@@ -1,0 +1,233 @@
+{
+  "ips": {
+    "touchpad": "192.168.100.39",
+    "msi": "192.168.100.14",
+    "lenovo": "192.168.100.33",
+    "desktop": "192.168.100.9",
+    "asus": "192.168.100.27",
+    "local": "127.0.0.1"
+  },
+  "delay": 200,
+  "aliases": {
+    "ee": [
+      "desktop"
+    ],
+    "bd": [
+      "asus"
+    ],
+    "se": [
+      "touchpad"
+    ],
+    "sws": [
+      "msi"
+    ],
+    "wc": [
+      "lenovo"
+    ],
+    "all": [
+      "desktop",
+      "msi",
+      "lenovo",
+      "touchpad",
+      "asus"
+    ]
+  },
+  "combinations": [
+    {
+      "receiversMulti": [
+        [
+          {
+            "destination": "sws",
+            "launch": "C:\\l2dion\\system\\L2.exe",
+            "delay": 10000
+          },
+          {
+            "destination": "sws",
+            "typeText": "deathangel2"
+          },
+          {
+            "destination": "sws",
+            "keySend": "tab"
+          },
+          {
+            "destination": "sws",
+            "typeText": "PASSWORD"
+          },
+          {
+            "destination": "sws",
+            "keySend": "enter",
+            "delay": 8000
+          },
+          {
+            "destination": "sws",
+            "keySend": "enter",
+            "delay": 1500
+          },
+          {
+            "destination": "sws",
+            "mouseMoveX": 900,
+            "mouseMoveY": 730,
+            "delay": 400,
+          },
+          {
+            "destination": "sws",
+            "mouseMoveX": 900,
+            "mouseMoveY": 730
+          }
+        ],
+        [
+          {
+            "destination": "bd",
+            "launch": "C:\\games\\l2dion\\system\\L2.exe",
+            "delay": 10000
+          },
+          {
+            "destination": "bd",
+            "typeText": "deathangel"
+          },
+          {
+            "destination": "bd",
+            "keySend": "tab"
+          },
+          {
+            "destination": "bd",
+            "typeText": "PASSWORD"
+          },
+          {
+            "destination": "bd",
+            "keySend": "enter",
+            "delay": 6000
+          },
+          {
+            "destination": "bd",
+            "keySend": "enter",
+            "delay": 1500
+          },
+          {
+            "destination": "bd",
+            "mouseMoveX": 900,
+            "mouseMoveY": 730,
+            "delay": 200
+          },
+          {
+            "destination": "bd",
+            "mouseMoveX": 900,
+            "mouseMoveY": 730
+          }
+        ],
+        [
+          {
+            "destination": "se",
+            "launch": "C:\\Games\\l2dion\\system\\L2.exe",
+            "delay": 10000
+          },
+          {
+            "destination": "se",
+            "typeText": "deathangelk"
+          },
+          {
+            "destination": "se",
+            "keySend": "tab"
+          },
+          {
+            "destination": "se",
+            "typeText": "PASSWORD"
+          },
+          {
+            "destination": "se",
+            "keySend": "enter",
+            "delay": 8000
+          },
+          {
+            "destination": "se",
+            "keySend": "enter",
+            "delay": 2000
+          },
+          {
+            "destination": "se",
+            "mouseMoveX": 900,
+            "mouseMoveY": 730,
+            "delay": 200
+          },
+          {
+            "destination": "se",
+            "mouseMoveX": 900,
+            "mouseMoveY": 730
+          }
+        ],
+        [
+          {
+            "destination": "wc",
+            "launch": "C:\\Users\\naxti\\l2dion\\system\\L2.exe",
+            "delay": 10000
+          },
+          {
+            "destination": "wc",
+            "typeText": "deathangel1"
+          },
+          {
+            "destination": "wc",
+            "keySend": "tab"
+          },
+          {
+            "destination": "wc",
+            "typeText": "PASSWORD"
+          },
+          {
+            "destination": "wc",
+            "keySend": "enter",
+            "delay": 8000
+          },
+          {
+            "destination": "wc",
+            "keySend": "enter",
+            "delay": 2000
+          },
+          {
+            "destination": "wc",
+            "mouseMoveX": 900,
+            "mouseMoveY": 730,
+            "delay": 200
+          },
+          {
+            "destination": "wc",
+            "mouseMoveX": 900,
+            "mouseMoveY": 730
+          }
+        ],
+        [
+          {
+            "destination": "ee",
+            "launch": "C:\\Games\\l2dion\\system\\L2.exe",
+            "delay": 10000
+          },
+          {
+            "destination": "ee",
+            "typeText": "deathangel8"
+          },
+          {
+            "destination": "ee",
+            "keySend": "tab"
+          },
+          {
+            "destination": "ee",
+            "typeText": "PASSWORD"
+          },
+          {
+            "destination": "ee",
+            "keySend": "enter",
+            "delay": 8000
+          },
+          {
+            "destination": "ee",
+            "keySend": "enter",
+            "delay": 2000
+          }
+        ]
+      ],
+      "name": "Launch l2 clients",
+      "shortCut": "Alt+F11",
+      "circular": false
+    }
+  ]
+}
