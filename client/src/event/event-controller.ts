@@ -2,7 +2,8 @@ import {
   Body,
   Controller,
   Get,
-  Post
+  Post,
+  UseGuards
 } from '@nestjs/common';
 import { KeyboardService } from '@/event/keyboard-service';
 import {
@@ -13,6 +14,7 @@ import {
 } from '@/event/event-dto';
 import { MouseService } from '@/event/mouse-service';
 import { LauncherService } from '@/event/launcher-service';
+import { JwtAuthGuard } from '@/auth/jwt-auth.guard';
 
 @Controller()
 export class EventController {
@@ -28,9 +30,10 @@ export class EventController {
     return "pong"
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post('mouse-click')
-  async mouseClick(@Body() body: MouseClickEvent): Promise<void> {
-    await this.mouseService.click(body.x, body.y);
+  async mouseClick(@Body() event: MouseClickEvent): Promise<void> {
+    await this.mouseService.click(event.x, event.y);
   }
 
   @Post('launch-exe')
