@@ -8,14 +8,18 @@ import {
 } from "@/config/types";
 import { ConfigService } from '@/config/config-service';
 import { ClientService } from '@/client/client-service';
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  Logger
+} from '@nestjs/common';
 
 @Injectable()
 export class LogicService {
 
   constructor(
     private configService: ConfigService,
-    private clientService: ClientService
+    private clientService: ClientService,
+    private readonly logger: Logger,
   ) {
   }
 
@@ -51,11 +55,11 @@ export class LogicService {
 
 
   async processEvent(comb: EventData) {
-    console.log(`${comb.shortCut} pressed`);
+    this.logger.log(`${comb.shortCut} pressed`);
     if (comb.receivers) {
       await this.processReceiverEvent(comb, comb.receivers);
     } else if (comb.receiversMulti) {
-      console.log(`${comb.shortCut} processing ${comb.receiversMulti.length} in parallel`);
+      this.logger.log(`${comb.shortCut} processing ${comb.receiversMulti.length} in parallel`);
       await Promise.all(comb.receiversMulti.map(rec => this.processReceiverEvent(comb, rec)))
     } else {
       throw Error("Unknown event type");
@@ -93,7 +97,7 @@ export class LogicService {
     }
   }
 
-  private async awaitDelay(combDelay: undefined|number, receiverDelay: undefined|number) {
+  private async awaitDelay(combDelay: undefined | number, receiverDelay: undefined | number) {
     if (receiverDelay !== undefined) {
       combDelay = receiverDelay;
     }

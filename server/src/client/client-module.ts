@@ -1,4 +1,5 @@
 import {
+  Logger,
   Module,
   OnModuleInit,
 } from '@nestjs/common';
@@ -7,10 +8,14 @@ import { ClientService } from '@/client/client-service';
 
 @Module({
   providers: [
-    ClientService, {
+    Logger,
+    {
       provide: FetchClient,
-      useValue: new FetchClient("http", 5000)
-    }],
+      useFactory: (logger) => new FetchClient(logger, "http", 5000),
+      inject: [Logger]
+    },
+    ClientService
+  ],
   exports: [ClientService]
 })
 export class ClientModule {

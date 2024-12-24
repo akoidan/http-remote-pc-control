@@ -6,18 +6,21 @@ import {
   Ips
 } from '@/config/types';
 import { parse } from 'jsonc-parser';
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  Logger
+} from '@nestjs/common';
 
 @Injectable()
 export class ConfigService {
 
   private configData: ConfigData | null = null;
 
-  constructor(private jsoncConfigData: string) {
+  constructor(private jsoncConfigData: string, private readonly logger: Logger) {
   }
 
   public async parseConfig(): Promise<void> {
-    console.log("parsing config");
+    this.logger.log("parsing config");
     if (this.configData) {
       throw Error('Config already loaded');
     }
@@ -27,7 +30,7 @@ export class ConfigService {
       shortCut: c.shortCut,
       name: c.name,
     })).sort((a: any, b: any) => a.shortCut.localeCompare(b.shortCut)).forEach((c: any) => {
-      console.log(`${c.shortCut}: ${c.name}`)
+      this.logger.log(`${c.shortCut}: ${c.name}`)
     });
     this.configData = conf;
   }

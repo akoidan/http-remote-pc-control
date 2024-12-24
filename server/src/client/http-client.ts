@@ -1,7 +1,13 @@
+import { Logger } from '@nestjs/common';
 
 export class FetchClient {
 
-  constructor(private protocol: string, private port: number) {}
+  constructor(
+    private readonly logger: Logger,
+    private protocol: string,
+    private port: number) {
+
+  }
 
   async post<T>(client: string, url: string, payload: T, timeout = 3000): Promise<void> {
     try {
@@ -22,7 +28,7 @@ export class FetchClient {
       if (!res.ok) {
         throw Error(text);
       }
-      console.debug(`POST:OK ${client}/${url} ${JSON.stringify(payload)}: ${text}`);
+      this.logger.debug(`POST:OK ${client}/${url} ${JSON.stringify(payload)}: ${text}`);
     } catch (e) {
       if (e.name === 'AbortError') {
         throw new Error(`POST:TIMEOUT: ${client}/${url} - Request timed out after 3s`);
@@ -45,7 +51,7 @@ export class FetchClient {
       if (!res.ok) {
         throw Error(text);
       }
-      console.debug(`GET:OK ${client}/${url}: ${text}`);
+      this.logger.debug(`GET:OK ${client}/${url}: ${text}`);
     } catch (e) {
       if (e.name === 'AbortError') {
         throw new Error(`GET:TIMEOUT: ${client}/${url} - Request timed out after 3s`);

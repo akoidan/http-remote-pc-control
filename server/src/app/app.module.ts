@@ -1,4 +1,8 @@
-import { Module, OnModuleInit } from '@nestjs/common';
+import {
+  Logger,
+  Module,
+  OnModuleInit
+} from '@nestjs/common';
 import { ElectronService } from '@/app/electron-service';
 import { LogicService } from '@/app/logic-service';
 import { ConfigModule } from '@/config/config-module';
@@ -7,7 +11,7 @@ import { ClientModule } from '@/client/client-module';
 
 @Module({
   imports: [ConfigModule, ClientModule],
-  providers: [ElectronService, LogicService],
+  providers: [Logger, ElectronService, LogicService],
   exports: [],
 })
 export class AppModule implements OnModuleInit {

@@ -2,11 +2,19 @@ import {
   app,
   globalShortcut
 } from 'electron'
+import {
+  Injectable,
+  Logger
+} from '@nestjs/common';
 
+@Injectable()
 export class ElectronService {
 
+  constructor(private readonly logger: Logger) {
+  }
+
   async bootstrap(): Promise<void> {
-    console.log("Bootstraping electron service");
+    this.logger.log("Bootstraping electron service");
     await app.whenReady();
     app.on('will-quit', () => {
       globalShortcut.unregisterAll()
@@ -15,13 +23,9 @@ export class ElectronService {
 
   registerShortcut(shortCut: string, cb: () => Promise<void>): void {
     const ret = globalShortcut.register(shortCut, cb);
-    console.debug(`registering ${shortCut} shortcut`);
+    this.logger.debug(`registering ${shortCut} shortcut`);
     if (!ret) {
       throw Error(`registration ${shortCut} failed`)
     }
-  }
-
-  async quit() {
-    app.exit(1);
   }
 }

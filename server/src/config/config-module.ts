@@ -1,6 +1,7 @@
 import {
   Module,
-  OnModuleInit
+  OnModuleInit,
+  Logger
 } from '@nestjs/common';
 import { promises as fs } from 'fs';
 import * as path from 'path';
@@ -8,6 +9,7 @@ import { ConfigService } from '@/config/config-service';
 
 @Module({
   providers: [
+    Logger,
     {
       provide: 'CONFIG_DATA',
       useFactory: async () => {
@@ -19,8 +21,8 @@ import { ConfigService } from '@/config/config-service';
     },
     {
       provide: ConfigService,
-      useFactory: (configData: string) => new ConfigService(configData),
-      inject: ['CONFIG_DATA'],
+      useFactory: (configData: string, logger: Logger) => new ConfigService(configData, logger),
+      inject: ['CONFIG_DATA', Logger],
     },
   ],
   exports: [ConfigService],

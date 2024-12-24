@@ -19,7 +19,6 @@ export class ClientService {
   }
 
   async keyPress(client: string, request: SendKeyRequest): Promise<void> {
-    console.log(`${client} -> ${request.key}`);
     return this.client.post(client, 'key-press', request);
   }
 
