@@ -33,19 +33,20 @@ export class LogicService {
   }
 
   async runCommand(currRec: Receiver) {
+    const ip = this.configService.getIps()[currRec.destination];
     if ((currRec as ReceiverSimple).keySend) {
-      await this.clientService.keyPress(currRec.destination, { key: (currRec as ReceiverSimple).keySend });
+      await this.clientService.keyPress(ip, { key: (currRec as ReceiverSimple).keySend });
     } else if ((currRec as ReceiverMouse).mouseMoveX) {
-      await this.clientService.mouseClick(currRec.destination, {
+      await this.clientService.mouseClick(ip, {
         x: (currRec as ReceiverMouse).mouseMoveX,
         y: (currRec as ReceiverMouse).mouseMoveY,
       });
     } else if ((currRec as ReceiveExecute).launch) {
-      await this.clientService.launchExe(currRec.destination, {
+      await this.clientService.launchExe(ip, {
         path: (currRec as ReceiveExecute).launch
       });
     } else if ((currRec as ReceiveTypeText).typeText) {
-      await this.clientService.typeText(currRec.destination, {
+      await this.clientService.typeText(ip, {
         text: (currRec as ReceiveTypeText).typeText
       });
     } else {

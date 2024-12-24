@@ -1,11 +1,19 @@
-import { Logger } from '@nestjs/common';
+import {
+  Injectable,
+  Logger
+} from '@nestjs/common';
+import { JwtService } from '@/client/jwt-service';
 
+
+@Injectable()
 export class FetchClient {
 
   constructor(
     private readonly logger: Logger,
-    private protocol: string,
-    private port: number) {
+    private readonly jwtService: JwtService,
+    private readonly protocol: string,
+    private readonly port: number
+  ) {
 
   }
 
@@ -18,6 +26,7 @@ export class FetchClient {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${this.jwtService.getToken()}`,
         },
         body: JSON.stringify(payload),
         signal: controller.signal,
@@ -38,12 +47,15 @@ export class FetchClient {
   }
 
   async get(client: string, url: string): Promise<void> {
-     try {
+    try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 3000);
 
       const res = await fetch(`${this.protocol}://${client}:${this.port}/${url}`, {
         signal: controller.signal,
+        headers: {
+          'Authorization': `Bearer ${this.jwtService.getToken()}`,
+        },
       });
 
       clearTimeout(timeoutId);
