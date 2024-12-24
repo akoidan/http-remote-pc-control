@@ -4,25 +4,30 @@
     "msi": "192.168.100.14",
     "lenovo": "192.168.100.33",
     "desktop": "192.168.100.9",
-    "asus": "192.168.100.27",
-    "local": "127.0.0.1"
+    "asus": "192.168.100.27"
   },
   "delay": 200,
   "aliases": {
-    "ee": [
-      "desktop"
+    "sws": [
+      "lenovo"
     ],
     "bd": [
-      "asus"
-    ],
-    "se": [
       "touchpad"
     ],
-    "sws": [
-      "msi"
-    ],
     "wc": [
-      "lenovo"
+      "desktop"
+    ],
+    "ss": [
+      "desktop"
+    ],
+    "pp": [
+      "desktop"
+    ],
+    "se": [
+      "asus"
+    ],
+    "ee": [
+      "msi"
     ],
     "all": [
       "desktop",
@@ -38,7 +43,7 @@
         [
           {
             "destination": "sws",
-            "launch": "C:\\l2dion\\system\\L2.exe",
+            "launch": "C:\\Users\\naxti\\l2dion\\system\\L2.exe",
             "delay": 10000
           },
           {
@@ -67,7 +72,7 @@
             "destination": "sws",
             "mouseMoveX": 900,
             "mouseMoveY": 730,
-            "delay": 400,
+            "delay": 400
           },
           {
             "destination": "sws",
@@ -157,8 +162,48 @@
         ],
         [
           {
+            "destination": "ee",
+            "launch": "C:\\l2dion\\system\\L2.exe",
+            "delay": 10000
+          },
+          {
+            "destination": "ee",
+            "typeText": "deathangel8"
+          },
+          {
+            "destination": "ee",
+            "keySend": "tab"
+          },
+          {
+            "destination": "ee",
+            "typeText": "PASSWORD"
+          },
+          {
+            "destination": "ee",
+            "keySend": "enter",
+            "delay": 8000
+          },
+          {
+            "destination": "ee",
+            "keySend": "enter",
+            "delay": 2000
+          },
+          {
+            "destination": "ee",
+            "mouseMoveX": 900,
+            "mouseMoveY": 730,
+            "delay": 200
+          },
+          {
+            "destination": "ee",
+            "mouseMoveX": 900,
+            "mouseMoveY": 730
+          }
+        ],
+        [
+          {
             "destination": "wc",
-            "launch": "C:\\Users\\naxti\\l2dion\\system\\L2.exe",
+            "launch": "C:\\Games\\l2dion\\system\\L2.exe",
             "delay": 10000
           },
           {
@@ -183,43 +228,31 @@
             "keySend": "enter",
             "delay": 2000
           },
+          // 2nd window
           {
-            "destination": "wc",
-            "mouseMoveX": 900,
-            "mouseMoveY": 730,
-            "delay": 200
-          },
-          {
-            "destination": "wc",
-            "mouseMoveX": 900,
-            "mouseMoveY": 730
-          }
-        ],
-        [
-          {
-            "destination": "ee",
+            "destination": "pp",
             "launch": "C:\\Games\\l2dion\\system\\L2.exe",
             "delay": 10000
           },
           {
-            "destination": "ee",
-            "typeText": "deathangel8"
+            "destination": "pp",
+            "typeText": "deathangelq"
           },
           {
-            "destination": "ee",
+            "destination": "pp",
             "keySend": "tab"
           },
           {
-            "destination": "ee",
+            "destination": "pp",
             "typeText": "PASSWORD"
           },
           {
-            "destination": "ee",
+            "destination": "pp",
             "keySend": "enter",
             "delay": 8000
           },
           {
-            "destination": "ee",
+            "destination": "pp",
             "keySend": "enter",
             "delay": 2000
           }
@@ -227,6 +260,118 @@
       ],
       "name": "Launch l2 clients",
       "shortCut": "Alt+F11",
+      "circular": false
+    },
+    {
+      "receivers": [
+        {
+          "destination": "bd",
+          "keySend": "-"
+        },
+        {
+          "destination": "sws",
+          "keySend": "4"
+        },
+        {
+          "destination": "ee",
+          "keySend": "6"
+        },
+        {
+          "destination": "wc",
+          "keySend": "5"
+        }
+      ],
+      "name": "all buff 1",
+      "shortCut": "Alt+9",
+      "circular": false
+    },
+    {
+      "receivers": [
+        {
+          "destination": "sws",
+          "keySend": "5"
+        },
+        {
+          "destination": "ee",
+          "keySend": "7"
+        },
+        {
+          "destination": "se",
+          "keySend": "7"
+        }
+      ],
+      "name": "all buff 1",
+      "shortCut": "Alt+0",
+      "circular": false
+    },
+    {
+      "receivers": [
+        {
+          "destination": "se",
+          "keySend": "f3"
+        },
+        {
+          "destination": "ee",
+          "keySend": "f3"
+        }
+      ],
+      "name": "mana",
+      "shortCut": "Alt+8",
+      "circular": true
+    },
+    {
+      "receivers": [
+        {
+          "destination": "all",
+          "keySend": "f6"
+        }
+      ],
+      "name": "to me",
+      "shortCut": "Alt+6",
+      "circular": false
+    },
+    {
+      "receivers": [
+        {
+          "destination": "ss",
+          "keySend": "1"
+        }
+      ],
+      "name": "attack 1",
+      "shortCut": "Alt+1",
+      "circular": false
+    },
+    {
+      "receivers": [
+        {
+          "destination": "ss",
+          "keySend": "2"
+        }
+      ],
+      "name": "attack 2",
+      "shortCut": "Alt+2",
+      "circular": false
+    },
+    {
+      "receivers": [
+        {
+          "destination": "ss",
+          "keySend": "3"
+        }
+      ],
+      "name": "attack 3",
+      "shortCut": "Alt+3",
+      "circular": false
+    },
+    {
+      "receivers": [
+        {
+          "destination": "ss",
+          "keySend": "4"
+        }
+      ],
+      "name": "attack 4",
+      "shortCut": "Alt+4",
       "circular": false
     }
   ]
