@@ -307,6 +307,17 @@
     {
       "receivers": [
         {
+          "destination": "sws",
+          "keySend": "5"
+        }
+      ],
+      "name": "Songs to run",
+      "shortCut": "Alt+7",
+      "circular": false
+    },
+    {
+      "receivers": [
+        {
           "destination": "se",
           "keySend": "f3"
         },
@@ -372,6 +383,111 @@
       ],
       "name": "attack 4",
       "shortCut": "Alt+4",
+      "circular": false
+    },
+    {
+      "receivers": [
+        {
+          "destination": "bd",
+          "keySend": "4"
+        },
+        {
+          "destination": "sws",
+          "keySend": "6"
+        }
+      ],
+      "name": "Song dance to fight",
+      "shortCut": "Alt+5",
+      "circular": false
+    },
+    {
+      "receivers": [
+        {
+          "destination": "ee",
+          "keySend": "5"
+        }
+      ],
+      "name": "Heal ALL",
+      "shortCut": "Alt+a",
+      "circular": false
+    },
+    {
+      "receivers": [
+        {
+          "destination": "ee",
+          "keySend": "1"
+        },
+        {
+          "destination": "se",
+          "keySend": "1"
+        }
+      ],
+      "name": "Heal DA (Sebia)",
+      "shortCut": "Alt+s",
+      "circular": false
+    },
+    {
+      "receivers": [
+        {
+          "destination": "ee",
+          "keySend": "2"
+        },
+        {
+          "destination": "se",
+          "keySend": "2"
+        }
+      ],
+      "name": "Heal SS",
+      "shortCut": "Alt+d",
+      "circular": false
+    },
+    {
+      "receivers": [
+        {
+          "destination": "ee",
+          "keySend": "3"
+        },
+        {
+          "destination": "se",
+          "keySend": "3"
+        }
+      ],
+      "name": "Heal EE",
+      "shortCut": "Alt+q",
+      "circular": false
+    },
+    {
+      "receivers": [
+        {
+          "destination": "ee",
+          "keySend": "4"
+        },
+        {
+          "destination": "se",
+          "keySend": "4"
+        }
+      ],
+      "name": "Heal SE",
+      "shortCut": "Alt+w",
+      "circular": false
+    },
+    {
+      "receivers": [
+        {
+          "destination": "se",
+          "keySend": "f1"
+        },
+        {
+          "destination": "ee",
+          "keySend": "f1"
+        },
+       {
+          "destination": "bd",
+          "keySend": "f1"
+        }
+      ],
+      "name": "Pick up",
+      "shortCut": "Alt+p",
       "circular": false
     }
   ]
