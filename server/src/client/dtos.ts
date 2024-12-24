@@ -1,4 +1,4 @@
-import { KeySend } from '@/types';
+import { KeySend } from '@/config/types';
 
 export interface MouseClickRequest {
   x: number;
