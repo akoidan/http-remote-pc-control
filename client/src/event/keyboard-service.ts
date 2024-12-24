@@ -1,0 +1,30 @@
+import { Injectable } from '@nestjs/common';
+
+
+import {
+  Key,
+  keyboard
+} from "@nut-tree-fork/nut-js";
+import { invertedMap } from '@/event/event-nut-types';
+import { PinoLogger, InjectPinoLogger } from 'nestjs-pino';
+
+@Injectable()
+export class KeyboardService {
+
+  constructor(
+    @InjectPinoLogger(KeyboardService.name)
+    private readonly logger: PinoLogger
+  ) {
+  }
+
+  async sendKey(key: string): Promise<void> {
+    const keymap: Key = invertedMap.get(key);
+    this.logger.info(`Key: ${key}`);
+    await keyboard.type(keymap);
+  }
+
+  async type(text: string): Promise<void> {
+    this.logger.info(`Type: ${text}`);
+    await keyboard.type(text);
+  }
+}

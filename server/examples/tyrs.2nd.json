@@ -1,0 +1,67 @@
+{
+  "urls": {
+    "tyrs": ["192.168.100.14",  "192.168.100.32"]
+  },
+  "combinations": [
+    {
+      "receivers": [
+        {
+          "destination": "tyrs",
+          "keySend": "F5"
+        }
+      ],
+      "shortCut": "Alt+1",
+      "circular": true
+    },
+    {
+      "receivers": [
+        {
+          "destination": "tyrs",
+          "keySend": "F4"
+        }
+      ],
+      "shortCut": "Alt+2",
+      "circular": false
+    },
+    {
+      "receivers": [
+        {
+          "destination": "tyrs",
+          "keySend": "F3"
+        }
+      ],
+      "shortCut": "Alt+3",
+      "circular": false
+    },
+    {
+      "receivers": [
+        {
+          "destination": "tyrs",
+          "keySend": "F7"
+        }
+      ],
+      "shortCut": "Alt+4",
+      "circular": false
+    },
+    {
+      "receivers": [
+        {
+          "destination": "tyrs",
+          "keySend": "F6"
+        },
+      ],
+      "shortCut": "Alt+6",
+      "circular": false
+    },
+    {
+      "receivers": [
+        {
+          "destination": "tyrs",
+          "keySend": "F9"
+        }
+      ],
+      "shortCut": "Alt+9",
+      "circular": false
+    }
+  ]
+}

@@ -1,0 +1,240 @@
+{
+  "ips": {
+    "touchpad": "192.168.100.39",
+    "msi": "192.168.100.14",
+    "lenovo": "192.168.100.33",
+    "desktop": "192.168.100.9",
+    "asus": "192.168.100.27"
+  },
+  "aliases": {
+    "sags": [
+      "lenovo",
+      "msi"
+    ],
+    "bish": [
+      "asus"
+    ],
+    "wc": [
+      "touchpad"
+    ]
+  },
+  "combinations": [
+    {
+      "receivers": [
+        {
+          "destination": "sags",
+          "keySend": "F5"
+        }
+      ],
+      "name": "stun",
+      "shortCut": "Alt+1",
+      "circular": true
+    },
+    {
+      "receivers": [
+        {
+          "destination": "sags",
+          "keySend": "F4"
+        }
+      ],
+      "shuffle": true,
+      "name": "attack",
+      "shortCut": "Alt+2"
+    },
+    {
+      "receivers": [
+        {
+          "destination": "wc",
+          "keySend": "1"
+        }
+      ],
+      "name": "WC Fear",
+      "shortCut": "Alt+3"
+    },
+    {
+      "receivers": [
+        {
+          "destination": "wc",
+          "keySend": "2"
+        }
+      ],
+      "name": "WC Sleep",
+      "shortCut": "alt+4"
+    },
+    {
+      "receivers": [
+        {
+          "destination": "bish",
+          "keySend": "F11"
+        }
+      ],
+      "name": "paralych",
+      "shortCut": "Alt+5"
+    },
+    {
+      "receivers": [
+        {
+          "destination": "sags",
+          "keySend": "F6"
+        },
+        {
+          "destination": "bish",
+          "keySend": "F6"
+        },
+        {
+          "destination": "wc",
+          "keySend": "F6"
+        }
+      ],
+      "shuffle": true,
+      "name": "come to me",
+      "shortCut": "Alt+6"
+    },
+    {
+      "receivers": [
+        {
+          "destination": "bish",
+          "id": "l2.CustomKeys",
+          "run":  {"Name": "alt_tab"}
+        },
+        {
+          "destination": "bish",
+          "keySend": "5"
+        },
+        {
+          "destination": "bish",
+          "id": "l2.CustomKeys",
+          "run":  {"Name": "alt_tab"}
+        }
+      ],
+      "name": "Songs",
+      "shortCut": "Alt+7"
+    },
+    {
+      "receivers": [
+        {
+          "destination": "sags",
+          "keySend": "F9"
+        }
+      ],
+      "shuffle": true,
+      "name": "archers buff",
+      "shortCut": "Alt+9"
+    },
+    {
+      "receivers": [
+        {
+          "destination": "bish",
+          "keySend": "F3"
+        }
+      ],
+      "name": "battle heal",
+      "shortCut": "Alt+q"
+    },
+    {
+      "receivers": [
+        {
+          "destination": "bish",
+          "keySend": "F4"
+        }
+      ],
+      "name": "greater heal",
+      "shortCut": "Alt+w"
+    },
+    {
+      "receivers": [
+        {
+          "destination": "bish",
+          "keySend": "F5"
+        }
+      ],
+      "name": "restore life",
+      "shortCut": "Alt+e"
+    },
+    {
+      "receivers": [
+        {
+          "destination": "bish",
+          "keySend": "F9"
+        }
+      ],
+      "name": "Heal all",
+      "shortCut": "Alt+a"
+    },
+    {
+      "receivers": [
+        {
+          "destination": "bish",
+          "keySend": "1"
+        }
+      ],
+      "name": "Target me",
+      "shortCut": "Alt+s"
+    },
+    {
+      "receivers": [
+        {
+          "destination": "bish",
+          "keySend": "2"
+        }
+      ],
+      "name": "destination",
+      "shortCut": "Alt+d"
+    },
+    {
+      "receivers": [
+        {
+          "destination": "bish",
+          "keySend": "F8"
+        }
+      ],
+      "name": "balance life",
+      "shortCut": "Alt+f"
+    },
+    {
+      "receivers": [
+        {
+          "destination": "bish",
+          "keySend": "F10"
+        }
+      ],
+      "name": "Benediction",
+      "shortCut": "Alt+g"
+    },
+    {
+      "receivers": [
+        {
+          "destination": "bish",
+          "keySend": "F6"
+        },
+        {
+          "destination": "wc",
+          "keySend": "F6"
+        }
+      ],
+      "shuffle": true,
+      "name": "bish to me",
+      "shortCut": "Alt+z"
+    },
+    {
+      "receivers": [
+        {
+          "destination": "bish",
+          "id": "l2.CustomKeys",
+          "run":  {"Name": "alt_tab"}
+        },
+        {
+          "destination": "bish",
+          "keySend": "F12"
+        },
+        {
+          "destination": "bish",
+          "id": "l2.CustomKeys",
+          "run":  {"Name": "alt_tab"}
+        }
+      ],
+      "name": "Mass TP",
+      "shortCut": "alt+/"
+    }
+  ]
+}

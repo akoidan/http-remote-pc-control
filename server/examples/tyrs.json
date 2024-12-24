@@ -1,0 +1,288 @@
+{
+  "ips": {
+    "touchpad": "192.168.100.39",
+    "msi": "192.168.100.14",
+    "lenovo": "192.168.100.33",
+    "desktop": "192.168.100.9",
+    "asus": "192.168.100.27"
+  },
+  "delay": 100,
+  "aliases": {
+    "se": [ "desktop"],
+    "tyrs": ["touchpad", "lenovo", "msi"],
+    "craft": ["asus"]
+  },
+  "combinations": [
+    {
+      "receivers": [
+        {
+          "destination": "tyrs",
+          "keySend": "F5"
+        }
+      ],
+      "name": "Skill attack",
+      "shortCut": "Alt+1",
+      "circular": true
+    },
+    {
+      "receivers": [
+        {
+          "destination": "tyrs",
+          "keySend": "F4"
+        },
+        {
+          "destination": "craft",
+          "keySend": "F4"
+        }
+      ],
+      "name": "Attack",
+      "shortCut": "Alt+2",
+      "circular": false
+    },
+    {
+      "receivers": [
+        {
+          "destination": "tyrs",
+          "keySend": "F3"
+        },
+        {
+          "destination": "craft",
+          "keySend": "F3"
+        }
+      ],
+      "name": "Potion",
+      "shortCut": "Alt+3",
+      "circular": false
+    },
+    {
+      "receivers": [
+        {
+          "destination": "se",
+          "keySend": "3"
+        }
+      ],
+      "name": "Stigma",
+      "shortCut": "Alt+4",
+      "circular": false
+    },
+    {
+      "receivers": [
+        {
+          "destination": "tyrs",
+          "keySend": "1"
+        }
+      ],
+      "name": "Fury Fist",
+      "shortCut": "Alt+5",
+      "circular": false
+    },
+    {
+      "receivers": [
+        {
+          "destination": "tyrs",
+          "keySend": "F6"
+        },
+        {
+          "destination": "se",
+          "keySend": "F6"
+        },
+        {
+          "destination": "craft",
+          "keySend": "F6"
+        }
+      ],
+      "name": "To Me",
+      "shortCut": "Alt+6",
+      "circular": false
+    },
+    {
+      "receivers": [
+        {
+          "destination": "tyrs",
+          "keySend": "F7"
+        },
+        {
+          "destination": "craft",
+          "keySend": "F7"
+        }
+      ],
+      "name": "Greater Potion",
+      "shortCut": "Alt+7",
+      "circular": false
+    },
+    {
+      "receivers": [
+        {
+          "destination": "tyrs",
+          "keySend": "F8"
+        },
+        {
+          "destination": "se",
+          "keySend": "F8"
+        },
+        {
+          "destination": "craft",
+          "keySend": "F8"
+        }
+      ],
+      "name": "To BD",
+      "shortCut": "Alt+8",
+      "circular": false
+    },
+    {
+      "receivers": [
+        {
+          "destination": "tyrs",
+          "keySend": "F9"
+        },
+        {
+          "destination": "craft",
+          "keySend": "F9"
+        }
+      ],
+      "name": "Buffs",
+      "shortCut": "Alt+9",
+      "circular": false
+    },
+    {
+      "receivers": [
+        {
+          "destination": "tyrs",
+          "keySend": "7"
+        }
+      ],
+      "name": "Target for zaelot",
+      "shortCut": "Alt+q",
+      "circular": false
+    },
+    {
+      "receivers": [
+        {
+          "destination": "tyrs",
+          "id": "l2.ctrl_f2",
+          "run":  {"Name": "ctrl_f2"}
+        }
+      ],
+      "name": "Force attack zaelot",
+      "shortCut": "Alt+w",
+      "circular": false
+    },
+    {
+      "receivers": [
+        {
+          "destination": "tyrs",
+          "keySend": "2"
+        }
+      ],
+      "name": "use zaelot",
+      "shortCut": "Alt+e",
+      "circular": false
+    },
+    {
+      "receivers": [
+        {
+          "destination": "se",
+          "keySend": "F9"
+        }
+      ],
+      "name": "Heal all",
+      "shortCut": "Alt+a",
+      "circular": false
+    },
+    {
+      "receivers": [
+        {
+          "destination": "se",
+          "keySend": "1"
+        }
+      ],
+      "name": "Heal sebia",
+      "shortCut": "Alt+s",
+      "circular": false
+    },
+    {
+      "receivers": [
+        {
+          "destination": "se",
+          "keySend": "2"
+        }
+      ],
+      "name": "Target Head",
+      "shortCut": "Alt+d",
+      "circular": false
+    },
+    {
+      "receivers": [
+        {
+          "destination": "se",
+          "keySend": "F5"
+        }
+      ],
+      "name": "Purify",
+      "shortCut": "Alt+z",
+      "circular": false
+    },
+    {
+      "receivers": [
+        {
+          "destination": "tyrs",
+          "keySend": "3"
+        },
+        {
+          "destination": "tyrs",
+          "keySend": "F11"
+        },
+        {
+          "destination": "se",
+          "keySend": "8"
+        },
+        {
+          "destination": "se",
+          "keySend": "F11"
+        },
+         {
+          "destination": "craft",
+          "keySend": "3"
+        },
+        {
+          "destination": "craft",
+          "keySend": "F11"
+        }
+      ],
+      "name": "Tyrs use form and kostochka",
+      "shortCut": "Alt+g",
+      "circular": false
+    },
+    {
+      "receivers": [
+        {
+          "destination": "tyrs",
+          "keySend": "8"
+        },
+        {
+          "destination": "se",
+          "keySend": "8"
+        },
+        {
+          "destination": "tyrs",
+          "keySend": "9"
+        },
+        {
+          "destination": "se",
+          "keySend": "9"
+        },
+        {
+          "destination": "craft",
+          "keySend": "8"
+        },
+        {
+          "destination": "craft",
+          "keySend": "9"
+        }
+      ],
+      "name": "EXP",
+      "shortCut": "Alt+0",
+      "circular": false
+    }
+  ]
+}

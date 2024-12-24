@@ -1,0 +1,291 @@
+{
+  "ips": {
+    "touchpad": "192.168.100.39",
+    "msi": "192.168.100.14",
+    "lenovo": "192.168.100.33",
+    "desktop": "192.168.100.9",
+    "asus": "192.168.100.27"
+  },
+  "delay": 300,
+  "aliases": {
+    "sags": [
+      "touchpad",
+      "lenovo",
+      "msi"
+    ],
+    "msi": ["msi"],
+    "bish": [
+      "desktop"
+    ],
+    "wc": [
+      "asus"
+    ]
+  },
+  "combinations": [
+    {
+      "receivers": [
+        {
+          "destination": "sags",
+          "keySend": "F5"
+        }
+      ],
+      "name": "stun",
+      "shortCut": "Alt+1",
+      "circular": true
+    },
+    {
+      "receivers": [
+        {
+          "destination": "sags",
+          "keySend": "F4"
+        }
+      ],
+      "shuffle": true,
+      "name": "attack",
+      "shortCut": "Alt+2"
+    },
+    {
+      "receivers": [
+        {
+          "destination": "wc",
+          "keySend": "1"
+        }
+      ],
+      "name": "WC Fear",
+      "shortCut": "Alt+3"
+    },
+    {
+      "receivers": [
+        {
+          "destination": "msi",
+          "keySend": "4"
+        }
+      ],
+      "name": "Bow res",
+      "shortCut": "alt+4"
+    },
+    {
+      "receivers": [
+        {
+          "destination": "wc",
+          "keySend": "3"
+        }
+      ],
+      "name": "WC Madness",
+      "shortCut": "alt+5"
+    },
+    {
+      "receivers": [
+        {
+          "destination": "sags",
+          "keySend": "F6"
+        },
+        {
+          "destination": "bish",
+          "keySend": "F6"
+        },
+        {
+          "destination": "wc",
+          "keySend": "F6"
+        }
+      ],
+      "shuffle": true,
+      "name": "come to me",
+      "shortCut": "Alt+6"
+    },
+    {
+      "receivers": [
+        {
+          "destination": "sags",
+          "keySend": "0"
+        },
+        {
+          "destination": "wc",
+          "keySend": "0"
+        },
+        {
+          "destination": "bish",
+          "keySend": "0"
+        },
+        {
+          "destination": "bish",
+          "id": "l2.CustomKeys",
+          "run":  {"Name": "alt_tab"},
+          "delay": 200
+        },
+         {
+          "destination": "bish",
+          "keySend": "0"
+        },
+       {
+          "destination": "bish",
+          "id": "l2.CustomKeys",
+          "run":  {"Name": "alt_tab"}
+        }
+      ],
+      "name": "Form",
+      "shortCut": "Alt+7"
+    },
+    {
+      "receivers": [
+        {
+          "destination": "sags",
+          "id": "l2.CustomKeys",
+          "run":  {"Name": "alt_tab"}
+        }
+      ],
+      "name": "Alt tab archers",
+      "shortCut": "Alt+8"
+    },
+    {
+      "receivers": [
+        {
+          "destination": "sags",
+          "keySend": "F9"
+        }
+      ],
+      "shuffle": true,
+      "name": "archers buff",
+      "shortCut": "Alt+9"
+    },
+    {
+      "receivers": [
+        {
+          "destination": "sags",
+          "keySend": "="
+        },
+        {
+          "destination": "wc",
+          "keySend": "="
+        }
+      ],
+      "name": "EXP",
+      "shortCut": "alt+="
+    },
+    {
+      "receivers": [
+        {
+          "destination": "bish",
+          "keySend": "F3"
+        }
+      ],
+      "name": "battle heal",
+      "shortCut": "Alt+q"
+    },
+    {
+      "receivers": [
+        {
+          "destination": "bish",
+          "keySend": "F4"
+        }
+      ],
+      "name": "greater heal",
+      "shortCut": "Alt+w"
+    },
+    {
+      "receivers": [
+        {
+          "destination": "bish",
+          "keySend": "F5"
+        }
+      ],
+      "name": "restore life",
+      "shortCut": "Alt+e"
+    },
+     {
+      "receivers": [
+         {
+          "destination": "bish",
+          "id": "l2.CustomKeys",
+          "run":  {"Name": "alt_tab"}
+        },
+        {
+          "destination": "bish",
+          "keySend": "F9"
+        },
+         {
+          "destination": "bish",
+          "id": "l2.CustomKeys",
+          "run":  {"Name": "alt_tab"}
+        }
+      ],
+      "name": "EE mass",
+      "shortCut": "Alt+R"
+    },
+    {
+      "receivers": [
+        {
+          "destination": "bish",
+          "keySend": "3"
+        }
+      ],
+      "name": "paralych",
+      "shortCut": "Alt+T"
+    },
+    {
+      "receivers": [
+        {
+          "destination": "bish",
+          "keySend": "F9"
+        }
+      ],
+      "name": "Heal all",
+      "shortCut": "Alt+a"
+    },
+    {
+      "receivers": [
+        {
+          "destination": "bish",
+          "keySend": "1"
+        }
+      ],
+      "name": "Target me",
+      "shortCut": "Alt+s"
+    },
+    {
+      "receivers": [
+        {
+          "destination": "bish",
+          "keySend": "2"
+        }
+      ],
+      "name": "destination",
+      "shortCut": "Alt+d"
+    },
+    {
+      "receivers": [
+        {
+          "destination": "bish",
+          "keySend": "F8"
+        }
+      ],
+      "name": "balance life",
+      "shortCut": "Alt+f"
+    },
+    {
+      "receivers": [
+        {
+          "destination": "bish",
+          "keySend": "F10"
+        }
+      ],
+      "name": "Benediction",
+      "shortCut": "Alt+g"
+    },
+    {
+      "receivers": [
+        {
+          "destination": "bish",
+          "keySend": "F6"
+        },
+        {
+          "destination": "wc",
+          "keySend": "F6"
+        }
+      ],
+      "shuffle": true,
+      "name": "bish to me",
+      "shortCut": "Alt+z"
+    }
+  ]
+}

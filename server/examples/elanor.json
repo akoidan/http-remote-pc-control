@@ -1,0 +1,90 @@
+{
+  "urls": {
+    "ee": [ "192.168.100.32"],
+    "bish": ["192.168.100.9"],
+    "sorc": ["192.168.100.27"]
+  },
+  "combinations": [
+    {
+      "receivers": [
+        {
+          "destination": "bish",
+          "keySend": "F3"
+        }
+      ],
+      "shortCut": "Alt+q"
+    },
+    {
+      "receivers": [
+        {
+          "destination": "bish",
+          "keySend": "F4"
+        }
+      ],
+      "shortCut": "Alt+w"
+    },
+    {
+      "receivers": [
+        {
+          "destination": "bish",
+          "keySend": "F5"
+        }
+      ],
+      "shortCut": "Alt+e"
+    },
+    {
+      "receivers": [
+        {
+          "destination": "bish",
+          "keySend": "1"
+        }
+      ],
+      "shortCut": "Alt+s"
+    },
+    {
+      "receivers": [
+        {
+          "destination": "bish",
+          "keySend": "2"
+        }
+      ],
+      "shortCut": "Alt+d"
+    },
+    {
+      "receivers": [
+        {
+          "destination": "bish",
+          "keySend": "3"
+        }
+      ],
+      "shortCut": "Alt+a"
+    },
+    {
+      "receivers": [
+        {
+          "destination": "sorc",
+          "keySend": "F2"
+        }
+      ],
+      "shortCut": "Alt+1"
+    },
+    {
+      "receivers": [
+        {
+          "destination": "sorc",
+          "keySend": "F3"
+        }
+      ],
+      "shortCut": "Alt+2"
+    },
+    {
+      "receivers": [
+        {
+          "destination": "sorc",
+          "keySend": "F4"
+        }
+      ],
+      "shortCut": "Alt+3"
+    }
+  ]
+}

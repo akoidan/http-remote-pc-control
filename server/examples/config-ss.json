@@ -1,0 +1,96 @@
+{
+  "ips": {
+    "touchpad": "192.168.100.39",
+    "msi": "192.168.100.14",
+    "lenovo": "192.168.100.33",
+    "desktop": "192.168.100.9",
+    "asus": "192.168.100.27"
+  },
+  "delay": 200,
+  "aliases": {
+    "se": [
+      "desktop"
+    ],
+    "bd": [
+      "asus"
+    ],
+    "ee": [
+      "touchpad"
+    ],
+    "sws": [
+      "msi"
+    ],
+    "cardinal": [
+      "lenovo"
+    ],
+    "all": [
+      "desktop",
+      "msi",
+      "lenovo",
+      "touchpad",
+      "asus"
+    ]
+  },
+  "combinations": [
+    {
+      "receivers": [
+        {
+          "destination": "sws",
+          "keySend": "4"
+        },
+        {
+          "destination": "bd",
+          "keySend": "4"
+        }
+      ],
+      "name": "song/dance",
+      "shortCut": "Alt+4",
+      "circular": false
+    },
+    {
+      "receivers": [
+        {
+          "destination": "cardinal",
+          "keySend": "4"
+        },
+        {
+          "destination": "ee",
+          "keySend": "4"
+        },
+        {
+          "destination": "se",
+          "keySend": "4"
+        }
+      ],
+      "name": "all buff",
+      "shortCut": "Alt+9",
+      "circular": false
+    },
+    {
+      "receivers": [
+        {
+          "destination": "se",
+          "keySend": "f3"
+        },
+        {
+          "destination": "ee",
+          "keySend": "f3"
+        }
+      ],
+      "name": "mana",
+      "shortCut": "Alt+3",
+      "circular": true
+    },
+    {
+      "receivers": [
+        {
+          "destination": "all",
+          "keySend": "f6"
+        }
+      ],
+      "name": "to me",
+      "shortCut": "Alt+6",
+      "circular": false
+    }
+  ]
+}
