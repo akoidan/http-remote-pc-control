@@ -7,10 +7,10 @@
   "license": "MIT",
   "scripts": {
     "start": "node -r tsconfig-paths/register -r ts-node/register src/main.ts",
-    "build:e": "electron-packager . MyApp --platform=win32 --arch=x64 --out=dist --overwrite --ignore=.idea --prune=true && tar -cvf ./result.tar dist/MyApp-win32-x64",
-    "prebuild": "nest build",
+    "build:electron": "electron-packager . MyApp --platform=win32 --arch=x64 --out=dist --overwrite --ignore=.idea --prune=true && tar -cvf ./result.tar dist/MyApp-win32-x64",
+    "prebuild": "nest build --clean && cp src/auth/public_key.pem build/auth/public_key.pem",
     "build": "pkg . --targets win --output app.exe",
-    "wine": "wine dist/MyApp-win32-x64/MyApp.exe"
+    "wine": "wine app.exe"
   },
   "devDependencies": {
     "@types/passport-jwt": "^4.0.1",
