@@ -1,6 +1,7 @@
 import {
   EventData,
   ReceiveExecute,
+  ReceiveMacro,
   Receiver,
   ReceiverMouse,
   ReceiverSimple,
@@ -33,8 +34,8 @@ export class LogicService {
     );
   }
 
-  async runCommand(currRec: Receiver) {
-    const ip = this.configService.getIps()[currRec.destination];
+  async runCommand(currRec: Omit<Receiver, 'destination'>, destination: string) {
+    const ip = this.configService.getIps()[destination];
     if ((currRec as ReceiverSimple).keySend) {
       await this.clientService.keyPress(ip, { key: (currRec as ReceiverSimple).keySend });
     } else if ((currRec as ReceiverMouse).mouseMoveX) {
@@ -50,6 +51,11 @@ export class LogicService {
       await this.clientService.typeText(ip, {
         text: (currRec as ReceiveTypeText).typeText
       });
+    } else if ((currRec as ReceiveMacro).macro) {
+      const commands = this.configService.getMacros()[(currRec as ReceiveMacro).macro];
+      for (const command of commands) {
+        await this.runCommand(command, destination);
+      }
     } else {
       throw Error(`Unknown receiver type ${JSON.stringify(currRec)}`);
     }
@@ -70,22 +76,14 @@ export class LogicService {
 
   private async processReceiverEvent(comb: Omit<EventData, 'receiversMulti' | 'receivers'>, inputReceivers: Receiver[]) {
     // but same as receiver but destination would be an ip
-    const receivers: Receiver[] = [];
-    inputReceivers.forEach(rec => {
-      this.configService.getAliases()[rec.destination].forEach(dest => {
-        receivers.push({
-          ...rec,
-          destination: dest,
-        })
-      })
-    })
+    const receivers = this.constructReceivers(inputReceivers);
     if (comb.shuffle) {
       this.shuffle(receivers);
     }
 
     // const receivers: string[] = comb.receivers.map(rec => this.config.urls[rec as keyof ConfigUrl]).flatMap(a => a);
     if (comb.circular && receivers.length > 0) {
-      await this.runCommand(receivers[this.activeFighterIndex]);
+      await this.runCommand(receivers[this.activeFighterIndex], receivers[this.activeFighterIndex].destination);
       if (this.activeFighterIndex >= receivers.length - 1) {
         this.activeFighterIndex = 0;
       } else if (this.activeFighterIndex + 1 <= receivers.length - 1) {
@@ -93,10 +91,38 @@ export class LogicService {
       }
     } else {
       for (let i = 0; i < receivers.length; i++) {
-        await this.runCommand(receivers[i]);
+        await this.runCommand(receivers[i], receivers[i].destination);
         await this.awaitDelay(comb.delay, receivers[i].delay);
       }
     }
+  }
+
+  private constructReceivers(inputReceivers: Receiver[]): Receiver[] {
+    const receivers: Receiver[] = [];
+    inputReceivers.forEach(rec => {
+      const dest = this.configService.getAliases()[rec.destination];
+      if (this.configService.getIps()[rec.destination]) {
+        receivers.push({
+          ...rec,
+          destination: rec.destination,
+        })
+      } else if (typeof dest === 'string') {
+        receivers.push({
+          ...rec,
+          destination: dest,
+        })
+      } else if (Array.isArray(dest)) {
+        dest.forEach(dest => {
+          receivers.push({
+            ...rec,
+            destination: dest,
+          })
+        })
+      } else {
+        throw Error(`Unknown destination type ${rec.destination}`);
+      }
+    })
+    return receivers;
   }
 
   private async awaitDelay(combDelay: undefined | number, receiverDelay: undefined | number) {

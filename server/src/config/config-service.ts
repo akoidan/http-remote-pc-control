@@ -3,7 +3,8 @@ import {
   ConfigData,
   EventData,
   fullSchema,
-  Ips
+  Ips,
+  MacroList
 } from '@/config/types';
 import { parse } from 'jsonc-parser';
 import {
@@ -54,6 +55,13 @@ export class ConfigService {
       throw Error('Config not loaded');
     }
     return this.configData.aliases;
+  }
+
+  public getMacros(): MacroList {
+    if (!this.configData) {
+      throw Error('Config not loaded');
+    }
+    return this.configData.macros;
   }
 
   public getDelay(): number{
