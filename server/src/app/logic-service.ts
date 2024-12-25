@@ -1,50 +1,53 @@
 import {
-  Aliases,
   EventData,
-  Ips,
   ReceiveExecute,
   Receiver,
   ReceiverMouse,
   ReceiverSimple,
   ReceiveTypeText
-} from "@/types";
-import { Api } from '@/client';
+} from "@/config/types";
+import { ConfigService } from '@/config/config-service';
+import { ClientService } from '@/client/client-service';
+import {
+  Injectable,
+  Logger
+} from '@nestjs/common';
 
-export class Logic {
+@Injectable()
+export class LogicService {
 
   constructor(
-    private ips: Ips,
-    private aliases: Aliases,
-    private delay: number,
+    private configService: ConfigService,
+    private clientService: ClientService,
+    private readonly logger: Logger,
   ) {
-
   }
 
   private activeFighterIndex: number = 0;
-  private ids: Record<string, Api> = {};
 
-  async createApi() {
-    return Promise.all(Object.entries(this.ips).map(([name, ip]) => {
-      const api = new Api(ip, name);
-      this.ids[name] = api;
-      return api.ping();
-    }));
+  async pingClients(): Promise<unknown[]> {
+    this.logger.debug("Pinging clients...")
+    return Promise.all(
+      Object.entries(this.configService.getIps())
+        .map(([name, ip]) => this.clientService.ping(ip))
+    );
   }
 
   async runCommand(currRec: Receiver) {
+    const ip = this.configService.getIps()[currRec.destination];
     if ((currRec as ReceiverSimple).keySend) {
-      await this.ids[currRec.destination].keyPress({ key: (currRec as ReceiverSimple).keySend });
+      await this.clientService.keyPress(ip, { key: (currRec as ReceiverSimple).keySend });
     } else if ((currRec as ReceiverMouse).mouseMoveX) {
-      await this.ids[currRec.destination].mouseClick({
+      await this.clientService.mouseClick(ip, {
         x: (currRec as ReceiverMouse).mouseMoveX,
         y: (currRec as ReceiverMouse).mouseMoveY,
       });
     } else if ((currRec as ReceiveExecute).launch) {
-      await this.ids[currRec.destination].launchExe({
+      await this.clientService.launchExe(ip, {
         path: (currRec as ReceiveExecute).launch
       });
     } else if ((currRec as ReceiveTypeText).typeText) {
-      await this.ids[currRec.destination].typeText({
+      await this.clientService.typeText(ip, {
         text: (currRec as ReceiveTypeText).typeText
       });
     } else {
@@ -54,11 +57,11 @@ export class Logic {
 
 
   async processEvent(comb: EventData) {
-    console.log(`${comb.shortCut} pressed`);
+    this.logger.log(`${comb.shortCut} pressed`);
     if (comb.receivers) {
       await this.processReceiverEvent(comb, comb.receivers);
     } else if (comb.receiversMulti) {
-      console.log(`${comb.shortCut} processing ${comb.receiversMulti.length} in parallel`);
+      this.logger.log(`${comb.shortCut} processing ${comb.receiversMulti.length} in parallel`);
       await Promise.all(comb.receiversMulti.map(rec => this.processReceiverEvent(comb, rec)))
     } else {
       throw Error("Unknown event type");
@@ -69,7 +72,7 @@ export class Logic {
     // but same as receiver but destination would be an ip
     const receivers: Receiver[] = [];
     inputReceivers.forEach(rec => {
-      this.aliases[rec.destination].forEach(dest => {
+      this.configService.getAliases()[rec.destination].forEach(dest => {
         receivers.push({
           ...rec,
           destination: dest,
@@ -91,16 +94,19 @@ export class Logic {
     } else {
       for (let i = 0; i < receivers.length; i++) {
         await this.runCommand(receivers[i]);
-        let delay = comb.delay;
-        if (receivers[i].delay !== undefined) {
-          delay = receivers[i].delay;
-        }
-        if (delay === undefined) {
-          delay = Math.round(Math.random() * this.delay)
-        }
-        await new Promise(resolve => setTimeout(resolve, delay));
+        await this.awaitDelay(comb.delay, receivers[i].delay);
       }
     }
+  }
+
+  private async awaitDelay(combDelay: undefined | number, receiverDelay: undefined | number) {
+    if (receiverDelay !== undefined) {
+      combDelay = receiverDelay;
+    }
+    if (combDelay === undefined) {
+      combDelay = Math.round(Math.random() * this.configService.getDelay())
+    }
+    await new Promise(resolve => setTimeout(resolve, combDelay));
   }
 
   /**

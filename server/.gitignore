@@ -1,4 +1,4 @@
 .idea
 node_modules
 yarn-error.log
-src/config.jsonc
+src/config/config.jsonc

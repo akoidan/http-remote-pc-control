@@ -1,29 +1,55 @@
 # l2
-Script bindings to send Keyboard strokes to multiple PCs using shorcuts on the local one.
-E.g. you press `alt+1` and on other PC keyStroke `F1` is triggered.
+Easy remote PC control via local shorcuts
+E.g. you press `alt+1` on your PC and remote one send a keyStroke `F1`.
+
+### OS support
+ - Windows
+ - Linux
+ - Mac
+
+This product has 2 apps: Client and Server. Client app is built via [pkg](https://www.npmjs.com/package/pkg) and server app is built via [electron](https://www.npmjs.com/package/electron). Electron has proper binary implementation that can capture global keystroke even if a game is active in full screen mode, while pkg provides an easy manipulation withing the keyboard and mouse and lightweight binary. Both packages support Window/Linux/Mac.
+
 
 ## How to use
 
 ### Remote PC
-In order to have control you need to install [Unified remote](https://www.unifiedremote.com/) on all PCs that you want to control
-For each unified remote go it its settings at http://localhost:9510/web/#/settings/network and check **allow remote web access**
-
-For custom combination, like. ctrl+f2 or alt+tab take a look at [unified_remote/README.md](unified_remote/README.md)
-
-
-### Local PC
-You can use nodejs for windows v20. The default installation should come with build tools support for electron.
-
+To build the client you need [nvm](https://github.com/nvm-sh/nvm) and [yarn](https://yarnpkg.com/) installed.
 ```bash
-nvm use #or use node v20
-yarn # install packages
+cd client
+nvm use
+yarn 
+yarn build
+```
+You'll get app.exe in client directory. Put it into remote PCs and run with admin permissions. For different OS  use `yarn pkg . --targets linux --output app.exe`. All targets are listed [here](https://www.npmjs.com/package/pkg#targets)
+
+
+## Local PC
+
+Copy an example config and fill it with your data.
+```bash
+cp ./server/src/config/examples/config-ss-2.jsonc ./server/src/config/config.jsonc
+```
+
+You'll have to define ip address of the receiver and configure aliases and combinations.  
+Run the server. You need [nvm](https://github.com/nvm-sh/nvm) and [yarn](https://yarnpkg.com/) installed.
+```bash
+cd server
+nvm use
+yarn
 yarn start
 ```
 
+WHen you hit the shortcut on your local PC, the remote PC will receive a keyStroke.
 
-alt+5
-alt+g
-alt+9
-viky
-alt+e
-song dance
+
+## Security
+
+The client server app uses JWT authorization. Clients verify that requests were signed with matched private key to a hardcoded matched public key in the client exe bytecode.
+Keys are generated and located here:
+ - openssl genpkey -algorithm RSA -out [private_key.pem](./server/src/client/private_key.pem)
+ - openssl rsa -pubout -in private_key.pem -out [public_key.pem](./client/src/auth/public_key.pem)
+
+You can replace the key when you build the client app.
+
+
+Client apps should be available withing the address provided in config. So either all apps are within same network. Or clients have public static IP address. 
