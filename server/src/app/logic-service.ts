@@ -3,6 +3,8 @@ import {
   ReceiveExecute,
   ReceiveMacro,
   Receiver,
+  ReceiverAndMacro,
+  ReceiverBase,
   ReceiverMouse,
   ReceiverSimple,
   ReceiveTypeText
@@ -34,8 +36,8 @@ export class LogicService {
     );
   }
 
-  async runCommand(currRec: Omit<Receiver, 'destination'>, destination: string) {
-    const ip = this.configService.getIps()[destination];
+  async runCommand(currRec: Receiver) {
+    const ip = this.configService.getIps()[(currRec as ReceiverBase).destination];
     if ((currRec as ReceiverSimple).keySend) {
       await this.clientService.keyPress(ip, { key: (currRec as ReceiverSimple).keySend });
     } else if ((currRec as ReceiverMouse).mouseMoveX) {
@@ -51,14 +53,25 @@ export class LogicService {
       await this.clientService.typeText(ip, {
         text: (currRec as ReceiveTypeText).typeText
       });
-    } else if ((currRec as ReceiveMacro).macro) {
-      const commands = this.configService.getMacros()[(currRec as ReceiveMacro).macro];
-      for (const command of commands) {
-        await this.runCommand(command, destination);
-      }
     } else {
       throw Error(`Unknown receiver type ${JSON.stringify(currRec)}`);
     }
+  }
+
+  replacePlaceholders<T>(obj: T, variables: Record<string, any> | undefined): T {
+    if (!variables) {
+      return obj;
+    }
+    const result: Partial<T> = {};
+    for (const [key, value] of Object.entries(obj) as [keyof T, T[keyof T]][]) {
+      result[key] = value;
+      for (const varName in variables) {
+        if (value == `{{${varName}}}`) {
+          result[key] = variables[varName];
+        }
+      }
+    }
+    return result as T;
   }
 
 
@@ -74,16 +87,27 @@ export class LogicService {
     }
   }
 
-  private async processReceiverEvent(comb: Omit<EventData, 'receiversMulti' | 'receivers'>, inputReceivers: Receiver[]) {
-    // but same as receiver but destination would be an ip
-    const receivers = this.constructReceivers(inputReceivers);
+  private async processReceiverEvent(comb: Omit<EventData, 'receiversMulti' | 'receivers'>, inputReceivers: ReceiverAndMacro[]) {
+    const processReceivers: Receiver[] = [];
+    for (const inpRec of inputReceivers) {
+      if ((inpRec as ReceiveMacro).macro) {
+        const executable = this.configService.getMacros()[(inpRec as ReceiveMacro).macro];
+        for (const command of executable.commands) {
+          processReceivers.push(this.replacePlaceholders(command, (inpRec as ReceiveMacro).variables));
+        }
+      } else {
+        processReceivers.push(inpRec);
+      }
+    }
+
+    const receivers = this.constructReceivers(processReceivers);
     if (comb.shuffle) {
       this.shuffle(receivers);
     }
 
     // const receivers: string[] = comb.receivers.map(rec => this.config.urls[rec as keyof ConfigUrl]).flatMap(a => a);
     if (comb.circular && receivers.length > 0) {
-      await this.runCommand(receivers[this.activeFighterIndex], receivers[this.activeFighterIndex].destination);
+      await this.runCommand(receivers[this.activeFighterIndex]);
       if (this.activeFighterIndex >= receivers.length - 1) {
         this.activeFighterIndex = 0;
       } else if (this.activeFighterIndex + 1 <= receivers.length - 1) {
@@ -91,22 +115,24 @@ export class LogicService {
       }
     } else {
       for (let i = 0; i < receivers.length; i++) {
-        await this.runCommand(receivers[i], receivers[i].destination);
+        await this.runCommand(receivers[i]);
         await this.awaitDelay(comb.delay, receivers[i].delay);
       }
     }
   }
 
   private constructReceivers(inputReceivers: Receiver[]): Receiver[] {
-    const receivers: Receiver[] = [];
+    const receivers: ReceiverAndMacro[] = [];
     inputReceivers.forEach(rec => {
-      const dest = this.configService.getAliases()[rec.destination];
       if (this.configService.getIps()[rec.destination]) {
         receivers.push({
           ...rec,
           destination: rec.destination,
         })
-      } else if (typeof dest === 'string') {
+        return
+      }
+      const dest = this.configService.getAliases()[rec.destination];
+      if (typeof dest === 'string') {
         receivers.push({
           ...rec,
           destination: dest,
