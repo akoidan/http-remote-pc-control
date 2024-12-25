@@ -14,7 +14,7 @@ export class ElectronService {
   }
 
   async bootstrap(): Promise<void> {
-    this.logger.log("Bootstraping electron service");
+    this.logger.debug("Waiting for electon app to init...");
     await app.whenReady();
     app.on('will-quit', () => {
       globalShortcut.unregisterAll()
@@ -23,7 +23,7 @@ export class ElectronService {
 
 
   async shutdown() {
-    this.logger.log("Shutting down electron service");
+    this.logger.log("Shutting down electron service...");
     app.exit(1);
   }
 

@@ -26,6 +26,7 @@ export class LogicService {
   private activeFighterIndex: number = 0;
 
   async pingClients(): Promise<unknown[]> {
+    this.logger.debug("Pinging clients...")
     return Promise.all(
       Object.entries(this.configService.getIps())
         .map(([name, ip]) => this.clientService.ping(ip))
