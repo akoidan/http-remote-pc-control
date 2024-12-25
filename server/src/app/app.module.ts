@@ -17,16 +17,24 @@ import { ClientModule } from '@/client/client-module';
 export class AppModule implements OnModuleInit {
 
   constructor(
+    private readonly logger: Logger,
     private readonly electronService: ElectronService,
     private readonly logicService: LogicService,
     private readonly configService: ConfigService,
-  ) {}
+  ) {
+  }
 
-   async onModuleInit() {
-    await this.logicService.pingClients();
-    await this.electronService.bootstrap();
-    this.configService.getCombinations().forEach((comb) => {
-      this.electronService.registerShortcut(comb.shortCut, () => this.logicService.processEvent(comb));
-    })
+  async onModuleInit() {
+    try {
+      this.logger.log('Initializing app...');
+      await this.logicService.pingClients();
+      await this.electronService.bootstrap();
+      this.configService.getCombinations().forEach((comb) => {
+        this.electronService.registerShortcut(comb.shortCut, () => this.logicService.processEvent(comb));
+      })
+    } catch (e) {
+      this.logger.error(`Unable to init main module: ${e.message}`, e.stack);
+      await this.electronService.shutdown();
+    }
   }
 }

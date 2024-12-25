@@ -3,6 +3,7 @@ import { AppModule } from '@/app/app.module';
 
 async function start(): Promise<void> {
   await NestFactory.createApplicationContext(AppModule);
+  console.log('asd');
 }
 
 start();

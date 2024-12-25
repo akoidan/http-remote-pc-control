@@ -21,6 +21,12 @@ export class ElectronService {
     });
   }
 
+
+  async shutdown() {
+    this.logger.log("Shutting down electron service");
+    app.exit(1);
+  }
+
   registerShortcut(shortCut: string, cb: () => Promise<void>): void {
     const ret = globalShortcut.register(shortCut, cb);
     this.logger.debug(`registering ${shortCut} shortcut`);

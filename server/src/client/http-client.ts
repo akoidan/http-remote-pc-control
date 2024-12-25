@@ -26,7 +26,7 @@ export class FetchClient {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.jwtService.getToken()}`,
+          'Authorization': `Bearer ${this.jwtService.getToken()}1`,
         },
         body: JSON.stringify(payload),
         signal: controller.signal,
@@ -54,7 +54,7 @@ export class FetchClient {
       const res = await fetch(`${this.protocol}://${client}:${this.port}/${url}`, {
         signal: controller.signal,
         headers: {
-          'Authorization': `Bearer ${this.jwtService.getToken()}`,
+          'Authorization': `Bearer ${this.jwtService.getToken()}1`,
         },
       });
 
