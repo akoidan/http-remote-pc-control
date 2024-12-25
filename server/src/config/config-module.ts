@@ -6,6 +6,7 @@ import {
 import { promises as fs } from 'fs';
 import * as path from 'path';
 import { ConfigService } from '@/config/config-service';
+import * as process from 'node:process';
 
 @Module({
   providers: [
@@ -21,7 +22,7 @@ import { ConfigService } from '@/config/config-service';
     },
     {
       provide: ConfigService,
-      useFactory: (configData: string, logger: Logger) => new ConfigService(configData, logger),
+      useFactory: (configData: string, logger: Logger) => new ConfigService(configData, logger, process.env),
       inject: ['CONFIG_DATA', Logger],
     },
   ],

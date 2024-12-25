@@ -15,6 +15,7 @@ import {
   Injectable,
   Logger
 } from '@nestjs/common';
+import * as process from 'node:process';
 
 @Injectable()
 export class LogicService {
@@ -74,6 +75,24 @@ export class LogicService {
     return result as T;
   }
 
+  replaceGlobalVars<T>(obj: T): T {
+    const result: Partial<T> = {};
+    for (const [key, value] of Object.entries(obj) as [keyof T, T[keyof T]][]) {
+      if (typeof value === 'string' && value.startsWith('{{') && value.endsWith('}}')) {
+        const globalVars = this.configService.getGlobalVars();
+        const varName = value.slice(2, -2);
+        if (globalVars[varName]) {
+          result[key] = globalVars[varName] as any;
+        } else {
+          throw Error(`Unknown environment variable ${value}`);
+        }
+      } else {
+        result[key] = value;
+      }
+    }
+    return result as T;
+  }
+
 
   async processEvent(comb: EventData) {
     this.logger.log(`${comb.shortCut} pressed`);
@@ -88,7 +107,7 @@ export class LogicService {
   }
 
   private async processReceiverEvent(comb: Omit<EventData, 'receiversMulti' | 'receivers'>, inputReceivers: ReceiverAndMacro[]) {
-    const processReceivers: Receiver[] = [];
+    let processReceivers: Receiver[] = [];
     for (const inpRec of inputReceivers) {
       if ((inpRec as ReceiveMacro).macro) {
         const executable = this.configService.getMacros()[(inpRec as ReceiveMacro).macro];
@@ -99,6 +118,7 @@ export class LogicService {
         processReceivers.push(inpRec);
       }
     }
+    processReceivers = processReceivers.map(rec => this.replaceGlobalVars(rec));
 
     const receivers = this.constructReceivers(processReceivers);
     if (comb.shuffle) {
@@ -116,7 +136,7 @@ export class LogicService {
     } else {
       for (let i = 0; i < receivers.length; i++) {
         await this.runCommand(receivers[i]);
-        await this.awaitDelay(comb.delay, receivers[i].delay);
+        await this.awaitDelay(comb.delay, receivers[i].delay as number);
       }
     }
   }

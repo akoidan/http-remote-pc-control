@@ -9,6 +9,8 @@ import KeyboardAction from "@nut-tree-fork/libnut/dist/lib/libnut-keyboard.class
 
 export const possibleKeys: string[] = [...KeyboardAction.KeyLookupMap.values()]
 
+const variableSchema = z.string().regex(/\{\{\w+\}\}/);
+
 const ipsSchema = z.record(z.string().ip());
 
 const aliasesSchema = z.record(z.union([z.array(z.string()), z.string()]));
@@ -17,15 +19,17 @@ const keySchema = z.enum(possibleKeys as any);
 
 
 const delaySchema = z.object({
-  delay: z.number().optional(),
+  delay: z.union([z.number(), variableSchema]).optional(),
 })
 
 const baseSchema = z.object({
   destination: z.string(),
 }).merge(delaySchema);
 
+
+
 const receiverSchemaKey = z.object({
-  keySend: z.union([keySchema, z.string().regex(/\{\{\w+\}\}/)]),
+  keySend: z.union([keySchema, variableSchema]),
 }).merge(baseSchema);
 
 

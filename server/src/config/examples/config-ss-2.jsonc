@@ -125,7 +125,7 @@
             "macro": "launch",
             "variables": {
               "destination": "ss",
-              "login": "deathangel1"
+              "login": "deathangelp"
             }
           },
           // 2nd window
@@ -133,7 +133,7 @@
             "macro": "launch",
             "variables": {
               "destination": "wc",
-              "login": "deathangelq"
+              "login": "deathangel1"
             }
           }
         ]
@@ -355,6 +355,10 @@
       "receivers": [
         {
           "destination": "se",
+          "keySend": "f1"
+        },
+         {
+          "destination": "sws",
           "keySend": "f1"
         },
         {
