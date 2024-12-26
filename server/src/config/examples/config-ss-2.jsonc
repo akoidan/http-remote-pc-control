@@ -13,7 +13,7 @@
         {
           "destination": "{{destination}}",
           "launch": "C:\\l2dion\\system\\L2.exe",
-          "delay": 10000
+          "delay": "{{delay}}"
         },
         {
           "destination": "{{destination}}",
@@ -25,7 +25,7 @@
         },
         {
           "destination": "{{destination}}",
-          "typeText": "PASSWORD"
+          "typeText": "{{PASSWORD}}"
         },
         {
           "destination": "{{destination}}",
@@ -50,7 +50,8 @@
       ],
       "variables": [
         "destination",
-        "login"
+        "login",
+        "delay"
       ]
     }
   },
@@ -89,7 +90,8 @@
             "macro": "launch",
             "variables": {
               "destination": "sws",
-              "login": "deathangel2"
+              "login": "deathangel2",
+              "delay": 10000
             }
           }
         ],
@@ -98,7 +100,8 @@
             "macro": "launch",
             "variables": {
               "destination": "bd",
-              "login": "deathangel"
+              "login": "deathangel",
+              "delay": 12000
             }
           }
         ],
@@ -107,7 +110,8 @@
             "macro": "launch",
             "variables": {
               "destination": "se",
-              "login": "deathangelk"
+              "login": "deathangelk",
+              "delay": 14000
             }
           }
         ],
@@ -116,7 +120,8 @@
             "macro": "launch",
             "variables": {
               "destination": "ee",
-              "login": "deathangel8"
+              "login": "deathangel8",
+              "delay": 16000
             }
           }
         ],
@@ -125,7 +130,8 @@
             "macro": "launch",
             "variables": {
               "destination": "ss",
-              "login": "deathangelp"
+              "login": "deathangelp",
+              "delay": 18000
             }
           },
           // 2nd window
@@ -133,7 +139,8 @@
             "macro": "launch",
             "variables": {
               "destination": "wc",
-              "login": "deathangel1"
+              "login": "deathangel1",
+              "delay": 10000
             }
           }
         ]
@@ -319,7 +326,7 @@
       ],
       "name": "Heal SS",
       "shortCut": "Alt+d",
-      "circular": false
+      "circular": true
     },
     {
       "receivers": [
