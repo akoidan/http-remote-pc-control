@@ -1,0 +1,107 @@
+{
+  "ips": {
+    "touchpad": "192.168.100.39",
+    "msi": "192.168.100.14",
+    "lenovo": "192.168.100.33",
+    "desktop": "192.168.100.9",
+    "asus": "192.168.100.27"
+  },
+  "delay": 200,
+  "macros": {
+    "launch": {
+      "commands": [
+        {
+          "destination": "{{destination}}",
+          "launch": "C:\\l2dion\\system\\L2.exe",
+          "delay": "{{delay}}"
+        },
+        {
+          "destination": "{{destination}}",
+          "typeText": "{{login}}"
+        },
+        {
+          "destination": "{{destination}}",
+          "keySend": "tab"
+        },
+        {
+          "destination": "{{destination}}",
+          "typeText": "{{PASSWORD}}"
+        },
+        {
+          "destination": "{{destination}}",
+          "keySend": "enter",
+          "delay": 8000
+        },
+        {
+          "destination": "{{destination}}",
+          "keySend": "enter",
+          "delay": 1500
+        },
+        {
+          "destination": "{{destination}}",
+          "keySend": "enter",
+          "delay": 1500
+        },
+        {
+          "destination": "{{destination}}",
+          "keySend": "enter",
+          "delay": 1500
+        }
+      ],
+      "variables": [
+        "destination",
+        "login",
+        "delay"
+      ]
+    }
+  },
+  "combinations": [
+    {
+      "receiversMulti": [
+        [
+          {
+            "macro": "launch",
+            "variables": {
+              "destination": "touchpad",
+              "login": "deathangel7",
+              "delay": 10000
+            }
+          }
+        ],
+        [
+          {
+            "macro": "launch",
+            "variables": {
+              "destination": "msi",
+              "login": "deathangelj",
+              "delay": 12000
+            }
+          }
+        ],
+        [
+          {
+            "macro": "launch",
+            "variables": {
+              "destination": "asus",
+              "login": "deathangelo",
+              "delay": 14000
+            }
+          }
+        ],
+        [
+          {
+            "macro": "launch",
+            "variables": {
+              "destination": "desktop",
+              "login": "deathangel6",
+              "delay": 16000
+            }
+          }
+        ]
+      ],
+      "name": "Launch l2 clients",
+      "shortCut": "Alt+F11",
+      "circular": false
+    }
+  ]
+}
