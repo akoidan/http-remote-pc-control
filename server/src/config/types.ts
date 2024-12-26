@@ -2,7 +2,6 @@ import {
   z,
   ZodIssueCode
 } from 'zod';
-import { Key } from '@nut-tree-fork/nut-js';
 // @ts-expect-error
 import KeyboardAction from "@nut-tree-fork/libnut/dist/lib/libnut-keyboard.class.js";
 
@@ -25,7 +24,6 @@ const delaySchema = z.object({
 const baseSchema = z.object({
   destination: z.string(),
 }).merge(delaySchema);
-
 
 
 const receiverSchemaKey = z.object({
@@ -127,20 +125,32 @@ export const fullSchema = z.object({
   });
   data.combinations.forEach((value, combId) => {
     const allReceivers = value.receivers ?? value.receiversMulti.flat();
-    allReceivers.forEach((v) => {
+    allReceivers.forEach((v, receiverId) => {
       if (!(v as ReceiveMacro).macro && !alisesKeys.has((v as Receiver).destination) && !data.ips[(v as Receiver).destination]) {
         ctx.addIssue({
           code: ZodIssueCode.custom,
-          path: ["combinations", "receivers", combId, "destination"],
+          path: [`combinations[${combId}]`, `receivers[${receiverId}]`, "destination"],
           message: `"${(v as Receiver).destination}" is not a valid destination, possible options are ${JSON.stringify([...Array.from(alisesKeys), ...Array.from(ipsKeys)])}`,
         });
       }
-      if ((v as ReceiveMacro).macro && !data.macros?.[(v as ReceiveMacro).macro]) {
-        ctx.addIssue({
-          code: ZodIssueCode.custom,
-          path: ["combinations", "receivers", combId, "destination"],
-          message: `Macro ${(v as ReceiveMacro).macro} doesn't exist`,
-        });
+      if ((v as ReceiveMacro).macro) {
+        if (!data.macros?.[(v as ReceiveMacro).macro]) {
+          ctx.addIssue({
+            code: ZodIssueCode.custom,
+            path: [`combinations[${combId}]`, `receivers[${receiverId}]`, "destination"],
+            message: `Macro ${(v as ReceiveMacro).macro} doesn't exist`,
+          });
+        } else if (data.macros[(v as ReceiveMacro).macro].variables?.length > 0) {
+          let macroVars = data.macros[(v as ReceiveMacro).macro].variables.sort();
+          let calledVars = Object.keys((v as ReceiveMacro).variables).sort();
+          if (JSON.stringify(macroVars) !== JSON.stringify(calledVars)) {
+            ctx.addIssue({
+              code: ZodIssueCode.custom,
+              path: [`combinations[${combId}]`, `receivers[${receiverId}]`, "variables"],
+              message: `Macro ${(v as ReceiveMacro).macro} variables missmatch ${JSON.stringify(macroVars)} ${JSON.stringify(calledVars)}`,
+            });
+          }
+        }
       }
     });
   });
