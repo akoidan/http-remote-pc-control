@@ -7,16 +7,14 @@
   "license": "MIT",
   "scripts": {
     "start": "node -r tsconfig-paths/register -r ts-node/register src/main.ts",
-    "build:electron": "electron-packager . MyApp --platform=win32 --arch=x64 --out=dist --overwrite --ignore=.idea --prune=true && tar -cvf ./result.tar dist/MyApp-win32-x64",
     "prebuild": "nest build --clean && cp src/auth/public_key.pem build/auth/public_key.pem",
     "build": "pkg . --targets win --output app.exe",
     "wine": "wine app.exe"
   },
   "devDependencies": {
     "@types/passport-jwt": "^4.0.1",
-    "electron": "^30.0.6",
-    "electron-packager": "^17.1.2",
-    "pkg": "^5.8.1"
+    "pkg": "^5.8.1",
+    "ts-node": "^10.9.2"
   },
   "pkg": {
     "scripts": "build/main.js",
@@ -47,7 +45,6 @@
     "pino-http": "^10.3.0",
     "pino-pretty": "^13.0.0",
     "reflect-metadata": "^0.2.2",
-    "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.4.5"
   }
