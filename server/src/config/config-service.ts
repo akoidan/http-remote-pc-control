@@ -3,7 +3,8 @@ import {
   ConfigData,
   EventData,
   fullSchema,
-  Ips
+  Ips,
+  MacroList
 } from '@/config/types';
 import { parse } from 'jsonc-parser';
 import {
@@ -16,7 +17,11 @@ export class ConfigService {
 
   private configData: ConfigData | null = null;
 
-  constructor(private jsoncConfigData: string, private readonly logger: Logger) {
+  constructor(
+    private jsoncConfigData: string,
+    private readonly logger: Logger,
+    private readonly envVars: Record<string, string>
+  ) {
   }
 
   public async parseConfig(): Promise<void> {
@@ -56,10 +61,21 @@ export class ConfigService {
     return this.configData.aliases;
   }
 
+  public getMacros(): MacroList {
+    if (!this.configData) {
+      throw Error('Config not loaded');
+    }
+    return this.configData.macros;
+  }
+
   public getDelay(): number{
     if (!this.configData) {
       throw Error('Config not loaded');
     }
     return this.configData.delay;
+  }
+
+  public getGlobalVars(): Record<string, string>{
+    return this.envVars;
   }
 }

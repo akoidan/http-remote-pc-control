@@ -20,7 +20,7 @@ export class JwtService {
   getToken() {
     if (!this.token) {
       this.logger.debug('Generating new JWT token');
-      this.token = jwt.sign({ username: 'admin', roles: ['keyboard', 'mouse', 'launch', 'reader'] }, this.privateKey, {
+      this.token = jwt.sign({ username: 'admin', roles: ['keyboard', 'mouse', 'launcher', 'reader'] }, this.privateKey, {
         algorithm: 'RS256',
         expiresIn: '10d',
       });

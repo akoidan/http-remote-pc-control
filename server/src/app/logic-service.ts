@@ -1,7 +1,10 @@
 import {
   EventData,
   ReceiveExecute,
+  ReceiveMacro,
   Receiver,
+  ReceiverAndMacro,
+  ReceiverBase,
   ReceiverMouse,
   ReceiverSimple,
   ReceiveTypeText
@@ -12,6 +15,7 @@ import {
   Injectable,
   Logger
 } from '@nestjs/common';
+import * as process from 'node:process';
 
 @Injectable()
 export class LogicService {
@@ -34,7 +38,7 @@ export class LogicService {
   }
 
   async runCommand(currRec: Receiver) {
-    const ip = this.configService.getIps()[currRec.destination];
+    const ip = this.configService.getIps()[(currRec as ReceiverBase).destination];
     if ((currRec as ReceiverSimple).keySend) {
       await this.clientService.keyPress(ip, { key: (currRec as ReceiverSimple).keySend });
     } else if ((currRec as ReceiverMouse).mouseMoveX) {
@@ -55,6 +59,40 @@ export class LogicService {
     }
   }
 
+  replacePlaceholders<T>(obj: T, variables: Record<string, any> | undefined): T {
+    if (!variables) {
+      return obj;
+    }
+    const result: Partial<T> = {};
+    for (const [key, value] of Object.entries(obj) as [keyof T, T[keyof T]][]) {
+      result[key] = value;
+      for (const varName in variables) {
+        if (value == `{{${varName}}}`) {
+          result[key] = variables[varName];
+        }
+      }
+    }
+    return result as T;
+  }
+
+  replaceGlobalVars<T>(obj: T): T {
+    const result: Partial<T> = {};
+    for (const [key, value] of Object.entries(obj) as [keyof T, T[keyof T]][]) {
+      if (typeof value === 'string' && value.startsWith('{{') && value.endsWith('}}')) {
+        const globalVars = this.configService.getGlobalVars();
+        const varName = value.slice(2, -2);
+        if (globalVars[varName]) {
+          result[key] = globalVars[varName] as any;
+        } else {
+          throw Error(`Unknown environment variable ${value}`);
+        }
+      } else {
+        result[key] = value;
+      }
+    }
+    return result as T;
+  }
+
 
   async processEvent(comb: EventData) {
     this.logger.log(`${comb.shortCut} pressed`);
@@ -68,17 +106,21 @@ export class LogicService {
     }
   }
 
-  private async processReceiverEvent(comb: Omit<EventData, 'receiversMulti' | 'receivers'>, inputReceivers: Receiver[]) {
-    // but same as receiver but destination would be an ip
-    const receivers: Receiver[] = [];
-    inputReceivers.forEach(rec => {
-      this.configService.getAliases()[rec.destination].forEach(dest => {
-        receivers.push({
-          ...rec,
-          destination: dest,
-        })
-      })
-    })
+  private async processReceiverEvent(comb: Omit<EventData, 'receiversMulti' | 'receivers'>, inputReceivers: ReceiverAndMacro[]) {
+    let processReceivers: Receiver[] = [];
+    for (const inpRec of inputReceivers) {
+      if ((inpRec as ReceiveMacro).macro) {
+        const executable = this.configService.getMacros()[(inpRec as ReceiveMacro).macro];
+        for (const command of executable.commands) {
+          processReceivers.push(this.replacePlaceholders(command, (inpRec as ReceiveMacro).variables));
+        }
+      } else {
+        processReceivers.push(inpRec);
+      }
+    }
+    processReceivers = processReceivers.map(rec => this.replaceGlobalVars(rec));
+
+    const receivers = this.constructReceivers(processReceivers);
     if (comb.shuffle) {
       this.shuffle(receivers);
     }
@@ -94,9 +136,39 @@ export class LogicService {
     } else {
       for (let i = 0; i < receivers.length; i++) {
         await this.runCommand(receivers[i]);
-        await this.awaitDelay(comb.delay, receivers[i].delay);
+        await this.awaitDelay(comb.delay, receivers[i].delay as number);
       }
     }
+  }
+
+  private constructReceivers(inputReceivers: Receiver[]): Receiver[] {
+    const receivers: ReceiverAndMacro[] = [];
+    inputReceivers.forEach(rec => {
+      if (this.configService.getIps()[rec.destination]) {
+        receivers.push({
+          ...rec,
+          destination: rec.destination,
+        })
+        return
+      }
+      const dest = this.configService.getAliases()[rec.destination];
+      if (typeof dest === 'string') {
+        receivers.push({
+          ...rec,
+          destination: dest,
+        })
+      } else if (Array.isArray(dest)) {
+        dest.forEach(dest => {
+          receivers.push({
+            ...rec,
+            destination: dest,
+          })
+        })
+      } else {
+        throw Error(`Unknown destination type ${rec.destination}`);
+      }
+    })
+    return receivers;
   }
 
   private async awaitDelay(combDelay: undefined | number, receiverDelay: undefined | number) {

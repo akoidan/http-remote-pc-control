@@ -31,7 +31,7 @@ export class ElectronService {
     const ret = globalShortcut.register(shortCut, cb);
     this.logger.debug(`registering ${shortCut} shortcut`);
     if (!ret) {
-      throw Error(`registration ${shortCut} failed`)
+      throw Error(`Cannot bind ${shortCut} shortcut`)
     }
   }
 }

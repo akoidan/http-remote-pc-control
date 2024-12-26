@@ -2,52 +2,71 @@ import {
   z,
   ZodIssueCode
 } from 'zod';
-import { Key } from '@nut-tree-fork/nut-js';
 // @ts-expect-error
 import KeyboardAction from "@nut-tree-fork/libnut/dist/lib/libnut-keyboard.class.js";
 
 
 export const possibleKeys: string[] = [...KeyboardAction.KeyLookupMap.values()]
 
+const variableSchema = z.string().regex(/\{\{\w+\}\}/);
+
 const ipsSchema = z.record(z.string().ip());
 
-const aliasesSchema = z.record(z.array(z.string()));
+const aliasesSchema = z.record(z.union([z.array(z.string()), z.string()]));
 
 const keySchema = z.enum(possibleKeys as any);
 
-const receiverSchemaKey = z.object({
+
+const delaySchema = z.object({
+  delay: z.union([z.number(), variableSchema]).optional(),
+})
+
+const baseSchema = z.object({
   destination: z.string(),
-  keySend: keySchema,
-  delay: z.number().optional(),
-});
+}).merge(delaySchema);
+
+
+const receiverSchemaKey = z.object({
+  keySend: z.union([keySchema, variableSchema]),
+}).merge(baseSchema);
 
 
 const receiverSchemaLaunchExe = z.object({
-  destination: z.string(),
   launch: z.string(),
-  delay: z.number().optional(),
-});
+}).merge(baseSchema);
+
+
+const receiverSchemaMacro = z.object({
+  macro: z.string(),
+  variables: z.record(z.any()).optional(),
+}).merge(delaySchema);
 
 const receiverSchemaTypeText = z.object({
-  destination: z.string(),
   typeText: z.string(),
-  delay: z.number().optional(),
-});
+}).merge(baseSchema);
 
 const receiverSchemaMouse = z.object({
-  destination: z.string(),
   mouseMoveX: z.number(),
   mouseMoveY: z.number(),
-  delay: z.number().optional(),
-});
+}).merge(baseSchema);
+
+const receiverSchema = z.union([
+  receiverSchemaKey,
+  receiverSchemaMouse,
+  receiverSchemaLaunchExe,
+  receiverSchemaTypeText,
+]);
 
 
-const receiverSchema = z.union([receiverSchemaKey, receiverSchemaMouse, receiverSchemaLaunchExe, receiverSchemaTypeText]);
+const receiverSchemaAndMacro = z.union([
+  receiverSchema,
+  receiverSchemaMacro,
+]);
 
 // Define the schema for the 'combinations' part
 const eventSchema = z.object({
-  receivers: z.array(receiverSchema).optional(),
-  receiversMulti: z.array(z.array(receiverSchema)).optional(),
+  receivers: z.array(receiverSchemaAndMacro).optional(),
+  receiversMulti: z.array(z.array(receiverSchemaAndMacro)).optional(),
   shuffle: z.boolean().optional(),
   delay: z.number().optional(),
   name: z.string(),
@@ -62,25 +81,39 @@ const eventSchema = z.object({
   }
 ).refine(
   (data) =>
-    (!(data.circular && data.receivers.length <= 1 )),
+    (!(data.circular && data.receivers.length <= 1)),
   {
     message: 'circular=true can be applied when there are multiple receivers',
     path: ['receivers', 'circular'], // Error will be shown for both fields
   }
 )
 
+const macrosList = z.record(z.object({
+  commands: z.array(receiverSchema),
+  variables: z.array(z.string()).optional(),
+}));
+
 // Define the full schema for the provided JSON structure
 export const fullSchema = z.object({
   ips: ipsSchema,
-  aliases: aliasesSchema,
+  aliases: z.optional(aliasesSchema),
   delay: z.number(),
   combinations: z.array(eventSchema),
+  macros: z.optional(macrosList),
 }).superRefine((data, ctx) => {
   // Ensure mapping values are arrays of keys from ips
   const ipsKeys = new Set(Object.keys(data.ips));
-  const alisesKeys = new Set(Object.keys(data.aliases));
-  Object.entries(data.aliases).forEach(([key, value]) => {
-    value.forEach((v) => {
+  const alisesKeys = new Set(Object.keys(data.aliases ?? {}));
+  Object.entries(data.aliases ?? {}).forEach(([key, value]) => {
+    const values = value instanceof Array ? value : [value];
+    if (ipsKeys.has(key)) {
+      ctx.addIssue({
+        code: ZodIssueCode.custom,
+        path: ["aliases", key],
+        message: `Alias ${key} should not be the same as a key from ips`,
+      });
+    }
+    values.forEach((v) => {
       if (!ipsKeys.has(v)) {
         ctx.addIssue({
           code: ZodIssueCode.custom,
@@ -90,15 +123,34 @@ export const fullSchema = z.object({
       }
     });
   });
-  data.combinations.forEach((value, i) => {
+  data.combinations.forEach((value, combId) => {
     const allReceivers = value.receivers ?? value.receiversMulti.flat();
-    allReceivers.forEach((v) => {
-      if (!alisesKeys.has(v.destination)) {
+    allReceivers.forEach((v, receiverId) => {
+      if (!(v as ReceiveMacro).macro && !alisesKeys.has((v as Receiver).destination) && !data.ips[(v as Receiver).destination]) {
         ctx.addIssue({
           code: ZodIssueCode.custom,
-          path: ["combinations", "receivers", i, "destination"],
-          message: `"${v.destination}" is not a valid destination, possible options are ${JSON.stringify(Array.from(alisesKeys))}`,
+          path: [`combinations[${combId}]`, `receivers[${receiverId}]`, "destination"],
+          message: `"${(v as Receiver).destination}" is not a valid destination, possible options are ${JSON.stringify([...Array.from(alisesKeys), ...Array.from(ipsKeys)])}`,
         });
+      }
+      if ((v as ReceiveMacro).macro) {
+        if (!data.macros?.[(v as ReceiveMacro).macro]) {
+          ctx.addIssue({
+            code: ZodIssueCode.custom,
+            path: [`combinations[${combId}]`, `receivers[${receiverId}]`, "destination"],
+            message: `Macro ${(v as ReceiveMacro).macro} doesn't exist`,
+          });
+        } else if (data.macros[(v as ReceiveMacro).macro].variables?.length > 0) {
+          let macroVars = data.macros[(v as ReceiveMacro).macro].variables.sort();
+          let calledVars = Object.keys((v as ReceiveMacro).variables).sort();
+          if (JSON.stringify(macroVars) !== JSON.stringify(calledVars)) {
+            ctx.addIssue({
+              code: ZodIssueCode.custom,
+              path: [`combinations[${combId}]`, `receivers[${receiverId}]`, "variables"],
+              message: `Macro ${(v as ReceiveMacro).macro} variables missmatch ${JSON.stringify(macroVars)} ${JSON.stringify(calledVars)}`,
+            });
+          }
+        }
       }
     });
   });
@@ -122,7 +174,11 @@ export type EventData = z.infer<typeof eventSchema>
 export type Ips = z.infer<typeof ipsSchema>
 export type Aliases = z.infer<typeof aliasesSchema>
 export type ReceiverSimple = z.infer<typeof receiverSchemaKey>
+export type ReceiverBase = z.infer<typeof baseSchema>
 export type ReceiverMouse = z.infer<typeof receiverSchemaMouse>
 export type ReceiveExecute = z.infer<typeof receiverSchemaLaunchExe>
-export type ReceiveTypeText = z.infer<typeof receiverSchemaTypeText>
 export type Receiver = z.infer<typeof receiverSchema>
+export type ReceiveTypeText = z.infer<typeof receiverSchemaTypeText>
+export type ReceiveMacro = z.infer<typeof receiverSchemaMacro>
+export type MacroList = z.infer<typeof macrosList>
+export type ReceiverAndMacro = z.infer<typeof receiverSchemaAndMacro>

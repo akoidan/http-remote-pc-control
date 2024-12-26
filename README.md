@@ -53,3 +53,32 @@ You can replace the key when you build the client app.
 
 
 Client apps should be available withing the address provided in config. So either all apps are within same network. Or clients have public static IP address. 
+
+
+## Config structure
+ - ips: a map of a name and ip address of the remote PC.
+ - aliases: a map with an alias and a corresponding name of the remote PC (from ips)
+ - delay: global delay between multiple commands in receiver section
+ - combinations: binding o
+
+## Autostart
+Add a script to autostart in Windows with admin permissions: Replace path to your app.exe:
+```shell
+@echo off
+setlocal
+
+:: Replace with the path to your program
+set "ProgramPath=C:\Users\msi\Downloads\app.exe"
+set "ProgramName=L2"
+
+:: Create the task in Task Scheduler for admin startup
+schtasks /create /tn "%ProgramName%" /tr "\"%ProgramPath%\"" /sc onlogon /rl highest /f
+
+if %errorlevel% equ 0 (
+echo Program added to startup with admin permissions successfully.
+) else (
+echo Failed to add program to startup.
+)
+
+pause
+```
