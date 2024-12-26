@@ -1,7 +1,7 @@
 import {
   Module,
   OnModuleInit,
-  Logger
+  Logger,
 } from '@nestjs/common';
 import { promises as fs } from 'fs';
 import * as path from 'path';
@@ -13,23 +13,21 @@ import * as process from 'node:process';
     Logger,
     {
       provide: 'CONFIG_DATA',
-      useFactory: async () => {
-        return await fs.readFile(
-          path.join(__dirname, 'config.jsonc'),
-          'utf8',
-        );
-      },
+      useFactory: async(): Promise<string> => fs.readFile(
+        path.join(__dirname, 'config.jsonc'),
+        'utf8',
+      ),
     },
     {
       provide: ConfigService,
-      useFactory: (configData: string, logger: Logger) => new ConfigService(configData, logger, process.env),
+      useFactory: (configData: string, logger: Logger): ConfigService => new ConfigService(configData, logger, process.env),
       inject: ['CONFIG_DATA', Logger],
     },
   ],
   exports: [ConfigService],
 })
-export class ConfigModule implements OnModuleInit{
-  constructor(private configService: ConfigService) {
+export class ConfigModule implements OnModuleInit {
+  constructor(private readonly configService: ConfigService) {
   }
 
   async onModuleInit() {

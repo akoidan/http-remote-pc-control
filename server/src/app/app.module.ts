@@ -1,13 +1,13 @@
 import {
   Logger,
   Module,
-  OnModuleInit
+  OnModuleInit,
 } from '@nestjs/common';
-import { ElectronService } from '@/app/electron-service';
-import { LogicService } from '@/app/logic-service';
-import { ConfigModule } from '@/config/config-module';
-import { ConfigService } from '@/config/config-service';
-import { ClientModule } from '@/client/client-module';
+import {ElectronService} from '@/app/electron-service';
+import {LogicService} from '@/app/logic-service';
+import {ConfigModule} from '@/config/config-module';
+import {ConfigService} from '@/config/config-service';
+import {ClientModule} from '@/client/client-module';
 
 @Module({
   imports: [ConfigModule, ClientModule],
@@ -15,7 +15,6 @@ import { ClientModule } from '@/client/client-module';
   exports: [],
 })
 export class AppModule implements OnModuleInit {
-
   constructor(
     private readonly logger: Logger,
     private readonly electronService: ElectronService,
@@ -24,17 +23,17 @@ export class AppModule implements OnModuleInit {
   ) {
   }
 
-  async onModuleInit() {
+  async onModuleInit(): Promise<void> {
     try {
       this.logger.debug('Initializing app...');
       await this.logicService.pingClients();
       await this.electronService.bootstrap();
       this.configService.getCombinations().forEach((comb) => {
-        this.electronService.registerShortcut(comb.shortCut, () => this.logicService.processEvent(comb));
-      })
+        this.electronService.registerShortcut(comb.shortCut, async() => this.logicService.processEvent(comb));
+      });
       this.logger.log('App has sucessfully started');
-    } catch (e) {
-      this.logger.error(`Unable to init main module: ${e.message}`, e.stack);
+    } catch (err) {
+      this.logger.error(`Unable to init main module: ${(err as Error).message}`, (err as Error).stack);
       await this.electronService.shutdown();
     }
   }

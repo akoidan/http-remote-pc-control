@@ -1,16 +1,15 @@
-import { FetchClient } from '@/client/http-client';
+import {FetchClient} from '@/client/http-client';
 import {
   LaunchExeRequest,
   MouseClickRequest,
   SendKeyRequest,
-  TypeTextRequest
+  TypeTextRequest,
 } from '@/client/dtos';
-import { Injectable } from '@nestjs/common';
+import {Injectable} from '@nestjs/common';
 
 
 @Injectable()
 export class ClientService {
-
   constructor(private readonly client: FetchClient) {
   }
 

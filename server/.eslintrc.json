@@ -83,7 +83,6 @@
     "@typescript-eslint/parameter-properties": [1, {"allow": ["private readonly", "public readonly"]}],
     "@typescript-eslint/no-inferrable-types": 0, // @typescript-eslint/typedef
     "@typescript-eslint/no-non-null-assertion": 0,
-    "@typescript-eslint/no-unused-vars-experimental": 1, // doesn't work with vue
     "@typescript-eslint/no-unused-vars":  [1,   {
       "argsIgnorePattern": "^_", // Ignore unused function parameters starting with '_'
       "varsIgnorePattern": "^_", // Ignore unused variables starting with '_'

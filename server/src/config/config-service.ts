@@ -4,28 +4,27 @@ import {
   EventData,
   fullSchema,
   Ips,
-  MacroList
+  MacroList,
 } from '@/config/types';
-import { parse } from 'jsonc-parser';
+import {parse} from 'jsonc-parser';
 import {
   Injectable,
-  Logger
+  Logger,
 } from '@nestjs/common';
 
 @Injectable()
 export class ConfigService {
-
   private configData: ConfigData | null = null;
 
   constructor(
-    private jsoncConfigData: string,
+    private readonly jsoncConfigData: string,
     private readonly logger: Logger,
-    private readonly envVars: Record<string, string>
+    private readonly envVars: Record<string, string|undefined>
   ) {
   }
 
   public async parseConfig(): Promise<void> {
-    this.logger.log("parsing config");
+    this.logger.log('parsing config');
     if (this.configData) {
       throw Error('Config already loaded');
     }
@@ -35,7 +34,7 @@ export class ConfigService {
       shortCut: c.shortCut,
       name: c.name,
     })).sort((a: any, b: any) => a.shortCut.localeCompare(b.shortCut)).forEach((c: any) => {
-      this.logger.log(`${c.shortCut}: ${c.name}`)
+      this.logger.log(`${c.shortCut}: ${c.name}`);
     });
     this.configData = conf;
   }
@@ -58,14 +57,14 @@ export class ConfigService {
     if (!this.configData) {
       throw Error('Config not loaded');
     }
-    return this.configData.aliases;
+    return this.configData.aliases ?? {};
   }
 
   public getMacros(): MacroList {
     if (!this.configData) {
       throw Error('Config not loaded');
     }
-    return this.configData.macros;
+    return this.configData.macros ?? {};
   }
 
   public getDelay(): number{
@@ -75,7 +74,7 @@ export class ConfigService {
     return this.configData.delay;
   }
 
-  public getGlobalVars(): Record<string, string>{
+  public getGlobalVars(): Record<string, string|undefined>{
     return this.envVars;
   }
 }

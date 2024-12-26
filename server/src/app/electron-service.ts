@@ -1,29 +1,28 @@
 import {
   app,
-  globalShortcut
-} from 'electron'
+  globalShortcut,
+} from 'electron';
 import {
   Injectable,
-  Logger
+  Logger,
 } from '@nestjs/common';
 
 @Injectable()
 export class ElectronService {
-
   constructor(private readonly logger: Logger) {
   }
 
   async bootstrap(): Promise<void> {
-    this.logger.debug("Waiting for electon app to init...");
+    this.logger.debug('Waiting for electon app to init...');
     await app.whenReady();
     app.on('will-quit', () => {
-      globalShortcut.unregisterAll()
+      globalShortcut.unregisterAll();
     });
   }
 
 
   async shutdown() {
-    this.logger.log("Shutting down electron service...");
+    this.logger.log('Shutting down electron service...');
     app.exit(1);
   }
 
@@ -31,7 +30,7 @@ export class ElectronService {
     const ret = globalShortcut.register(shortCut, cb);
     this.logger.debug(`registering ${shortCut} shortcut`);
     if (!ret) {
-      throw Error(`Cannot bind ${shortCut} shortcut`)
+      throw Error(`Cannot bind ${shortCut} shortcut`);
     }
   }
 }

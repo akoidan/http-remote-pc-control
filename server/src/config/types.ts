@@ -1,12 +1,12 @@
 import {
   z,
-  ZodIssueCode
+  ZodIssueCode,
 } from 'zod';
 // @ts-expect-error
-import KeyboardAction from "@nut-tree-fork/libnut/dist/lib/libnut-keyboard.class.js";
+import KeyboardAction from '@nut-tree-fork/libnut/dist/lib/libnut-keyboard.class.js';
 
 
-export const possibleKeys: string[] = [...KeyboardAction.KeyLookupMap.values()]
+export const possibleKeys: string[] = [...KeyboardAction.KeyLookupMap.values()];
 
 const variableSchema = z.string().regex(/\{\{\w+\}\}/);
 
@@ -19,7 +19,7 @@ const keySchema = z.enum(possibleKeys as any);
 
 const delaySchema = z.object({
   delay: z.union([z.number(), variableSchema]).optional(),
-})
+});
 
 const baseSchema = z.object({
   destination: z.string(),
@@ -81,12 +81,12 @@ const eventSchema = z.object({
   }
 ).refine(
   (data) =>
-    (!(data.circular && data.receivers.length <= 1)),
+    (!data.receivers || !(data.circular && data.receivers.length <= 1)),
   {
     message: 'circular=true can be applied when there are multiple receivers',
     path: ['receivers', 'circular'], // Error will be shown for both fields
   }
-)
+);
 
 const macrosList = z.record(z.object({
   commands: z.array(receiverSchema),
@@ -109,7 +109,7 @@ export const fullSchema = z.object({
     if (ipsKeys.has(key)) {
       ctx.addIssue({
         code: ZodIssueCode.custom,
-        path: ["aliases", key],
+        path: ['aliases', key],
         message: `Alias ${key} should not be the same as a key from ips`,
       });
     }
@@ -117,19 +117,19 @@ export const fullSchema = z.object({
       if (!ipsKeys.has(v)) {
         ctx.addIssue({
           code: ZodIssueCode.custom,
-          path: ["aliases", key],
+          path: ['aliases', key],
           message: `"${v}" is not a valid key from ips, valid are ${JSON.stringify(Array.from(ipsKeys))}`,
         });
       }
     });
   });
   data.combinations.forEach((value, combId) => {
-    const allReceivers = value.receivers ?? value.receiversMulti.flat();
+    const allReceivers = value.receivers ?? value.receiversMulti!.flat();
     allReceivers.forEach((v, receiverId) => {
       if (!(v as ReceiveMacro).macro && !alisesKeys.has((v as Receiver).destination) && !data.ips[(v as Receiver).destination]) {
         ctx.addIssue({
           code: ZodIssueCode.custom,
-          path: [`combinations[${combId}]`, `receivers[${receiverId}]`, "destination"],
+          path: [`combinations[${combId}]`, `receivers[${receiverId}]`, 'destination'],
           message: `"${(v as Receiver).destination}" is not a valid destination, possible options are ${JSON.stringify([...Array.from(alisesKeys), ...Array.from(ipsKeys)])}`,
         });
       }
@@ -137,16 +137,16 @@ export const fullSchema = z.object({
         if (!data.macros?.[(v as ReceiveMacro).macro]) {
           ctx.addIssue({
             code: ZodIssueCode.custom,
-            path: [`combinations[${combId}]`, `receivers[${receiverId}]`, "destination"],
+            path: [`combinations[${combId}]`, `receivers[${receiverId}]`, 'destination'],
             message: `Macro ${(v as ReceiveMacro).macro} doesn't exist`,
           });
-        } else if (data.macros[(v as ReceiveMacro).macro].variables?.length > 0) {
-          let macroVars = data.macros[(v as ReceiveMacro).macro].variables.sort();
-          let calledVars = Object.keys((v as ReceiveMacro).variables).sort();
+        } else if (data.macros[(v as ReceiveMacro).macro]?.variables?.length ?? 0 > 0) {
+          const macroVars = data.macros[(v as ReceiveMacro).macro].variables!.sort();
+          const calledVars = Object.keys((v as ReceiveMacro).variables ?? {})!.sort();
           if (JSON.stringify(macroVars) !== JSON.stringify(calledVars)) {
             ctx.addIssue({
               code: ZodIssueCode.custom,
-              path: [`combinations[${combId}]`, `receivers[${receiverId}]`, "variables"],
+              path: [`combinations[${combId}]`, `receivers[${receiverId}]`, 'variables'],
               message: `Macro ${(v as ReceiveMacro).macro} variables missmatch ${JSON.stringify(macroVars)} ${JSON.stringify(calledVars)}`,
             });
           }
@@ -159,7 +159,7 @@ export const fullSchema = z.object({
     if (shortCuts.has(value.shortCut)) {
       ctx.addIssue({
         code: ZodIssueCode.custom,
-        path: ["combinations", "shortcut", i],
+        path: ['combinations', 'shortcut', i],
         message: `Shortcut ${value.shortCut} already exists at index ${shortCuts.get(value.shortCut)}`,
       });
     }

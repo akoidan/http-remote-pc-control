@@ -8,7 +8,8 @@
   "scripts": {
     "build": "electron-packager . l2 --platform=win32 --arch=x64",
     "start": "electron ./src/index.js",
-    "lint": "eslint --ext .ts --max-warnings=0 src "
+    "lint": "eslint --ext .ts --max-warnings=0 src",
+    "autoformat": "eslint --ext .ts --max-warnings=0 --fix src"
   },
   "devDependencies": {
     "electron-packager": "^17.1.2",
@@ -25,6 +26,9 @@
     "@typescript-eslint/eslint-plugin": "^7.7.2",
     "@typescript-eslint/parser": "^7.7.2",
     "eslint-plugin-unicorn": "^56.0.0"
+  },
+  "peerDependencies": {
+    "@nut-tree-fork/libnut": "*"
   },
   "dependencies": {
     "@nestjs/common": "^10.4.15",

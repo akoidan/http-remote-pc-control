@@ -7,22 +7,21 @@ import {
   ReceiverBase,
   ReceiverMouse,
   ReceiverSimple,
-  ReceiveTypeText
-} from "@/config/types";
+  ReceiveTypeText,
+} from '@/config/types';
 import { ConfigService } from '@/config/config-service';
 import { ClientService } from '@/client/client-service';
 import {
   Injectable,
-  Logger
+  Logger,
 } from '@nestjs/common';
 import * as process from 'node:process';
 
 @Injectable()
 export class LogicService {
-
   constructor(
-    private configService: ConfigService,
-    private clientService: ClientService,
+    private readonly configService: ConfigService,
+    private readonly clientService: ClientService,
     private readonly logger: Logger,
   ) {
   }
@@ -30,10 +29,10 @@ export class LogicService {
   private activeFighterIndex: number = 0;
 
   async pingClients(): Promise<unknown[]> {
-    this.logger.debug("Pinging clients...")
+    this.logger.debug('Pinging clients...');
     return Promise.all(
       Object.entries(this.configService.getIps())
-        .map(([name, ip]) => this.clientService.ping(ip))
+        .map(async([name, ip]) => this.clientService.ping(ip))
     );
   }
 
@@ -48,18 +47,18 @@ export class LogicService {
       });
     } else if ((currRec as ReceiveExecute).launch) {
       await this.clientService.launchExe(ip, {
-        path: (currRec as ReceiveExecute).launch
+        path: (currRec as ReceiveExecute).launch,
       });
     } else if ((currRec as ReceiveTypeText).typeText) {
       await this.clientService.typeText(ip, {
-        text: (currRec as ReceiveTypeText).typeText
+        text: (currRec as ReceiveTypeText).typeText,
       });
     } else {
       throw Error(`Unknown receiver type ${JSON.stringify(currRec)}`);
     }
   }
 
-  replacePlaceholders<T>(obj: T, variables: Record<string, any> | undefined): T {
+  replacePlaceholders<T extends object>(obj: T, variables: Record<string, any> | undefined): T {
     if (!variables) {
       return obj;
     }
@@ -75,7 +74,7 @@ export class LogicService {
     return result as T;
   }
 
-  replaceGlobalVars<T>(obj: T): T {
+  replaceGlobalVars<T extends object>(obj: T): T {
     const result: Partial<T> = {};
     for (const [key, value] of Object.entries(obj) as [keyof T, T[keyof T]][]) {
       if (typeof value === 'string' && value.startsWith('{{') && value.endsWith('}}')) {
@@ -100,9 +99,9 @@ export class LogicService {
       await this.processReceiverEvent(comb, comb.receivers);
     } else if (comb.receiversMulti) {
       this.logger.log(`${comb.shortCut} processing ${comb.receiversMulti.length} in parallel`);
-      await Promise.all(comb.receiversMulti.map(rec => this.processReceiverEvent(comb, rec)))
+      await Promise.all(comb.receiversMulti.map(async rec => this.processReceiverEvent(comb, rec)));
     } else {
-      throw Error("Unknown event type");
+      throw Error('Unknown event type');
     }
   }
 
@@ -115,7 +114,7 @@ export class LogicService {
           processReceivers.push(this.replacePlaceholders(command, (inpRec as ReceiveMacro).variables));
         }
       } else {
-        processReceivers.push(inpRec);
+        processReceivers.push(inpRec as Receiver);
       }
     }
     processReceivers = processReceivers.map(rec => this.replaceGlobalVars(rec));
@@ -142,32 +141,32 @@ export class LogicService {
   }
 
   private constructReceivers(inputReceivers: Receiver[]): Receiver[] {
-    const receivers: ReceiverAndMacro[] = [];
+    const receivers: Receiver[] = [];
     inputReceivers.forEach(rec => {
       if (this.configService.getIps()[rec.destination]) {
         receivers.push({
           ...rec,
           destination: rec.destination,
-        })
-        return
+        });
+        return;
       }
       const dest = this.configService.getAliases()[rec.destination];
       if (typeof dest === 'string') {
         receivers.push({
           ...rec,
           destination: dest,
-        })
+        });
       } else if (Array.isArray(dest)) {
         dest.forEach(dest => {
           receivers.push({
             ...rec,
             destination: dest,
-          })
-        })
+          });
+        });
       } else {
         throw Error(`Unknown destination type ${rec.destination}`);
       }
-    })
+    });
     return receivers;
   }
 
@@ -176,7 +175,7 @@ export class LogicService {
       combDelay = receiverDelay;
     }
     if (combDelay === undefined) {
-      combDelay = Math.round(Math.random() * this.configService.getDelay())
+      combDelay = Math.round(Math.random() * this.configService.getDelay());
     }
     await new Promise(resolve => setTimeout(resolve, combDelay));
   }
