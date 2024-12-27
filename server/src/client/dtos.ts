@@ -1,18 +1,25 @@
-import type {KeySend} from '@/config/types';
+import type {KeySend} from '@/config/types/commands';
 
-export interface MouseClickRequest {
+interface MouseClickRequest {
   x: number;
   y: number;
 }
 
-export interface SendKeyRequest {
+interface SendKeyRequest {
   key: KeySend;
 }
 
-export interface LaunchExeRequest {
+interface LaunchExeRequest {
   path: string;
 }
 
-export interface TypeTextRequest {
+interface TypeTextRequest {
   text: string;
 }
+
+export type {
+  MouseClickRequest,
+  SendKeyRequest,
+  LaunchExeRequest,
+  TypeTextRequest,
+};

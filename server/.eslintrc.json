@@ -42,7 +42,7 @@
     "no-warning-comments": 0,
     "object-curly-spacing": 0,
     "sort-keys": 0,
-    "id-length": [1, {"min": 2, "exceptions": ["_"]}],
+    "id-length": 0,
     "lines-around-comment": 0, // this breaks padded-blocks rule
     "no-mixed-operators": 0, // doesn't work with no extra parens
     "init-declarations": 0, // poor choice
@@ -120,6 +120,8 @@
     "import/newline-after-import": 1,
     "import/no-absolute-path":1,
     "import/no-amd": 1,
+    "no-param-reassign": 0,
+    "no-undefined": 0,
     "import/no-anonymous-default-export":1,
     "import/no-commonjs": 1,
     "import/no-cycle":1,
@@ -130,9 +132,11 @@
     "import/no-internal-modules": [ 1, {"allow": [ "@nut-tree-fork/**"]} ],
     "import/no-mutable-exports":1,
     "import/no-named-default": 1,
+    "@typescript-eslint/no-extraneous-class": 0,
+    "@typescript-eslint/no-confusing-void-expression": 0,
     "import/no-named-export":0, // we want them
     "import/no-namespace": 0,
-    "import/no-nodejs-modules":1,
+    "import/no-nodejs-modules": 0,
     "import/no-restricted-paths": 1,
     "import/no-self-import":1,
     "grouped-accessor-pairs": 0, // conflicts with public first

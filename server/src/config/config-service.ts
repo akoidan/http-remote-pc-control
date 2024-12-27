@@ -5,12 +5,17 @@ import {
   fullSchema,
   Ips,
   MacroList,
-} from '@/config/types';
+} from '@/config/types/schema';
 import {parse} from 'jsonc-parser';
 import {
   Injectable,
   Logger,
 } from '@nestjs/common';
+
+interface ConfigCombination {
+  shortCut: string;
+  name: string;
+}
 
 @Injectable()
 export class ConfigService {
@@ -19,62 +24,52 @@ export class ConfigService {
   constructor(
     private readonly jsoncConfigData: string,
     private readonly logger: Logger,
-    private readonly envVars: Record<string, string|undefined>
-  ) {
-  }
+    private readonly envVars: Record<string, string|undefined>,
+  ) {}
 
   public async parseConfig(): Promise<void> {
     this.logger.log('parsing config');
     if (this.configData) {
-      throw Error('Config already loaded');
+      throw new Error('Config already loaded');
     }
-    const conf = parse(this.jsoncConfigData);
+    const conf = parse(this.jsoncConfigData) as ConfigData;
     await fullSchema.parseAsync(conf);
-    conf.combinations.map((c: any) => ({
-      shortCut: c.shortCut,
-      name: c.name,
-    })).sort((a: any, b: any) => a.shortCut.localeCompare(b.shortCut)).forEach((c: any) => {
-      this.logger.log(`${c.shortCut}: ${c.name}`);
+
+    const combinations = (conf.combinations as EventData[])
+      .map((combination): ConfigCombination => ({
+        shortCut: combination.shortCut,
+        name: combination.name,
+      }))
+      .sort((a, b) => a.shortCut.localeCompare(b.shortCut));
+
+    combinations.forEach((combination) => {
+      this.logger.log(`${combination.shortCut}: ${combination.name}`);
     });
+
     this.configData = conf;
   }
 
   public getIps(): Ips {
-    if (!this.configData) {
-      throw Error('Config not loaded');
-    }
-    return this.configData.ips;
+    return this.configData!.ips;
   }
 
- public getCombinations(): EventData[] {
-    if (!this.configData) {
-      throw Error('Config not loaded');
-    }
-    return this.configData.combinations;
+  public getCombinations(): EventData[] {
+    return this.configData!.combinations;
   }
 
   public getAliases(): Aliases {
-    if (!this.configData) {
-      throw Error('Config not loaded');
-    }
-    return this.configData.aliases ?? {};
+    return this.configData!.aliases ?? {};
   }
 
   public getMacros(): MacroList {
-    if (!this.configData) {
-      throw Error('Config not loaded');
-    }
-    return this.configData.macros ?? {};
+    return this.configData!.macros ?? {};
   }
 
-  public getDelay(): number{
-    if (!this.configData) {
-      throw Error('Config not loaded');
-    }
-    return this.configData.delay;
+  public getDelay(): number {
+    return this.configData!.delay;
   }
 
-  public getGlobalVars(): Record<string, string|undefined>{
+  public getGlobalVars(): Record<string, string|undefined> {
     return this.envVars;
   }
 }

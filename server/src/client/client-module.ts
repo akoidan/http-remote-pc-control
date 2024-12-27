@@ -13,7 +13,7 @@ import * as path from 'path';
     Logger,
     {
       provide: 'JWT_PRIVATE_KEY',
-      useFactory: async() => {
+      useFactory: async(): Promise<string> => {
         return fs.readFile(
           path.join(__dirname, 'private_key.pem'),
           'utf8',
@@ -22,12 +22,12 @@ import * as path from 'path';
     },
     {
       provide: JwtService,
-      useFactory: async(logger, key) => new JwtService(logger, key),
+      useFactory: (logger: Logger, key: string): JwtService => new JwtService(logger, key),
       inject: [Logger, 'JWT_PRIVATE_KEY'],
     },
     {
       provide: FetchClient,
-      useFactory: (logger, jwt) => new FetchClient(logger, jwt, 'http', 5000),
+      useFactory: (logger: Logger, jwt: JwtService): FetchClient => new FetchClient(logger, jwt, 'http', 5000),
       inject: [Logger, JwtService],
     },
     ClientService,

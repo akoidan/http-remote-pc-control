@@ -1,67 +1,21 @@
+/* eslint-disable import/group-exports */
+
 import {
   z,
   ZodIssueCode,
 } from 'zod';
-// @ts-expect-error
-import KeyboardAction from '@nut-tree-fork/libnut/dist/lib/libnut-keyboard.class.js';
+import {
+  type ReceiveMacro,
+  receiverSchemaAndMacro,
+  receiverSchema,
+  type Receiver,
+} from '@/config/types/commands';
 
-
-export const possibleKeys: string[] = [...KeyboardAction.KeyLookupMap.values()];
-
-const variableSchema = z.string().regex(/\{\{\w+\}\}/);
 
 const ipsSchema = z.record(z.string().ip());
 
 const aliasesSchema = z.record(z.union([z.array(z.string()), z.string()]));
 
-const keySchema = z.enum(possibleKeys as any);
-
-
-const delaySchema = z.object({
-  delay: z.union([z.number(), variableSchema]).optional(),
-});
-
-const baseSchema = z.object({
-  destination: z.string(),
-}).merge(delaySchema);
-
-
-const receiverSchemaKey = z.object({
-  keySend: z.union([keySchema, variableSchema]),
-}).merge(baseSchema);
-
-
-const receiverSchemaLaunchExe = z.object({
-  launch: z.string(),
-}).merge(baseSchema);
-
-
-const receiverSchemaMacro = z.object({
-  macro: z.string(),
-  variables: z.record(z.any()).optional(),
-}).merge(delaySchema);
-
-const receiverSchemaTypeText = z.object({
-  typeText: z.string(),
-}).merge(baseSchema);
-
-const receiverSchemaMouse = z.object({
-  mouseMoveX: z.number(),
-  mouseMoveY: z.number(),
-}).merge(baseSchema);
-
-const receiverSchema = z.union([
-  receiverSchemaKey,
-  receiverSchemaMouse,
-  receiverSchemaLaunchExe,
-  receiverSchemaTypeText,
-]);
-
-
-const receiverSchemaAndMacro = z.union([
-  receiverSchema,
-  receiverSchemaMacro,
-]);
 
 // Define the schema for the 'combinations' part
 const eventSchema = z.object({
@@ -74,7 +28,7 @@ const eventSchema = z.object({
   circular: z.boolean().optional(),
 }).refine(
   (data) =>
-    (data.receivers && !data.receiversMulti) || (!data.receivers && data.receiversMulti),
+    (data.receivers && !data.receiversMulti) ?? (!data.receivers && data.receiversMulti),
   {
     message: 'Either receivers or receiversMulti must be present, but not both.',
     path: ['receivers', 'receiversMulti'], // Error will be shown for both fields
@@ -127,10 +81,11 @@ export const fullSchema = z.object({
     const allReceivers = value.receivers ?? value.receiversMulti!.flat();
     allReceivers.forEach((v, receiverId) => {
       if (!(v as ReceiveMacro).macro && !alisesKeys.has((v as Receiver).destination) && !data.ips[(v as Receiver).destination]) {
+        const allOptions = JSON.stringify([...Array.from(alisesKeys), ...Array.from(ipsKeys)]);
         ctx.addIssue({
           code: ZodIssueCode.custom,
           path: [`combinations[${combId}]`, `receivers[${receiverId}]`, 'destination'],
-          message: `"${(v as Receiver).destination}" is not a valid destination, possible options are ${JSON.stringify([...Array.from(alisesKeys), ...Array.from(ipsKeys)])}`,
+          message: `"${(v as Receiver).destination}" is not a valid destination, possible options are ${allOptions}`,
         });
       }
       if ((v as ReceiveMacro).macro) {
@@ -169,16 +124,8 @@ export const fullSchema = z.object({
 
 // Generate TypeScript type
 export type ConfigData = z.infer<typeof fullSchema>;
-export type KeySend = z.infer<typeof keySchema>;
 export type EventData = z.infer<typeof eventSchema>
 export type Ips = z.infer<typeof ipsSchema>
 export type Aliases = z.infer<typeof aliasesSchema>
-export type ReceiverSimple = z.infer<typeof receiverSchemaKey>
-export type ReceiverBase = z.infer<typeof baseSchema>
-export type ReceiverMouse = z.infer<typeof receiverSchemaMouse>
-export type ReceiveExecute = z.infer<typeof receiverSchemaLaunchExe>
-export type Receiver = z.infer<typeof receiverSchema>
-export type ReceiveTypeText = z.infer<typeof receiverSchemaTypeText>
-export type ReceiveMacro = z.infer<typeof receiverSchemaMacro>
 export type MacroList = z.infer<typeof macrosList>
-export type ReceiverAndMacro = z.infer<typeof receiverSchemaAndMacro>
+

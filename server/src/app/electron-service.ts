@@ -13,20 +13,19 @@ export class ElectronService {
   }
 
   async bootstrap(): Promise<void> {
-    this.logger.debug('Waiting for electon app to init...');
+    this.logger.debug('Waiting for electron app to init...');
     await app.whenReady();
     app.on('will-quit', () => {
       globalShortcut.unregisterAll();
     });
   }
 
-
-  async shutdown() {
+  shutdown(): void {
     this.logger.log('Shutting down electron service...');
     app.exit(1);
   }
 
-  registerShortcut(shortCut: string, cb: () => Promise<void>): void {
+  registerShortcut(shortCut: string, cb: () => void): void {
     const ret = globalShortcut.register(shortCut, cb);
     this.logger.debug(`registering ${shortCut} shortcut`);
     if (!ret) {

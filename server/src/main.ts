@@ -5,4 +5,4 @@ async function start(): Promise<void> {
   await NestFactory.createApplicationContext(AppModule);
 }
 
-start();
+void start();

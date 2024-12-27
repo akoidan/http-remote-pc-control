@@ -2,8 +2,12 @@ import {
   Injectable,
   Logger,
 } from '@nestjs/common';
-
 import jwt from 'jsonwebtoken';
+
+interface JwtPayload {
+  username: string;
+  roles: string[];
+}
 
 @Injectable()
 export class JwtService {
@@ -12,14 +16,16 @@ export class JwtService {
   constructor(
     private readonly logger: Logger,
     private readonly privateKey: string,
-  ) {
+  ) {}
 
-  }
-
-  getToken() {
+  getToken(): string {
     if (!this.token) {
       this.logger.debug('Generating new JWT token');
-      this.token = jwt.sign({username: 'admin', roles: ['keyboard', 'mouse', 'launcher', 'reader']}, this.privateKey, {
+      const payload: JwtPayload = {
+        username: 'admin',
+        roles: ['keyboard', 'mouse', 'launcher', 'reader'],
+      };
+      this.token = jwt.sign(payload, this.privateKey, {
         algorithm: 'RS256',
         expiresIn: '10d',
       });

@@ -29,12 +29,14 @@ export class AppModule implements OnModuleInit {
       await this.logicService.pingClients();
       await this.electronService.bootstrap();
       this.configService.getCombinations().forEach((comb) => {
-        this.electronService.registerShortcut(comb.shortCut, async() => this.logicService.processEvent(comb));
+        this.electronService.registerShortcut(comb.shortCut, () => {
+          this.logicService.processEvent(comb).catch((err: unknown) => this.logger.error(err));
+        });
       });
       this.logger.log('App has sucessfully started');
     } catch (err) {
       this.logger.error(`Unable to init main module: ${(err as Error).message}`, (err as Error).stack);
-      await this.electronService.shutdown();
+      this.electronService.shutdown();
     }
   }
 }
