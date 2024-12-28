@@ -3,7 +3,7 @@ import {
   Module,
   OnModuleInit,
 } from '@nestjs/common';
-import {ElectronService} from '@/app/electron-service';
+import {HotkeyService} from '@/app/hotkey.service';
 import {LogicService} from '@/app/logic-service';
 import {ConfigModule} from '@/config/config-module';
 import {ConfigService} from '@/config/config-service';
@@ -11,13 +11,13 @@ import {ClientModule} from '@/client/client-module';
 
 @Module({
   imports: [ConfigModule, ClientModule],
-  providers: [Logger, ElectronService, LogicService],
+  providers: [Logger, HotkeyService, LogicService],
   exports: [],
 })
 export class AppModule implements OnModuleInit {
   constructor(
     private readonly logger: Logger,
-    private readonly electronService: ElectronService,
+    private readonly hotKeyService: HotkeyService,
     private readonly logicService: LogicService,
     private readonly configService: ConfigService,
   ) {
@@ -27,16 +27,16 @@ export class AppModule implements OnModuleInit {
     try {
       this.logger.debug('Initializing app...');
       await this.logicService.pingClients();
-      await this.electronService.bootstrap();
+      await this.hotKeyService.bootstrap();
       this.configService.getCombinations().forEach((comb) => {
-        this.electronService.registerShortcut(comb.shortCut, () => {
+        this.hotKeyService.registerShortcut(comb.shortCut, () => {
           this.logicService.processEvent(comb).catch((err: unknown) => this.logger.error(err));
         });
       });
       this.logger.log('App has sucessfully started');
     } catch (err) {
       this.logger.error(`Unable to init main module: ${(err as Error).message}`, (err as Error).stack);
-      this.electronService.shutdown();
+      this.hotKeyService.shutdown();
     }
   }
 }

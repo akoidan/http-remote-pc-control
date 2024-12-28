@@ -1,15 +1,16 @@
-import {
-  app,
-  globalShortcut,
-} from 'electron';
+import {GlobalKeyboardListener} from 'node-global-key-listener';
+
 import {
   Injectable,
   Logger,
 } from '@nestjs/common';
 
 @Injectable()
-export class ElectronService {
+export class HotkeyService {
+  private readonly listener = new GlobalKeyboardListener();
+
   constructor(private readonly logger: Logger) {
+
   }
 
   async bootstrap(): Promise<void> {
