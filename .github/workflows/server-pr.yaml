@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+    paths:
+      - 'server/**'
+
+concurrency:
+  group: preview-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20
+      - name: Restore node_modules cache
+        id: cache-node
+        # DO not create cache for PRs, since they are not accessible withing different PRs
+        # Only restore them
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            server/node_modules
+          key: ${{ runner.os }}-node-modules-server-${{ hashFiles('server/yarn.lock') }}
+      - name: Install yarn deps
+        if: steps.cache-node.outputs.cache-hit != 'true'
+        run: |
+          cd server
+          yarn install --frozen-lockfile
+      - name: Check Eslint
+        run: |
+          cd server
+          yarn lint
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20
+      - name: Restore node_modules cache
+        id: cache-node
+        # DO not create cache for PRs, since they are not accessible withing different PRs
+        # Only restore them
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            server/node_modules
+          key: ${{ runner.os }}-node-modules-server-${{ hashFiles('server/yarn.lock') }}
+      - name: Install yarn deps
+        if: steps.cache-node.outputs.cache-hit != 'true'
+        run: |
+          cd server
+          yarn install --frozen-lockfile
+      - name: Check Eslint
+        run: |
+          cd server
+          yarn build

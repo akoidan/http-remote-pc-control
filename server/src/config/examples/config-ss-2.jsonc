@@ -133,15 +133,6 @@
               "login": "deathangelp",
               "delay": 18000
             }
-          },
-          // 2nd window
-          {
-            "macro": "launch",
-            "variables": {
-              "destination": "wc",
-              "login": "deathangel1",
-              "delay": 10000
-            }
           }
         ]
       ],
@@ -174,10 +165,6 @@
     },
     {
       "receivers": [
-        {
-          "destination": "sws",
-          "keySend": "5"
-        },
         {
           "destination": "ee",
           "keySend": "7"
@@ -359,23 +346,27 @@
       "circular": false
     },
     {
-      "receivers": [
-        {
+      "receiversMulti": [
+        [{
           "destination": "se",
           "keySend": "f1"
-        },
-         {
+        }],
+        [{
           "destination": "sws",
           "keySend": "f1"
-        },
-        {
+        }],
+        [{
           "destination": "ee",
           "keySend": "f1"
-        },
-        {
+        }],
+        [{
           "destination": "bd",
           "keySend": "f1"
-        }
+        }],
+        [{
+          "destination": "wc",
+          "keySend": "f1"
+        }]
       ],
       "name": "Pick up",
       "shortCut": "Alt+p",
