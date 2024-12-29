@@ -13,6 +13,10 @@ interface LaunchExeRequest {
   path: string;
 }
 
+interface KillExeRequest {
+  name: string;
+}
+
 interface TypeTextRequest {
   text: string;
 }
@@ -22,4 +26,5 @@ export type {
   SendKeyRequest,
   LaunchExeRequest,
   TypeTextRequest,
+  KillExeRequest,
 };

@@ -5,25 +5,30 @@ import {
   IsString
 } from 'class-validator';
 
-export class KeyPressEvent  {
+export class KeyPressRequest {
   @IsIn(possibleKeys)
   @IsString()
   key: string;
 }
 
-export class TypeEvent  {
+export class TypeTextRequest {
   @IsString()
   text: string;
 }
 
-export class MouseClickEvent  {
+export class MouseClickRequest {
   @IsNumber()
   x: number;
   @IsNumber()
   y: number;
 }
 
-export class LaunchExeEvent  {
+export class LaunchExeRequest {
   @IsString()
   path: string;
+}
+
+export class KillExeRequest {
+  @IsString()
+  name: string;
 }

@@ -3,7 +3,7 @@ import {EventController} from '@/event/event-controller';
 import {KeyboardService} from '@/event/keyboard-service';
 import {LoggerModule} from 'nestjs-pino';
 import {MouseService} from '@/event/mouse-service';
-import {LauncherService} from '@/event/launcher-service';
+import {ExecutionService} from '@/event/execution.service';
 import {AuthModule} from '@/auth/auth.module';
 
 @Module({
@@ -34,16 +34,20 @@ import {AuthModule} from '@/auth/auth.module';
         // Custom format for success messages
         customSuccessMessage: (req: any, res: any) => {
           if (res.statusCode >= 400) {
-            return `\u001b[33m${req.method} \u001b[35m${req.url} \u001b[31m${res.statusCode} \u001b[38;5;237m<-=${JSON.stringify(req.body ?? '')};; ->=${JSON.stringify(res.body ?? '')} from ${req.ip}`;
+            return `\u001b[33m${req.method} \u001b[35m${req.url} \u001b[31m${res.statusCode} \u001b[38;5;237m${req.ip} ${JSON.stringify(req.body ?? '')}`;
           } else {
-            return `\u001b[33m${req.method} \u001b[35m${req.url} \u001b[32m${res.statusCode} \u001b[38;5;237m<-=${JSON.stringify(req.body ?? '')};; ->=${JSON.stringify(res.body ?? '')} from ${req.ip}`;
+            return `\u001b[33m${req.method} \u001b[35m${req.url} \u001b[32m${res.statusCode} \u001b[38;5;237m${req.ip} ${JSON.stringify(req.body ?? '')}`;
           }
+        },
+
+        customErrorMessage: (req: any, res: any) => {
+          return `\u001b[33m${req.method} \u001b[35m${req.url} \u001b[31m${res.statusCode} \u001b[38;5;237m${req.ip} ${JSON.stringify(req.body ?? '')}`;
         },
       },
     }),
   ],
   controllers: [EventController],
-  providers: [KeyboardService, MouseService, LauncherService],
+  providers: [KeyboardService, MouseService, ExecutionService],
 })
 export class EventModule {
 }

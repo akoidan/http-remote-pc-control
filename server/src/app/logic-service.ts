@@ -7,7 +7,7 @@ import {
   ReceiverSimple,
   ReceiveTypeText,
   Receiver,
-  ReceiverAndMacro,
+  ReceiverAndMacro, ReceiverKill,
 } from '@/config/types/commands';
 import {
   EventData,
@@ -54,6 +54,10 @@ export class LogicService {
     } else if ((currRec as ReceiveTypeText).typeText) {
       await this.clientService.typeText(ip, {
         text: (currRec as ReceiveTypeText).typeText,
+      });
+    }  else if ((currRec as ReceiverKill).kill) {
+      await this.clientService.killExe(ip, {
+        name: (currRec as ReceiverKill).kill,
       });
     } else {
       throw Error(`Unknown receiver type ${JSON.stringify(currRec)}`);

@@ -41,11 +41,16 @@ const receiverSchemaMouse = z.object({
   mouseMoveY: z.number(),
 }).merge(baseSchema);
 
+const receiverSchemaKillExe = z.object({
+  kill: z.string(),
+}).merge(baseSchema);
+
 const receiverSchema = z.union([
   receiverSchemaKey,
   receiverSchemaMouse,
   receiverSchemaLaunchExe,
   receiverSchemaTypeText,
+  receiverSchemaKillExe,
 ]);
 
 
@@ -63,6 +68,7 @@ type ReceiveExecute = z.infer<typeof receiverSchemaLaunchExe>
 type Receiver = z.infer<typeof receiverSchema>
 type KeySend = z.infer<typeof keySchema>;
 type ReceiverAndMacro = z.infer<typeof receiverSchemaAndMacro>
+type ReceiverKill = z.infer<typeof receiverSchemaKillExe>
 
 export type {
   ReceiveTypeText,
@@ -74,6 +80,7 @@ export type {
   Receiver,
   KeySend,
   ReceiverAndMacro,
+  ReceiverKill,
 };
 export {
   receiverSchema,

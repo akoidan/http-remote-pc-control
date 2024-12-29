@@ -23,7 +23,7 @@ export class JwtService {
       this.logger.debug('Generating new JWT token');
       const payload: JwtPayload = {
         username: 'admin',
-        roles: ['keyboard', 'mouse', 'launcher', 'reader'],
+        roles: ['keyboard', 'mouse', 'execution', "launcher", 'reader'],
       };
       this.token = jwt.sign(payload, this.privateKey, {
         algorithm: 'RS256',
