@@ -2,9 +2,10 @@ name: server-build
 
 on:
   push:
-    # Sequence of patterns matched against refs/tags
-    tags:
-      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+    branches: [ main ]
+    paths:
+      - 'server/**'
+      - '.github/workflows/server-build.yaml'
 
 jobs:
   build:
@@ -44,15 +45,13 @@ jobs:
           draft: false
           prerelease: false
       - name: Compress Directory
-        run: |
-          cd server
-          zip -r l2-win32-x64.zip l2-win32-x64
+        run: tar -czvf l2-win32-x64.tar.gz -C ./server/l2-win32-x64 .
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: l2-win32-x64.zip
+          asset_path: l2-win32-x64.tar.gz
           asset_name: server
           asset_content_type: application/zip
