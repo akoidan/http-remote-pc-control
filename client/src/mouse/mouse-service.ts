@@ -1,11 +1,10 @@
 import {Injectable} from '@nestjs/common';
 
-import {mouse, Point} from "@nut-tree-fork/nut-js";
+import {mouse, Point} from '@nut-tree-fork/nut-js';
 import {InjectPinoLogger, PinoLogger} from 'nestjs-pino';
 
 @Injectable()
 export class MouseService {
-
   constructor(
     @InjectPinoLogger(MouseService.name)
     private readonly logger: PinoLogger

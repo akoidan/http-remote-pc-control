@@ -1,6 +1,6 @@
 import {Module} from '@nestjs/common';
-import {MouseController} from "@/mouse/mouse-controller";
-import {MouseService} from "@/mouse/mouse-service";
+import {MouseController} from '@/mouse/mouse-controller';
+import {MouseService} from '@/mouse/mouse-service';
 
 @Module({
   providers: [MouseService],

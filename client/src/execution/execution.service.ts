@@ -6,7 +6,6 @@ import {InjectPinoLogger, PinoLogger} from 'nestjs-pino';
 
 @Injectable()
 export class ExecutionService {
-
   constructor(
     @InjectPinoLogger(ExecutionService.name)
     private readonly logger: PinoLogger
@@ -17,7 +16,7 @@ export class ExecutionService {
     this.logger.info(`Launching ${pathToExe}`);
     const gameProcess = spawn(pathToExe, [], {
       detached: true, // Run independently from parent process
-      stdio: 'ignore' // Ignore console output
+      stdio: 'ignore', // Ignore console output
     });
     // Detach and allow process to continue running even after the script exits
     gameProcess.unref();
@@ -37,7 +36,7 @@ export class ExecutionService {
       throw new Error(`Unsupported platform: ${platform}`);
     }
     try {
-      const { stdout, stderr } = await promisify(exec)(command);
+      const {stdout, stderr} = await promisify(exec)(command);
       this.logger.info(`Process "${name}" killed successfully:`, stdout || stderr);
       return true;
     } catch (e) {

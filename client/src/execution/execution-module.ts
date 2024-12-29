@@ -1,6 +1,6 @@
 import {Module} from '@nestjs/common';
 import {ExecutionService} from '@/execution/execution.service';
-import {ExecutionController} from "@/execution/execution-controller";
+import {ExecutionController} from '@/execution/execution-controller';
 
 @Module({
   controllers: [ExecutionController],

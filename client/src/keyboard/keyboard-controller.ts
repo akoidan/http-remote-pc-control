@@ -1,7 +1,7 @@
 import {Body, Controller, Post, UseGuards} from '@nestjs/common';
 import {RoleGuard} from '@/auth/roles.guard';
-import {KeyPressRequest, TypeTextRequest} from "@/keyboard/keyboard-dto";
-import {KeyboardService} from "@/keyboard/keyboard-service";
+import {KeyPressRequest, TypeTextRequest} from '@/keyboard/keyboard-dto';
+import {KeyboardService} from '@/keyboard/keyboard-service';
 
 @UseGuards(RoleGuard(['keyboard']))
 @Controller()

@@ -1,14 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import {Injectable} from '@nestjs/common';
 import {
   Key,
-  keyboard
-} from "@nut-tree-fork/nut-js";
-import { PinoLogger, InjectPinoLogger } from 'nestjs-pino';
-import {invertedMap} from "@/keyboard/keyboard-dto";
+  keyboard,
+} from '@nut-tree-fork/nut-js';
+import {PinoLogger, InjectPinoLogger} from 'nestjs-pino';
+import {invertedMap} from '@/keyboard/keyboard-dto';
 
 @Injectable()
 export class KeyboardService {
-
   constructor(
     @InjectPinoLogger(KeyboardService.name)
     private readonly logger: PinoLogger

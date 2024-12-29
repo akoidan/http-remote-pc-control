@@ -1,9 +1,9 @@
 import {
   Injectable,
-  UnauthorizedException
+  UnauthorizedException,
 } from '@nestjs/common';
-import { PassportStrategy } from '@nestjs/passport';
-import { ExtractJwt, Strategy } from 'passport-jwt';
+import {PassportStrategy} from '@nestjs/passport';
+import {ExtractJwt, Strategy} from 'passport-jwt';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -20,6 +20,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     if (!payload.username || !payload.roles) {
       throw new UnauthorizedException();
     }
-    return { username: payload.username, roles: payload.roles };
+    return {username: payload.username, roles: payload.roles};
   }
 }
