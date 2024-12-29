@@ -2,10 +2,12 @@ import {Injectable, Logger,} from '@nestjs/common';
 
 import {promises as fs} from 'fs';
 import * as path from 'path';
+import {InjectPinoLogger, PinoLogger} from "nestjs-pino";
 
 @Injectable()
 export class KeyService {
   constructor(
+      @InjectPinoLogger(KeyService.name)
       private readonly logger: Logger,
   ) {
   }
