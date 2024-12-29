@@ -6,10 +6,12 @@ on:
     paths:
       - 'client/**'
       - '.github/workflow/client-build.yaml'
+
 permissions:
   contents: write
   packages: write
   id-token: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
