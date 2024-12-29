@@ -1,0 +1,15 @@
+name: test
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - '.github/workflows/test.yaml'
+jobs:
+  build:
+    runs-on: windows-2022
+    steps:
+
+      - name: Set Short SHA
+        run: echo "SHORT_SHA=${env:GITHUB_SHA.Substring(0,7)}" | Out-File -FilePath $env:GITHUB_ENV -Append
+      - run: echo ${{ env.SHORT_SHA }}
