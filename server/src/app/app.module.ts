@@ -27,7 +27,7 @@ export class AppModule implements OnModuleInit {
     try {
       this.logger.debug('Initializing app...');
       await this.logicService.pingClients();
-      await this.hotKeyService.bootstrap();
+      await this.hotKeyService.init();
       this.configService.getCombinations().forEach((comb) => {
         this.hotKeyService.registerShortcut(comb.shortCut, () => {
           this.logicService.processEvent(comb).catch((err: unknown) => this.logger.error(err));

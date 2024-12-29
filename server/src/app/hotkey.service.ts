@@ -1,5 +1,7 @@
-import {GlobalKeyboardListener} from 'node-global-key-listener';
-
+import {
+  app,
+  globalShortcut,
+} from 'electron';
 import {
   Injectable,
   Logger,
@@ -7,13 +9,10 @@ import {
 
 @Injectable()
 export class HotkeyService {
-  private readonly listener = new GlobalKeyboardListener();
-
   constructor(private readonly logger: Logger) {
-
   }
 
-  async bootstrap(): Promise<void> {
+  async init(): Promise<void> {
     this.logger.debug('Waiting for electron app to init...');
     await app.whenReady();
     app.on('will-quit', () => {

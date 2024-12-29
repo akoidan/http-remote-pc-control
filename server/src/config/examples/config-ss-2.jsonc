@@ -131,7 +131,15 @@
             "variables": {
               "destination": "ss",
               "login": "deathangelp",
-              "delay": 18000
+              "delay": 8000
+            }
+          },
+          {
+            "macro": "launch",
+            "variables": {
+              "destination": "wc",
+              "login": "deathangel1",
+              "delay": 6000
             }
           }
         ]

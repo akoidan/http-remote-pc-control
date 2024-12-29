@@ -18,7 +18,7 @@ export class ClientService {
   }
 
   async keyPress(client: string, request: SendKeyRequest): Promise<void> {
-    return this.client.post(client, 'key-press', request);
+    return this.client.post(client, 'key-press1', request);
   }
 
   async mouseClick(client: string, request: MouseClickRequest): Promise<void> {
