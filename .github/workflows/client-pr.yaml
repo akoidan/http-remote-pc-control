@@ -1,4 +1,4 @@
-name: CI
+name: pr-client
 
 on:
   pull_request:
