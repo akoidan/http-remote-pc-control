@@ -6,7 +6,7 @@ on:
     paths:
       - 'client/**'
 jobs:
-  cache-node-modules:
+  build:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -29,3 +29,13 @@ jobs:
         run: |
           cd client
           yarn install --frozen-lockfile
+      - name: Build
+        run: |
+          cd client
+          yarn build
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: client
+          path: client/app.exe
+          retention-days: 900
