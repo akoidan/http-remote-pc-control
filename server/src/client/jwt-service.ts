@@ -3,6 +3,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import jwt from 'jsonwebtoken';
+import {KeyService} from "@/client/keys-service";
 
 interface JwtPayload {
   username: string;
@@ -15,17 +16,18 @@ export class JwtService {
 
   constructor(
     private readonly logger: Logger,
-    private readonly privateKey: string,
+    private readonly keyService: KeyService,
   ) {}
 
-  getToken(): string {
+  async getToken(): Promise<string> {
     if (!this.token) {
       this.logger.debug('Generating new JWT token');
       const payload: JwtPayload = {
         username: 'admin',
         roles: ['keyboard', 'mouse', 'execution', 'launcher', 'reader'],
       };
-      this.token = jwt.sign(payload, this.privateKey, {
+      const pk = await this.keyService.getPrivateKey();
+      this.token = jwt.sign(payload, pk, {
         algorithm: 'RS256',
         expiresIn: '10d',
       });

@@ -28,7 +28,7 @@ export class FetchClient {
         headers: {
           // eslint-disable-next-line @typescript-eslint/naming-convention
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.jwtService.getToken()}`,
+          Authorization: `Bearer ${await this.jwtService.getToken()}`,
         },
         body: JSON.stringify(payload),
         signal: controller.signal,
@@ -57,7 +57,7 @@ export class FetchClient {
       const response = await fetch(`${this.protocol}://${client}:${this.port}/${url}`, {
         signal: controller.signal,
         headers: {
-          authorization: `Bearer ${this.jwtService.getToken()}`,
+          authorization: `Bearer ${await this.jwtService.getToken()}`,
         },
       });
 
