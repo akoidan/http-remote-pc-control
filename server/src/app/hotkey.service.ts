@@ -8,11 +8,11 @@ import {
 } from '@nestjs/common';
 
 @Injectable()
-export class ElectronService {
+export class HotkeyService {
   constructor(private readonly logger: Logger) {
   }
 
-  async bootstrap(): Promise<void> {
+  async init(): Promise<void> {
     this.logger.debug('Waiting for electron app to init...');
     await app.whenReady();
     app.on('will-quit', () => {

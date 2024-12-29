@@ -1,9 +1,9 @@
 import {
   Injectable,
-  UnauthorizedException
+  UnauthorizedException,
 } from '@nestjs/common';
-import { PassportStrategy } from '@nestjs/passport';
-import { ExtractJwt, Strategy } from 'passport-jwt';
+import {PassportStrategy} from '@nestjs/passport';
+import {ExtractJwt, Strategy} from 'passport-jwt';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -15,11 +15,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       algorithms: ['RS256'], // Use RS256 algorithm
     });
   }
-
-  async validate(payload: any) {
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  validate(payload: any): unknown {
     if (!payload.username || !payload.roles) {
       throw new UnauthorizedException();
     }
-    return { username: payload.username, roles: payload.roles };
+    return {username: payload.username, roles: payload.roles};
   }
 }

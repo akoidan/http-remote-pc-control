@@ -7,13 +7,13 @@ import {
   ReceiverSimple,
   ReceiveTypeText,
   Receiver,
-  ReceiverAndMacro
+  ReceiverAndMacro, ReceiverKill,
 } from '@/config/types/commands';
 import {
   EventData,
 } from '@/config/types/schema';
-import { ConfigService } from '@/config/config-service';
-import { ClientService } from '@/client/client-service';
+import {ConfigService} from '@/config/config-service';
+import {ClientService} from '@/client/client-service';
 import {
   Injectable,
   Logger,
@@ -41,7 +41,7 @@ export class LogicService {
   async runCommand(currRec: Receiver): Promise<void> {
     const ip = this.configService.getIps()[(currRec as ReceiverBase).destination];
     if ((currRec as ReceiverSimple).keySend) {
-      await this.clientService.keyPress(ip, { key: (currRec as ReceiverSimple).keySend as string });
+      await this.clientService.keyPress(ip, {key: (currRec as ReceiverSimple).keySend as string});
     } else if ((currRec as ReceiverMouse).mouseMoveX) {
       await this.clientService.mouseClick(ip, {
         x: (currRec as ReceiverMouse).mouseMoveX,
@@ -54,6 +54,10 @@ export class LogicService {
     } else if ((currRec as ReceiveTypeText).typeText) {
       await this.clientService.typeText(ip, {
         text: (currRec as ReceiveTypeText).typeText,
+      });
+    }  else if ((currRec as ReceiverKill).kill) {
+      await this.clientService.killExe(ip, {
+        name: (currRec as ReceiverKill).kill,
       });
     } else {
       throw Error(`Unknown receiver type ${JSON.stringify(currRec)}`);
@@ -154,15 +158,15 @@ export class LogicService {
     const receivers: Receiver[] = [];
     inputReceivers.forEach(rec => {
       if (this.configService.getIps()[rec.destination]) {
-        receivers.push({ ...rec, destination: rec.destination });
+        receivers.push({...rec, destination: rec.destination});
         return;
       }
       const destination = this.configService.getAliases()[rec.destination];
       if (typeof destination === 'string') {
-        receivers.push({ ...rec, destination });
+        receivers.push({...rec, destination});
       } else if (Array.isArray(destination)) {
         destination.forEach(dest => {
-          receivers.push({ ...rec, destination: dest });
+          receivers.push({...rec, destination: dest});
         });
       } else {
         throw Error(`Unknown destination type ${rec.destination}`);

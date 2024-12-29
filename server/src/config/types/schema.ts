@@ -57,7 +57,6 @@ export const fullSchema = z.object({
 }).superRefine((data, ctx) => {
   // Ensure mapping values are arrays of keys from ips
   const ipsKeys = new Set(Object.keys(data.ips));
-  const alisesKeys = new Set(Object.keys(data.aliases ?? {}));
   Object.entries(data.aliases ?? {}).forEach(([key, value]) => {
     const values = value instanceof Array ? value : [value];
     if (ipsKeys.has(key)) {
@@ -77,6 +76,9 @@ export const fullSchema = z.object({
       }
     });
   });
+}).superRefine((data, ctx) => {
+  const alisesKeys = new Set(Object.keys(data.aliases ?? {}));
+  const ipsKeys = new Set(Object.keys(data.ips));
   data.combinations.forEach((value, combId) => {
     const allReceivers = value.receivers ?? value.receiversMulti!.flat();
     allReceivers.forEach((v, receiverId) => {
@@ -95,7 +97,7 @@ export const fullSchema = z.object({
             path: [`combinations[${combId}]`, `receivers[${receiverId}]`, 'destination'],
             message: `Macro ${(v as ReceiveMacro).macro} doesn't exist`,
           });
-        } else if (data.macros[(v as ReceiveMacro).macro]?.variables?.length ?? 0 > 0) {
+        } else if ((data.macros[(v as ReceiveMacro).macro]?.variables?.length ?? 0) > 0) {
           const macroVars = data.macros[(v as ReceiveMacro).macro].variables!.sort();
           const calledVars = Object.keys((v as ReceiveMacro).variables ?? {})!.sort();
           if (JSON.stringify(macroVars) !== JSON.stringify(calledVars)) {
@@ -109,6 +111,7 @@ export const fullSchema = z.object({
       }
     });
   });
+}).superRefine((data, ctx) => {
   const shortCuts = new Map<string, number>();
   data.combinations.forEach((value, i) => {
     if (shortCuts.has(value.shortCut)) {

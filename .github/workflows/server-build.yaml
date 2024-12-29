@@ -1,0 +1,41 @@
+name: server-build
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'server/**'
+jobs:
+  build:
+    runs-on: windows-2022
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20
+      - name: Cache node_modules cache
+        id: cache-node
+        uses: actions/cache@v4
+        with:
+          path: |
+            server/node_modules
+          key: ${{ runner.os }}-node-modules-server-${{ hashFiles('server/yarn.lock') }}
+      - name: Install yarn deps
+        if: steps.cache-node.outputs.cache-hit != 'true'
+        run: |
+          cd server
+          yarn install --frozen-lockfile
+      - name: Build
+        run: |
+          cd server
+          yarn build
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: server
+          path: server/l2-win32-x64
+          retention-days: 900

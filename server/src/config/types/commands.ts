@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import {z} from 'zod';
 // @ts-expect-error
 import KeyboardAction from '@nut-tree-fork/libnut/dist/lib/libnut-keyboard.class.js';
 
@@ -18,7 +18,7 @@ const baseSchema = z.object({
 
 
 const receiverSchemaKey = z.object({
-  keySend: z.union([keySchema, variableSchema]),
+  keySend: z.union([keySchema, variableSchema])!.describe(`Available combination ${JSON.stringify(possibleKeys)}`),
 }).merge(baseSchema);
 
 
@@ -41,25 +41,49 @@ const receiverSchemaMouse = z.object({
   mouseMoveY: z.number(),
 }).merge(baseSchema);
 
-export const receiverSchema = z.union([
+const receiverSchemaKillExe = z.object({
+  kill: z.string(),
+}).merge(baseSchema);
+
+const receiverSchema = z.union([
   receiverSchemaKey,
   receiverSchemaMouse,
   receiverSchemaLaunchExe,
   receiverSchemaTypeText,
+  receiverSchemaKillExe,
 ]);
 
 
-export const receiverSchemaAndMacro = z.union([
+const receiverSchemaAndMacro = z.union([
   receiverSchema,
   receiverSchemaMacro,
 ]);
 
-export type ReceiveTypeText = z.infer<typeof receiverSchemaTypeText>
-export type ReceiveMacro = z.infer<typeof receiverSchemaMacro>
-export type ReceiverSimple = z.infer<typeof receiverSchemaKey>
-export type ReceiverBase = z.infer<typeof baseSchema>
-export type ReceiverMouse = z.infer<typeof receiverSchemaMouse>
-export type ReceiveExecute = z.infer<typeof receiverSchemaLaunchExe>
-export type Receiver = z.infer<typeof receiverSchema>
-export type KeySend = z.infer<typeof keySchema>;
-export type ReceiverAndMacro = z.infer<typeof receiverSchemaAndMacro>
+type ReceiveTypeText = z.infer<typeof receiverSchemaTypeText>
+type ReceiveMacro = z.infer<typeof receiverSchemaMacro>
+type ReceiverSimple = z.infer<typeof receiverSchemaKey>
+type ReceiverBase = z.infer<typeof baseSchema>
+type ReceiverMouse = z.infer<typeof receiverSchemaMouse>
+type ReceiveExecute = z.infer<typeof receiverSchemaLaunchExe>
+type Receiver = z.infer<typeof receiverSchema>
+type KeySend = z.infer<typeof keySchema>;
+type ReceiverAndMacro = z.infer<typeof receiverSchemaAndMacro>
+type ReceiverKill = z.infer<typeof receiverSchemaKillExe>
+
+export type {
+  ReceiveTypeText,
+  ReceiveMacro,
+  ReceiverSimple,
+  ReceiverBase,
+  ReceiverMouse,
+  ReceiveExecute,
+  Receiver,
+  KeySend,
+  ReceiverAndMacro,
+  ReceiverKill,
+};
+export {
+  receiverSchema,
+  receiverSchemaAndMacro,
+};
+
