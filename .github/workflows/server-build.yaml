@@ -1,13 +1,13 @@
-name: deploy-client
+name: server-build
 
 on:
   push:
     branches: [ main ]
     paths:
-      - 'client/**'
+      - 'server/**'
 jobs:
   cache-node-modules:
-    runs-on: ubuntu-latest
+    runs-on: windows-2022
     permissions:
       contents: read
       packages: write
@@ -16,16 +16,16 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 20
       - name: Cache node_modules cache
         id: cache-node
         uses: actions/cache@v4
         with:
           path: |
-            client/node_modules
-          key: ${{ runner.os }}-node-modules-client-${{ hashFiles('client/yarn.lock') }}
+            server/node_modules
+          key: ${{ runner.os }}-node-modules-server-${{ hashFiles('server/yarn.lock') }}
       - name: Install yarn deps
         if: steps.cache-node.outputs.cache-hit != 'true'
         run: |
-          cd client
+          cd server
           yarn install --frozen-lockfile
