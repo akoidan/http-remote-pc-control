@@ -1,7 +1,7 @@
 import {Injectable} from '@nestjs/common';
 import {promises as fs} from 'fs';
 import * as path from 'path';
-import {InjectPinoLogger, PinoLogger} from "nestjs-pino";
+import {InjectPinoLogger, PinoLogger} from 'nestjs-pino';
 
 @Injectable()
 export class KeyService {
@@ -17,7 +17,7 @@ export class KeyService {
 
   private async getPackedToken(): Promise<string> {
     const token =  await fs.readFile(path.join(__dirname, 'public_key.pem'), 'utf8');
-    this.logger.warn("Using internal packed publicKey");
+    this.logger.warn('Using internal packed publicKey');
     return token;
   }
 

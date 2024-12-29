@@ -1,14 +1,8 @@
-import {
-  Logger,
-  Module, OnModuleInit,
-} from '@nestjs/common';
+import {Logger, Module} from '@nestjs/common';
 import {FetchClient} from '@/client/http-client';
 import {ClientService} from '@/client/client-service';
 import {JwtService} from '@/client/jwt-service';
-import {KeyService} from "@/client/keys-service";
-import {HotkeyService} from "@/app/hotkey.service";
-import {LogicService} from "@/app/logic-service";
-import {ConfigService} from "@/config/config-service";
+import {KeyService} from '@/client/keys-service';
 
 
 @Module({

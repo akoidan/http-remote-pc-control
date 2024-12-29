@@ -26,6 +26,11 @@
     "eslint-plugin-unicorn": "^56.0.0",
     "typescript": "^5.4.5"
   },
+  "engines": {
+    "node": ">=18.0.0 <19",
+    "npm": "please-use-yarn",
+    "yarn": ">= 1.17.3"
+  },
   "peerDependencies": {
     "@nut-tree-fork/libnut": "*"
   },

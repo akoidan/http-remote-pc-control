@@ -41,6 +41,7 @@
     "dot-location": [1, "property"],
     "no-warning-comments": 0,
     "object-curly-spacing": 0,
+    "@typescript-eslint/no-unsafe-member-access": 0,
     "sort-keys": 0,
     "id-length": 0,
     "lines-around-comment": 0, // this breaks padded-blocks rule

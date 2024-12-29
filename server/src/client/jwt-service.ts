@@ -3,7 +3,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import jwt from 'jsonwebtoken';
-import {KeyService} from "@/client/keys-service";
+import {KeyService} from '@/client/keys-service';
 
 interface JwtPayload {
   username: string;

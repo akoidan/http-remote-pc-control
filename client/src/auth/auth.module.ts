@@ -1,7 +1,7 @@
 import {Module} from '@nestjs/common';
 import {PassportModule} from '@nestjs/passport';
 import {JwtStrategy} from '@/auth/jwt.strategy';
-import {KeyService} from "@/auth/keys-service";
+import {KeyService} from '@/auth/keys-service';
 
 @Module({
   imports: [
@@ -11,7 +11,7 @@ import {KeyService} from "@/auth/keys-service";
     KeyService,
     {
       provide: JwtStrategy,
-      useFactory: async (keyService: KeyService): Promise<JwtStrategy> => new JwtStrategy(await keyService.getPrivateKey()),
+      useFactory: async(keyService: KeyService): Promise<JwtStrategy> => new JwtStrategy(await keyService.getPrivateKey()),
       inject: [KeyService],
     },
   ],

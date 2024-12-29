@@ -1,4 +1,4 @@
-import {Injectable, Logger,} from '@nestjs/common';
+import {Injectable, Logger} from '@nestjs/common';
 
 import {promises as fs} from 'fs';
 import * as path from 'path';
@@ -16,7 +16,7 @@ export class KeyService {
 
   private async getPackedToken(): Promise<string> {
     const res = await fs.readFile(path.join(__dirname, 'private_key.pem'), 'utf8');
-    this.logger.warn("Using internal packed privateKey");
+    this.logger.warn('Using internal packed privateKey');
     return res;
   }
 
@@ -31,7 +31,7 @@ export class KeyService {
     try {
       return await this.getExternalToken();
     } catch (e) {
-      this.logger.warn(`Unable to load ${this.externalTokenPath} because ${e.message}`);
+      this.logger.warn(`Unable to load ${this.externalTokenPath} because ${e?.message as string}`);
       return this.getPackedToken();
     }
   }
