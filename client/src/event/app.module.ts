@@ -1,14 +1,17 @@
 import {Module} from '@nestjs/common';
-import {EventController} from '@/event/event-controller';
-import {KeyboardService} from '@/event/keyboard-service';
+import {AppController} from '@/event/app-controller';
 import {LoggerModule} from 'nestjs-pino';
-import {MouseService} from '@/event/mouse-service';
-import {ExecutionService} from '@/event/execution.service';
 import {AuthModule} from '@/auth/auth.module';
+import {KeyboardModule} from "@/keyboard/keyboard-module";
+import {ExecutionModule} from "@/execution/execution-module";
+import {MouseModule} from "@/mouse/mouse-module";
 
 @Module({
   imports: [
     AuthModule,
+    KeyboardModule,
+    ExecutionModule,
+    MouseModule,
     LoggerModule.forRoot({
       pinoHttp: {
         level: "debug", // Global log level
@@ -46,8 +49,8 @@ import {AuthModule} from '@/auth/auth.module';
       },
     }),
   ],
-  controllers: [EventController],
-  providers: [KeyboardService, MouseService, ExecutionService],
+  controllers: [AppController],
+  providers: [],
 })
-export class EventModule {
+export class AppModule {
 }

@@ -1,10 +1,10 @@
 import { NestFactory } from '@nestjs/core';
-import { EventModule } from '@/event/event.module';
+import { AppModule } from '@/event/app.module';
 import { Logger } from 'nestjs-pino';
 import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
-  const app = await NestFactory.create(EventModule, { bufferLogs: true });
+  const app = await NestFactory.create(AppModule, { bufferLogs: true });
   app.useGlobalPipes(new ValidationPipe());
   app.useLogger(app.get(Logger));
   await app.listen(5000);

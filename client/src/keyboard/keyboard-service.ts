@@ -1,12 +1,10 @@
 import { Injectable } from '@nestjs/common';
-
-
 import {
   Key,
   keyboard
 } from "@nut-tree-fork/nut-js";
-import { invertedMap } from '@/event/event-nut-types';
 import { PinoLogger, InjectPinoLogger } from 'nestjs-pino';
+import {invertedMap} from "@/keyboard/keyboard-dto";
 
 @Injectable()
 export class KeyboardService {

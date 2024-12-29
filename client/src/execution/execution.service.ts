@@ -1,13 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {Injectable} from '@nestjs/common';
 import os from 'os';
-import { exec } from 'child_process';
-import { appendFile } from 'fs/promises';
-import { promisify } from 'util';
-import { spawn } from 'child_process';
-import {
-  InjectPinoLogger,
-  PinoLogger
-} from 'nestjs-pino';
+import {exec, spawn} from 'child_process';
+import {promisify} from 'util';
+import {InjectPinoLogger, PinoLogger} from 'nestjs-pino';
 
 @Injectable()
 export class ExecutionService {
@@ -31,9 +26,16 @@ export class ExecutionService {
   async killExe(name: string): Promise<boolean> {
     this.logger.info(`debug ${name}`);
     const platform = os.platform(); // Detect OS
-    const command = platform === 'win32'
-        ? `taskkill /IM ${name} /F`   // Windows command
-        : `pkill -9 ${name}`;         // Linux command
+    let command: string;
+
+    // Determine the command based on OS
+    if (platform === 'win32') {
+      command = `taskkill /IM ${name} /F`; // Windows
+    } else if (platform === 'linux' || platform === 'darwin') {
+      command = `pkill -9 ${name}`; // Linux and macOS
+    } else {
+      throw new Error(`Unsupported platform: ${platform}`);
+    }
     try {
       const { stdout, stderr } = await promisify(exec)(command);
       this.logger.info(`Process "${name}" killed successfully:`, stdout || stderr);
@@ -44,7 +46,6 @@ export class ExecutionService {
         return false;
       }
       throw e;
-
     }
   }
 }

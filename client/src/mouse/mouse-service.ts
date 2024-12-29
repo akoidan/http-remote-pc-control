@@ -1,15 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import {Injectable} from '@nestjs/common';
 
-
-import {
-  mouse,
-  Point,
-  straightTo
-} from "@nut-tree-fork/nut-js";
-import {
-  InjectPinoLogger,
-  PinoLogger
-} from 'nestjs-pino';
+import {mouse, Point} from "@nut-tree-fork/nut-js";
+import {InjectPinoLogger, PinoLogger} from 'nestjs-pino';
 
 @Injectable()
 export class MouseService {
