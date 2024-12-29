@@ -6,6 +6,12 @@ on:
     paths:
       - 'server/**'
       - '.github/workflow/server-build.yaml'
+
+permissions:
+  contents: write
+  packages: write
+  id-token: write
+
 jobs:
   build:
     runs-on: windows-2022
@@ -34,9 +40,26 @@ jobs:
         run: |
           cd server
           yarn build
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: server
-          path: server/l2-win32-x64
-          retention-days: 900
+          tag_name: ${{ github.ref_name }}
+          release_name: Release ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+      - name: Compress Directory
+        run: |
+          cd server
+          zip -r l2-win32-x64.zip l2-win32-x64
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: l2-win32-x64.zip
+          asset_name: server
+          asset_content_type: application/zip
