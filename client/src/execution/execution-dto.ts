@@ -1,11 +1,13 @@
 import {IsString} from 'class-validator';
 
-export class LaunchExeRequest {
+class LaunchExeRequest {
   @IsString()
-  path: string;
+  public path: string;
 }
 
-export class KillExeRequest {
+class KillExeRequest {
   @IsString()
-  name: string;
+  public name: string;
 }
+
+export {KillExeRequest, LaunchExeRequest};

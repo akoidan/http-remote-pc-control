@@ -5,7 +5,7 @@ import {RoleGuard} from '@/auth/roles.guard';
 @Controller()
 export class AppController {
   @Get('ping')
-  async ping(): Promise<string> {
+  ping(): string {
     return 'pong';
   }
 }

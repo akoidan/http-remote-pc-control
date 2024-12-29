@@ -15,7 +15,7 @@ export class KeyboardService {
   }
 
   async sendKey(key: string): Promise<void> {
-    const keymap: Key = invertedMap.get(key);
+    const keymap: Key = invertedMap.get(key)!;
     this.logger.info(`Key: \u001b[35m${key}\u001b`);
     await keyboard.type(keymap);
   }

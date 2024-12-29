@@ -12,7 +12,7 @@ export class ExecutionService {
   ) {
   }
 
-  async launchExe(pathToExe: string): Promise<void> {
+  launchExe(pathToExe: string): void {
     this.logger.info(`Launching ${pathToExe}`);
     const gameProcess = spawn(pathToExe, [], {
       detached: true, // Run independently from parent process

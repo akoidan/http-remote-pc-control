@@ -12,8 +12,8 @@ export class ExecutionController {
   }
 
   @Post('launch-exe')
-  async lunchExe(@Body() body: LaunchExeRequest): Promise<void> {
-    await this.executionService.launchExe(body.path);
+  lunchExe(@Body() body: LaunchExeRequest): void {
+    this.executionService.launchExe(body.path);
   }
 
   @Post('kill-exe')

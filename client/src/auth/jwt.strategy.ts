@@ -15,8 +15,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       algorithms: ['RS256'], // Use RS256 algorithm
     });
   }
-
-  async validate(payload: any) {
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  validate(payload: any): unknown {
     if (!payload.username || !payload.roles) {
       throw new UnauthorizedException();
     }

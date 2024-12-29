@@ -1,7 +1,7 @@
 import {Injectable, CanActivate, ExecutionContext, UnauthorizedException, mixin, Type} from '@nestjs/common';
 import {AuthGuard} from '@nestjs/passport';
 
-export const RoleGuard = (roles: string[]): Type<CanActivate> => {
+function RoleGuard(roles: string[]): Type<CanActivate> {
   // uses JwtStrategy from ./jwt.strategy.ts
   // since that class extends Strategy from passport-jwt
   // Request → RoleGuard → AuthGuard('jwt') → Passport.js → JwtStrategy → validate()
@@ -31,3 +31,5 @@ export const RoleGuard = (roles: string[]): Type<CanActivate> => {
 
   return mixin(RoleGuardMixin);
 };
+
+export {RoleGuard};

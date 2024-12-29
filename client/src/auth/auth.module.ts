@@ -9,7 +9,7 @@ import * as path from 'path';
   providers: [
     {
       provide: 'JWT_PUBLIC_KEY',
-      useFactory: async() => {
+      useFactory: async(): Promise<string> => {
         return fs.readFile(
           path.join(__dirname, 'public_key.pem'),
           'utf8',
@@ -18,7 +18,7 @@ import * as path from 'path';
     },
     {
       provide: JwtStrategy,
-      useFactory: (publicKey: string) => new JwtStrategy(publicKey),
+      useFactory: (publicKey: string): JwtStrategy => new JwtStrategy(publicKey),
       inject: ['JWT_PUBLIC_KEY'],
     },
   ],

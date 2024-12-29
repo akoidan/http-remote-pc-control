@@ -105,7 +105,7 @@
     "babel/semi": 1,
     "babel/no-unused-expressions": 1,
     "babel/valid-typeof": 1,
-    "babel/new-cap": 1,
+    "babel/new-cap": 0,
     "babel/camelcase": 0, // use typescript-eslint/naming-convention
     "babel/no-invalid-this": 1,
     "import/no-named-as-default": 1, //is not part of default sert
@@ -132,8 +132,12 @@
     "import/no-internal-modules": [ 1, {"allow": [ "@nut-tree-fork/**"]} ],
     "import/no-mutable-exports":1,
     "import/no-named-default": 1,
+    "max-classes-per-file": 0,
     "@typescript-eslint/no-extraneous-class": 0,
     "@typescript-eslint/no-confusing-void-expression": 0,
+    "@typescript-eslint/no-unsafe-assignment": 0,
+    "@typescript-eslint/no-unsafe-member-access": 0,
+    "@typescript-eslint/no-unsafe-call": 0,
     "import/no-named-export":0, // we want them
     "import/no-namespace": 0,
     "import/no-nodejs-modules": 0,
