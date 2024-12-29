@@ -32,14 +32,16 @@ jobs:
         run: |
           cd server
           yarn build
+      - name: Set Short SHA
+        run: echo "SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_ENV
       - name: Create Release
         id: create_release
         uses: comnoco/create-release-action@v2.0.5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: server-${{ github.sha }}
-          release_name: server-${{ github.sha }}
+          tag_name: server-${{ env.SHORT_SHA }}
+          release_name: server-${{ env.SHORT_SHA }}
           draft: false
           prerelease: false
       - name: Compress Directory
@@ -51,5 +53,5 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: l2-win32-x64.tar.gz
-          asset_name: server
+          asset_name: server.tar.gz
           asset_content_type: application/zip
