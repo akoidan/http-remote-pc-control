@@ -14,15 +14,17 @@ export class KeyService {
     return path.join(path.dirname(process.execPath), 'l2_private_key.pem');
   }
 
-  private getPackedToken(): Promise<string> {
+  private async getPackedToken(): Promise<string> {
+    const res = await fs.readFile(path.join(__dirname, 'private_key.pem'), 'utf8');
     this.logger.warn("Using internal packed privateKey");
-    return fs.readFile(path.join(__dirname, 'private_key.pem'), 'utf8');
+    return res;
   }
 
 
-  private getExternalToken(): Promise<string> {
-    this.logger.log(`Loading external private key from ${this.externalTokenPath}`);
-    return fs.readFile(this.externalTokenPath, 'utf8');
+  private async getExternalToken(): Promise<string> {
+    const res = await fs.readFile(this.externalTokenPath, 'utf8');
+    this.logger.warn(`Using external private token from ${this.externalTokenPath}`);
+    return res;
   }
 
   async getPrivateKey(): Promise<string> {

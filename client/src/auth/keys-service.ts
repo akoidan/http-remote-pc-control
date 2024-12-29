@@ -1,5 +1,4 @@
-import {Injectable, Logger,} from '@nestjs/common';
-
+import {Injectable} from '@nestjs/common';
 import {promises as fs} from 'fs';
 import * as path from 'path';
 import {InjectPinoLogger, PinoLogger} from "nestjs-pino";
@@ -8,7 +7,7 @@ import {InjectPinoLogger, PinoLogger} from "nestjs-pino";
 export class KeyService {
   constructor(
       @InjectPinoLogger(KeyService.name)
-      private readonly logger: Logger,
+      private readonly logger: PinoLogger,
   ) {
   }
 
@@ -16,15 +15,16 @@ export class KeyService {
     return path.join(path.dirname(process.execPath), 'l2_public_key.pem');
   }
 
-  private getPackedToken(): Promise<string> {
+  private async getPackedToken(): Promise<string> {
+    const token =  await fs.readFile(path.join(__dirname, 'public_key.pem'), 'utf8');
     this.logger.warn("Using internal packed publicKey");
-    return fs.readFile(path.join(__dirname, 'public_key.pem'), 'utf8');
+    return token;
   }
 
-
-  private getExternalToken(): Promise<string> {
-    this.logger.log(`Loading external public key from ${this.externalTokenPath}`);
-    return fs.readFile(this.externalTokenPath, 'utf8');
+ private async getExternalToken(): Promise<string> {
+    const token =  await fs.readFile(this.externalTokenPath, 'utf8');
+    this.logger.warn(`Loading external public key from ${this.externalTokenPath}`);
+    return token;
   }
 
   async getPrivateKey(): Promise<string> {
