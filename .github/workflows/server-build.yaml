@@ -5,7 +5,7 @@ on:
     branches: [ main ]
     paths:
       - 'server/**'
-      - '.github/workflow/server-build.yaml'
+      - '.github/workflows/server-build.yaml'
 
 permissions:
   contents: write

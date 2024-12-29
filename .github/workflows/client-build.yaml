@@ -5,7 +5,7 @@ on:
     branches: [ main ]
     paths:
       - 'client/**'
-      - '.github/workflow/client-build.yaml'
+      - '.github/workflows/client-build.yaml'
 permissions:
   contents: write
   packages: write
