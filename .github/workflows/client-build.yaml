@@ -5,6 +5,7 @@ on:
     branches: [ main ]
     paths:
       - 'client/**'
+      - '.github/workflow/client-build.yaml'
 jobs:
   build:
     runs-on: ubuntu-latest
