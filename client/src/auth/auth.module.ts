@@ -1,27 +1,21 @@
 import {Module} from '@nestjs/common';
 import {PassportModule} from '@nestjs/passport';
 import {JwtStrategy} from '@/auth/jwt.strategy';
-import {promises as fs} from 'fs';
-import * as path from 'path';
+import {KeyService} from '@/auth/keys-service';
 
 @Module({
-  imports: [PassportModule],
+  imports: [
+    PassportModule,
+  ],
   providers: [
-    {
-      provide: 'JWT_PUBLIC_KEY',
-      useFactory: async(): Promise<string> => {
-        return fs.readFile(
-          path.join(__dirname, 'public_key.pem'),
-          'utf8',
-        );
-      },
-    },
+    KeyService,
     {
       provide: JwtStrategy,
-      useFactory: (publicKey: string): JwtStrategy => new JwtStrategy(publicKey),
-      inject: ['JWT_PUBLIC_KEY'],
+      useFactory: async(keyService: KeyService): Promise<JwtStrategy> => new JwtStrategy(await keyService.getPrivateKey()),
+      inject: [KeyService],
     },
   ],
   exports: [],
 })
-export class AuthModule {}
+export class AuthModule {
+}

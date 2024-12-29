@@ -23,7 +23,7 @@ export class ExecutionService {
   }
 
   async killExe(name: string): Promise<boolean> {
-    this.logger.info(`debug ${name}`);
+    this.logger.info(`Kill ${name}`);
     const platform = os.platform(); // Detect OS
     let command: string;
 
