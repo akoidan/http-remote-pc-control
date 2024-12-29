@@ -10,7 +10,7 @@ on:
       - 'client/**'
 
 concurrency:
-  group: preview-${{ github.ref }}
+  group: client-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
