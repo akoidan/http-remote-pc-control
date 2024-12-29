@@ -7,15 +7,15 @@
   "license": "MIT",
   "scripts": {
     "build": "electron-builder",
-    "start": "electron ./src/index.js",
+    "start": "rm -rf ./dist/ && electron ./src/index.js",
     "lint": "eslint --ext .ts --max-warnings=0 src",
     "autoformat": "eslint --ext .ts --max-warnings=0 --fix src"
   },
   "devDependencies": {
     "electron": "^30.0.6",
+    "electron-packager": "^17.1.2",
     "@typescript-eslint/eslint-plugin": "^7.7.2",
     "@typescript-eslint/parser": "^7.7.2",
-    "electron-packager": "^17.1.2",
     "eslint": "^8.57.0",
     "eslint-find-rules": "^4.1.0",
     "eslint-plugin-babel": "^5.3.1",

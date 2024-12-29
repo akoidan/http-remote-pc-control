@@ -1,10 +1,10 @@
 import {Module} from '@nestjs/common';
-import {AppController} from '@/event/app-controller';
 import {KeyboardService} from "@/keyboard/keyboard-service";
+import {KeyboardController} from "@/keyboard/keyboard-controller";
 
 
 @Module({
-  controllers: [AppController],
+  controllers: [KeyboardController],
   providers: [KeyboardService],
 })
 export class KeyboardModule {

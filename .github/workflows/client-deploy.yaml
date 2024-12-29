@@ -4,7 +4,7 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'server/**'
+      - 'client/**'
 jobs:
   cache-node-modules:
     runs-on: ubuntu-latest
@@ -22,10 +22,10 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            server/node_modules
-          key: ${{ runner.os }}-node-modules-server-${{ hashFiles('server/yarn.lock') }}
+            client/node_modules
+          key: ${{ runner.os }}-node-modules-client-${{ hashFiles('client/yarn.lock') }}
       - name: Install yarn deps
         if: steps.cache-node.outputs.cache-hit != 'true'
         run: |
-          cd server
+          cd client
           yarn install --frozen-lockfile

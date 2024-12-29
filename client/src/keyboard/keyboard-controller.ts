@@ -11,7 +11,6 @@ export class KeyboardController {
   ) {
   }
 
-
   @Post('key-press')
   async keyPress(@Body() body: KeyPressRequest): Promise<void> {
     await this.keyboardService.sendKey(body.key);

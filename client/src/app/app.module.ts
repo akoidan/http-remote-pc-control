@@ -1,5 +1,5 @@
 import {Module} from '@nestjs/common';
-import {AppController} from '@/event/app-controller';
+import {AppController} from '@/app/app-controller';
 import {LoggerModule} from 'nestjs-pino';
 import {AuthModule} from '@/auth/auth.module';
 import {KeyboardModule} from "@/keyboard/keyboard-module";
