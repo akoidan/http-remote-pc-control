@@ -11,5 +11,6 @@ jobs:
     steps:
 
       - name: Set Short SHA
-        run: echo "SHORT_SHA=${env:GITHUB_SHA.Substring(0,7)}" | Out-File -FilePath $env:GITHUB_ENV -Append
-      - run: echo $env:SHORT_SHA
+        shell: bash
+        run: echo "SHORT_SHA=${GITHUB_SHA::7}" >> $GITHUB_ENV
+      - run: echo $SHORT_SHA
