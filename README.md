@@ -1,4 +1,4 @@
-# l2
+# Hotkey Hub
 Easy remote PC control via local shorcuts
 E.g. you press `alt+1` on your PC and remote one send a keyStroke `F1`.
 
@@ -33,19 +33,14 @@ It will generate:
  - run **l2.exe** as regular user. If it crasher, run it from cmd to get output
 
 ## Security
-The client server app uses JWT authorization. Clients verify that requests were signed with matched private key to a hardcoded matched public key in the client exe bytecode.
-Keys are generated and located here:
-- openssl genpkey -algorithm RSA -out [private_key.pem](./server/src/client/private_key.pem)
-- openssl rsa -pubout -in private_key.pem -out [public_key.pem](client/src/mtls/public_key.pem)
-
-You can replace the key when you build the client app.
+The client server app both use mutual TLS authentication. 
 Client apps should be available withing the address provided in config. So either all apps are within same network. Or clients have public static IP address.
 
 ## Config structure
 - ips: a map of a name and ip address of the remote PC.
 - aliases: a map with an alias and a corresponding name of the remote PC (from ips)
 - delay: global delay between multiple commands in receiver section
-- combinations: binding o
+- combinations: binding 
 
 
 ## OS support
@@ -56,7 +51,7 @@ Client apps should be available withing the address provided in config. So eithe
 This product has 2 apps: Client and Server. Client app is built via [pkg](https://www.npmjs.com/package/pkg) and server app is built via [electron](https://www.npmjs.com/package/electron). Electron has proper binary implementation that can capture global keystroke even if a game is active in full screen mode, while pkg provides an easy manipulation withing the keyboard and mouse and lightweight binary. Both packages support Window/Linux/Mac.
 
 ## Autostart
-Add a script to autostart in Windows with admin permissions: Replace path to your app.exe:
+Add a script to autostart in Windows with admin petrmissions: Replace path to your app.exe:
 ```shell
 @echo off
 setlocal
