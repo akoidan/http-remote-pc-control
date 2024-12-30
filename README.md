@@ -5,20 +5,38 @@ E.g. you press `alt+1` on your PC and remote one send a keyStroke `F1`.
 
 ## Get started
 
+### Certificates
+
+Generate certificates with [gen-cert.sh](./gen-cert.sh) for [MTLS](https://www.cloudflare.com/learning/access-management/what-is-mutual-tls/) encryption.
+
+```bash
+bash ./gen-cert.sh
+```
+
+It will generate:
+ - self-sign CA certificate with its private key and put CA cert into both ./server/certs/ca-cert.pem and ./client/certs/ca-cert.pem
+ - server and client private key in the ./server/certs/key.pem and ./client/certs/key.pem
+ - server and client certificate that is signed with CA private key and put it into  ./server/certs/cert.pem and ./server/certs/cert.pem
+
+**If you don't care about security** you can grab certificates directories from [poc/mtls/client](/pocs/mtls/client/certs) and [poc/mtls/server](/pocs/mtls/server/certs).
+
 ### Client
- - Download client you want to receive shorcuts [releases](https://github.com/akoidan/l2/releases) 
- - Run it as Administrator. If Windows antivirus complains about it, add it to exceptions. If it crashes run it from cmd to get the stdout 
+ - Download client you want to receive shorcuts [releases](https://github.com/akoidan/l2/releases)
+ - Copy ./client/certs directory into a current directory. So pwd contains `certs` directory
+ - Run exe files as Administrator. If Windows antivirus complains about it, add it to exceptions. If it crashes run it from cmd to get the stdout 
+ 
 ### Server
  - Download server you want to send shortcuts [releases](https://github.com/akoidan/l2/releases)
  - Unpack archive
  - Create a config file inside **/resources/app/src/config/config.jsonc**. You can find examples [here](server/src/config/examples)
+ - Copy ./server/certs directory into a current directory. So pwd contains `certs` directory
  - run **l2.exe** as regular user. If it crasher, run it from cmd to get output
 
 ## Security
 The client server app uses JWT authorization. Clients verify that requests were signed with matched private key to a hardcoded matched public key in the client exe bytecode.
 Keys are generated and located here:
 - openssl genpkey -algorithm RSA -out [private_key.pem](./server/src/client/private_key.pem)
-- openssl rsa -pubout -in private_key.pem -out [public_key.pem](./client/src/auth/public_key.pem)
+- openssl rsa -pubout -in private_key.pem -out [public_key.pem](client/src/mtls/public_key.pem)
 
 You can replace the key when you build the client app.
 Client apps should be available withing the address provided in config. So either all apps are within same network. Or clients have public static IP address.

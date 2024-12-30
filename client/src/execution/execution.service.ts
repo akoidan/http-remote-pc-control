@@ -1,8 +1,14 @@
 import {Injectable} from '@nestjs/common';
 import os from 'os';
-import {exec, spawn} from 'child_process';
+import {
+  exec,
+  spawn,
+} from 'child_process';
 import {promisify} from 'util';
-import {InjectPinoLogger, PinoLogger} from 'nestjs-pino';
+import {
+  InjectPinoLogger,
+  PinoLogger,
+} from 'nestjs-pino';
 
 @Injectable()
 export class ExecutionService {

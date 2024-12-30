@@ -1,14 +1,12 @@
 import {Module} from '@nestjs/common';
 import {AppController} from '@/app/app-controller';
-import {LoggerModule} from 'nestjs-pino';
-import {AuthModule} from '@/auth/auth.module';
 import {KeyboardModule} from '@/keyboard/keyboard-module';
 import {ExecutionModule} from '@/execution/execution-module';
 import {MouseModule} from '@/mouse/mouse-module';
+import {LoggerModule} from 'nestjs-pino';
 
 @Module({
   imports: [
-    AuthModule,
     KeyboardModule,
     ExecutionModule,
     MouseModule,
@@ -39,15 +37,15 @@ import {MouseModule} from '@/mouse/mouse-module';
         customSuccessMessage: (req: any, res: any) => {
           if (res.statusCode >= 400) {
             return `\u001b[33m${req.method} \u001b[35m${req.url} \u001b[31m${res.statusCode}` +
-                ` \u001b[38;5;237m${req.ip} ${JSON.stringify(req.body ?? '')}`;
+              ` \u001b[38;5;237m${req.ip} ${JSON.stringify(req.body ?? '')}`;
           }
           return `\u001b[33m${req.method} \u001b[35m${req.url} \u001b[32m${res.statusCode}` +
-              ` \u001b[38;5;237m${req.ip} ${JSON.stringify(req.body ?? '')}`;
+            ` \u001b[38;5;237m${req.ip} ${JSON.stringify(req.body ?? '')}`;
         },
 
         customErrorMessage: (req: any, res: any) => {
           return `\u001b[33m${req.method} \u001b[35m${req.url} \u001b[31m${res.statusCode}` +
-              ` \u001b[38;5;237m${req.ip} ${JSON.stringify(req.body ?? '')}`;
+            ` \u001b[38;5;237m${req.ip} ${JSON.stringify(req.body ?? '')}`;
         },
       },
     }),

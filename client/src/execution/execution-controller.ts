@@ -1,10 +1,15 @@
-import {Body, Controller, Post, UseGuards} from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+} from '@nestjs/common';
 import {ExecutionService} from '@/execution/execution.service';
-import {RoleGuard} from '@/auth/roles.guard';
-import {KillExeRequest, LaunchExeRequest} from '@/execution/execution-dto';
+import {
+  KillExeRequest,
+  LaunchExeRequest,
+} from '@/execution/execution-dto';
 
 @Controller()
-@UseGuards(RoleGuard(['execution']))
 export class ExecutionController {
   constructor(
     private readonly executionService: ExecutionService,

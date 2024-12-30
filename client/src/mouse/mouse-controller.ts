@@ -1,9 +1,11 @@
-import {Body, Controller, Post, UseGuards} from '@nestjs/common';
-import {RoleGuard} from '@/auth/roles.guard';
+import {
+  Body,
+  Controller,
+  Post,
+} from '@nestjs/common';
 import {MouseClickRequest} from '@/mouse/mouse-dto';
 import {MouseService} from '@/mouse/mouse-service';
 
-@UseGuards(RoleGuard(['mouse']))
 @Controller()
 export class MouseController {
   constructor(

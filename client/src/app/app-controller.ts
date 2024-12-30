@@ -1,7 +1,8 @@
-import {Controller, Get, UseGuards} from '@nestjs/common';
-import {RoleGuard} from '@/auth/roles.guard';
+import {
+  Controller,
+  Get,
+} from '@nestjs/common';
 
-@UseGuards(RoleGuard(['reader']))
 @Controller()
 export class AppController {
   @Get('ping')
