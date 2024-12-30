@@ -21,9 +21,9 @@ async function bootstrap(): Promise<void> {
       rejectUnauthorized: true,
     },
   });
-  // app.useGlobalPipes(new ValidationPipe());
-  // app.useLogger(app.get(Logger));
-  // await app.listen(5000);
+  app.useGlobalPipes(new ValidationPipe());
+  app.useLogger(app.get(Logger));
+  await app.listen(5000);
 }
 
 bootstrap().catch((e: unknown) => {

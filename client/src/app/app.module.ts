@@ -4,7 +4,7 @@ import {MtlsModule} from '@/mtls/mtls.module';
 import {KeyboardModule} from '@/keyboard/keyboard-module';
 import {ExecutionModule} from '@/execution/execution-module';
 import {MouseModule} from '@/mouse/mouse-module';
-import {CustomLoggerModule} from '@/logger/custom-logger-module';
+import {LoggerModule} from 'nestjs-pino';
 
 @Module({
   imports: [
@@ -12,7 +12,45 @@ import {CustomLoggerModule} from '@/logger/custom-logger-module';
     KeyboardModule,
     ExecutionModule,
     MouseModule,
-    CustomLoggerModule,
+    LoggerModule.forRoot({
+      pinoHttp: {
+        level: 'trace', // Global log level
+        transport: {
+          target: 'pino-pretty',
+          options: {
+            singleLine: true,
+            colorize: true,
+            levelFirst: false,
+            messageFormat: '\u001b[36m{reqId}\u001b[39m: \u001b[38;5;237m{msg}\u001b[39m',
+            translateTime: 'HH:MM:ss.l',
+            ignore: 'pid,hostname,context,req,res,responseTime,reqId',
+            destination: 1, // stdout
+          },
+        },
+        genReqId: (req) => {
+          req.id = Math.random().toString(36).substring(2, 6); // Random 4-char ID
+          return req.id;
+        },
+        customProps: (req) => ({
+          reqId: req.id ?? '   ',
+        }),
+
+        // Custom format for success messages
+        customSuccessMessage: (req: any, res: any) => {
+          if (res.statusCode >= 400) {
+            return `\u001b[33m${req.method} \u001b[35m${req.url} \u001b[31m${res.statusCode}` +
+              ` \u001b[38;5;237m${req.ip} ${JSON.stringify(req.body ?? '')}`;
+          }
+          return `\u001b[33m${req.method} \u001b[35m${req.url} \u001b[32m${res.statusCode}` +
+            ` \u001b[38;5;237m${req.ip} ${JSON.stringify(req.body ?? '')}`;
+        },
+
+        customErrorMessage: (req: any, res: any) => {
+          return `\u001b[33m${req.method} \u001b[35m${req.url} \u001b[31m${res.statusCode}` +
+            ` \u001b[38;5;237m${req.ip} ${JSON.stringify(req.body ?? '')}`;
+        },
+      },
+    }),
   ],
   controllers: [AppController],
   providers: [],

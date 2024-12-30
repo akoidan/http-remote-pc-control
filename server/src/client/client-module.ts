@@ -1,19 +1,20 @@
-import {Logger, Module} from '@nestjs/common';
+import {
+  Logger,
+  Module,
+} from '@nestjs/common';
 import {FetchClient} from '@/client/http-client';
 import {ClientService} from '@/client/client-service';
-import {JwtService} from '@/client/jwt-service';
-import {KeyService} from '@/client/keys-service';
+import {CertService} from '@/client/cert-service';
 
 
 @Module({
   providers: [
     Logger,
-    KeyService,
-    JwtService,
+    CertService,
     {
       provide: FetchClient,
-      useFactory: (logger: Logger, jwt: JwtService): FetchClient => new FetchClient(logger, jwt, 'http', 5000),
-      inject: [Logger, JwtService],
+      useFactory: async(logger: Logger, cert: CertService): Promise<FetchClient> => new FetchClient(logger, await cert.getHttpAgent(), 'https', 5000),
+      inject: [Logger, CertService],
     },
     ClientService,
   ],

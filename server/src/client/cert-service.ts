@@ -1,19 +1,18 @@
-import {Injectable} from '@nestjs/common';
 import {
-  readFile,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
+import {
   access,
+  readFile,
 } from 'fs/promises';
 import * as path from 'path';
-import {
-  InjectPinoLogger,
-  PinoLogger,
-} from 'nestjs-pino';
+import {Agent} from 'https';
 
 @Injectable()
 export class CertService {
   constructor(
-    @InjectPinoLogger(CertService.name)
-    private readonly logger: PinoLogger,
+    private readonly logger: Logger,
   ) {
   }
 
@@ -44,19 +43,31 @@ export class CertService {
     }
   }
 
+  public async getHttpAgent(): Promise<Agent> {
+    await this.checkFilesExist();
+    const [cert, key, ca] = await Promise.all([this.getCert(), this.getPrivateKey(), this.getCaCert()]);
+    return new Agent({
+      cert,
+      key,
+      ca,
+      rejectUnauthorized: true,
+      checkServerIdentity: () => undefined,
+    });
+  }
+
 
   public async getPrivateKey(): Promise<string> {
-    this.logger.info(`Loading private key from ${this.privateKeyPath}`);
+    this.logger.log(`Loading private key from ${this.privateKeyPath}`);
     return readFile(this.privateKeyPath, 'utf8');
   }
 
   public async getCert(): Promise<string> {
-    this.logger.info(`Loading private key from ${this.certificatePath}`);
+    this.logger.log(`Loading private key from ${this.certificatePath}`);
     return readFile(this.certificatePath, 'utf8');
   }
 
   public async getCaCert(): Promise<string> {
-    this.logger.info(`Loading private key from ${this.caCertificatePath}`);
+    this.logger.log(`Loading private key from ${this.caCertificatePath}`);
     return readFile(this.caCertificatePath, 'utf8');
   }
 }
