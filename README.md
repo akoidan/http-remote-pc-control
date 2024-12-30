@@ -18,7 +18,7 @@ E.g. you press `alt+1` on your PC and remote one send a keyStroke `F1`.
 The client server app uses JWT authorization. Clients verify that requests were signed with matched private key to a hardcoded matched public key in the client exe bytecode.
 Keys are generated and located here:
 - openssl genpkey -algorithm RSA -out [private_key.pem](./server/src/client/private_key.pem)
-- openssl rsa -pubout -in private_key.pem -out [public_key.pem](./client/src/auth/public_key.pem)
+- openssl rsa -pubout -in private_key.pem -out [public_key.pem](client/src/mtls/public_key.pem)
 
 You can replace the key when you build the client app.
 Client apps should be available withing the address provided in config. So either all apps are within same network. Or clients have public static IP address.
