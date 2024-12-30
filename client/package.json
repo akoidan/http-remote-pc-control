@@ -6,7 +6,7 @@
   "author": "akoidan <deathangel908@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "start": "node -r tsconfig-paths/register -r ts-node/register src/main.ts",
+    "start": "rm -rf ./dist/ && node -r tsconfig-paths/register -r ts-node/register src/main.ts",
     "prebuild": "rm -rf ./dist/ && nest build",
     "build": "pkg . --targets win --output app.exe",
     "wine": "wine app.exe",
