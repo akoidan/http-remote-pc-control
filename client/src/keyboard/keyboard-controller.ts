@@ -1,5 +1,12 @@
-import {Body, Controller, Post, UseGuards} from '@nestjs/common';
-import {KeyPressRequest, TypeTextRequest} from '@/keyboard/keyboard-dto';
+import {
+  Body,
+  Controller,
+  Post,
+} from '@nestjs/common';
+import {
+  KeyPressRequest,
+  TypeTextRequest,
+} from '@/keyboard/keyboard-dto';
 import {KeyboardService} from '@/keyboard/keyboard-service';
 
 @Controller()

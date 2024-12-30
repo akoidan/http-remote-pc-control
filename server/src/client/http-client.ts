@@ -85,10 +85,10 @@ export class FetchClient {
           res.on('data', (chunk) => (data += chunk));
           res.on('end', () => {
             clearTimeout(timeoutId);
-            if (!(res.statusCode! < 400)) {
-              reject(Error(`status code ${res.statusCode} ${data}`));
-            } else {
+            if (res.statusCode! < 400) {
               resolve(data);
+            } else {
+              reject(Error(`status code ${res.statusCode} ${data}`));
             }
           });
         });

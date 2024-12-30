@@ -3,7 +3,10 @@ import {
   Key,
   keyboard,
 } from '@nut-tree-fork/nut-js';
-import {PinoLogger, InjectPinoLogger} from 'nestjs-pino';
+import {
+  InjectPinoLogger,
+  PinoLogger,
+} from 'nestjs-pino';
 import {invertedMap} from '@/keyboard/keyboard-dto';
 
 @Injectable()

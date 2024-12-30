@@ -1,7 +1,7 @@
 import {Injectable} from '@nestjs/common';
 import {
-  readFile,
   access,
+  readFile,
 } from 'fs/promises';
 import * as path from 'path';
 import {
