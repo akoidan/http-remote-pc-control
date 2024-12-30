@@ -12,7 +12,7 @@ export class MouseService {
   }
 
   async click(x: number, y: number): Promise<void> {
-    this.logger.info(`Left click: \u001b[35m[${x},${y}]\u001b`);
+    this.logger.info(`Left click: \u001b[35m[${x},${y}]`);
     await mouse.setPosition(new Point(x,y));
     await mouse.leftClick();
   }

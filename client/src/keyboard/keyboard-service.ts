@@ -16,12 +16,12 @@ export class KeyboardService {
 
   async sendKey(key: string): Promise<void> {
     const keymap: Key = invertedMap.get(key)!;
-    this.logger.info(`Key: \u001b[35m${key}\u001b`);
+    this.logger.info(`KeyPress: \u001b[35m${key}`);
     await keyboard.type(keymap);
   }
 
   async type(text: string): Promise<void> {
-    this.logger.info(`Type: \u001b[35m${text}\u001b`);
+    this.logger.info(`Type: \u001b[35m${text}`);
     await keyboard.type(text);
   }
 }
