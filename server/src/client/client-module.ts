@@ -13,7 +13,7 @@ import {CertService} from '@/client/cert-service';
     CertService,
     {
       provide: FetchClient,
-      useFactory: async(logger: Logger, cert: CertService): Promise<FetchClient> => new FetchClient(logger, await cert.getHttpAgent(), 'https', 5000),
+      useFactory: async(logger: Logger, cert: CertService): Promise<FetchClient> => new FetchClient(logger, await cert.getHttpAgent(), 'https:', 5000),
       inject: [Logger, CertService],
     },
     ClientService,

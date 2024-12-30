@@ -7,10 +7,6 @@ import {
   request,
 } from 'https';
 
-interface FetchError extends Error {
-  name: string;
-}
-
 @Injectable()
 export class FetchClient {
   constructor(
@@ -35,6 +31,7 @@ export class FetchClient {
           agent: this.agent,
           port: this.port,
           host: client,
+          protocol: this.protocol,
           path: url,
           signal: controller.signal,
           headers: {
@@ -60,9 +57,9 @@ export class FetchClient {
         req.write(payloadstr);
         req.end();
       });
-      this.logger.debug(`POST:OK ${client}/${url} ${payloadstr}: ${result}`);
+      this.logger.debug(`POST:OK ${client}${url} ${payloadstr}: ${result}`);
     } catch (error: unknown) {
-      throw new Error(`POST:FAIL ${this.protocol}://${client}:${this.port}/${url} ${(error as any).message}`);
+      throw new Error(`POST:FAIL ${this.protocol}//${client}:${this.port}${url} ${(error as any).message}`);
     }
   }
 
@@ -78,10 +75,11 @@ export class FetchClient {
         const req = request({
           agent: this.agent,
           port: this.port,
+          protocol: this.protocol,
           host: client,
           path: url,
           signal: controller.signal,
-          method: 'POST',
+          method: 'GET',
         }, (res) => {
           let data = '';
           res.on('data', (chunk) => (data += chunk));
@@ -93,17 +91,17 @@ export class FetchClient {
               resolve(data);
             }
           });
-          res.on('error', (e) => {
-            clearTimeout(timeoutId);
-            reject(e);
-          });
+        });
+        req.on('error', (e) => {
+          clearTimeout(timeoutId);
+          reject(e);
         });
         req.end();
       });
 
-      this.logger.debug(`GET:OK ${this.protocol}://${client}:${this.port}/${url} ${result}`);
+      this.logger.debug(`GET:OK ${this.protocol}//${client}:${this.port}${url} ${result}`);
     } catch (error: unknown) {
-      throw new Error(`GET:FAIL ${this.protocol}://${client}:${this.port}/${url} ${(error as any).message}`);
+      throw new Error(`GET:FAIL ${this.protocol}//${client}:${this.port}${url} ${(error as any).message}`);
     }
   }
 }

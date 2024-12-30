@@ -14,7 +14,7 @@ import {LoggerModule} from 'nestjs-pino';
     MouseModule,
     LoggerModule.forRoot({
       pinoHttp: {
-        level: 'trace', // Global log level
+        level: 'debug', // Global log level
         transport: {
           target: 'pino-pretty',
           options: {
