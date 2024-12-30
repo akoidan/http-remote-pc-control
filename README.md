@@ -19,6 +19,7 @@ It will generate:
  - server and client certificate that is signed with CA private key and put it into  ./server/certs/cert.pem and ./server/certs/cert.pem
 
 **If you don't care about security** you can grab certificates directories from [poc/mtls/client](/pocs/mtls/client/certs) and [poc/mtls/server](/pocs/mtls/server/certs).
+
 ### Client
  - Download client you want to receive shorcuts [releases](https://github.com/akoidan/l2/releases)
  - Copy ./client/certs directory into a current directory. So pwd contains `certs` directory
