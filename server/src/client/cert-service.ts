@@ -16,16 +16,20 @@ export class CertService {
   ) {
   }
 
+  private get certDir(): string {
+    return path.join(process.execPath.endsWith('node') ? process.cwd() : path.dirname(process.execPath), 'certs');
+  }
+
   private get privateKeyPath(): string {
-    return path.join(process.cwd(), 'certs', 'key.pem');
+    return path.join(this.certDir, 'key.pem');
   }
 
   private get certificatePath(): string {
-    return path.join(process.cwd(), 'certs', 'cert.pem');
+    return path.join(this.certDir, 'cert.pem');
   }
 
   private get caCertificatePath(): string {
-    return path.join(process.cwd(), 'certs', 'ca-cert.pem');
+    return path.join(this.certDir, 'ca-cert.pem');
   }
 
   public async checkFilesExist(): Promise<void> {

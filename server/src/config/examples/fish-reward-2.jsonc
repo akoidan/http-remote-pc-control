@@ -12,6 +12,11 @@
       "commands": [
         {
           "destination": "{{destination}}",
+          "kill": "L2.exe",
+          "delay": 2000
+        },
+        {
+          "destination": "{{destination}}",
           "launch": "C:\\l2dion\\system\\L2.exe",
           "delay": "{{delay}}"
         },
@@ -95,6 +100,16 @@
               "destination": "desktop",
               "login": "deathangel6",
               "delay": 16000
+            }
+          }
+        ],
+        [
+          {
+            "macro": "launch",
+            "variables": {
+              "destination": "lenovo",
+              "login": "deathangelr",
+              "delay": 18000
             }
           }
         ]
