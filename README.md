@@ -21,16 +21,20 @@ It will generate:
 **If you don't care about security** you can grab certificates directories from [poc/mtls/client](/pocs/mtls/client/certs) and [poc/mtls/server](/pocs/mtls/server/certs).
 
 ### Client
- - Download client you want to receive shorcuts [releases](https://github.com/akoidan/l2/releases)
+ - Download client you want to receive shorcuts [releases](https://github.com/akoidan/l2/releases).
+ - If windows antivirus deletes a file, you can allow it in **Virus & threat protection** -> **Protection History** -> Expaned recently blocked threat and allow it
  - Copy ./client/certs directory into a current directory. So pwd contains `certs` directory
- - Run exe files as Administrator. If Windows antivirus complains about it, add it to exceptions. If it crashes run it from cmd to get the stdout 
+ - Run exe files as Administrator. 
+ - If windows antivirus complains about security Open **Virus & threat protection** -> **Virus & threat protection settings** -> **Exclusions Add or remove exclusions** -> **Add an exclusion**. 
+ - If it crashes , open powershell and run exe file from it, it's a CLI app.
  
 ### Server
  - Download server you want to send shortcuts [releases](https://github.com/akoidan/l2/releases)
  - Unpack archive
  - Create a config file inside **/resources/app/src/config/config.jsonc**. You can find examples [here](server/src/config/examples)
  - Copy ./server/certs directory into a current directory. So pwd contains `certs` directory
- - run **l2.exe** as regular user. If it crasher, run it from cmd to get output
+ - run **l2.exe** as regular user.
+ - If it crasher, run it from cmd to get output
 
 ## Security
 The client server app both use mutual TLS authentication. 
