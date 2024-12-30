@@ -3,9 +3,9 @@ const fs = require('fs');
 
 // Load the client certificate, key, and CA
 const httpsAgent = new https.Agent({
-  cert: fs.readFileSync('client-cert.pem'), // Client certificate
-  key: fs.readFileSync('client-key.pem'), // Client private key
-  ca: fs.readFileSync('ca-cert.pem'), // CA certificate for verifying the server
+  cert: fs.readFileSync('../client/certs/cert.pem'), // Client certificate
+  key: fs.readFileSync('../client/certs/key.pem'), // Client private key
+  ca: fs.readFileSync('../client/certs/ca-cert.pem'), // CA certificate for verifying the server
   rejectUnauthorized: true, // Reject unauthorized servers
   checkServerIdentity: () => undefined
 });
