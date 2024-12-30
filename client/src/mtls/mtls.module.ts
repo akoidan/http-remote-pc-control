@@ -13,7 +13,7 @@ import {LoggerModule} from 'nestjs-pino';
             singleLine: true,
             colorize: true,
             levelFirst: false,
-            messageFormat: '\u001b[36m{reqId}\u001b[39m: \u001b[38;5;237m{msg}\u001b[39m',
+            messageFormat: '\u001b[36m{reqId}\u001b[39m \u001b[38;5;237m{msg}\u001b[39m',
             translateTime: 'HH:MM:ss.l',
             ignore: 'pid,hostname,context,req,res,responseTime,reqId',
             destination: 1, // stdout
