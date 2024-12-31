@@ -21,7 +21,7 @@
   },
   "combinations": [
     {
-      "receivers": [
+      "commands": [
         {
           "destination": "sags",
           "keySend": "5"
@@ -32,7 +32,7 @@
       "circular": false
     },
     {
-      "receivers": [
+      "commands": [
         {
           "destination": "sags",
           "keySend": "F5"
@@ -43,7 +43,7 @@
       "circular": true
     },
     {
-      "receivers": [
+      "commands": [
         {
           "destination": "sags",
           "keySend": "F4"
@@ -54,7 +54,7 @@
       "circular": false
     },
     {
-      "receivers": [
+      "commands": [
         {
           "destination": "bdsws",
           "keySend": "F6"
@@ -73,7 +73,7 @@
       "circular": false
     },
     {
-      "receivers": [
+      "commands": [
         {
           "destination": "sags",
           "keySend": "F9"

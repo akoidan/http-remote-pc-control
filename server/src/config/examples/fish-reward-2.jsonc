@@ -62,7 +62,7 @@
   },
   "combinations": [
     {
-      "receiversMulti": [
+      "threads": [
         [
           {
             "macro": "launch",

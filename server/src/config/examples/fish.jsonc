@@ -12,6 +12,11 @@
       "commands": [
         {
           "destination": "{{destination}}",
+          "kill": "L2.exe",
+          "delay": 2000
+        },
+        {
+          "destination": "{{destination}}",
           "launch": "C:\\l2dion\\system\\L2.exe",
           "delay": "{{delay}}"
         },
@@ -57,7 +62,7 @@
   },
   "combinations": [
     {
-      "receiversMulti": [
+      "threads": [
         [
           {
             "macro": "launch",

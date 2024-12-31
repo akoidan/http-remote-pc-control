@@ -84,7 +84,7 @@
   },
   "combinations": [
     {
-      "receiversMulti": [
+      "threads": [
         [
           {
             "destination": "sws",
@@ -174,7 +174,7 @@
       "circular": false
     },
     {
-      "receivers": [
+      "commands": [
         {
           "destination": "bd",
           "keySend": "-"
@@ -197,7 +197,7 @@
       "circular": false
     },
     {
-      "receivers": [
+      "commands": [
         {
           "destination": "ee",
           "keySend": "7"
@@ -212,7 +212,7 @@
       "circular": false
     },
     {
-      "receivers": [
+      "commands": [
         {
           "destination": "sws",
           "keySend": "5"
@@ -223,7 +223,7 @@
       "circular": false
     },
     {
-      "receivers": [
+      "commands": [
         {
           "destination": "se",
           "keySend": "f3"
@@ -238,7 +238,7 @@
       "circular": true
     },
     {
-      "receivers": [
+      "commands": [
         {
           "destination": "all",
           "keySend": "f6"
@@ -249,7 +249,7 @@
       "circular": false
     },
     {
-      "receivers": [
+      "commands": [
         {
           "destination": "ss",
           "keySend": "1"
@@ -260,7 +260,7 @@
       "circular": false
     },
     {
-      "receivers": [
+      "commands": [
         {
           "destination": "ss",
           "keySend": "2"
@@ -271,7 +271,7 @@
       "circular": false
     },
     {
-      "receivers": [
+      "commands": [
         {
           "destination": "ss",
           "keySend": "3"
@@ -282,7 +282,7 @@
       "circular": false
     },
     {
-      "receivers": [
+      "commands": [
         {
           "destination": "ss",
           "keySend": "4"
@@ -293,7 +293,7 @@
       "circular": false
     },
     {
-      "receivers": [
+      "commands": [
         {
           "destination": "bd",
           "keySend": "4"
@@ -308,7 +308,7 @@
       "circular": false
     },
     {
-      "receivers": [
+      "commands": [
         {
           "destination": "ee",
           "keySend": "5"
@@ -319,7 +319,7 @@
       "circular": false
     },
     {
-      "receivers": [
+      "commands": [
         {
           "destination": "ee",
           "keySend": "1"
@@ -334,7 +334,7 @@
       "circular": false
     },
     {
-      "receivers": [
+      "commands": [
         {
           "destination": "ee",
           "keySend": "2"
@@ -349,7 +349,7 @@
       "circular": true
     },
     {
-      "receivers": [
+      "commands": [
         {
           "destination": "ee",
           "keySend": "3"
@@ -364,7 +364,7 @@
       "circular": false
     },
     {
-      "receivers": [
+      "commands": [
         {
           "destination": "ee",
           "keySend": "4"
@@ -379,7 +379,7 @@
       "circular": false
     },
     {
-      "receiversMulti": [
+      "threads": [
         [
           {
             "destination": "se",

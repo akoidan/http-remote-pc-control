@@ -4,7 +4,7 @@
   },
   "combinations": [
     {
-      "receivers": [
+      "commands": [
         {
           "destination": "tyrs",
           "keySend": "F5"
@@ -14,7 +14,7 @@
       "circular": true
     },
     {
-      "receivers": [
+      "commands": [
         {
           "destination": "tyrs",
           "keySend": "F4"
@@ -24,7 +24,7 @@
       "circular": false
     },
     {
-      "receivers": [
+      "commands": [
         {
           "destination": "tyrs",
           "keySend": "F3"
@@ -34,7 +34,7 @@
       "circular": false
     },
     {
-      "receivers": [
+      "commands": [
         {
           "destination": "tyrs",
           "keySend": "F7"
@@ -44,7 +44,7 @@
       "circular": false
     },
     {
-      "receivers": [
+      "commands": [
         {
           "destination": "tyrs",
           "keySend": "F6"
@@ -54,7 +54,7 @@
       "circular": false
     },
     {
-      "receivers": [
+      "commands": [
         {
           "destination": "tyrs",
           "keySend": "F9"

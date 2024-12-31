@@ -82,51 +82,33 @@ export class LogicService {
     return result as T;
   }
 
-  replaceGlobalVars<T extends object>(obj: T): T {
-    const result: Partial<T> = {};
-    for (const [key, value] of Object.entries(obj) as [keyof T, T[keyof T]][]) {
-      if (typeof value === 'string' && value.startsWith('{{') && value.endsWith('}}')) {
-        const globalVars = this.configService.getGlobalVars();
-        const varName = value.slice(2, -2);
-        if (globalVars[varName]) {
-          result[key] = globalVars[varName] as T[keyof T];
-        } else {
-          throw Error(`Unknown environment variable ${value}`);
-        }
-      } else {
-        result[key] = value;
-      }
-    }
-    return result as T;
-  }
-
   async processEvent(comb: EventData): Promise<void> {
     this.logger.log(`${comb.shortCut} pressed`);
-    if (comb.receivers) {
-      await this.processReceiverEvent(comb, comb.receivers);
-    } else if (comb.receiversMulti) {
-      this.logger.log(`${comb.shortCut} processing ${comb.receiversMulti.length} in parallel`);
-      await Promise.all(comb.receiversMulti.map(async receiver => this.processReceiverEvent(comb, receiver)));
+    if (comb.commands) {
+      await this.processReceiverEvent(comb, comb.commands);
+    } else if (comb.threads) {
+      this.logger.log(`${comb.shortCut} processing ${comb.threads.length} in parallel`);
+      await Promise.all(comb.threads.map(async receiver => this.processReceiverEvent(comb, receiver)));
     } else {
       throw Error('Unknown event type');
     }
   }
 
   private async processReceiverEvent(
-    comb: Omit<EventData, 'receiversMulti' | 'receivers'>,
+    comb: Omit<EventData, 'threads' | 'commands'>,
     inputReceivers: ReceiverAndMacro[]
   ): Promise<void> {
-    const receivers = this.removeMacroAndAliases(inputReceivers, comb);
+    const commands = this.removeMacroAndAliases(inputReceivers, comb);
 
-    if (comb.circular && receivers.length > 0) {
-      await this.runCommand(receivers[this.activeFighterIndex]);
-      if (this.activeFighterIndex >= receivers.length - 1) {
+    if (comb.circular && commands.length > 0) {
+      await this.runCommand(commands[this.activeFighterIndex]);
+      if (this.activeFighterIndex >= commands.length - 1) {
         this.activeFighterIndex = 0;
-      } else if (this.activeFighterIndex + 1 <= receivers.length - 1) {
+      } else if (this.activeFighterIndex + 1 <= commands.length - 1) {
         this.activeFighterIndex++;
       }
     } else {
-      for (const receiver of receivers) {
+      for (const receiver of commands) {
         // eslint-disable-next-line no-await-in-loop
         await this.runCommand(receiver);
         // eslint-disable-next-line no-await-in-loop
@@ -135,7 +117,7 @@ export class LogicService {
     }
   }
 
-  private removeMacroAndAliases(inputReceivers: ReceiverAndMacro[], comb: Omit<EventData, 'receiversMulti' | 'receivers'>): Receiver[] {
+  private removeMacroAndAliases(inputReceivers: ReceiverAndMacro[], comb: Omit<EventData, 'threads' | 'commands'>): Receiver[] {
     let processReceivers: Receiver[] = [];
     for (const inpRec of inputReceivers) {
       if ((inpRec as ReceiveMacro).macro) {
@@ -147,34 +129,33 @@ export class LogicService {
         processReceivers.push(inpRec as Receiver);
       }
     }
-    processReceivers = processReceivers.map(rec => this.replaceGlobalVars(rec));
 
-    const receivers = this.constructReceivers(processReceivers);
+    const commands = this.constructReceivers(processReceivers);
     if (comb.shuffle) {
-      this.shuffle(receivers);
+      this.shuffle(commands);
     }
-    return receivers;
+    return commands;
   }
 
   private constructReceivers(inputReceivers: Receiver[]): Receiver[] {
-    const receivers: Receiver[] = [];
+    const commands: Receiver[] = [];
     inputReceivers.forEach(rec => {
       if (this.configService.getIps()[rec.destination]) {
-        receivers.push({...rec, destination: rec.destination});
+        commands.push({...rec, destination: rec.destination});
         return;
       }
       const destination = this.configService.getAliases()[rec.destination];
       if (typeof destination === 'string') {
-        receivers.push({...rec, destination});
+        commands.push({...rec, destination});
       } else if (Array.isArray(destination)) {
         destination.forEach(dest => {
-          receivers.push({...rec, destination: dest});
+          commands.push({...rec, destination: dest});
         });
       } else {
         throw Error(`Unknown destination type ${rec.destination}`);
       }
     });
-    return receivers;
+    return commands;
   }
 
   private async awaitDelay(combDelay: undefined | number, receiverDelay: undefined | number): Promise<void> {
