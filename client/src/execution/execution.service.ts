@@ -18,9 +18,9 @@ export class ExecutionService {
   ) {
   }
 
-  launchExe(pathToExe: string): void {
+  launchExe(pathToExe: string, args: string[]): void {
     this.logger.info(`Launching ${pathToExe}`);
-    const gameProcess = spawn(pathToExe, [], {
+    const gameProcess = spawn(pathToExe, args, {
       detached: true, // Run independently from parent process
       stdio: 'ignore', // Ignore console output
     });

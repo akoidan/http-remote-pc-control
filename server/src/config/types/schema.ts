@@ -4,7 +4,7 @@ import {
   ZodIssueCode,
 } from 'zod';
 import {
-  type ReceiveMacro,
+  type MacroCommand,
   commandOrMacroSchema,
   commandSchema,
   keyPressCommandSchema,
@@ -14,7 +14,7 @@ import {
   mouseClickCommandSchema,
   variableSchema,
   killExeCommandSchema,
-  type Receiver,
+  type Command,
 } from '@/config/types/commands';
 
 
@@ -103,29 +103,29 @@ const aARootSchema = z.object({
   data.combinations.forEach((value, combId) => {
     const allReceivers = value.commands ?? value.threads!.flat();
     allReceivers.forEach((v, receiverId) => {
-      if (!(v as ReceiveMacro).macro && !alisesKeys.has((v as Receiver).destination) && !data.ips[(v as Receiver).destination]) {
+      if (!(v as MacroCommand).macro && !alisesKeys.has((v as Command).destination) && !data.ips[(v as Command).destination]) {
         const allOptions = JSON.stringify([...Array.from(alisesKeys), ...Array.from(ipsKeys)]);
         ctx.addIssue({
           code: ZodIssueCode.custom,
           path: [`combinations[${combId}]`, `commands[${receiverId}]`, 'destination'],
-          message: `"${(v as Receiver).destination}" is not a valid destination, possible options are ${allOptions}`,
+          message: `"${(v as Command).destination}" is not a valid destination, possible options are ${allOptions}`,
         });
       }
-      if ((v as ReceiveMacro).macro) {
-        if (!data.macros?.[(v as ReceiveMacro).macro]) {
+      if ((v as MacroCommand).macro) {
+        if (!data.macros?.[(v as MacroCommand).macro]) {
           ctx.addIssue({
             code: ZodIssueCode.custom,
             path: [`combinations[${combId}]`, `commands[${receiverId}]`, 'destination'],
-            message: `Macro ${(v as ReceiveMacro).macro} doesn't exist`,
+            message: `Macro ${(v as MacroCommand).macro} doesn't exist`,
           });
-        } else if ((data.macros[(v as ReceiveMacro).macro]?.variables?.length ?? 0) > 0) {
-          const macroVars = data.macros[(v as ReceiveMacro).macro].variables!.sort();
-          const calledVars = Object.keys((v as ReceiveMacro).variables ?? {})!.sort();
+        } else if ((data.macros[(v as MacroCommand).macro]?.variables?.length ?? 0) > 0) {
+          const macroVars = data.macros[(v as MacroCommand).macro].variables!.sort();
+          const calledVars = Object.keys((v as MacroCommand).variables ?? {})!.sort();
           if (JSON.stringify(macroVars) !== JSON.stringify(calledVars)) {
             ctx.addIssue({
               code: ZodIssueCode.custom,
               path: [`combinations[${combId}]`, `commands[${receiverId}]`, 'variables'],
-              message: `Macro ${(v as ReceiveMacro).macro} variables missmatch ${JSON.stringify(macroVars)} ${JSON.stringify(calledVars)}`,
+              message: `Macro ${(v as MacroCommand).macro} variables missmatch ${JSON.stringify(macroVars)} ${JSON.stringify(calledVars)}`,
             });
           }
         }

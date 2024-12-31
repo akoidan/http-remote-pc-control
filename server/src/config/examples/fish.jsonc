@@ -98,7 +98,7 @@
             "macro": "launch",
             "variables": {
               "destination": "lenovo",
-              "login": "deathangell",
+              "login": "deathangelr",
               "delay": 16000
             }
           }
@@ -108,7 +108,7 @@
             "macro": "launch",
             "variables": {
               "destination": "desktop",
-              "login": "deathangelm",
+              "login": "deathangels",
               "delay": 18000
             }
           }

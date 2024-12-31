@@ -18,7 +18,7 @@ export class ExecutionController {
 
   @Post('launch-exe')
   lunchExe(@Body() body: LaunchExeRequest): void {
-    this.executionService.launchExe(body.path);
+    this.executionService.launchExe(body.path, body.arguments);
   }
 
   @Post('kill-exe')

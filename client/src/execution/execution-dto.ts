@@ -1,8 +1,15 @@
-import {IsString} from 'class-validator';
+import {
+  IsArray,
+  IsString,
+} from 'class-validator';
 
 class LaunchExeRequest {
   @IsString()
   public path: string;
+
+  @IsArray()
+  @IsString({each: true})
+  public arguments: string[];
 }
 
 class KillExeRequest {
@@ -10,4 +17,7 @@ class KillExeRequest {
   public name: string;
 }
 
-export {KillExeRequest, LaunchExeRequest};
+export {
+  KillExeRequest,
+  LaunchExeRequest,
+};

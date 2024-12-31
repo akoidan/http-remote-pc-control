@@ -1,15 +1,15 @@
 /* eslint-disable max-lines */
 import {
-  ReceiveExecute,
-  ReceiveMacro,
-  ReceiverBase,
-  ReceiverMouse,
-  ReceiverSimple,
-  ReceiveTypeText,
-  Receiver,
-  ReceiverAndMacro,
-  ReceiverKill,
-  KeySend,
+  ExecuteCommand,
+  MacroCommand,
+  BaseCommand,
+  MouseClickCommand,
+  KeyPressCommand,
+  TypeTextCommand,
+  Command,
+  CommandOrMacro,
+  KillCommand,
+  Key,
 } from '@/config/types/commands';
 import {
   EventData,
@@ -40,26 +40,27 @@ export class LogicService {
     );
   }
 
-  async runCommand(currRec: Receiver): Promise<void> {
-    const ip = this.configService.getIps()[(currRec as ReceiverBase).destination];
-    if ((currRec as ReceiverSimple).keySend) {
-      await this.clientService.keyPress(ip, {key: (currRec as ReceiverSimple).keySend as KeySend});
-    } else if ((currRec as ReceiverMouse).mouseMoveX) {
+  async runCommand(currRec: Command): Promise<void> {
+    const ip = this.configService.getIps()[(currRec as BaseCommand).destination];
+    if ((currRec as KeyPressCommand).keySend) {
+      await this.clientService.keyPress(ip, {key: (currRec as KeyPressCommand).keySend as Key});
+    } else if ((currRec as MouseClickCommand).mouseMoveX) {
       await this.clientService.mouseClick(ip, {
-        x: (currRec as ReceiverMouse).mouseMoveX,
-        y: (currRec as ReceiverMouse).mouseMoveY,
+        x: (currRec as MouseClickCommand).mouseMoveX as number,
+        y: (currRec as MouseClickCommand).mouseMoveY as number,
       });
-    } else if ((currRec as ReceiveExecute).launch) {
+    } else if ((currRec as ExecuteCommand).launch) {
       await this.clientService.launchExe(ip, {
-        path: (currRec as ReceiveExecute).launch,
+        path: (currRec as ExecuteCommand).launch,
+        arguments: (currRec as ExecuteCommand).arguments ?? [],
       });
-    } else if ((currRec as ReceiveTypeText).typeText) {
+    } else if ((currRec as TypeTextCommand).typeText) {
       await this.clientService.typeText(ip, {
-        text: (currRec as ReceiveTypeText).typeText,
+        text: (currRec as TypeTextCommand).typeText,
       });
-    }  else if ((currRec as ReceiverKill).kill) {
+    }  else if ((currRec as KillCommand).kill) {
       await this.clientService.killExe(ip, {
-        name: (currRec as ReceiverKill).kill,
+        name: (currRec as KillCommand).kill,
       });
     } else {
       throw Error(`Unknown receiver type ${JSON.stringify(currRec)}`);
@@ -82,6 +83,24 @@ export class LogicService {
     return result as T;
   }
 
+    replaceGlobalVars<T extends object>(obj: T): T {
+    const result: Partial<T> = {};
+    for (const [key, value] of Object.entries(obj) as [keyof T, T[keyof T]][]) {
+      if (typeof value === 'string' && value.startsWith('{{') && value.endsWith('}}')) {
+        const globalVars = this.configService.getGlobalVars();
+        const varName = value.slice(2, -2);
+        if (globalVars[varName]) {
+          result[key] = globalVars[varName] as T[keyof T];
+        } else {
+          throw Error(`Unknown environment variable ${value}`);
+        }
+      } else {
+        result[key] = value;
+      }
+    }
+    return result as T;
+  }
+
   async processEvent(comb: EventData): Promise<void> {
     this.logger.log(`${comb.shortCut} pressed`);
     if (comb.commands) {
@@ -96,7 +115,7 @@ export class LogicService {
 
   private async processReceiverEvent(
     comb: Omit<EventData, 'threads' | 'commands'>,
-    inputReceivers: ReceiverAndMacro[]
+    inputReceivers: CommandOrMacro[]
   ): Promise<void> {
     const commands = this.removeMacroAndAliases(inputReceivers, comb);
 
@@ -117,18 +136,19 @@ export class LogicService {
     }
   }
 
-  private removeMacroAndAliases(inputReceivers: ReceiverAndMacro[], comb: Omit<EventData, 'threads' | 'commands'>): Receiver[] {
-    let processReceivers: Receiver[] = [];
+  private removeMacroAndAliases(inputReceivers: CommandOrMacro[], comb: Omit<EventData, 'threads' | 'commands'>): Command[] {
+    let processReceivers: Command[] = [];
     for (const inpRec of inputReceivers) {
-      if ((inpRec as ReceiveMacro).macro) {
-        const executable = this.configService.getMacros()[(inpRec as ReceiveMacro).macro];
+      if ((inpRec as MacroCommand).macro) {
+        const executable = this.configService.getMacros()[(inpRec as MacroCommand).macro];
         for (const command of executable.commands) {
-          processReceivers.push(this.replacePlaceholders(command, (inpRec as ReceiveMacro).variables));
+          processReceivers.push(this.replacePlaceholders(command, (inpRec as MacroCommand).variables));
         }
       } else {
-        processReceivers.push(inpRec as Receiver);
+        processReceivers.push(inpRec as Command);
       }
     }
+    processReceivers = processReceivers.map(rec => this.replaceGlobalVars(rec));
 
     const commands = this.constructReceivers(processReceivers);
     if (comb.shuffle) {
@@ -137,8 +157,8 @@ export class LogicService {
     return commands;
   }
 
-  private constructReceivers(inputReceivers: Receiver[]): Receiver[] {
-    const commands: Receiver[] = [];
+  private constructReceivers(inputReceivers: Command[]): Command[] {
+    const commands: Command[] = [];
     inputReceivers.forEach(rec => {
       if (this.configService.getIps()[rec.destination]) {
         commands.push({...rec, destination: rec.destination});

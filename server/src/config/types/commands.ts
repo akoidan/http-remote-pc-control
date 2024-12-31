@@ -27,6 +27,7 @@ const keyPressCommandSchema = z.object({
 
 const launchExeCommandSchema = z.object({
   launch: z.string().describe('Full path to an executable.'),
+  arguments: z.array(z.string()).optional().describe('Full path to an executable.'),
 }).merge(baseSchema).describe('Starts a program on a remote PC.');
 
 const runMacroCommandSchema = z.object({
@@ -61,28 +62,28 @@ const commandOrMacroSchema = z.union([
   runMacroCommandSchema,
 ]).describe('A remote command or a macro name');
 
-type ReceiveTypeText = z.infer<typeof typeTextCommandSchema>
-type ReceiveMacro = z.infer<typeof runMacroCommandSchema>
-type ReceiverSimple = z.infer<typeof keyPressCommandSchema>
-type ReceiverBase = z.infer<typeof baseSchema>
-type ReceiverMouse = z.infer<typeof mouseClickCommandSchema>
-type ReceiveExecute = z.infer<typeof launchExeCommandSchema>
-type Receiver = z.infer<typeof commandSchema>
-type KeySend = z.infer<typeof keySchema>;
-type ReceiverAndMacro = z.infer<typeof commandOrMacroSchema>
-type ReceiverKill = z.infer<typeof killExeCommandSchema>
+type TypeTextCommand = z.infer<typeof typeTextCommandSchema>
+type MacroCommand = z.infer<typeof runMacroCommandSchema>
+type KeyPressCommand = z.infer<typeof keyPressCommandSchema>
+type BaseCommand = z.infer<typeof baseSchema>
+type MouseClickCommand = z.infer<typeof mouseClickCommandSchema>
+type ExecuteCommand = z.infer<typeof launchExeCommandSchema>
+type Command = z.infer<typeof commandSchema>
+type Key = z.infer<typeof keySchema>;
+type CommandOrMacro = z.infer<typeof commandOrMacroSchema>
+type KillCommand = z.infer<typeof killExeCommandSchema>
 
 export type {
-  ReceiveTypeText,
-  ReceiveMacro,
-  ReceiverSimple,
-  ReceiverBase,
-  ReceiverMouse,
-  ReceiveExecute,
-  Receiver,
-  KeySend,
-  ReceiverAndMacro,
-  ReceiverKill,
+  TypeTextCommand,
+  MacroCommand,
+  KeyPressCommand,
+  BaseCommand,
+  MouseClickCommand,
+  ExecuteCommand,
+  Command,
+  Key,
+  CommandOrMacro,
+  KillCommand,
 };
 export {
   variableSchema,

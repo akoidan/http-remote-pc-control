@@ -57,7 +57,7 @@ _Object containing the following properties:_
 
 | Property               | Description                                                   | Type                                |
 | :--------------------- | :------------------------------------------------------------ | :---------------------------------- |
-| **`kill`** (\*)        | Executable file name. E.g. Chrome.exe                         | `string`                            |
+| **`kill`** (\*)        | Executable file name. E.g. Chrome.exe                         | `string` _or_ [Variable](#variable) |
 | **`destination`** (\*) | Remote PC from ips or aliases section to send this command to | `string` _or_ [Variable](#variable) |
 | `delay`                | Delay in milliseconds before the next command.                | `number` _or_ [Variable](#variable) |
 

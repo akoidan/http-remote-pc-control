@@ -1,4 +1,4 @@
-import type {KeySend} from '@/config/types/commands';
+import type {Key} from '@/config/types/commands';
 
 interface MouseClickRequest {
   x: number;
@@ -6,11 +6,12 @@ interface MouseClickRequest {
 }
 
 interface SendKeyRequest {
-  key: KeySend;
+  key: Key;
 }
 
 interface LaunchExeRequest {
   path: string;
+  arguments: string[];
 }
 
 interface KillExeRequest {
