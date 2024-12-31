@@ -17,9 +17,13 @@ import {
 } from '@/config/types/commands';
 
 
-const ipsSchema = z.record(z.string().ip());
+const ipsSchema = z.record(z.string().ip())
+  .describe('Definition of remote PCs where keys are PC names and values are their IP addresses.' +
+    ' The IP address should be available to a remote PC.' +
+    ' You can also use https://ngrok.com/ to get public address or create VPN ');
 
-const aliasesSchema = z.record(z.union([z.array(z.string()), z.string()]))
+const aliasesSchema = z.record(z.union([z.array(z.string()), z.string()])).optional()
+
   .describe('A map for extra layer above destination property. E.g. you can define PC name in ' +
     'IPS section and instead of specifying PC name directly you can use aliases from this section that points to the PC name.');
 
@@ -54,22 +58,22 @@ const shortCutMappingSchema = z.object({
   }
 ).describe('An event schema that represent a set of commands that is executed when a cirtain shortkey is pressed');
 
-
-const macrosList = z.record(z.object({
+const macroSchema = z.object({
   commands: z.array(commandSchema).describe('Set of commands for this macro'),
   variables: z.array(z.string()).optional()
     .describe('Variables that are used in macros. If you set a option value to {{varName}}' +
       ' in this macro section. If this varName is present in this array, it will be replaced'),
-})).describe('A map of macro commands, where a key is a macro name. ');
+}).describe('A macro that can be injected instead of command. ' +
+  'That will run commands from its body. Can be also injected with variables. Think of it like a function');
 
-
+const macrosMapSchema = z.record(macroSchema).optional().describe('A map of macros where a key is the macro name and value is its body');
 // Define the full schema for the provided JSON structure
-const rootSchema = z.object({
-  ips: ipsSchema.describe('Remote PCS ips with their names that are used in destination property'),
-  aliases: z.optional(aliasesSchema).describe('Aliases or remote PCs bindinds'),
+const aARootSchema = z.object({
+  ips: ipsSchema,
+  aliases: aliasesSchema,
   delay: z.number().describe('Global delay in miliseconds between commands in order to prevent spam. Could be set to 0'),
   combinations: z.array(shortCutMappingSchema).describe('Shorcuts mappings. Main logic'),
-  macros: z.optional(macrosList).describe('List of macros in order to omit DRY'),
+  macros: macrosMapSchema,
 }).superRefine((data, ctx) => {
   // Ensure mapping values are arrays of keys from ips
   const ipsKeys = new Set(Object.keys(data.ips));
@@ -142,11 +146,11 @@ const rootSchema = z.object({
 });
 
 // Generate TypeScript type
-type ConfigData = z.infer<typeof rootSchema>;
+type ConfigData = z.infer<typeof aARootSchema>;
 type EventData = z.infer<typeof shortCutMappingSchema>
 type Ips = z.infer<typeof ipsSchema>
 type Aliases = z.infer<typeof aliasesSchema>
-type MacroList = z.infer<typeof macrosList>
+type MacroList = z.infer<typeof macrosMapSchema>
 
 export type {
   ConfigData,
@@ -157,11 +161,9 @@ export type {
 };
 
 export {
-  rootSchema,
-  ipsSchema,
+  aARootSchema,
   shortCutMappingSchema,
-  aliasesSchema,
-  macrosList,
+  macroSchema,
   commandSchema,
   keyPressCommandSchema,
   receiversAndMacrosArray,

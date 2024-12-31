@@ -2,7 +2,7 @@ import {
   Aliases,
   ConfigData,
   EventData,
-  rootSchema,
+  aARootSchema,
   Ips,
   MacroList,
 } from '@/config/types/schema';
@@ -33,7 +33,7 @@ export class ConfigService {
       throw new Error('Config already loaded');
     }
     const conf = parse(this.jsoncConfigData) as ConfigData;
-    await rootSchema.parseAsync(conf);
+    await aARootSchema.parseAsync(conf);
 
     const combinations = (conf.combinations as EventData[])
       .map((combination): ConfigCombination => ({

@@ -1,13 +1,18 @@
 # Schema for config.jsonc
 
-## Aliases
+## AARoot
 
-A map for extra layer above destination property. E.g. you can define PC name in IPS section and instead of specifying PC name directly you can use aliases from this section that points to the PC name.
+_Object containing the following properties:_
 
-_Object record with dynamic keys:_
+| Property                | Description                                                                                                                                                                                                     | Type                                                                             |
+| :---------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------- |
+| **`ips`** (\*)          | Definition of remote PCs where keys are PC names and values are their IP addresses. The IP address should be available to a remote PC. You can also use https://ngrok.com/ to get public address or create VPN  | _Object with dynamic keys of type_ `string` _and values of type_ `string` (_IP_) |
+| `aliases`               | A map for extra layer above destination property. E.g. you can define PC name in IPS section and instead of specifying PC name directly you can use aliases from this section that points to the PC name.       | `Record<string, Array<string> \| string>`                                        |
+| **`delay`** (\*)        | Global delay in miliseconds between commands in order to prevent spam. Could be set to 0                                                                                                                        | `number`                                                                         |
+| **`combinations`** (\*) | Shorcuts mappings. Main logic                                                                                                                                                                                   | _Array of [ShortCutMapping](#shortcutmapping) items_                             |
+| `macros`                | A map of macros where a key is the macro name and value is its body                                                                                                                                             | _Object with dynamic keys of type_ `string` _and values of type_ [Macro](#macro) |
 
-- _keys of type_ `string`
-- _values of type_ `Array<string> | string`
+_(\*) Required._
 
 ## CommandOrMacro
 
@@ -29,13 +34,6 @@ _Union of the following possible types:_
 - [LaunchExeCommand](#launchexecommand)
 - [TypeTextCommand](#typetextcommand)
 - [KillExeCommand](#killexecommand)
-
-## Ips
-
-_Object record with dynamic keys:_
-
-- _keys of type_ `string`
-- _values of type_ `string` (_IP_)
 
 ## KeyPressCommand
 
@@ -79,14 +77,18 @@ _Object containing the following properties:_
 
 _(\*) Required._
 
-## MacrosList
+## Macro
 
-A map of macro commands, where a key is a macro name. 
+A macro that can be injected instead of command. That will run commands from its body. Can be also injected with variables. Think of it like a function
 
-_Object record with dynamic keys:_
+_Object containing the following properties:_
 
-- _keys of type_ `string`
-- _values of type_ _Object with properties:_<ul><li>`commands`: _Array of [Command](#command) items_ - Set of commands for this macro</li><li>`variables`: `Array<string>` - Variables that are used in macros. If you set a option value to {{varName}} in this macro section. If this varName is present in this array, it will be replaced</li></ul>
+| Property            | Description                                                                                                                                                      | Type                                 |
+| :------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------------- |
+| **`commands`** (\*) | Set of commands for this macro                                                                                                                                   | _Array of [Command](#command) items_ |
+| `variables`         | Variables that are used in macros. If you set a option value to {{varName}} in this macro section. If this varName is present in this array, it will be replaced | `Array<string>`                      |
+
+_(\*) Required._
 
 ## MouseClickCommand
 
@@ -108,20 +110,6 @@ _(\*) Required._
 A set of events that executed sequentially in this thread
 
 _Array of [CommandOrMacro](#commandormacro) items._
-
-## Root
-
-_Object containing the following properties:_
-
-| Property                | Description                                                                              | Type                                                 |
-| :---------------------- | :--------------------------------------------------------------------------------------- | :--------------------------------------------------- |
-| **`ips`** (\*)          | Remote PCS ips with their names that are used in destination property                    | [Ips](#ips)                                          |
-| `aliases`               | Aliases or remote PCs bindinds                                                           | [Aliases](#aliases)                                  |
-| **`delay`** (\*)        | Global delay in miliseconds between commands in order to prevent spam. Could be set to 0 | `number`                                             |
-| **`combinations`** (\*) | Shorcuts mappings. Main logic                                                            | _Array of [ShortCutMapping](#shortcutmapping) items_ |
-| `macros`                | List of macros in order to omit DRY                                                      | [MacrosList](#macroslist)                            |
-
-_(\*) Required._
 
 ## RunMacroCommand
 
