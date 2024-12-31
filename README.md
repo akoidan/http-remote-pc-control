@@ -31,7 +31,7 @@ It will generate:
 ### Server
  - Download server you want to send shortcuts [releases](https://github.com/akoidan/l2/releases)
  - Unpack archive
- - Create a config file inside **/resources/app/src/config/config.jsonc**. You can find examples [here](server/src/config/examples)
+ - Create a config file inside **/resources/app/src/config/config.jsonc**. You can find examples [here](server/src/config/examples) and documentation [here](./server/README.md#root) 
  - Copy ./server/certs directory into a current directory. So pwd contains `certs` directory
  - run **l2.exe** as regular user.
  - If it crasher, run it from cmd to get output
