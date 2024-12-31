@@ -72,6 +72,7 @@ _Object containing the following properties:_
 | Property               | Description                                                   | Type                                |
 | :--------------------- | :------------------------------------------------------------ | :---------------------------------- |
 | **`launch`** (\*)      | Full path to an executable.                                   | `string`                            |
+| `arguments`            | Full path to an executable.                                   | `Array<string>`                     |
 | **`destination`** (\*) | Remote PC from ips or aliases section to send this command to | `string` _or_ [Variable](#variable) |
 | `delay`                | Delay in milliseconds before the next command.                | `number` _or_ [Variable](#variable) |
 

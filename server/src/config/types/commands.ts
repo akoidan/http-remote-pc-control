@@ -27,7 +27,7 @@ const keyPressCommandSchema = z.object({
 
 const launchExeCommandSchema = z.object({
   launch: z.string().describe('Full path to an executable.'),
-  arguments: z.array(z.string()).optional().describe('Full path to an executable.'),
+  arguments: z.array(z.string()).optional().describe('Array of arguments to an executable'),
 }).merge(baseSchema).describe('Starts a program on a remote PC.');
 
 const runMacroCommandSchema = z.object({
