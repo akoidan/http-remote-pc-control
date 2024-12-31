@@ -7,7 +7,9 @@ import {
   ReceiverSimple,
   ReceiveTypeText,
   Receiver,
-  ReceiverAndMacro, ReceiverKill,
+  ReceiverAndMacro,
+  ReceiverKill,
+  KeySend,
 } from '@/config/types/commands';
 import {
   EventData,
@@ -41,7 +43,7 @@ export class LogicService {
   async runCommand(currRec: Receiver): Promise<void> {
     const ip = this.configService.getIps()[(currRec as ReceiverBase).destination];
     if ((currRec as ReceiverSimple).keySend) {
-      await this.clientService.keyPress(ip, {key: (currRec as ReceiverSimple).keySend as string});
+      await this.clientService.keyPress(ip, {key: (currRec as ReceiverSimple).keySend as KeySend});
     } else if ((currRec as ReceiverMouse).mouseMoveX) {
       await this.clientService.mouseClick(ip, {
         x: (currRec as ReceiverMouse).mouseMoveX,

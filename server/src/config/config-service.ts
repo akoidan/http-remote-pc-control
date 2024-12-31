@@ -57,11 +57,11 @@ export class ConfigService {
     return this.configData!.combinations;
   }
 
-  public getAliases(): Aliases {
+  public getAliases(): NonNullable<Aliases> {
     return this.configData!.aliases ?? {};
   }
 
-  public getMacros(): MacroList {
+  public getMacros(): NonNullable<MacroList> {
     return this.configData!.macros ?? {};
   }
 

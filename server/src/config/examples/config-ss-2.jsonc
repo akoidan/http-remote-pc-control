@@ -87,6 +87,11 @@
       "receiversMulti": [
         [
           {
+            "destination": "sws",
+            "kill": "L2.exe",
+            "delay": 2000
+          },
+          {
             "macro": "launch",
             "variables": {
               "destination": "sws",
@@ -96,6 +101,11 @@
           }
         ],
         [
+          {
+            "destination": "bd",
+            "kill": "L2.exe",
+            "delay": 2000
+          },
           {
             "macro": "launch",
             "variables": {
@@ -107,6 +117,11 @@
         ],
         [
           {
+            "destination": "se",
+            "kill": "L2.exe",
+            "delay": 2000
+          },
+          {
             "macro": "launch",
             "variables": {
               "destination": "se",
@@ -117,6 +132,11 @@
         ],
         [
           {
+            "destination": "ee",
+            "kill": "L2.exe",
+            "delay": 2000
+          },
+          {
             "macro": "launch",
             "variables": {
               "destination": "ee",
@@ -126,6 +146,11 @@
           }
         ],
         [
+          {
+            "destination": "ss",
+            "kill": "L2.exe",
+            "delay": 2000
+          },
           {
             "macro": "launch",
             "variables": {
@@ -355,26 +380,36 @@
     },
     {
       "receiversMulti": [
-        [{
-          "destination": "se",
-          "keySend": "f1"
-        }],
-        [{
-          "destination": "sws",
-          "keySend": "f1"
-        }],
-        [{
-          "destination": "ee",
-          "keySend": "f1"
-        }],
-        [{
-          "destination": "bd",
-          "keySend": "f1"
-        }],
-        [{
-          "destination": "wc",
-          "keySend": "f1"
-        }]
+        [
+          {
+            "destination": "se",
+            "keySend": "f1"
+          }
+        ],
+        [
+          {
+            "destination": "sws",
+            "keySend": "f1"
+          }
+        ],
+        [
+          {
+            "destination": "ee",
+            "keySend": "f1"
+          }
+        ],
+        [
+          {
+            "destination": "bd",
+            "keySend": "f1"
+          }
+        ],
+        [
+          {
+            "destination": "wc",
+            "keySend": "f1"
+          }
+        ]
       ],
       "name": "Pick up",
       "shortCut": "Alt+p",
