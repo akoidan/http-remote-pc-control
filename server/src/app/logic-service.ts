@@ -53,6 +53,7 @@ export class LogicService {
       await this.clientService.launchExe(ip, {
         path: (currRec as ExecuteCommand).launch,
         arguments: (currRec as ExecuteCommand).arguments ?? [],
+        waitTillFinish: (currRec as ExecuteCommand).waitTillFinish ?? false,
       });
     } else if ((currRec as TypeTextCommand).typeText) {
       await this.clientService.typeText(ip, {

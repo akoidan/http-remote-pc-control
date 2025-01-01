@@ -12,6 +12,7 @@ interface SendKeyRequest {
 interface LaunchExeRequest {
   path: string;
   arguments: string[];
+  waitTillFinish: boolean;
 }
 
 interface KillExeRequest {

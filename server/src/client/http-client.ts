@@ -46,7 +46,11 @@ export class FetchClient {
           res.on('data', (chunk) => (data += chunk));
           res.on('end', () => {
             clearTimeout(timeoutId);
-            resolve(data);
+            if (res.statusCode! < 400) {
+              resolve(data);
+            } else {
+              reject(Error(`status code ${res.statusCode} ${data}`));
+            }
           });
           res.on('error', (e) => {
             clearTimeout(timeoutId);

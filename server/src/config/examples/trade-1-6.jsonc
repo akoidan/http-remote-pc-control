@@ -68,7 +68,7 @@
             "macro": "launch",
             "variables": {
               "destination": "touchpad",
-              "login": "deathangelw",
+              "login": "deathangela",
               "delay": 10000
             }
           }
@@ -78,7 +78,7 @@
             "macro": "launch",
             "variables": {
               "destination": "msi",
-              "login": "deathangelx",
+              "login": "deathangelb",
               "delay": 12000
             }
           }
@@ -88,7 +88,7 @@
             "macro": "launch",
             "variables": {
               "destination": "asus",
-              "login": "deathangely",
+              "login": "deathangelc",
               "delay": 14000
             }
           }
@@ -98,7 +98,7 @@
             "macro": "launch",
             "variables": {
               "destination": "lenovo",
-              "login": "deathangelu",
+              "login": "deathangeld",
               "delay": 16000
             }
           }
@@ -108,7 +108,7 @@
             "macro": "launch",
             "variables": {
               "destination": "desktop",
-              "login": "deathangelv",
+              "login": "deathangele",
               "delay": 18000
             }
           }

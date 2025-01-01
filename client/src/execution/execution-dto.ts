@@ -1,5 +1,6 @@
 import {
   IsArray,
+  IsBoolean,
   IsString,
 } from 'class-validator';
 
@@ -10,6 +11,9 @@ class LaunchExeRequest {
   @IsArray()
   @IsString({each: true})
   public arguments: string[];
+
+  @IsBoolean()
+  public waitTillFinish: boolean;
 }
 
 class KillExeRequest {

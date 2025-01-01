@@ -4,7 +4,8 @@
     "msi": "192.168.100.14",
     "lenovo": "192.168.100.33",
     "desktop": "192.168.100.9",
-    "asus": "192.168.100.27"
+    "asus": "192.168.100.27",
+    "this": "127.0.0.1"
   },
   "delay": 200,
   "macros": {
@@ -87,16 +88,6 @@
           {
             "macro": "launch",
             "variables": {
-              "destination": "asus",
-              "login": "deathangelo",
-              "delay": 14000
-            }
-          }
-        ],
-        [
-          {
-            "macro": "launch",
-            "variables": {
               "destination": "desktop",
               "login": "deathangel6",
               "delay": 16000
@@ -109,6 +100,26 @@
             "variables": {
               "destination": "lenovo",
               "login": "deathangelm",
+              "delay": 18000
+            }
+          }
+        ],
+        [
+          {
+            "macro": "launch",
+            "variables": {
+              "destination": "asus",
+              "login": "deathangell",
+              "delay": 18000
+            }
+          }
+        ],
+         [
+          {
+            "macro": "launch",
+            "variables": {
+              "destination": "this",
+              "login": "deathangeln",
               "delay": 18000
             }
           }

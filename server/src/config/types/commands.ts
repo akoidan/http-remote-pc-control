@@ -28,6 +28,7 @@ const keyPressCommandSchema = z.object({
 const launchExeCommandSchema = z.object({
   launch: z.string().describe('Full path to an executable.'),
   arguments: z.array(z.string()).optional().describe('Array of arguments to an executable'),
+  waitTillFinish: z.boolean().optional().describe('Waits until executable finishes to run before running the next command'),
 }).merge(baseSchema).describe('Starts a program on a remote PC.');
 
 const runMacroCommandSchema = z.object({
