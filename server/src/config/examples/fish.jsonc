@@ -68,7 +68,7 @@
             "macro": "launch",
             "variables": {
               "destination": "touchpad",
-              "login": "deathangel3",
+              "login": "deathangell",
               "delay": 10000
             }
           }
@@ -78,7 +78,7 @@
             "macro": "launch",
             "variables": {
               "destination": "msi",
-              "login": "deathangel4",
+              "login": "deathangelm",
               "delay": 12000
             }
           }
@@ -88,7 +88,7 @@
             "macro": "launch",
             "variables": {
               "destination": "asus",
-              "login": "deathangel5",
+              "login": "deathangeln",
               "delay": 14000
             }
           }

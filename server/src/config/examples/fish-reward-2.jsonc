@@ -59,6 +59,58 @@
         "login",
         "delay"
       ]
+    },
+    "wine": {
+      "commands": [
+        {
+          "destination": "{{destination}}",
+          "kill": "wine",
+          "delay": 2000
+        },
+        {
+          "destination": "{{destination}}",
+          "launch": "wine",
+          "arguments": ["/home/andrew/ntfs/Games/l2dion/system/L2.exe"],
+          "delay": 2000
+        },
+        {
+          "destination": "{{destination}}",
+          "typeText": "{{login}}"
+        },
+        {
+          "destination": "{{destination}}",
+          "keySend": "tab"
+        },
+        {
+          "destination": "{{destination}}",
+          "typeText": "{{PASSWORD}}"
+        },
+        {
+          "destination": "{{destination}}",
+          "keySend": "enter",
+          "delay": 8000
+        },
+        {
+          "destination": "{{destination}}",
+          "keySend": "enter",
+          "delay": 1500
+        },
+        {
+          "destination": "{{destination}}",
+          "keySend": "enter",
+          "delay": 1500
+        },
+        {
+          "destination": "{{destination}}",
+          "keySend": "enter",
+          "delay": 1500
+        }
+      ],
+      "variables": [
+        "destination",
+        "login",
+        "delay"
+      ]
     }
   },
   "combinations": [
@@ -69,7 +121,7 @@
             "macro": "launch",
             "variables": {
               "destination": "touchpad",
-              "login": "deathangel7",
+              "login": "deathangel3",
               "delay": 10000
             }
           }
@@ -79,8 +131,18 @@
             "macro": "launch",
             "variables": {
               "destination": "msi",
-              "login": "deathangelj",
+              "login": "deathangel4",
               "delay": 12000
+            }
+          }
+        ],
+        [
+          {
+            "macro": "launch",
+            "variables": {
+              "destination": "lenovo",
+              "login": "deathangel5",
+              "delay": 18000
             }
           }
         ],
@@ -98,28 +160,18 @@
           {
             "macro": "launch",
             "variables": {
-              "destination": "lenovo",
-              "login": "deathangelm",
-              "delay": 18000
-            }
-          }
-        ],
-        [
-          {
-            "macro": "launch",
-            "variables": {
               "destination": "asus",
-              "login": "deathangell",
+              "login": "deathangel7",
               "delay": 18000
             }
           }
         ],
          [
           {
-            "macro": "launch",
+            "macro": "wine",
             "variables": {
               "destination": "this",
-              "login": "deathangeln",
+              "login": "deathangelj",
               "delay": 18000
             }
           }
