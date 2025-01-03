@@ -1,0 +1,186 @@
+{
+  "ips": {
+    "touchpad": "192.168.100.39",
+    "msi": "192.168.100.14",
+    "lenovo": "192.168.100.33",
+    "desktop": "192.168.100.9",
+    "asus": "192.168.100.27",
+    "this": "127.0.0.1"
+  },
+  "delay": 200,
+  "macros": {
+    "launch": {
+      "commands": [
+        {
+          "destination": "{{destination}}",
+          "kill": "L2.exe",
+          "delay": 2000
+        },
+        {
+          "destination": "{{destination}}",
+          "launch": "C:\\l2dion\\system\\L2.exe",
+          "delay": "{{delay}}"
+        },
+        {
+          "destination": "{{destination}}",
+          "typeText": "{{login}}"
+        },
+        {
+          "destination": "{{destination}}",
+          "keySend": "tab"
+        },
+        {
+          "destination": "{{destination}}",
+          "typeText": "{{PASSWORD}}"
+        },
+        {
+          "destination": "{{destination}}",
+          "keySend": "enter",
+          "delay": 8000
+        },
+        {
+          "destination": "{{destination}}",
+          "keySend": "enter",
+          "delay": 1500
+        },
+        {
+          "destination": "{{destination}}",
+          "keySend": "enter",
+          "delay": 1500
+        },
+        {
+          "destination": "{{destination}}",
+          "keySend": "enter",
+          "delay": 1500
+        }
+      ],
+      "variables": [
+        "destination",
+        "login",
+        "delay"
+      ]
+    },
+    "wine": {
+      "commands": [
+       {
+          "destination": "{{destination}}",
+          "kill": "L2.exe",
+          "delay": 2000
+        },
+        {
+          "destination": "{{destination}}",
+          "launch": "/usr/bin/wine",
+          "arguments": ["/home/andrew/ntfs/Games/l2dion/system/L2.exe"],
+          "delay": "{{delay}}"
+        },
+        {
+          "destination": "{{destination}}",
+          "typeText": "{{login}}"
+        },
+        {
+          "destination": "{{destination}}",
+          "keySend": "tab"
+        },
+        {
+          "destination": "{{destination}}",
+          "typeText": "{{PASSWORD}}"
+        },
+        {
+          "destination": "{{destination}}",
+          "keySend": "enter",
+          "delay": 8000
+        },
+        {
+          "destination": "{{destination}}",
+          "keySend": "enter",
+          "delay": 1500
+        },
+        {
+          "destination": "{{destination}}",
+          "keySend": "enter",
+          "delay": 1500
+        },
+        {
+          "destination": "{{destination}}",
+          "keySend": "enter",
+          "delay": 1500
+        }
+      ],
+      "variables": [
+        "destination",
+        "login",
+        "delay"
+      ]
+  }
+  },
+  "combinations": [
+    {
+      "threads": [
+        [
+          {
+            "macro": "launch",
+            "variables": {
+              "destination": "touchpad",
+              "login": "deathangel2",
+              "delay": 10000
+            }
+          }
+        ],
+        [
+          {
+            "macro": "launch",
+            "variables": {
+              "destination": "msi",
+              "login": "deathangel",
+              "delay": 12000
+            }
+          }
+        ],
+        [
+          {
+            "macro": "launch",
+            "variables": {
+              "destination": "lenovo",
+              "login": "deathangelk",
+              "delay": 14000
+            }
+          }
+        ],
+        [
+          {
+            "macro": "launch",
+            "variables": {
+              "destination": "desktop",
+              "login": "deathangel8",
+              "delay": 16000
+            }
+          }
+        ],
+        [
+          {
+            "macro": "launch",
+            "variables": {
+              "destination": "asus",
+              "login": "deathangel1",
+              "delay": 6000
+            }
+          }
+        ],
+         [
+          {
+            "macro": "wine",
+            "variables": {
+              "destination": "this",
+              "login": "deathangel9",
+              "delay": 7000
+            }
+          }
+        ]
+      ],
+      "name": "Launch l2 clients",
+      "shortCut": "Alt+F11",
+      "circular": false
+    }
+
+  ]
+}

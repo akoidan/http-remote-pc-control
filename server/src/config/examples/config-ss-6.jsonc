@@ -114,44 +114,18 @@
   }
   },
   "aliases": {
-    "sws": [
-      "lenovo"
-    ],
-    "bd": [
-      "touchpad"
-    ],
-    "wc": [
-      "desktop"
-    ],
-    "ss": [
-      "desktop"
-    ],
-    "se": [
-      "asus"
-    ],
-    "ee": [
-      "msi"
-    ],
-    "da": [
-      "this"
-    ],
-    "all": [
-      "desktop",
-      "msi",
-      "lenovo",
-      "touchpad",
-      "asus"
-    ]
+    "sws": "lenovo",
+    "bd": "touchpad",
+    "ss": "desktop",
+    "pp": "asus",
+    "ee": "msi",
+    "da": "this",
+    "all": ["touchpad", "msi", "lenovo", "desktop", "asus"]
   },
   "combinations": [
     {
       "threads": [
         [
-          {
-            "destination": "sws",
-            "kill": "L2.exe",
-            "delay": 2000
-          },
           {
             "macro": "launch",
             "variables": {
@@ -163,11 +137,6 @@
         ],
         [
           {
-            "destination": "bd",
-            "kill": "L2.exe",
-            "delay": 2000
-          },
-          {
             "macro": "launch",
             "variables": {
               "destination": "bd",
@@ -177,26 +146,16 @@
           }
         ],
         [
-          {
-            "destination": "se",
-            "kill": "L2.exe",
-            "delay": 2000
-          },
-          {
-            "macro": "launch",
+         {
+            "macro": "wine",
             "variables": {
-              "destination": "se",
-              "login": "deathangelk",
-              "delay": 14000
+              "destination": "this",
+              "login": "deathangelq",
+              "delay": 9000
             }
           }
         ],
         [
-          {
-            "destination": "ee",
-            "kill": "L2.exe",
-            "delay": 2000
-          },
           {
             "macro": "launch",
             "variables": {
@@ -208,47 +167,21 @@
         ],
         [
           {
-            "destination": "ss",
-            "kill": "L2.exe",
-            "delay": 2000
-          },
-          {
             "macro": "launch",
             "variables": {
               "destination": "ss",
               "login": "deathangelp",
               "delay": 8000
             }
-          },
-          {
-            "macro": "launch",
-            "variables": {
-              "destination": "wc",
-              "login": "deathangel1",
-              "delay": 6000
-            }
           }
         ],
          [
-          {
-            "destination": "this",
-            "kill": "wine",
-            "delay": 2000
-          },
           {
             "macro": "wine",
             "variables": {
               "destination": "da",
               "login": "deathangel9",
               "delay": 7000
-            }
-          },
-           {
-            "macro": "wine",
-            "variables": {
-              "destination": "this",
-              "login": "deathangelq",
-              "delay": 9000
             }
           }
         ]
@@ -270,10 +203,6 @@
         {
           "destination": "ee",
           "keySend": "6"
-        },
-        {
-          "destination": "wc",
-          "keySend": "5"
         }
       ],
       "name": "all buff 1",
@@ -284,10 +213,6 @@
       "commands": [
         {
           "destination": "ee",
-          "keySend": "7"
-        },
-        {
-          "destination": "se",
           "keySend": "7"
         }
       ],
@@ -309,17 +234,12 @@
     {
       "commands": [
         {
-          "destination": "se",
-          "keySend": "f3"
-        },
-        {
           "destination": "ee",
           "keySend": "f3"
         }
       ],
       "name": "mana",
-      "shortCut": "Alt+8",
-      "circular": true
+      "shortCut": "Alt+8"
     },
     {
       "commands": [
@@ -408,10 +328,6 @@
           "destination": "ee",
           "keySend": "1"
         },
-        {
-          "destination": "se",
-          "keySend": "1"
-        }
       ],
       "name": "Heal DA (Sebia)",
       "shortCut": "Alt+s",
@@ -422,24 +338,15 @@
         {
           "destination": "ee",
           "keySend": "2"
-        },
-        {
-          "destination": "se",
-          "keySend": "2"
         }
       ],
       "name": "Heal SS",
-      "shortCut": "Alt+d",
-      "circular": true
+      "shortCut": "Alt+d"
     },
     {
       "commands": [
         {
           "destination": "ee",
-          "keySend": "3"
-        },
-        {
-          "destination": "se",
           "keySend": "3"
         }
       ],
@@ -448,25 +355,10 @@
       "circular": false
     },
     {
-      "commands": [
-        {
-          "destination": "ee",
-          "keySend": "4"
-        },
-        {
-          "destination": "se",
-          "keySend": "4"
-        }
-      ],
-      "name": "Heal SE",
-      "shortCut": "Alt+w",
-      "circular": false
-    },
-    {
       "threads": [
         [
           {
-            "destination": "se",
+            "destination": "pp",
             "keySend": "f1"
           }
         ],
@@ -490,7 +382,7 @@
         ],
         [
           {
-            "destination": "wc",
+            "destination": "ss",
             "keySend": "f1"
           }
         ]
