@@ -55,12 +55,12 @@ export class CertService {
   }
 
   public async getCert(): Promise<string> {
-    this.logger.info(`Loading private key from ${this.certificatePath}`);
+    this.logger.info(`Loading certificate key from ${this.certificatePath}`);
     return readFile(this.certificatePath, 'utf8');
   }
 
   public async getCaCert(): Promise<string> {
-    this.logger.info(`Loading private key from ${this.caCertificatePath}`);
+    this.logger.info(`Loading CA certificate key from ${this.caCertificatePath}`);
     return readFile(this.caCertificatePath, 'utf8');
   }
 }

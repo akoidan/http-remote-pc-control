@@ -62,7 +62,7 @@
     },
     "wine": {
       "commands": [
-         {
+        {
           "destination": "{{destination}}",
           "kill": "L2.exe",
           "delay": 2000
@@ -71,7 +71,7 @@
           "destination": "{{destination}}",
           "launch": "wine",
           "arguments": ["/home/andrew/ntfs/Games/l2dion/system/L2.exe"],
-          "delay": 2000
+          "delay": 7000
         },
         {
           "destination": "{{destination}}",
@@ -121,7 +121,7 @@
             "macro": "launch",
             "variables": {
               "destination": "touchpad",
-              "login": "deathangel3",
+              "login": "deathangelf",
               "delay": 10000
             }
           }
@@ -131,7 +131,7 @@
             "macro": "launch",
             "variables": {
               "destination": "msi",
-              "login": "deathangel4",
+              "login": "deathangelg",
               "delay": 12000
             }
           }
@@ -140,18 +140,18 @@
           {
             "macro": "launch",
             "variables": {
-              "destination": "lenovo",
-              "login": "deathangel5",
-              "delay": 18000
+              "destination": "asus",
+              "login": "deathangelh",
+              "delay": 14000
             }
           }
         ],
         [
-          {
+           {
             "macro": "launch",
             "variables": {
-              "destination": "desktop",
-              "login": "deathangel6",
+              "destination": "lenovo",
+              "login": "deathangele",
               "delay": 16000
             }
           }
@@ -160,19 +160,19 @@
           {
             "macro": "launch",
             "variables": {
-              "destination": "asus",
-              "login": "deathangel7",
+              "destination": "desktop",
+              "login": "deathangeld",
               "delay": 18000
             }
           }
         ],
-         [
+        [
           {
             "macro": "wine",
             "variables": {
               "destination": "this",
-              "login": "deathangelj",
-              "delay": 18000
+              "login": "deathangelc",
+              "delay": 8000
             }
           }
         ]
