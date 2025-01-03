@@ -71,7 +71,7 @@
           "destination": "{{destination}}",
           "launch": "wine",
           "arguments": ["/home/andrew/ntfs/Games/l2dion/system/L2.exe"],
-          "delay": 2000
+          "delay": "{{delay}}"
         },
         {
           "destination": "{{destination}}",

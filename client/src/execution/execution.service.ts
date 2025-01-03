@@ -81,10 +81,8 @@ export class ExecutionService {
       this.logger.info(`Process "${name}" killed successfully:`, stdout || stderr);
       return true;
     } catch (e) {
-      if (platform === 'win32' && e?.message.includes(`process "${name}" not found`)) {
-        this.logger.info(`Process "${name}" is not up. Skipping it`);
-        return false;
-      } else if (platform === 'linux' && e?.code === 1) {
+      if ((platform === 'win32' && e?.message.includes(`process "${name}" not found`))
+        || (platform === 'linux' && e?.code === 1)) {
         this.logger.info(`Process "${name}" is not up. Skipping it`);
         return false;
       }
