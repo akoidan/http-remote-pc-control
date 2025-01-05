@@ -2,6 +2,7 @@
 node_modules
 yarn-error.log
 src/config/config.jsonc
+src/config/macros.jsonc
 l2-win32-x64
 certs
 !certs/.gitkeep

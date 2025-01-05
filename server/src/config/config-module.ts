@@ -12,24 +12,21 @@ import * as process from 'node:process';
   providers: [
     Logger,
     {
-      provide: 'CONFIG_DATA',
-      useFactory: async(): Promise<string> => {
-        return fs.readFile(
-          path.join(__dirname, 'config.jsonc'),
-          'utf8',
-        );
-      },
-    },
-    {
       provide: ConfigService,
-      useFactory: (configData: string, logger: Logger): ConfigService => new ConfigService(configData, logger, process.env),
-      inject: ['CONFIG_DATA', Logger],
+      useFactory: (logger: Logger): ConfigService => new ConfigService(
+        path.join(__dirname, 'config.jsonc'),
+        path.join(__dirname, 'macros.jsonc'),
+        logger,
+        process.env
+      ),
+      inject: [Logger],
     },
   ],
   exports: [ConfigService],
 })
 export class ConfigModule implements OnModuleInit {
-  constructor(private readonly configService: ConfigService) {}
+  constructor(private readonly configService: ConfigService) {
+  }
 
   async onModuleInit(): Promise<void> {
     await this.configService.parseConfig();

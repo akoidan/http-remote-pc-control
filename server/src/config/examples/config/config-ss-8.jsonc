@@ -8,111 +8,6 @@
     "this": "127.0.0.1"
   },
   "delay": 200,
-  "macros": {
-    "launch": {
-      "commands": [
-        {
-          "destination": "{{destination}}",
-          "kill": "L2.exe",
-          "delay": 2000
-        },
-        {
-          "destination": "{{destination}}",
-          "launch": "C:\\l2dion\\system\\L2.exe",
-          "delay": "{{delay}}"
-        },
-        {
-          "destination": "{{destination}}",
-          "typeText": "{{login}}"
-        },
-        {
-          "destination": "{{destination}}",
-          "keySend": "tab"
-        },
-        {
-          "destination": "{{destination}}",
-          "typeText": "{{PASSWORD}}"
-        },
-        {
-          "destination": "{{destination}}",
-          "keySend": "enter",
-          "delay": 8000
-        },
-        {
-          "destination": "{{destination}}",
-          "keySend": "enter",
-          "delay": 1500
-        },
-        {
-          "destination": "{{destination}}",
-          "keySend": "enter",
-          "delay": 1500
-        },
-        {
-          "destination": "{{destination}}",
-          "keySend": "enter",
-          "delay": 1500
-        }
-      ],
-      "variables": [
-        "destination",
-        "login",
-        "delay"
-      ]
-    },
-    "wine": {
-      "commands": [
-       {
-          "destination": "{{destination}}",
-          "kill": "L2.exe",
-          "delay": 2000
-        },
-        {
-          "destination": "{{destination}}",
-          "launch": "/usr/bin/wine",
-          "arguments": ["/home/andrew/ntfs/Games/l2dion/system/L2.exe"],
-          "delay": "{{delay}}"
-        },
-        {
-          "destination": "{{destination}}",
-          "typeText": "{{login}}"
-        },
-        {
-          "destination": "{{destination}}",
-          "keySend": "tab"
-        },
-        {
-          "destination": "{{destination}}",
-          "typeText": "{{PASSWORD}}"
-        },
-        {
-          "destination": "{{destination}}",
-          "keySend": "enter",
-          "delay": 8000
-        },
-        {
-          "destination": "{{destination}}",
-          "keySend": "enter",
-          "delay": 1500
-        },
-        {
-          "destination": "{{destination}}",
-          "keySend": "enter",
-          "delay": 1500
-        },
-        {
-          "destination": "{{destination}}",
-          "keySend": "enter",
-          "delay": 1500
-        }
-      ],
-      "variables": [
-        "destination",
-        "login",
-        "delay"
-      ]
-  }
-  },
   "aliases": {
     "sws": [
       "lenovo"
@@ -153,7 +48,7 @@
             "delay": 2000
           },
           {
-            "macro": "launch",
+            "macro": "killLaunchL2",
             "variables": {
               "destination": "sws",
               "login": "deathangel2",
@@ -168,7 +63,7 @@
             "delay": 2000
           },
           {
-            "macro": "launch",
+            "macro": "killLaunchL2",
             "variables": {
               "destination": "bd",
               "login": "deathangel",
@@ -183,7 +78,7 @@
             "delay": 2000
           },
           {
-            "macro": "launch",
+            "macro": "killLaunchL2",
             "variables": {
               "destination": "se",
               "login": "deathangelk",
@@ -198,7 +93,7 @@
             "delay": 2000
           },
           {
-            "macro": "launch",
+            "macro": "killLaunchL2",
             "variables": {
               "destination": "ee",
               "login": "deathangel8",
@@ -208,12 +103,13 @@
         ],
         [
           {
-            "destination": "ss",
-            "kill": "L2.exe",
-            "delay": 2000
+            "macro": "killL2",
+            "variables": {
+              "destination": "ss"
+            }
           },
           {
-            "macro": "launch",
+            "macro": "launchL2",
             "variables": {
               "destination": "ss",
               "login": "deathangelp",
@@ -221,7 +117,7 @@
             }
           },
           {
-            "macro": "launch",
+            "macro": "launchL2",
             "variables": {
               "destination": "wc",
               "login": "deathangel1",
@@ -231,12 +127,11 @@
         ],
          [
           {
-            "destination": "this",
-            "kill": "wine",
-            "delay": 2000
+            "macro": "killL2",
+            "destination": "da"
           },
           {
-            "macro": "wine",
+            "macro": "launchL2Wine",
             "variables": {
               "destination": "da",
               "login": "deathangel9",
@@ -244,7 +139,7 @@
             }
           },
            {
-            "macro": "wine",
+            "macro": "launchL2Wine",
             "variables": {
               "destination": "this",
               "login": "deathangelq",

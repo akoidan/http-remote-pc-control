@@ -1,0 +1,69 @@
+{
+  "ips": {
+    "touchpad": "192.168.100.39",
+    "msi": "192.168.100.14",
+    "lenovo": "192.168.100.33",
+    "desktop": "192.168.100.9",
+    "asus": "192.168.100.27"
+  },
+  "delay": 200,
+  "combinations": [
+    {
+      "threads": [
+        [
+          {
+            "macro": "killLaunchL2",
+            "variables": {
+              "destination": "touchpad",
+              "login": "deathangell",
+              "delay": 10000
+            }
+          }
+        ],
+        [
+          {
+            "macro": "killLaunchL2",
+            "variables": {
+              "destination": "msi",
+              "login": "deathangelm",
+              "delay": 12000
+            }
+          }
+        ],
+        [
+          {
+            "macro": "killLaunchL2",
+            "variables": {
+              "destination": "asus",
+              "login": "deathangeln",
+              "delay": 14000
+            }
+          }
+        ],
+        [
+           {
+            "macro": "killLaunchL2",
+            "variables": {
+              "destination": "lenovo",
+              "login": "deathangelr",
+              "delay": 16000
+            }
+          }
+        ],
+        [
+          {
+            "macro": "killLaunchL2",
+            "variables": {
+              "destination": "desktop",
+              "login": "deathangels",
+              "delay": 18000
+            }
+          }
+        ]
+      ],
+      "name": "Launch l2 clients",
+      "shortCut": "Alt+F11",
+      "circular": false
+    }
+  ]
+}

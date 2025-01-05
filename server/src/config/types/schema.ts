@@ -67,7 +67,7 @@ const macroSchema = z.object({
 }).describe('A macro that can be injected instead of command. ' +
   'That will run commands from its body. Can be also injected with variables. Think of it like a function');
 
-const macrosMapSchema = z.record(macroSchema).optional().describe('A map of macros where a key is the macro name and value is its body');
+export const macrosMapSchema = z.record(macroSchema).optional().describe('A map of macros where a key is the macro name and value is its body');
 // Define the full schema for the provided JSON structure
 const aARootSchema = z.object({
   ips: ipsSchema,

@@ -1,0 +1,230 @@
+{
+  "shutdown": {
+    "commands": [
+      {
+        "destination": "{{destination}}",
+        "launch": "C:\\Windows\\System32\\shutdown.exe",
+        "arguments": [
+          "/s",
+          "/t",
+          "0"
+        ]
+      }
+    ],
+    "variables": [
+      "destination"
+    ]
+  },
+  "killL2": {
+    "commands": [
+      {
+        "destination": "{{destination}}",
+        "kill": "L2.exe",
+        "delay": 2000
+      }
+    ],
+    "variables": [
+      "destination"
+    ]
+  },
+  "killLaunchL2": {
+    "commands": [
+      {
+        "destination": "{{destination}}",
+        "kill": "L2.exe",
+        "delay": 2000
+      },
+      {
+        "destination": "{{destination}}",
+        "launch": "C:\\l2dion\\system\\L2.exe",
+        "delay": "{{delay}}"
+      },
+      {
+        "destination": "{{destination}}",
+        "typeText": "{{login}}"
+      },
+      {
+        "destination": "{{destination}}",
+        "keySend": "tab"
+      },
+      {
+        "destination": "{{destination}}",
+        "typeText": "{{PASSWORD}}"
+      },
+      {
+        "destination": "{{destination}}",
+        "keySend": "enter",
+        "delay": 8000
+      },
+      {
+        "destination": "{{destination}}",
+        "keySend": "enter",
+        "delay": 1500
+      },
+      {
+        "destination": "{{destination}}",
+        "keySend": "enter",
+        "delay": 1500
+      },
+      {
+        "destination": "{{destination}}",
+        "keySend": "enter",
+        "delay": 1500
+      }
+    ],
+    "variables": [
+      "destination",
+      "login",
+      "delay"
+    ]
+  },
+  "launchL2": {
+    "commands": [
+      {
+        "destination": "{{destination}}",
+        "launch": "C:\\l2dion\\system\\L2.exe",
+        "delay": "{{delay}}"
+      },
+      {
+        "destination": "{{destination}}",
+        "typeText": "{{login}}"
+      },
+      {
+        "destination": "{{destination}}",
+        "keySend": "tab"
+      },
+      {
+        "destination": "{{destination}}",
+        "typeText": "{{PASSWORD}}"
+      },
+      {
+        "destination": "{{destination}}",
+        "keySend": "enter",
+        "delay": 8000
+      },
+      {
+        "destination": "{{destination}}",
+        "keySend": "enter",
+        "delay": 1500
+      },
+      {
+        "destination": "{{destination}}",
+        "keySend": "enter",
+        "delay": 1500
+      },
+      {
+        "destination": "{{destination}}",
+        "keySend": "enter",
+        "delay": 1500
+      }
+    ],
+    "variables": [
+      "destination",
+      "login",
+      "delay"
+    ]
+  },
+  "killLaunchL2Wine": {
+    "commands": [
+      {
+        "destination": "{{destination}}",
+        "kill": "L2.exe",
+        "delay": 2000
+      },
+      {
+        "destination": "{{destination}}",
+        "launch": "/usr/bin/wine",
+        "arguments": [
+          "/home/andrew/ntfs/Games/l2dion/system/L2.exe"
+        ],
+        "delay": "{{delay}}"
+      },
+      {
+        "destination": "{{destination}}",
+        "typeText": "{{login}}"
+      },
+      {
+        "destination": "{{destination}}",
+        "keySend": "tab"
+      },
+      {
+        "destination": "{{destination}}",
+        "typeText": "{{PASSWORD}}"
+      },
+      {
+        "destination": "{{destination}}",
+        "keySend": "enter",
+        "delay": 8000
+      },
+      {
+        "destination": "{{destination}}",
+        "keySend": "enter",
+        "delay": 1500
+      },
+      {
+        "destination": "{{destination}}",
+        "keySend": "enter",
+        "delay": 1500
+      },
+      {
+        "destination": "{{destination}}",
+        "keySend": "enter",
+        "delay": 1500
+      }
+    ],
+    "variables": [
+      "destination",
+      "login",
+      "delay"
+    ]
+  },
+  "launchL2Wine": {
+    "commands": [
+      {
+        "destination": "{{destination}}",
+        "launch": "/usr/bin/wine",
+        "arguments": [
+          "/home/andrew/ntfs/Games/l2dion/system/L2.exe"
+        ],
+        "delay": "{{delay}}"
+      },
+      {
+        "destination": "{{destination}}",
+        "typeText": "{{login}}"
+      },
+      {
+        "destination": "{{destination}}",
+        "keySend": "tab"
+      },
+      {
+        "destination": "{{destination}}",
+        "typeText": "{{PASSWORD}}"
+      },
+      {
+        "destination": "{{destination}}",
+        "keySend": "enter",
+        "delay": 8000
+      },
+      {
+        "destination": "{{destination}}",
+        "keySend": "enter",
+        "delay": 1500
+      },
+      {
+        "destination": "{{destination}}",
+        "keySend": "enter",
+        "delay": 1500
+      },
+      {
+        "destination": "{{destination}}",
+        "keySend": "enter",
+        "delay": 1500
+      }
+    ],
+    "variables": [
+      "destination",
+      "login",
+      "delay"
+    ]
+  }
+}
