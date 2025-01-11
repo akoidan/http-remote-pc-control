@@ -1,0 +1,290 @@
+{
+  "ips": {
+    "touchpad": "192.168.100.39",
+    "msi": "192.168.100.14",
+    "lenovo": "192.168.100.33",
+    "desktop": "192.168.100.9",
+    "asus": "192.168.100.27",
+    "this": "127.0.0.1"
+  },
+  "delay": 200,
+  "aliases": {
+    "sws": "lenovo",
+    "bd": "touchpad",
+    "ss": "desktop",
+    "pp": "asus",
+    "ee": "msi",
+    "da": "this",
+    "all": ["touchpad", "msi", "lenovo", "desktop", "asus"]
+  },
+  "combinations": [
+    {
+      "threads": [
+        [
+          {
+            "macro": "killLaunchL2",
+            "variables": {
+              "destination": "sws",
+              "login": "deathangel2",
+              "delay": 10000
+            }
+          }
+        ],
+        [
+          {
+            "macro": "killLaunchL2",
+            "variables": {
+              "destination": "bd",
+              "login": "deathangel",
+              "delay": 12000
+            }
+          }
+        ],
+        [
+         {
+            "macro": "killLaunchL2",
+            "variables": {
+              "destination": "pp",
+              "login": "deathangel1",
+              "delay": 9000
+            }
+          }
+        ],
+        [
+          {
+            "macro": "killLaunchL2",
+            "variables": {
+              "destination": "ee",
+              "login": "deathangel8",
+              "delay": 16000
+            }
+          }
+        ],
+        [
+          {
+            "macro": "killLaunchL2",
+            "variables": {
+              "destination": "ss",
+              "login": "deathangel7",
+              "delay": 8000
+            }
+          }
+        ],
+         [
+          {
+            "macro": "killLaunchL2Wine",
+            "variables": {
+              "destination": "da",
+              "login": "deathangel9",
+              "delay": 7000
+            }
+          }
+        ]
+      ],
+      "name": "Launch l2 clients",
+      "shortCut": "Alt+F11",
+      "circular": false
+    },
+    {
+      "commands": [
+        {
+          "destination": "bd",
+          "keySend": "-"
+        },
+        {
+          "destination": "sws",
+          "keySend": "4"
+        },
+        {
+          "destination": "ee",
+          "keySend": "6"
+        }
+      ],
+      "name": "all buff 1",
+      "shortCut": "Alt+9",
+      "circular": false
+    },
+    {
+      "commands": [
+        {
+          "destination": "ee",
+          "keySend": "7"
+        }
+      ],
+      "name": "all buff 1",
+      "shortCut": "Alt+0",
+      "circular": false
+    },
+    {
+      "commands": [
+        {
+          "destination": "sws",
+          "keySend": "5"
+        }
+      ],
+      "name": "Songs to run",
+      "shortCut": "Alt+7",
+      "circular": false
+    },
+    {
+      "commands": [
+        {
+          "destination": "ee",
+          "keySend": "f3"
+        }
+      ],
+      "name": "mana",
+      "shortCut": "Alt+8"
+    },
+    {
+      "commands": [
+        {
+          "destination": "all",
+          "keySend": "f6"
+        }
+      ],
+      "name": "to me",
+      "shortCut": "Alt+6",
+      "circular": false
+    },
+    {
+      "commands": [
+        {
+          "destination": "ss",
+          "keySend": "1"
+        }
+      ],
+      "name": "attack 1",
+      "shortCut": "Alt+1",
+      "circular": false
+    },
+    {
+      "commands": [
+        {
+          "destination": "ss",
+          "keySend": "2"
+        }
+      ],
+      "name": "attack 2",
+      "shortCut": "Alt+2",
+      "circular": false
+    },
+    {
+      "commands": [
+        {
+          "destination": "ss",
+          "keySend": "3"
+        }
+      ],
+      "name": "attack 3",
+      "shortCut": "Alt+3",
+      "circular": false
+    },
+    {
+      "commands": [
+        {
+          "destination": "ss",
+          "keySend": "4"
+        }
+      ],
+      "name": "attack 4",
+      "shortCut": "Alt+4",
+      "circular": false
+    },
+    {
+      "commands": [
+        {
+          "destination": "bd",
+          "keySend": "4"
+        },
+        {
+          "destination": "sws",
+          "keySend": "5"
+        }
+      ],
+      "name": "Song dance to fight",
+      "shortCut": "Alt+5",
+      "circular": false
+    },
+    {
+      "commands": [
+        {
+          "destination": "ee",
+          "keySend": "5"
+        }
+      ],
+      "name": "Heal ALL",
+      "shortCut": "Alt+a",
+      "circular": false
+    },
+    {
+      "commands": [
+        {
+          "destination": "ee",
+          "keySend": "1"
+        },
+      ],
+      "name": "Heal DA (Sebia)",
+      "shortCut": "Alt+s",
+      "circular": false
+    },
+    {
+      "commands": [
+        {
+          "destination": "ee",
+          "keySend": "2"
+        }
+      ],
+      "name": "Heal SS",
+      "shortCut": "Alt+d"
+    },
+    {
+      "commands": [
+        {
+          "destination": "ee",
+          "keySend": "3"
+        }
+      ],
+      "name": "Heal EE",
+      "shortCut": "Alt+q",
+      "circular": false
+    },
+    {
+      "threads": [
+        [
+          {
+            "destination": "pp",
+            "keySend": "f1"
+          }
+        ],
+        [
+          {
+            "destination": "sws",
+            "keySend": "f1"
+          }
+        ],
+        [
+          {
+            "destination": "ee",
+            "keySend": "f1"
+          }
+        ],
+        [
+          {
+            "destination": "bd",
+            "keySend": "f1"
+          }
+        ],
+        [
+          {
+            "destination": "ss",
+            "keySend": "f1"
+          }
+        ]
+      ],
+      "name": "Pick up",
+      "shortCut": "Alt+p",
+      "circular": false
+    }
+  ]
+}

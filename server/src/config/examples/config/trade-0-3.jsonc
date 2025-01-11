@@ -41,21 +41,11 @@
           }
         ],
         [
-           {
-            "macro": "killLaunchL2",
-            "variables": {
-              "destination": "lenovo",
-              "login": "deathangeld",
-              "delay": 16000
-            }
-          }
-        ],
-        [
           {
             "macro": "killLaunchL2",
             "variables": {
               "destination": "desktop",
-              "login": "deathangele",
+              "login": "deathangel0",
               "delay": 18000
             }
           }
