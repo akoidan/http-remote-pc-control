@@ -60,16 +60,6 @@
               "delay": 18000
             }
           }
-        ],
-         [
-          {
-            "macro": "killLaunchL2Wine",
-            "variables": {
-              "destination": "this",
-              "login": "deathangelj",
-              "delay": 18000
-            }
-          }
         ]
       ],
       "name": "Launch l2 clients",

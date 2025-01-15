@@ -65,7 +65,7 @@
             "macro": "killLaunchL2",
             "variables": {
               "destination": "ss",
-              "login": "deathangel7",
+              "login": "deathangelp",
               "delay": 8000
             }
           }
@@ -94,10 +94,6 @@
         {
           "destination": "sws",
           "keySend": "4"
-        },
-        {
-          "destination": "ee",
-          "keySend": "6"
         }
       ],
       "name": "all buff 1",
@@ -194,12 +190,13 @@
     {
       "commands": [
         {
-          "destination": "bd",
-          "keySend": "4"
+          "destination": "sws",
+          "keySend": "5",
+          "delay": 15000
         },
         {
-          "destination": "sws",
-          "keySend": "5"
+          "destination": "bd",
+          "keySend": "4"
         }
       ],
       "name": "Song dance to fight",

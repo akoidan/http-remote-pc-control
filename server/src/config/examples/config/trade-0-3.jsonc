@@ -14,7 +14,7 @@
           {
             "macro": "killLaunchL2",
             "variables": {
-              "destination": "touchpad",
+              "destination": "asus",
               "login": "deathangela",
               "delay": 10000
             }
@@ -27,16 +27,6 @@
               "destination": "msi",
               "login": "deathangelb",
               "delay": 12000
-            }
-          }
-        ],
-        [
-          {
-            "macro": "killLaunchL2",
-            "variables": {
-              "destination": "asus",
-              "login": "deathangelc",
-              "delay": 14000
             }
           }
         ],
