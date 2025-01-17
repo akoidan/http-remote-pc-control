@@ -1,8 +1,8 @@
 import {
+  aARootSchema,
   Aliases,
   ConfigData,
   EventData,
-  aARootSchema,
   Ips,
   MacroList,
   macrosMapSchema,
@@ -13,7 +13,6 @@ import {
   Logger,
 } from '@nestjs/common';
 import {promises as fs} from 'fs';
-import path from 'path';
 
 interface ConfigCombination {
   shortCut: string;

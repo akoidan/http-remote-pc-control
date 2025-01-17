@@ -50,8 +50,6 @@
     "@types/express": "^5.0.0",
     "@typescript-eslint/eslint-plugin": "^7.7.2",
     "@typescript-eslint/parser": "^7.7.2",
-    "class-transformer": "^0.5.1",
-    "class-validator": "^0.14.1",
     "eslint": "^8.57.0",
     "eslint-find-rules": "^4.1.0",
     "eslint-plugin-babel": "^5.3.1",

@@ -1,10 +1,13 @@
 import {
-  Body,
   Controller,
   Post,
 } from '@nestjs/common';
-import {MouseClickRequest} from '@/mouse/mouse-dto';
+import {
+  MouseClickRequest,
+  mouseClickRequestSchema,
+} from '@/mouse/mouse-dto';
 import {MouseService} from '@/mouse/mouse-service';
+import {ZodBody} from '@/validation/zod-validator';
 
 @Controller()
 export class MouseController {
@@ -14,7 +17,7 @@ export class MouseController {
   }
 
   @Post('mouse-click')
-  async mouseClick(@Body() event: MouseClickRequest): Promise<void> {
+  async mouseClick(@ZodBody(mouseClickRequestSchema) event: MouseClickRequest): Promise<void> {
     await this.mouseService.click(event.x, event.y);
   }
 }

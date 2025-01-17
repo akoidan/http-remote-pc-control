@@ -54,10 +54,7 @@ export class KeyboardService {
       this.logger.debug(`Type: \u001b[35m${text}`);
       await keyboard.type(parts[i]);
       if (i < parts.length - 1) {
-        this.logger.debug('Type: \u001b[35m$4');
-        await keyboard.pressKey(Key.LeftShift);
-        await keyboard.type('4');
-        await keyboard.releaseKey(Key.LeftShift);
+        await this.sendKey(['4'], ['shift']);
       }
     }
   }

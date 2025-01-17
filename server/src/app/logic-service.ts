@@ -1,26 +1,23 @@
 /* eslint-disable max-lines */
 import {
-  ExecuteCommand,
-  MacroCommand,
   BaseCommand,
-  MouseClickCommand,
-  KeyPressCommand,
-  TypeTextCommand,
   Command,
   CommandOrMacro,
-  KillCommand,
+  ExecuteCommand,
   Key,
+  KeyPressCommand,
+  KillCommand,
+  MacroCommand,
+  MouseClickCommand,
+  TypeTextCommand,
 } from '@/config/types/commands';
-import {
-  EventData,
-} from '@/config/types/schema';
+import {EventData} from '@/config/types/schema';
 import {ConfigService} from '@/config/config-service';
 import {ClientService} from '@/client/client-service';
 import {
   Injectable,
   Logger,
 } from '@nestjs/common';
-import {KeySchema} from 'zod';
 
 @Injectable()
 export class LogicService {
@@ -47,11 +44,12 @@ export class LogicService {
     if (keySend) {
       let holdKeys: Key[] = [];
       if (Array.isArray(keySend.holdKeys)) {
+        // eslint-disable-next-line @typescript-eslint/prefer-destructuring
         holdKeys = keySend.holdKeys;
       } else if (typeof keySend.holdKeys === 'string') {
         holdKeys = [keySend.holdKeys as Key];
       } else {
-        throw Error(`Unknown holdKeys type ${keySend}`);
+        throw Error(`Unknown holdKeys type ${JSON.stringify(keySend)}`);
       }
       await this.clientService.keyPress(ip, {
         keys: (Array.isArray(keySend.keySend) ? keySend.keySend : [keySend.keySend]) as Key[],

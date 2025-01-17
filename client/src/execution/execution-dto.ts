@@ -1,27 +1,25 @@
-import {
-  IsArray,
-  IsBoolean,
-  IsString,
-} from 'class-validator';
+import {z} from 'zod';
 
-class LaunchExeRequest {
-  @IsString()
-  public path: string;
 
-  @IsArray()
-  @IsString({each: true})
-  public arguments: string[];
+const launchExeRequestSchema = z.object({
+  path: z.string(),
+  arguments: z.array(z.string()),
+  waitTillFinish: z.boolean(),
+});
+type LaunchExeRequest = z.infer<typeof launchExeRequestSchema>;
 
-  @IsBoolean()
-  public waitTillFinish: boolean;
-}
+const killExeRequestSchema = z.object({
+  name: z.string(),
+});
 
-class KillExeRequest {
-  @IsString()
-  public name: string;
-}
+type KillExeRequest = z.infer<typeof killExeRequestSchema>
 
 export {
+  launchExeRequestSchema,
+  killExeRequestSchema,
+};
+
+export type {
   KillExeRequest,
   LaunchExeRequest,
 };

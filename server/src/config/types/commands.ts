@@ -1,7 +1,4 @@
-import {
-  z,
-  ZodIssueCode,
-} from 'zod';
+import {z} from 'zod';
 
 const variableSchema = z.string().regex(/\{\{\w+\}\}/u)
   .describe('Inject variable with this name. Either can be an environment variable, ' +

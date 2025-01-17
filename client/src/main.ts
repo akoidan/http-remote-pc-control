@@ -1,7 +1,6 @@
 import {NestFactory} from '@nestjs/core';
 import {AppModule} from '@/app/app.module';
 import {Logger} from 'nestjs-pino';
-import {ValidationPipe} from '@nestjs/common';
 import {MtlsModule} from '@/mtls/mtls.module';
 import {CertService} from '@/mtls/cert-service';
 
@@ -21,7 +20,7 @@ async function bootstrap(): Promise<void> {
       rejectUnauthorized: true,
     },
   });
-  app.useGlobalPipes(new ValidationPipe());
+  // app.useGlobalPipes(new ValidationPipe());
   app.useLogger(app.get(Logger));
   await app.listen(5000);
 }
