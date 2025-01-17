@@ -4,15 +4,149 @@
     "msi": "192.168.100.14",
     "lenovo": "192.168.100.33",
     "desktop": "192.168.100.9",
-    "asus": "192.168.100.27"
+    "asus": "192.168.100.27",
+    "this": "127.0.0.1"
   },
   "delay": 100,
   "aliases": {
-    "se": [ "desktop"],
-    "tyrs": ["touchpad", "lenovo", "msi"],
-    "craft": ["asus"]
+    "se": [
+      "desktop"
+    ],
+    "wc": [
+      "desktop"
+    ],
+    "pp": [
+      "desktop"
+    ],
+    "tyrs": [
+      "touchpad",
+      "lenovo",
+      "msi"
+    ],
+    "da": [
+      "this"
+    ],
+    "bd": [
+      "this"
+    ],
+    "sws": [
+      "this"
+    ],
+    "ee": [
+      "asus"
+    ],
+    "bish": [
+      "asus"
+    ]
   },
   "combinations": [
+    {
+      "threads": [
+        [
+          {
+            "macro": "killLaunchL2Wine",
+            "variables": {
+              "destination": "this",
+              "login": "deathangel2",
+              "delay": 10000
+            }
+          },
+          {
+            "macro": "launchL2Wine",
+            "variables": {
+              "destination": "this",
+              "login": "deathangel",
+              "delay": 10000
+            }
+          },
+          {
+            "macro": "launchL2Wine",
+            "variables": {
+              "destination": "this",
+              "login": "deathangel9",
+              "delay": 10000
+            }
+          }
+        ],
+        [
+          {
+            "macro": "killLaunchL2",
+            "variables": {
+              "destination": "desktop",
+              "login": "deathangelq",
+              "delay": 9000
+            }
+          },
+          {
+            "macro": "launchL2",
+            "variables": {
+              "destination": "this",
+              "login": "deathangelk",
+              "delay": 10000
+            }
+          },
+          {
+            "macro": "launchL2",
+            "variables": {
+              "destination": "this",
+              "login": "deathangel1",
+              "delay": 10000
+            }
+          }
+        ],
+        [
+          {
+            "macro": "killLaunchL2",
+            "variables": {
+              "destination": "asus",
+              "login": "deathangel8",
+              "delay": 12000
+            }
+          },
+          {
+            "macro": "killLaunchL2",
+            "variables": {
+              "destination": "asus",
+              "login": "deathangel6",
+              "delay": 10000
+            }
+          }
+        ],
+        [
+          {
+            "macro": "killLaunchL2",
+            "variables": {
+              "destination": "touchpad",
+              "login": "deathangell",
+              "delay": 14000
+            }
+          }
+        ],
+        [
+          {
+            "macro": "killLaunchL2",
+            "variables": {
+              "destination": "msi",
+              "login": "deathangelm",
+              "delay": 16000
+            }
+          }
+        ],
+        [
+          {
+            "macro": "killLaunchL2",
+            "variables": {
+              "destination": "msi",
+              "login": "deathangeln",
+              "delay": 16000
+            }
+          }
+        ]
+      ],
+      "name": "Launch l2 clients",
+      "shortCut": "Alt+F11",
+      "circular": false
+    },
     {
       "commands": [
         {
@@ -20,7 +154,7 @@
           "keySend": "F5"
         }
       ],
-      "name": "Skill attack",
+      "name": "Stun",
       "shortCut": "Alt+1",
       "circular": true
     },
@@ -28,10 +162,6 @@
       "commands": [
         {
           "destination": "tyrs",
-          "keySend": "F4"
-        },
-        {
-          "destination": "craft",
           "keySend": "F4"
         }
       ],
@@ -42,16 +172,23 @@
     {
       "commands": [
         {
-          "destination": "tyrs",
-          "keySend": "F3"
-        },
-        {
-          "destination": "craft",
-          "keySend": "F3"
+          "destination": "se",
+          "keySend": "3"
         }
       ],
-      "name": "Potion",
+      "name": "WC Fear",
       "shortCut": "Alt+3",
+      "circular": false
+    },
+    {
+      "commands": [
+        {
+          "destination": "wc",
+          "keySend": "2"
+        }
+      ],
+      "name": "WC Sleep",
+      "shortCut": "Alt+4",
       "circular": false
     },
     {
@@ -62,17 +199,6 @@
         }
       ],
       "name": "Stigma",
-      "shortCut": "Alt+4",
-      "circular": false
-    },
-    {
-      "commands": [
-        {
-          "destination": "tyrs",
-          "keySend": "1"
-        }
-      ],
-      "name": "Fury Fist",
       "shortCut": "Alt+5",
       "circular": false
     },
@@ -83,26 +209,21 @@
           "keySend": "F6"
         },
         {
-          "destination": "se",
+          "destination": "asus",
           "keySend": "F6"
         },
         {
-          "destination": "craft",
+          "destination": "desktop",
           "keySend": "F6"
         }
       ],
       "name": "To Me",
-      "shortCut": "Alt+6",
-      "circular": false
+      "shortCut": "Alt+6"
     },
     {
       "commands": [
         {
           "destination": "tyrs",
-          "keySend": "F7"
-        },
-        {
-          "destination": "craft",
           "keySend": "F7"
         }
       ],
@@ -114,29 +235,6 @@
       "commands": [
         {
           "destination": "tyrs",
-          "keySend": "F8"
-        },
-        {
-          "destination": "se",
-          "keySend": "F8"
-        },
-        {
-          "destination": "craft",
-          "keySend": "F8"
-        }
-      ],
-      "name": "To BD",
-      "shortCut": "Alt+8",
-      "circular": false
-    },
-    {
-      "commands": [
-        {
-          "destination": "tyrs",
-          "keySend": "F9"
-        },
-        {
-          "destination": "craft",
           "keySend": "F9"
         }
       ],
@@ -147,80 +245,131 @@
     {
       "commands": [
         {
-          "destination": "tyrs",
-          "keySend": "7"
+          "destination": "bish",
+          "keySend": "F3"
         }
       ],
-      "name": "Target for zaelot",
-      "shortCut": "Alt+q",
-      "circular": false
+      "name": "battle heal",
+      "shortCut": "Alt+q"
     },
     {
       "commands": [
         {
-          "destination": "tyrs",
-          "id": "l2.ctrl_f2",
-          "run":  {"Name": "ctrl_f2"}
+          "destination": "bish",
+          "keySend": "F4"
         }
       ],
-      "name": "Force attack zaelot",
-      "shortCut": "Alt+w",
-      "circular": false
+      "name": "greater heal",
+      "shortCut": "Alt+w"
     },
     {
       "commands": [
         {
-          "destination": "tyrs",
-          "keySend": "2"
+          "destination": "bish",
+          "keySend": "F5"
         }
       ],
-      "name": "use zaelot",
-      "shortCut": "Alt+e",
-      "circular": false
+      "name": "restore life",
+      "shortCut": "Alt+e"
     },
     {
       "commands": [
         {
-          "destination": "se",
+          "destination": "bish",
           "keySend": "F9"
         }
       ],
       "name": "Heal all",
-      "shortCut": "Alt+a",
-      "circular": false
+      "shortCut": "Alt+a"
     },
     {
       "commands": [
         {
-          "destination": "se",
+          "destination": "bish",
           "keySend": "1"
         }
       ],
-      "name": "Heal sebia",
-      "shortCut": "Alt+s",
-      "circular": false
+      "name": "Target me",
+      "shortCut": "Alt+s"
     },
     {
       "commands": [
         {
-          "destination": "se",
+          "destination": "bish",
           "keySend": "2"
         }
       ],
-      "name": "Target Head",
-      "shortCut": "Alt+d",
-      "circular": false
+      "name": "destination",
+      "shortCut": "Alt+d"
     },
     {
       "commands": [
         {
-          "destination": "se",
-          "keySend": "F5"
+          "destination": "bish",
+          "keySend": "F8"
         }
       ],
-      "name": "Purify",
-      "shortCut": "Alt+z",
-      "circular": false
+      "name": "balance life",
+      "shortCut": "Alt+f"
+    },
+    {
+      "commands": [
+        {
+          "destination": "bish",
+          "keySend": "F10"
+        }
+      ],
+      "name": "Benediction",
+      "shortCut": "Alt+g"
+    },
+    {
+      "commands": [
+        {
+          "destination": "bish",
+          "keySend": "3"
+        }
+      ],
+      "name": "paralych",
+      "shortCut": "Alt+T"
+    },
+    {
+      "commands": [
+        {
+          "destination": "bish",
+          "id": "l2.CustomKeys",
+          "run": {
+            "Name": "alt_tab"
+          }
+        },
+        {
+          "destination": "bish",
+          "keySend": "F9"
+        },
+        {
+          "destination": "bish",
+          "id": "l2.CustomKeys",
+          "run": {
+            "Name": "alt_tab"
+          }
+        }
+      ],
+      "name": "EE mass",
+      "shortCut": "Alt+R"
+    },
+    {
+      "commands": [
+        {
+          "destination": "bish",
+          "keySend": "F6"
+        },
+        {
+          "destination": "wc",
+          "keySend": "F6"
+        }
+      ],
+      "shuffle": true,
+      "name": "bish to me",
+      "shortCut": "Alt+z"
     },
     {
       "commands": [
@@ -240,7 +389,7 @@
           "destination": "se",
           "keySend": "F11"
         },
-         {
+        {
           "destination": "craft",
           "keySend": "3"
         },
@@ -251,37 +400,6 @@
       ],
       "name": "Tyrs use form and kostochka",
       "shortCut": "Alt+g",
-      "circular": false
-    },
-    {
-      "commands": [
-        {
-          "destination": "tyrs",
-          "keySend": "8"
-        },
-        {
-          "destination": "se",
-          "keySend": "8"
-        },
-        {
-          "destination": "tyrs",
-          "keySend": "9"
-        },
-        {
-          "destination": "se",
-          "keySend": "9"
-        },
-        {
-          "destination": "craft",
-          "keySend": "8"
-        },
-        {
-          "destination": "craft",
-          "keySend": "9"
-        }
-      ],
-      "name": "EXP",
-      "shortCut": "Alt+0",
       "circular": false
     }
   ]

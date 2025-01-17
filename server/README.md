@@ -10,7 +10,7 @@ _Object containing the following properties:_
 | `aliases`               | A map for extra layer above destination property. E.g. you can define PC name in IPS section and instead of specifying PC name directly you can use aliases from this section that points to the PC name.       | `Record<string, Array<string> \| string>`                                        |
 | **`delay`** (\*)        | Global delay in miliseconds between commands in order to prevent spam. Could be set to 0                                                                                                                        | `number`                                                                         |
 | **`combinations`** (\*) | Shorcuts mappings. Main logic                                                                                                                                                                                   | _Array of [ShortCutMapping](#shortcutmapping) items_                             |
-| `macros`                | A map of macros where a key is the macro name and value is its body                                                                                                                                             | _Object with dynamic keys of type_ `string` _and values of type_ [Macro](#macro) |
+| `macros`                | A map of macros where a key is the macro name and value is its body                                                                                                                                             | [MacrosMap](#macrosmap)                                                          |
 
 _(\*) Required._
 
@@ -41,13 +41,158 @@ Sends a keyPress to a remote PC.
 
 _Object containing the following properties:_
 
-| Property               | Description                                                   | Type                                                                                                                                                                         |
-| :--------------------- | :------------------------------------------------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **`keySend`** (\*)     | A key to be sent.                                             | `'a' \| 'b' \| 'c' \| 'd' \| 'e' \| 'f' \| 'g' \| 'h' \| 'i' \| 'j' \| 'k' \| 'l' \| 'm' \| 'n' \| 'o' \| 'p' \| 'q' \| 'r' \| 's' \| 't' \| ...` _or_ [Variable](#variable) |
-| **`destination`** (\*) | Remote PC from ips or aliases section to send this command to | `string` _or_ [Variable](#variable)                                                                                                                                          |
-| `delay`                | Delay in milliseconds before the next command.                | `number` _or_ [Variable](#variable)                                                                                                                                          |
+| Property               | Description                                                   | Type                                                                 |
+| :--------------------- | :------------------------------------------------------------ | :------------------------------------------------------------------- |
+| **`keySend`** (\*)     |                                                               | [Key](#key), [Variable](#variable) _or_ _Array of [Key](#key) items_ |
+| `holdKeys`             | A key to be sent.                                             | [Key](#key), [Variable](#variable) _or_ _Array of [Key](#key) items_ |
+| **`destination`** (\*) | Remote PC from ips or aliases section to send this command to | `string` _or_ [Variable](#variable)                                  |
+| `delay`                | Delay in milliseconds before the next command.                | `number` _or_ [Variable](#variable)                                  |
 
 _(\*) Required._
+
+## Key
+
+A key to be sent.
+
+_Enum string, one of the following possible values:_
+
+<details>
+<summary><i>Expand for full list of 132 values</i></summary>
+
+- `'a'`
+- `'b'`
+- `'c'`
+- `'d'`
+- `'e'`
+- `'f'`
+- `'g'`
+- `'h'`
+- `'i'`
+- `'j'`
+- `'k'`
+- `'l'`
+- `'m'`
+- `'n'`
+- `'o'`
+- `'p'`
+- `'q'`
+- `'r'`
+- `'s'`
+- `'t'`
+- `'u'`
+- `'v'`
+- `'w'`
+- `'x'`
+- `'y'`
+- `'z'`
+- `'f1'`
+- `'f2'`
+- `'f3'`
+- `'f4'`
+- `'f5'`
+- `'f6'`
+- `'f7'`
+- `'f8'`
+- `'f9'`
+- `'f10'`
+- `'f11'`
+- `'f12'`
+- `'f13'`
+- `'f14'`
+- `'f15'`
+- `'f16'`
+- `'f17'`
+- `'f18'`
+- `'f19'`
+- `'f20'`
+- `'f21'`
+- `'f22'`
+- `'f23'`
+- `'f24'`
+- `'0'`
+- `'1'`
+- `'2'`
+- `'3'`
+- `'4'`
+- `'5'`
+- `'6'`
+- `'7'`
+- `'8'`
+- `'9'`
+- `'numpad_0'`
+- `'numpad_1'`
+- `'numpad_2'`
+- `'numpad_3'`
+- `'numpad_4'`
+- `'numpad_5'`
+- `'numpad_6'`
+- `'numpad_7'`
+- `'numpad_8'`
+- `'numpad_9'`
+- `'numpad_decimal'`
+- `'space'`
+- `'escape'`
+- `'tab'`
+- `'alt'`
+- `'control'`
+- `'right_alt'`
+- `'right_control'`
+- `'win'`
+- `'right_win'`
+- `'cmd'`
+- `'right_cmd'`
+- `'menu'`
+- `'fn'`
+- `'shift'`
+- `'command'`
+- `'right_shift'`
+- `'command'`
+- `'`'`
+- `'-'`
+- `'='`
+- `'backspace'`
+- `'['`
+- `']'`
+- `'\'`
+- `';'`
+- `'''`
+- `'enter'`
+- `','`
+- `'.'`
+- `'/'`
+- `'left'`
+- `'up'`
+- `'right'`
+- `'down'`
+- `'printscreen'`
+- `'insert'`
+- `'delete'`
+- `'home'`
+- `'end'`
+- `'pageup'`
+- `'pagedown'`
+- `'add'`
+- `'subtract'`
+- `'multiply'`
+- `'divide'`
+- `'enter'`
+- `'caps_lock'`
+- `'scroll_lock'`
+- `'num_lock'`
+- `'audio_mute'`
+- `'audio_vol_down'`
+- `'audio_vol_up'`
+- `'audio_play'`
+- `'audio_stop'`
+- `'audio_pause'`
+- `'audio_prev'`
+- `'audio_next'`
+- `'audio_rewind'`
+- `'audio_forward'`
+- `'audio_repeat'`
+- `'audio_random'`
+
+</details>
 
 ## KillExeCommand
 
@@ -69,12 +214,13 @@ Starts a program on a remote PC.
 
 _Object containing the following properties:_
 
-| Property               | Description                                                   | Type                                |
-| :--------------------- | :------------------------------------------------------------ | :---------------------------------- |
-| **`launch`** (\*)      | Full path to an executable.                                   | `string`                            |
-| `arguments`            | Full path to an executable.                                   | `Array<string>`                     |
-| **`destination`** (\*) | Remote PC from ips or aliases section to send this command to | `string` _or_ [Variable](#variable) |
-| `delay`                | Delay in milliseconds before the next command.                | `number` _or_ [Variable](#variable) |
+| Property               | Description                                                            | Type                                |
+| :--------------------- | :--------------------------------------------------------------------- | :---------------------------------- |
+| **`launch`** (\*)      | Full path to an executable.                                            | `string`                            |
+| `arguments`            | Array of arguments to an executable                                    | `Array<string>`                     |
+| `waitTillFinish`       | Waits until executable finishes to run before running the next command | `boolean`                           |
+| **`destination`** (\*) | Remote PC from ips or aliases section to send this command to          | `string` _or_ [Variable](#variable) |
+| `delay`                | Delay in milliseconds before the next command.                         | `number` _or_ [Variable](#variable) |
 
 _(\*) Required._
 
@@ -90,6 +236,16 @@ _Object containing the following properties:_
 | `variables`         | Variables that are used in macros. If you set a option value to {{varName}} in this macro section. If this varName is present in this array, it will be replaced | `Array<string>`                      |
 
 _(\*) Required._
+
+## MacrosMap
+
+A map of macros where a key is the macro name and value is its body
+
+_Object record with dynamic keys:_
+
+- _keys of type_ `string`
+- _values of type_ [Macro](#macro)
+ (_optional_)
 
 ## MouseClickCommand
 

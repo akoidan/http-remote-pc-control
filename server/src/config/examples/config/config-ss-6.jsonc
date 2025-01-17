@@ -194,12 +194,13 @@
     {
       "commands": [
         {
-          "destination": "bd",
-          "keySend": "4"
+          "destination": "sws",
+          "keySend": "5",
+          "delay": 15000
         },
         {
-          "destination": "sws",
-          "keySend": "5"
+          "destination": "bd",
+          "keySend": "4"
         }
       ],
       "name": "Song dance to fight",

@@ -5,9 +5,12 @@ import {
 } from '@nestjs/common';
 import {
   KeyPressRequest,
+  keyPressRequestSchema,
   TypeTextRequest,
+  typeTextRequestSchema,
 } from '@/keyboard/keyboard-dto';
-import {KeyboardService} from '@/keyboard/keyboard-service';
+import { KeyboardService } from '@/keyboard/keyboard-service';
+import { ZodBody } from '@/validation/zod-validator';
 
 @Controller()
 export class KeyboardController {
@@ -17,13 +20,13 @@ export class KeyboardController {
   }
 
   @Post('key-press')
-  async keyPress(@Body() body: KeyPressRequest): Promise<void> {
-    await this.keyboardService.sendKey(body.key);
+  async keyPress(@ZodBody(keyPressRequestSchema) body: KeyPressRequest): Promise<void> {
+    await this.keyboardService.sendKey(body.keys as string[], body.holdKeys as string[]);
   }
 
 
   @Post('type-text')
-  async typeText(@Body() body: TypeTextRequest): Promise<void> {
+  async typeText(@ZodBody(typeTextRequestSchema) body: TypeTextRequest): Promise<void> {
     await this.keyboardService.type(body.text);
   }
 }

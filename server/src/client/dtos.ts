@@ -6,7 +6,8 @@ interface MouseClickRequest {
 }
 
 interface SendKeyRequest {
-  key: Key;
+  keys: Key[];
+  holdKeys: Key[];
 }
 
 interface LaunchExeRequest {

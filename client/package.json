@@ -65,6 +65,7 @@
     "pino-pretty": "^13.0.0",
     "reflect-metadata": "^0.2.2",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "zod": "^3.24.1"
   }
 }

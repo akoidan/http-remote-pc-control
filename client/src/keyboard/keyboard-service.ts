@@ -1,7 +1,7 @@
 /*
  eslint-disable no-await-in-loop
  */
-import { Injectable } from '@nestjs/common';
+import {Injectable} from '@nestjs/common';
 import {
   Key,
   keyboard,
@@ -10,7 +10,7 @@ import {
   InjectPinoLogger,
   PinoLogger,
 } from 'nestjs-pino';
-import { invertedMap } from '@/keyboard/keyboard-dto';
+import {invertedMap} from '@/keyboard/keyboard-dto';
 
 @Injectable()
 export class KeyboardService {
@@ -20,20 +20,31 @@ export class KeyboardService {
   ) {
   }
 
-  async sendKey(key: string): Promise<void> {
-    const keymap: Key = invertedMap.get(key)!;
-    this.logger.info(`KeyPress: \u001b[35m${key}`);
-    await keyboard.type(keymap);
-  }
-
   private readonly specialCharacters = '$';
 
-  async type(text: string): Promise<void> {
+  public async type(text: string): Promise<void> {
     if (text.includes(this.specialCharacters)) {
       await this.typeWithSpecialCharacters(text);
     } else {
       this.logger.info(`Type: \u001b[35m${text}`);
       await keyboard.type(text);
+    }
+  }
+
+  public async sendKey(keys: string[], holdKeys: string[]): Promise<void> {
+    for (const key of holdKeys) {
+      this.logger.debug(`HoldKey: \u001b[35m${key}`);
+      await keyboard.pressKey(invertedMap.get(key)!);
+    }
+    for (const key of keys) {
+      this.logger.debug(`KeyPress: \u001b[35m${key}`);
+      await keyboard.type(invertedMap.get(key)!);
+      // eslint-disable-next-line @typescript-eslint/no-loop-func
+      await new Promise(resolve => {setTimeout(resolve, 10);});
+    }
+    for (const key of holdKeys) {
+      this.logger.debug(`ReleaseKey: \u001b[35m${key}`);
+      await keyboard.releaseKey(invertedMap.get(key)!);
     }
   }
 

@@ -1,4 +1,7 @@
-import {z} from 'zod';
+import {
+  z,
+  ZodIssueCode,
+} from 'zod';
 
 const variableSchema = z.string().regex(/\{\{\w+\}\}/u)
   .describe('Inject variable with this name. Either can be an environment variable, ' +
@@ -19,8 +22,11 @@ const baseSchema = z.object({
 }).merge(delaySchema);
 
 
+
 const keyPressCommandSchema = z.object({
-  keySend: z.union([keySchema, variableSchema])
+  keySend: z.union([keySchema, variableSchema, z.array(keySchema)]),
+  holdKeys: z.union([keySchema, variableSchema, z.array(keySchema)])
+    .optional()
     .describe('A key to be sent.'),
 }).merge(baseSchema).describe('Sends a keyPress to a remote PC.');
 
@@ -87,6 +93,7 @@ export type {
   KillCommand,
 };
 export {
+  keySchema,
   variableSchema,
   keyPressCommandSchema,
   launchExeCommandSchema,

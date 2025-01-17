@@ -20,6 +20,7 @@ import {
   Injectable,
   Logger,
 } from '@nestjs/common';
+import {KeySchema} from 'zod';
 
 @Injectable()
 export class LogicService {
@@ -42,8 +43,20 @@ export class LogicService {
 
   async runCommand(currRec: Command): Promise<void> {
     const ip = this.configService.getIps()[(currRec as BaseCommand).destination];
-    if ((currRec as KeyPressCommand).keySend) {
-      await this.clientService.keyPress(ip, {key: (currRec as KeyPressCommand).keySend as Key});
+    const keySend: KeyPressCommand = currRec as KeyPressCommand;
+    if (keySend) {
+      let holdKeys: Key[] = [];
+      if (Array.isArray(keySend.holdKeys)) {
+        holdKeys = keySend.holdKeys;
+      } else if (typeof keySend.holdKeys === 'string') {
+        holdKeys = [keySend.holdKeys as Key];
+      } else {
+        throw Error(`Unknown holdKeys type ${keySend}`);
+      }
+      await this.clientService.keyPress(ip, {
+        keys: (Array.isArray(keySend.keySend) ? keySend.keySend : [keySend.keySend]) as Key[],
+        holdKeys,
+      });
     } else if ((currRec as MouseClickCommand).mouseMoveX) {
       await this.clientService.mouseClick(ip, {
         x: (currRec as MouseClickCommand).mouseMoveX as number,
