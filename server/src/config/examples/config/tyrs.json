@@ -11,15 +11,15 @@
   "variables": {
     "se": {
       "type": "number",
-      "defaultValue": 23704
+      "defaultValue": 21816
     },
     "ee": {
       "type": "number",
-      "defaultValue": 23704
+      "defaultValue": 21512
     },
     "wc": {
       "type": "number",
-      "defaultValue": 23704
+      "defaultValue": 21540
     }
   },
   "aliases": {
@@ -75,7 +75,8 @@
             "variables": {
               "destination": "desktop",
               "login": "deathangelq",
-              "delay": 10000
+              "delay": 10000,
+              "assignId": "pp"
             }
           },
           {
@@ -83,7 +84,8 @@
             "variables": {
               "destination": "desktop",
               "login": "deathangel1",
-              "delay": 10000
+              "delay": 10000,
+              "assignId": "wc"
             }
           },
           {
@@ -91,7 +93,8 @@
             "variables": {
               "destination": "desktop",
               "login": "deathangel8",
-              "delay": 10000
+              "delay": 10000,
+              "assignId": "ee"
             }
           }
         ],
@@ -100,16 +103,9 @@
             "macro": "killLaunchL2",
             "variables": {
               "destination": "asus",
-              "login": "deathangel8",
-              "delay": 12000
-            }
-          },
-          {
-            "macro": "killLaunchL2",
-            "variables": {
-              "destination": "asus",
               "login": "deathangel6",
-              "delay": 10000
+              "delay": 10000,
+              "assignId": "bish"
             }
           }
         ],
@@ -119,7 +115,8 @@
             "variables": {
               "destination": "touchpad",
               "login": "deathangell",
-              "delay": 14000
+              "delay": 14000,
+              "assignId": "tyr"
             }
           }
         ],
@@ -129,7 +126,8 @@
             "variables": {
               "destination": "msi",
               "login": "deathangelm",
-              "delay": 16000
+              "delay": 16000,
+              "assignId": "monk"
             }
           }
         ],
@@ -139,7 +137,8 @@
             "variables": {
               "destination": "lenovo",
               "login": "deathangeln",
-              "delay": 16000
+              "delay": 16000,
+              "assignId": "raider"
             }
           }
         ]
@@ -242,6 +241,10 @@
     {
       "commands": [
         {
+          "focusPid": "{{wc}}",
+          "destination": "wc"
+        },
+        {
           "destination": "wc",
           "keySend": "2"
         }
@@ -285,6 +288,26 @@
         {
           "destination": "asus",
           "keySend": "f6"
+        },
+        {
+          "focusPid": "{{se}}",
+          "destination": "desktop"
+        },
+        {
+          "destination": "desktop",
+          "keySend": "f6"
+        },
+        {
+          "focusPid": "{{wc}}",
+          "destination": "desktop"
+        },
+        {
+          "destination": "desktop",
+          "keySend": "f6"
+        },
+       {
+          "focusPid": "{{ee}}",
+          "destination": "desktop"
         },
         {
           "destination": "desktop",
@@ -341,19 +364,12 @@
       "commands": [
         {
           "destination": "ee",
-          "keySend": "tab",
-          "holdKeys": "alt",
-          "delay": 300
+          "focusPid": "{{ee}}"
         },
         {
           "destination": "ee",
-          "keySend": "f5",
+          "keySend": "f9",
           "delay": 100
-        },
-        {
-          "destination": "ee",
-          "keySend": "tab",
-          "holdKeys": "alt"
         }
       ],
       "name": "ee Heal Poison",
@@ -497,17 +513,11 @@
       "commands": [
         {
           "destination": "ee",
-          "holdKeys": "alt",
-          "keySend": "tab"
+          "focusPid": "{{ee}}"
         },
         {
           "destination": "ee",
           "keySend": "f12"
-        },
-        {
-          "destination": "ee",
-          "holdKeys": "alt",
-          "keySend": "tab"
         }
       ],
       "name": "EE mass tp",

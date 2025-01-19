@@ -32,12 +32,13 @@
       {
         "destination": "{{destination}}",
         "kill": "L2.exe",
-        "delay": 2000
+        "delay": 200
       },
       {
         "destination": "{{destination}}",
         "launch": "C:\\l2dion\\system\\L2.exe",
-        "delay": "{{delay}}"
+        "delay": "{{delay}}",
+        "assignId": "{{assignId}}"
       },
       {
         "destination": "{{destination}}",
@@ -75,7 +76,8 @@
     "variables": [
       "destination",
       "login",
-      "delay"
+      "delay",
+      "assignId"
     ]
   },
   "launchL2": {
@@ -83,7 +85,8 @@
       {
         "destination": "{{destination}}",
         "launch": "C:\\l2dion\\system\\L2.exe",
-        "delay": "{{delay}}"
+        "delay": "{{delay}}",
+        "assignId": "{{assignId}}"
       },
       {
         "destination": "{{destination}}",
@@ -121,7 +124,8 @@
     "variables": [
       "destination",
       "login",
-      "delay"
+      "delay",
+      "assignId"
     ]
   },
   "killLaunchL2Wine": {
@@ -172,6 +176,7 @@
         "delay": 1500
       }
     ],
+
     "variables": [
       "destination",
       "login",

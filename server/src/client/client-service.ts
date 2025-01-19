@@ -33,7 +33,7 @@ export class ClientService {
   }
 
   async launchExe(client: string, request: LaunchExeRequest): Promise<LaunchPidResponse> {
-    return this.client.post(client, '/launch-exe', request);
+    return this.client.post(client, '/launch-exe', request, 3000, true);
   }
 
   async killExe(client: string, request: KillExeRequest): Promise<void> {
