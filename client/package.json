@@ -7,12 +7,13 @@
   "license": "MIT",
   "scripts": {
     "start": "rm -rf ./dist/ && node -r tsconfig-paths/register -r ts-node/register src/main.ts",
-    "prebuild": "rm -rf ./dist/ && nest build",
+    "prebuild": "rm -rf ./dist/ && nest build && cp ./src/native/window.node ./dist/native/window.node",
     "build": "pkg . --targets win --output app.exe",
     "wine": "wine app.exe",
-    "native": "node-gyp rebuild && node -r tsconfig-paths/register -r ts-node/register src/native/main.ts",
+    "native": "node-gyp rebuild && cp ./build/Release/window.node ./src/native/window.node",
     "lint": "eslint --ext .ts --max-warnings=0 src",
-    "autoformat": "eslint --ext .ts --max-warnings=0 --fix src"
+    "autoformat": "eslint --ext .ts --max-warnings=0 --fix src",
+    "postinstall": "patch-package"
   },
   "devDependencies": {
     "node-addon-api": "^8.3.0",
@@ -59,6 +60,8 @@
     "eslint-plugin-sonarjs": "^0.25.1",
     "eslint-plugin-unicorn": "^56.0.0",
     "nestjs-pino": "^4.1.0",
+    "node-window-manager": "^2.2.4",
+    "patch-package": "^8.0.0",
     "pino-http": "^10.3.0",
     "pino-pretty": "^13.0.0",
     "reflect-metadata": "^0.2.2",

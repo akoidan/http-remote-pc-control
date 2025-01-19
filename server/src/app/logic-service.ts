@@ -4,6 +4,7 @@ import {
   Command,
   CommandOrMacro,
   ExecuteCommand,
+  FocusWindowCommand,
   Key,
   KeyPressCommand,
   KillCommand,
@@ -11,9 +12,9 @@ import {
   MouseClickCommand,
   TypeTextCommand,
 } from '@/config/types/commands';
-import {EventData} from '@/config/types/schema';
-import {ConfigService} from '@/config/config-service';
-import {ClientService} from '@/client/client-service';
+import { EventData } from '@/config/types/schema';
+import { ConfigService } from '@/config/config-service';
+import { ClientService } from '@/client/client-service';
 import {
   Injectable,
   Logger,
@@ -29,6 +30,7 @@ export class LogicService {
   }
 
   private activeFighterIndex = 0;
+  private readonly localVariables: Record<string, any> = {};
 
   async pingClients(): Promise<unknown[]> {
     this.logger.debug('Pinging clients...');
@@ -38,6 +40,7 @@ export class LogicService {
     );
   }
 
+  // eslint-disable-next-line sonarjs/cognitive-complexity
   async runCommand(currRec: Command): Promise<void> {
     const ip = this.configService.getIps()[(currRec as BaseCommand).destination];
     const keySend: KeyPressCommand = currRec as KeyPressCommand;
@@ -53,22 +56,29 @@ export class LogicService {
         keys: (Array.isArray(keySend.keySend) ? keySend.keySend : [keySend.keySend]) as Key[],
         holdKeys,
       });
+    } else if ((currRec as FocusWindowCommand).focusPid) {
+      await this.clientService.focusExe(ip, {
+        pid: (currRec as FocusWindowCommand).focusPid as number,
+      });
     } else if ((currRec as MouseClickCommand).mouseMoveX) {
       await this.clientService.mouseClick(ip, {
         x: (currRec as MouseClickCommand).mouseMoveX as number,
         y: (currRec as MouseClickCommand).mouseMoveY as number,
       });
     } else if ((currRec as ExecuteCommand).launch) {
-      await this.clientService.launchExe(ip, {
+      const response = await this.clientService.launchExe(ip, {
         path: (currRec as ExecuteCommand).launch,
         arguments: (currRec as ExecuteCommand).arguments ?? [],
         waitTillFinish: (currRec as ExecuteCommand).waitTillFinish ?? false,
       });
+      if ((currRec as ExecuteCommand).assignId) {
+        this.localVariables[(currRec as ExecuteCommand).assignId!] = response.pid;
+      }
     } else if ((currRec as TypeTextCommand).typeText) {
       await this.clientService.typeText(ip, {
         text: (currRec as TypeTextCommand).typeText,
       });
-    }  else if ((currRec as KillCommand).kill) {
+    } else if ((currRec as KillCommand).kill) {
       await this.clientService.killExe(ip, {
         name: (currRec as KillCommand).kill,
       });
@@ -93,14 +103,23 @@ export class LogicService {
     return result as T;
   }
 
-    replaceGlobalVars<T extends object>(obj: T): T {
+  replaceEnvVars<T extends object>(obj: T): T {
     const result: Partial<T> = {};
     for (const [key, value] of Object.entries(obj) as [keyof T, T[keyof T]][]) {
       if (typeof value === 'string' && value.startsWith('{{') && value.endsWith('}}')) {
         const globalVars = this.configService.getGlobalVars();
+        const scriptVars = this.configService.getVariables();
         const varName = value.slice(2, -2);
-        if (globalVars[varName]) {
-          result[key] = globalVars[varName] as T[keyof T];
+        if (this.localVariables[varName]) {
+          result[key] = this.localVariables[varName] as T[keyof T];
+        } else if (globalVars[varName]) {
+          if (scriptVars[varName]?.type === 'number') {
+            result[key] = parseInt(globalVars[varName]) as T[keyof T];
+          } else {
+            result[key] = globalVars[varName] as T[keyof T];
+          }
+        } else if (scriptVars[varName]) {
+          result[key] = scriptVars[varName].defaultValue as T[keyof T];
         } else {
           throw Error(`Unknown environment variable ${value}`);
         }
@@ -158,7 +177,7 @@ export class LogicService {
         processReceivers.push(inpRec as Command);
       }
     }
-    processReceivers = processReceivers.map(rec => this.replaceGlobalVars(rec));
+    processReceivers = processReceivers.map(rec => this.replaceEnvVars(rec));
 
     const commands = this.constructReceivers(processReceivers);
     if (comb.shuffle) {
@@ -171,15 +190,15 @@ export class LogicService {
     const commands: Command[] = [];
     inputReceivers.forEach(rec => {
       if (this.configService.getIps()[rec.destination]) {
-        commands.push({...rec, destination: rec.destination});
+        commands.push({ ...rec, destination: rec.destination });
         return;
       }
       const destination = this.configService.getAliases()[rec.destination];
       if (typeof destination === 'string') {
-        commands.push({...rec, destination});
+        commands.push({ ...rec, destination });
       } else if (Array.isArray(destination)) {
         destination.forEach(dest => {
-          commands.push({...rec, destination: dest});
+          commands.push({ ...rec, destination: dest });
         });
       } else {
         throw Error(`Unknown destination type ${rec.destination}`);

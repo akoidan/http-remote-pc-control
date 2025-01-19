@@ -1,7 +1,9 @@
 import {FetchClient} from '@/client/http-client';
 import {
+  FocusExeRequest,
   KillExeRequest,
   LaunchExeRequest,
+  LaunchPidResponse,
   MouseClickRequest,
   SendKeyRequest,
   TypeTextRequest,
@@ -22,11 +24,15 @@ export class ClientService {
     return this.client.post(client, '/key-press', request);
   }
 
+   async focusExe(client: string, request: FocusExeRequest): Promise<void> {
+    return this.client.post(client, '/focus-exe', request);
+  }
+
   async mouseClick(client: string, request: MouseClickRequest): Promise<void> {
     return this.client.post(client, '/mouse-click', request);
   }
 
-  async launchExe(client: string, request: LaunchExeRequest): Promise<void> {
+  async launchExe(client: string, request: LaunchExeRequest): Promise<LaunchPidResponse> {
     return this.client.post(client, '/launch-exe', request);
   }
 

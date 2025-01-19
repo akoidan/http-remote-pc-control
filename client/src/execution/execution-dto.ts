@@ -6,20 +6,34 @@ const launchExeRequestSchema = z.object({
   arguments: z.array(z.string()),
   waitTillFinish: z.boolean(),
 });
-type LaunchExeRequest = z.infer<typeof launchExeRequestSchema>;
+
+const focusExeRequestSchema = z.object({
+  pid: z.number(),
+});
+
+
 
 const killExeRequestSchema = z.object({
   name: z.string(),
 });
 
 type KillExeRequest = z.infer<typeof killExeRequestSchema>
+type LaunchExeRequest = z.infer<typeof launchExeRequestSchema>;
+type FocusExeRequest = z.infer<typeof focusExeRequestSchema>;
+
+interface LaunchPidResponse {
+  pid: number;
+}
 
 export {
   launchExeRequestSchema,
   killExeRequestSchema,
+  focusExeRequestSchema,
 };
 
 export type {
+  LaunchPidResponse,
+  FocusExeRequest,
   KillExeRequest,
   LaunchExeRequest,
 };

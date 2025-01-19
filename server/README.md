@@ -8,6 +8,7 @@ _Object containing the following properties:_
 | :---------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------- |
 | **`ips`** (\*)          | Definition of remote PCs where keys are PC names and values are their IP addresses. The IP address should be available to a remote PC. You can also use https://ngrok.com/ to get public address or create VPN  | _Object with dynamic keys of type_ `string` _and values of type_ `string` (_IP_) |
 | `aliases`               | A map for extra layer above destination property. E.g. you can define PC name in IPS section and instead of specifying PC name directly you can use aliases from this section that points to the PC name.       | `Record<string, Array<string> \| string>`                                        |
+| `variables`             | Set of variable desciption along with default values                                                                                                                                                            | [Variables](#variables)                                                          |
 | **`delay`** (\*)        | Global delay in miliseconds between commands in order to prevent spam. Could be set to 0                                                                                                                        | `number`                                                                         |
 | **`combinations`** (\*) | Shorcuts mappings. Main logic                                                                                                                                                                                   | _Array of [ShortCutMapping](#shortcutmapping) items_                             |
 | `macros`                | A map of macros where a key is the macro name and value is its body                                                                                                                                             | [MacrosMap](#macrosmap)                                                          |
@@ -32,8 +33,23 @@ _Union of the following possible types:_
 - [KeyPressCommand](#keypresscommand)
 - [MouseClickCommand](#mouseclickcommand)
 - [LaunchExeCommand](#launchexecommand)
+- [FocusWindowCommand](#focuswindowcommand)
 - [TypeTextCommand](#typetextcommand)
 - [KillExeCommand](#killexecommand)
+
+## FocusWindowCommand
+
+Focuses window with the provided PID, making it active
+
+_Object containing the following properties:_
+
+| Property               | Description                                                   | Type                                               |
+| :--------------------- | :------------------------------------------------------------ | :------------------------------------------------- |
+| **`focusPid`** (\*)    | Pid of the process that has this window                       | `string` (_regex: `/\{\{\w+\}\}/u`_) _or_ `number` |
+| **`destination`** (\*) | Remote PC from ips or aliases section to send this command to | `string` _or_ `string` (_regex: `/\{\{\w+\}\}/u`_) |
+| `delay`                | Delay in milliseconds before the next command.                | `number` _or_ `string` (_regex: `/\{\{\w+\}\}/u`_) |
+
+_(\*) Required._
 
 ## KeyPressCommand
 
@@ -41,12 +57,12 @@ Sends a keyPress to a remote PC.
 
 _Object containing the following properties:_
 
-| Property               | Description                                                   | Type                                                                 |
-| :--------------------- | :------------------------------------------------------------ | :------------------------------------------------------------------- |
-| **`keySend`** (\*)     |                                                               | [Key](#key), [Variable](#variable) _or_ _Array of [Key](#key) items_ |
-| `holdKeys`             | A key to be sent.                                             | [Key](#key), [Variable](#variable) _or_ _Array of [Key](#key) items_ |
-| **`destination`** (\*) | Remote PC from ips or aliases section to send this command to | `string` _or_ [Variable](#variable)                                  |
-| `delay`                | Delay in milliseconds before the next command.                | `number` _or_ [Variable](#variable)                                  |
+| Property               | Description                                                   | Type                                                                                |
+| :--------------------- | :------------------------------------------------------------ | :---------------------------------------------------------------------------------- |
+| **`keySend`** (\*)     |                                                               | [Key](#key), `string` (_regex: `/\{\{\w+\}\}/u`_) _or_ _Array of [Key](#key) items_ |
+| `holdKeys`             | A key to be sent.                                             | [Key](#key), `string` (_regex: `/\{\{\w+\}\}/u`_) _or_ _Array of [Key](#key) items_ |
+| **`destination`** (\*) | Remote PC from ips or aliases section to send this command to | `string` _or_ `string` (_regex: `/\{\{\w+\}\}/u`_)                                  |
+| `delay`                | Delay in milliseconds before the next command.                | `number` _or_ `string` (_regex: `/\{\{\w+\}\}/u`_)                                  |
 
 _(\*) Required._
 
@@ -200,11 +216,11 @@ Kills a process on the remote PC.
 
 _Object containing the following properties:_
 
-| Property               | Description                                                   | Type                                |
-| :--------------------- | :------------------------------------------------------------ | :---------------------------------- |
-| **`kill`** (\*)        | Executable file name. E.g. Chrome.exe                         | `string` _or_ [Variable](#variable) |
-| **`destination`** (\*) | Remote PC from ips or aliases section to send this command to | `string` _or_ [Variable](#variable) |
-| `delay`                | Delay in milliseconds before the next command.                | `number` _or_ [Variable](#variable) |
+| Property               | Description                                                   | Type                                               |
+| :--------------------- | :------------------------------------------------------------ | :------------------------------------------------- |
+| **`kill`** (\*)        | Executable file name. E.g. Chrome.exe                         | `string` _or_ `string` (_regex: `/\{\{\w+\}\}/u`_) |
+| **`destination`** (\*) | Remote PC from ips or aliases section to send this command to | `string` _or_ `string` (_regex: `/\{\{\w+\}\}/u`_) |
+| `delay`                | Delay in milliseconds before the next command.                | `number` _or_ `string` (_regex: `/\{\{\w+\}\}/u`_) |
 
 _(\*) Required._
 
@@ -214,13 +230,14 @@ Starts a program on a remote PC.
 
 _Object containing the following properties:_
 
-| Property               | Description                                                            | Type                                |
-| :--------------------- | :--------------------------------------------------------------------- | :---------------------------------- |
-| **`launch`** (\*)      | Full path to an executable.                                            | `string`                            |
-| `arguments`            | Array of arguments to an executable                                    | `Array<string>`                     |
-| `waitTillFinish`       | Waits until executable finishes to run before running the next command | `boolean`                           |
-| **`destination`** (\*) | Remote PC from ips or aliases section to send this command to          | `string` _or_ [Variable](#variable) |
-| `delay`                | Delay in milliseconds before the next command.                         | `number` _or_ [Variable](#variable) |
+| Property               | Description                                                            | Type                                               |
+| :--------------------- | :--------------------------------------------------------------------- | :------------------------------------------------- |
+| **`launch`** (\*)      | Full path to an executable.                                            | `string`                                           |
+| `arguments`            | Array of arguments to an executable                                    | `Array<string>`                                    |
+| `waitTillFinish`       | Waits until executable finishes to run before running the next command | `boolean`                                          |
+| `assignId`             | Assigns PID of launched command to a variable that can be used after   | `string`                                           |
+| **`destination`** (\*) | Remote PC from ips or aliases section to send this command to          | `string` _or_ `string` (_regex: `/\{\{\w+\}\}/u`_) |
+| `delay`                | Delay in milliseconds before the next command.                         | `number` _or_ `string` (_regex: `/\{\{\w+\}\}/u`_) |
 
 _(\*) Required._
 
@@ -253,12 +270,12 @@ Moves mouse to specified coordinates and clicks with left button
 
 _Object containing the following properties:_
 
-| Property               | Description                                                   | Type                                |
-| :--------------------- | :------------------------------------------------------------ | :---------------------------------- |
-| **`mouseMoveX`** (\*)  | X coordinate                                                  | `number` _or_ [Variable](#variable) |
-| **`mouseMoveY`** (\*)  | Y coordinate                                                  | `number` _or_ [Variable](#variable) |
-| **`destination`** (\*) | Remote PC from ips or aliases section to send this command to | `string` _or_ [Variable](#variable) |
-| `delay`                | Delay in milliseconds before the next command.                | `number` _or_ [Variable](#variable) |
+| Property               | Description                                                   | Type                                               |
+| :--------------------- | :------------------------------------------------------------ | :------------------------------------------------- |
+| **`mouseMoveX`** (\*)  | X coordinate                                                  | `number` _or_ `string` (_regex: `/\{\{\w+\}\}/u`_) |
+| **`mouseMoveY`** (\*)  | Y coordinate                                                  | `number` _or_ `string` (_regex: `/\{\{\w+\}\}/u`_) |
+| **`destination`** (\*) | Remote PC from ips or aliases section to send this command to | `string` _or_ `string` (_regex: `/\{\{\w+\}\}/u`_) |
+| `delay`                | Delay in milliseconds before the next command.                | `number` _or_ `string` (_regex: `/\{\{\w+\}\}/u`_) |
 
 _(\*) Required._
 
@@ -274,11 +291,11 @@ Runs a macro from the macros section.
 
 _Object containing the following properties:_
 
-| Property         | Description                                        | Type                                |
-| :--------------- | :------------------------------------------------- | :---------------------------------- |
-| **`macro`** (\*) | Name of the macro (key from macros section object) | `string`                            |
-| `variables`      | Object of a key-values of variable name and value  | `Record<string, string \| number>`  |
-| `delay`          | Delay in milliseconds before the next command.     | `number` _or_ [Variable](#variable) |
+| Property         | Description                                        | Type                                               |
+| :--------------- | :------------------------------------------------- | :------------------------------------------------- |
+| **`macro`** (\*) | Name of the macro (key from macros section object) | `string`                                           |
+| `variables`      | Object of a key-values of variable name and value  | `Record<string, string \| number>`                 |
+| `delay`          | Delay in milliseconds before the next command.     | `number` _or_ `string` (_regex: `/\{\{\w+\}\}/u`_) |
 
 _(\*) Required._
 
@@ -306,16 +323,33 @@ Types text on the remote PC.
 
 _Object containing the following properties:_
 
-| Property               | Description                                                   | Type                                |
-| :--------------------- | :------------------------------------------------------------ | :---------------------------------- |
-| **`typeText`** (\*)    | Any string to type                                            | `string` _or_ [Variable](#variable) |
-| **`destination`** (\*) | Remote PC from ips or aliases section to send this command to | `string` _or_ [Variable](#variable) |
-| `delay`                | Delay in milliseconds before the next command.                | `number` _or_ [Variable](#variable) |
+| Property               | Description                                                   | Type                                               |
+| :--------------------- | :------------------------------------------------------------ | :------------------------------------------------- |
+| **`typeText`** (\*)    | Any string to type                                            | `string` _or_ `string` (_regex: `/\{\{\w+\}\}/u`_) |
+| **`destination`** (\*) | Remote PC from ips or aliases section to send this command to | `string` _or_ `string` (_regex: `/\{\{\w+\}\}/u`_) |
+| `delay`                | Delay in milliseconds before the next command.                | `number` _or_ `string` (_regex: `/\{\{\w+\}\}/u`_) |
 
 _(\*) Required._
 
-## Variable
+## VariableDescription
 
-Inject variable with this name. Either can be an environment variable, either a variables passed to a macro from variables section
+A variable that can be injected instead of command
 
-_String which matches the regular expression `/\{\{\w+\}\}/u`._
+_Object containing the following properties:_
+
+| Property        | Description                              | Type                   |
+| :-------------- | :--------------------------------------- | :--------------------- |
+| **`type`** (\*) | if number, parseInt will be used         | `'string' \| 'number'` |
+| `defaultValue`  | default value if not others are provided | `any` (_nullable_)     |
+
+_(\*) Required._
+
+## Variables
+
+Set of variable desciption along with default values
+
+_Object record with dynamic keys:_
+
+- _keys of type_ `string`
+- _values of type_ [VariableDescription](#variabledescription)
+ (_optional_)

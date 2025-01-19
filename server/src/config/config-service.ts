@@ -6,6 +6,7 @@ import {
   Ips,
   MacroList,
   macrosMapSchema,
+  Variables,
 } from '@/config/types/schema';
 import {parse} from 'jsonc-parser';
 import {
@@ -95,6 +96,10 @@ export class ConfigService {
 
   public getDelay(): number {
     return this.configData!.delay;
+  }
+
+  public getVariables(): NonNullable<Variables> {
+    return this.configData!.variables ?? {};
   }
 
   public getGlobalVars(): Record<string, string | undefined> {

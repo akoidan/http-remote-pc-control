@@ -19,7 +19,6 @@ const baseSchema = z.object({
 }).strict().merge(delaySchema);
 
 
-
 const keyPressCommandSchema = z.object({
   keySend: z.union([keySchema, variableSchema, z.array(keySchema)]),
   holdKeys: z.union([keySchema, variableSchema, z.array(keySchema)])
@@ -27,12 +26,16 @@ const keyPressCommandSchema = z.object({
     .describe('A key to be sent.'),
 }).strict().merge(baseSchema).describe('Sends a keyPress to a remote PC.');
 
-
 const launchExeCommandSchema = z.object({
   launch: z.string().describe('Full path to an executable.'),
   arguments: z.array(z.string()).optional().describe('Array of arguments to an executable'),
   waitTillFinish: z.boolean().optional().describe('Waits until executable finishes to run before running the next command'),
+  assignId: z.string().optional().describe('Assigns PID of launched command to a variable that can be used after'),
 }).strict().merge(baseSchema).describe('Starts a program on a remote PC.');
+
+const focusWindowCommandSchema = z.object({
+  focusPid: z.union([variableSchema, z.number()]).describe('Pid of the process that has this window'),
+}).strict().merge(baseSchema).describe('Focuses window with the provided PID, making it active');
 
 const runMacroCommandSchema = z.object({
   macro: z.string().describe('Name of the macro (key from macros section object)'),
@@ -56,6 +59,7 @@ const commandSchema = z.union([
   keyPressCommandSchema,
   mouseClickCommandSchema,
   launchExeCommandSchema,
+  focusWindowCommandSchema,
   typeTextCommandSchema,
   killExeCommandSchema,
 ]).describe('A remote command');
@@ -68,6 +72,7 @@ const commandOrMacroSchema = z.union([
 
 type TypeTextCommand = z.infer<typeof typeTextCommandSchema>
 type MacroCommand = z.infer<typeof runMacroCommandSchema>
+type FocusWindowCommand = z.infer<typeof focusWindowCommandSchema>
 type KeyPressCommand = z.infer<typeof keyPressCommandSchema>
 type BaseCommand = z.infer<typeof baseSchema>
 type MouseClickCommand = z.infer<typeof mouseClickCommandSchema>
@@ -83,6 +88,7 @@ export type {
   KeyPressCommand,
   BaseCommand,
   MouseClickCommand,
+  FocusWindowCommand,
   ExecuteCommand,
   Command,
   Key,
@@ -94,6 +100,7 @@ export {
   variableSchema,
   keyPressCommandSchema,
   launchExeCommandSchema,
+  focusWindowCommandSchema,
   typeTextCommandSchema,
   runMacroCommandSchema,
   mouseClickCommandSchema,

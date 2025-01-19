@@ -17,8 +17,8 @@ export class FetchClient {
   ) {
   }
 
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  async post(client: string, url: string, payload: any, timeout = 3000): Promise<void> {
+  // eslint-disable-next-line
+  async post<T>(client: string, url: string, payload: any, timeout = 3000, withParse: boolean = false): Promise<T> {
     try {
       const payloadstr: string = JSON.stringify(payload);
       const result = await new Promise<string>((resolve, reject) => {
@@ -62,6 +62,14 @@ export class FetchClient {
         req.end();
       });
       this.logger.debug(`POST:OK ${client}${url} ${payloadstr}: ${result}`);
+      if (withParse) {
+        try {
+          return JSON.parse(result) as T;
+        } catch (error) {
+          throw new Error(`Failed to parse ${result}`);
+        }
+      }
+      return null as T;
     } catch (error: unknown) {
       throw new Error(`POST:FAIL ${this.protocol}//${client}:${this.port}${url} ${(error as any).message}`);
     }

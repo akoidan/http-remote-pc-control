@@ -1,8 +1,8 @@
 {
   "targets": [
     {
-      "target_name": "hello",
-      "sources": ["src/native/hello.c"]
+      "target_name": "window",
+      "sources": ["src/native/window.c"]
     }
   ]
 }

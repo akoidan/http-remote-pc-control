@@ -23,7 +23,7 @@ export class ExecutionService {
   ) {
   }
 
-  async launchExe(pathToExe: string, args: string[], waitTillFinish: boolean): Promise<void> {
+  async launchExe(pathToExe: string, args: string[], waitTillFinish: boolean): Promise<number> {
     return new Promise((resolve, reject) => {
       this.logger.info(`Launching ${pathToExe} ${args.join(' ')}`);
 
@@ -43,13 +43,13 @@ export class ExecutionService {
         // Detect if the process exits quickly after starting
         const startupTimeout = setTimeout(() => {
           this.logger.info(`Process started successfully: ${pathToExe}`);
-          resolve(); // Resolve only after some time has passed without errors
+          resolve(process.pid!); // Resolve only after some time has passed without errors
         }, waitTillFinish ? 60_000 : 300);
 
         process.on('close', (code) => {
           clearTimeout(startupTimeout); // Clear timeout if process exits
           if (code === 0) {
-            resolve();
+            resolve(process.pid!);
           } else {
             reject(new ServiceUnavailableException(`Process exit with code ${code}`));
           }

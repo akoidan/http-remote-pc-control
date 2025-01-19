@@ -16,6 +16,7 @@ import {
   variableSchema,
   killExeCommandSchema,
   type Command,
+  focusWindowCommandSchema,
 } from '@/config/types/commands';
 
 
@@ -47,13 +48,13 @@ const shortCutMappingSchema = z.object({
 })
   .strict()
   .refine(
-  (data) =>
-    (data.commands && !data.threads) ?? (!data.commands && data.threads),
-  {
-    message: 'Either commands or threads must be present, but not both.',
-    path: ['commands', 'threads'], // Error will be shown for both fields
-  }
-).describe('An event schema that represent a set of commands that is executed when a cirtain shortkey is pressed');
+    (data) =>
+      (data.commands && !data.threads) ?? (!data.commands && data.threads),
+    {
+      message: 'Either commands or threads must be present, but not both.',
+      path: ['commands', 'threads'], // Error will be shown for both fields
+    }
+  ).describe('An event schema that represent a set of commands that is executed when a cirtain shortkey is pressed');
 
 const macroSchema = z.object({
   commands: z.array(commandSchema).describe('Set of commands for this macro'),
@@ -63,11 +64,20 @@ const macroSchema = z.object({
 }).strict().describe('A macro that can be injected instead of command. ' +
   'That will run commands from its body. Can be also injected with variables. Think of it like a function');
 
+
+const variableDescriptionSchema = z.object({
+  type: z.enum(['string', 'number']).describe('if number, parseInt will be used'),
+  defaultValue: z.any().describe('default value if not others are provided'),
+}).describe('A variable that can be injected instead of command');
+
+const variablesSchema = z.record(variableDescriptionSchema).optional().describe('Set of variable desciption along with default values');
+
 const macrosMapSchema = z.record(macroSchema).optional().describe('A map of macros where a key is the macro name and value is its body');
 // Define the full schema for the provided JSON structure
 const aARootSchema = z.object({
   ips: ipsSchema,
   aliases: aliasesSchema,
+  variables: variablesSchema,
   delay: z.number().describe('Global delay in miliseconds between commands in order to prevent spam. Could be set to 0'),
   combinations: z.array(shortCutMappingSchema).describe('Shorcuts mappings. Main logic'),
   macros: macrosMapSchema,
@@ -147,12 +157,16 @@ type ConfigData = z.infer<typeof aARootSchema>;
 type EventData = z.infer<typeof shortCutMappingSchema>
 type Ips = z.infer<typeof ipsSchema>
 type Aliases = z.infer<typeof aliasesSchema>
+type Variables = z.infer<typeof variablesSchema>
+type VariablesDescription = z.infer<typeof variableDescriptionSchema>
 type MacroList = z.infer<typeof macrosMapSchema>
 
 export type {
   ConfigData,
   EventData,
   Ips,
+  Variables,
+  VariablesDescription,
   Aliases,
   MacroList,
 };
@@ -160,7 +174,8 @@ export type {
 export {
   aARootSchema,
   keySchema,
-  variableSchema,
+  variableDescriptionSchema,
+  variablesSchema,
   macrosMapSchema,
   shortCutMappingSchema,
   macroSchema,
@@ -169,6 +184,7 @@ export {
   receiversAndMacrosArray,
   launchExeCommandSchema,
   typeTextCommandSchema,
+  focusWindowCommandSchema,
   runMacroCommandSchema,
   mouseClickCommandSchema,
   killExeCommandSchema,

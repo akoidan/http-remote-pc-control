@@ -10,6 +10,10 @@ interface SendKeyRequest {
   holdKeys: Key[];
 }
 
+interface FocusExeRequest {
+  pid: number;
+}
+
 interface LaunchExeRequest {
   path: string;
   arguments: string[];
@@ -24,9 +28,15 @@ interface TypeTextRequest {
   text: string;
 }
 
+interface LaunchPidResponse {
+  pid: number;
+}
+
 export type {
   MouseClickRequest,
   SendKeyRequest,
+  FocusExeRequest,
+  LaunchPidResponse,
   LaunchExeRequest,
   TypeTextRequest,
   KillExeRequest,

@@ -8,6 +8,20 @@
     "this": "127.0.0.1"
   },
   "delay": 200,
+  "variables": {
+    "se": {
+      "type": "number",
+      "defaultValue": 23704
+    },
+    "ee": {
+      "type": "number",
+      "defaultValue": 23704
+    },
+    "wc": {
+      "type": "number",
+      "defaultValue": 23704
+    }
+  },
   "aliases": {
     "se": "desktop",
     "wc": "desktop",
@@ -31,6 +45,14 @@
       "threads": [
         [
           {
+            "macro": "launchL2Wine",
+            "variables": {
+              "destination": "this",
+              "login": "deathangel9",
+              "delay": 10000
+            }
+          },
+          {
             "macro": "killLaunchL2Wine",
             "variables": {
               "destination": "this",
@@ -43,14 +65,6 @@
             "variables": {
               "destination": "this",
               "login": "deathangel",
-              "delay": 10000
-            }
-          },
-          {
-            "macro": "launchL2Wine",
-            "variables": {
-              "destination": "this",
-              "login": "deathangel9",
               "delay": 10000
             }
           }
@@ -76,7 +90,7 @@
             "macro": "launchL2",
             "variables": {
               "destination": "desktop",
-              "login": "deathangelo",
+              "login": "deathangel8",
               "delay": 10000
             }
           }
@@ -132,6 +146,53 @@
       ],
       "name": "Launch l2 clients",
       "shortCut": "Alt+f11",
+      "circular": false
+    },
+    {
+      "threads": [
+        [
+          {
+            "macro": "killL2",
+            "variables": {
+              "destination": "touchpad"
+            }
+          }
+        ],
+        [
+          {
+            "macro": "killL2",
+            "variables": {
+              "destination": "msi"
+            }
+          }
+        ],
+        [
+          {
+            "macro": "killL2",
+            "variables": {
+              "destination": "lenovo"
+            }
+          }
+        ],
+        [
+          {
+            "macro": "killL2",
+            "variables": {
+              "destination": "asus"
+            }
+          }
+        ],
+        [
+          {
+            "macro": "killL2",
+            "variables": {
+              "destination": "desktop"
+            }
+          }
+        ]
+      ],
+      "name": "Kill all L2 no main",
+      "shortCut": "Alt+f10",
       "circular": false
     },
     {
@@ -193,11 +254,26 @@
       "commands": [
         {
           "destination": "se",
-          "keySend": "3"
+          "focusPid": "{{se}}"
+        },
+        {
+          "destination": "se",
+          "keySend": "f5"
         }
       ],
       "name": "Stigma",
       "shortCut": "Alt+5",
+      "circular": false
+    },
+    {
+      "commands": [
+        {
+          "destination": "this",
+          "focusPid": "{{se}}"
+        }
+      ],
+      "name": "Stigma",
+      "shortCut": "Alt+-",
       "circular": false
     },
     {
@@ -466,21 +542,21 @@
       "threads": [
         [
           {
-            "destination": "tyrs",
+            "destination": "monk",
             "keySend": "f2",
             "holdKeys": "control"
           }
         ],
         [
           {
-            "destination": "tyrs",
+            "destination": "tyrant",
             "keySend": "f2",
             "holdKeys": "control"
           }
         ],
         [
           {
-            "destination": "tyrs",
+            "destination": "raider",
             "keySend": "f2",
             "holdKeys": "control"
           }
