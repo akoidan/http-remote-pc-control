@@ -10,7 +10,7 @@
     "prebuild": "rm -rf ./dist/ && nest build && cp ./src/native/window.node ./dist/native/window.node",
     "build": "pkg . --targets win --output app.exe",
     "wine": "wine app.exe",
-    "native": "node-gyp rebuild && cp ./build/Release/window.node ./src/native/window.node",
+    "win32": "node-gyp rebuild && cp ./build/Release/window.node ./src/native/window.node",
     "lint": "eslint --ext .ts --max-warnings=0 src",
     "autoformat": "eslint --ext .ts --max-warnings=0 --fix src",
     "postinstall": "patch-package"
