@@ -24,8 +24,8 @@ const ipsSchema = z.record(z.string().ip())
     ' The IP address should be available to a remote PC.' +
     ' You can also use https://ngrok.com/ to get public address or create VPN ');
 
-const aliasesSchema = z.record(z.union([z.array(z.string()), z.string()])).optional()
-
+const aliasesSchema = z.record(z.union([z.array(z.string()), z.string()]))
+  .optional()
   .describe('A map for extra layer above destination property. E.g. you can define PC name in ' +
     'IPS section and instead of specifying PC name directly you can use aliases from this section that points to the PC name.');
 
@@ -44,19 +44,14 @@ const shortCutMappingSchema = z.object({
   shortCut: z.string().describe('A shorcut to be pressed. E.g. Alt+1'),
   circular: z.boolean().optional().describe('If set to true. Commands in this chain will be executed in a circular way.' +
     ' So each press = 1 command. Instead of full commands'),
-}).refine(
+})
+  .strict()
+  .refine(
   (data) =>
     (data.commands && !data.threads) ?? (!data.commands && data.threads),
   {
     message: 'Either commands or threads must be present, but not both.',
     path: ['commands', 'threads'], // Error will be shown for both fields
-  }
-).refine(
-  (data) =>
-    (!data.commands || !(data.circular && data.commands.length <= 1)),
-  {
-    message: 'circular=true can be applied when there are multiple commands',
-    path: ['commands', 'circular'], // Error will be shown for both fields
   }
 ).describe('An event schema that represent a set of commands that is executed when a cirtain shortkey is pressed');
 
@@ -65,7 +60,7 @@ const macroSchema = z.object({
   variables: z.array(z.string()).optional()
     .describe('Variables that are used in macros. If you set a option value to {{varName}}' +
       ' in this macro section. If this varName is present in this array, it will be replaced'),
-}).describe('A macro that can be injected instead of command. ' +
+}).strict().describe('A macro that can be injected instead of command. ' +
   'That will run commands from its body. Can be also injected with variables. Think of it like a function');
 
 const macrosMapSchema = z.record(macroSchema).optional().describe('A map of macros where a key is the macro name and value is its body');
@@ -76,7 +71,7 @@ const aARootSchema = z.object({
   delay: z.number().describe('Global delay in miliseconds between commands in order to prevent spam. Could be set to 0'),
   combinations: z.array(shortCutMappingSchema).describe('Shorcuts mappings. Main logic'),
   macros: macrosMapSchema,
-}).superRefine((data, ctx) => {
+}).strict().superRefine((data, ctx) => {
   // Ensure mapping values are arrays of keys from ips
   const ipsKeys = new Set(Object.keys(data.ips));
   Object.entries(data.aliases ?? {}).forEach(([key, value]) => {

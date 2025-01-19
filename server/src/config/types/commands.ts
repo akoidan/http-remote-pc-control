@@ -12,11 +12,11 @@ const keySchema = z.enum(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
 const delaySchema = z.object({
   delay: z.union([z.number(), variableSchema]).optional()
     .describe('Delay in milliseconds before the next command.'),
-});
+}).strict();
 
 const baseSchema = z.object({
   destination: z.union([z.string(),variableSchema]).describe('Remote PC from ips or aliases section to send this command to'),
-}).merge(delaySchema);
+}).strict().merge(delaySchema);
 
 
 
@@ -25,32 +25,32 @@ const keyPressCommandSchema = z.object({
   holdKeys: z.union([keySchema, variableSchema, z.array(keySchema)])
     .optional()
     .describe('A key to be sent.'),
-}).merge(baseSchema).describe('Sends a keyPress to a remote PC.');
+}).strict().merge(baseSchema).describe('Sends a keyPress to a remote PC.');
 
 
 const launchExeCommandSchema = z.object({
   launch: z.string().describe('Full path to an executable.'),
   arguments: z.array(z.string()).optional().describe('Array of arguments to an executable'),
   waitTillFinish: z.boolean().optional().describe('Waits until executable finishes to run before running the next command'),
-}).merge(baseSchema).describe('Starts a program on a remote PC.');
+}).strict().merge(baseSchema).describe('Starts a program on a remote PC.');
 
 const runMacroCommandSchema = z.object({
   macro: z.string().describe('Name of the macro (key from macros section object)'),
   variables: z.record(z.union([z.string(), z.number()])).optional().describe('Object of a key-values of variable name and value'),
-}).merge(delaySchema).describe('Runs a macro from the macros section.');
+}).strict().merge(delaySchema).describe('Runs a macro from the macros section.');
 
 const typeTextCommandSchema = z.object({
   typeText: z.union([z.string(), variableSchema]).describe('Any string to type'),
-}).merge(baseSchema).describe('Types text on the remote PC.');
+}).strict().merge(baseSchema).describe('Types text on the remote PC.');
 
 const mouseClickCommandSchema = z.object({
   mouseMoveX: z.union([z.number(),variableSchema]).describe('X coordinate'),
   mouseMoveY: z.union([z.number(), variableSchema]).describe('Y coordinate'),
-}).merge(baseSchema).describe('Moves mouse to specified coordinates and clicks with left button');
+}).strict().merge(baseSchema).describe('Moves mouse to specified coordinates and clicks with left button');
 
 const killExeCommandSchema = z.object({
   kill: z.union([z.string(), variableSchema]).describe('Executable file name. E.g. Chrome.exe'),
-}).merge(baseSchema).describe('Kills a process on the remote PC.');
+}).strict().merge(baseSchema).describe('Kills a process on the remote PC.');
 
 const commandSchema = z.union([
   keyPressCommandSchema,

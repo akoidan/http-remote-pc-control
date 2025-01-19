@@ -35,7 +35,7 @@
       "commands": [
         {
           "destination": "sags",
-          "keySend": "F5"
+          "keySend": "f5"
         }
       ],
       "name": "stun",
@@ -46,7 +46,7 @@
       "commands": [
         {
           "destination": "sags",
-          "keySend": "F4"
+          "keySend": "f4"
         }
       ],
       "name": "attack",
@@ -57,15 +57,15 @@
       "commands": [
         {
           "destination": "bdsws",
-          "keySend": "F6"
+          "keySend": "f6"
         },
         {
           "destination": "sags",
-          "keySend": "F6"
+          "keySend": "f6"
         },
         {
           "destination": "wc",
-          "keySend": "F6"
+          "keySend": "f6"
         }
       ],
       "name": "come to me",
@@ -76,7 +76,7 @@
       "commands": [
         {
           "destination": "sags",
-          "keySend": "F9"
+          "keySend": "f9"
         }
       ],
       "name": "archers buff",

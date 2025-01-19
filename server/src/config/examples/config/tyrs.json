@@ -7,37 +7,24 @@
     "asus": "192.168.100.27",
     "this": "127.0.0.1"
   },
-  "delay": 100,
+  "delay": 200,
   "aliases": {
-    "se": [
-      "desktop"
-    ],
-    "wc": [
-      "desktop"
-    ],
-    "pp": [
-      "desktop"
-    ],
+    "se": "desktop",
+    "wc": "desktop",
+    "pp": "desktop",
     "tyrs": [
       "touchpad",
       "lenovo",
       "msi"
     ],
-    "da": [
-      "this"
-    ],
-    "bd": [
-      "this"
-    ],
-    "sws": [
-      "this"
-    ],
-    "ee": [
-      "asus"
-    ],
-    "bish": [
-      "asus"
-    ]
+    "da": "this",
+    "bd": "this",
+    "sws": "this",
+    "ee": "desktop",
+    "bish": "asus",
+    "monk": "touchpad",
+    "tyrant": "msi",
+    "raider": "lenovo"
   },
   "combinations": [
     {
@@ -74,22 +61,22 @@
             "variables": {
               "destination": "desktop",
               "login": "deathangelq",
-              "delay": 9000
-            }
-          },
-          {
-            "macro": "launchL2",
-            "variables": {
-              "destination": "this",
-              "login": "deathangelk",
               "delay": 10000
             }
           },
           {
             "macro": "launchL2",
             "variables": {
-              "destination": "this",
+              "destination": "desktop",
               "login": "deathangel1",
+              "delay": 10000
+            }
+          },
+          {
+            "macro": "launchL2",
+            "variables": {
+              "destination": "desktop",
+              "login": "deathangelo",
               "delay": 10000
             }
           }
@@ -136,7 +123,7 @@
           {
             "macro": "killLaunchL2",
             "variables": {
-              "destination": "msi",
+              "destination": "lenovo",
               "login": "deathangeln",
               "delay": 16000
             }
@@ -144,14 +131,14 @@
         ]
       ],
       "name": "Launch l2 clients",
-      "shortCut": "Alt+F11",
+      "shortCut": "Alt+f11",
       "circular": false
     },
     {
       "commands": [
         {
           "destination": "tyrs",
-          "keySend": "F5"
+          "keySend": "f5"
         }
       ],
       "name": "Stun",
@@ -162,7 +149,18 @@
       "commands": [
         {
           "destination": "tyrs",
-          "keySend": "F4"
+          "keySend": "3"
+        }
+      ],
+      "name": "Raging Force Tyr(-Pdef)",
+      "shortCut": "Alt+c",
+      "circular": true
+    },
+    {
+      "commands": [
+        {
+          "destination": "tyrs",
+          "keySend": "f4"
         }
       ],
       "name": "Attack",
@@ -206,15 +204,15 @@
       "commands": [
         {
           "destination": "tyrs",
-          "keySend": "F6"
+          "keySend": "f6"
         },
         {
           "destination": "asus",
-          "keySend": "F6"
+          "keySend": "f6"
         },
         {
           "destination": "desktop",
-          "keySend": "F6"
+          "keySend": "f6"
         }
       ],
       "name": "To Me",
@@ -224,7 +222,7 @@
       "commands": [
         {
           "destination": "tyrs",
-          "keySend": "F7"
+          "keySend": "f7"
         }
       ],
       "name": "Greater Potion",
@@ -235,7 +233,18 @@
       "commands": [
         {
           "destination": "tyrs",
-          "keySend": "F9"
+          "keySend": "1"
+        }
+      ],
+      "name": "Fury Fist",
+      "shortCut": "Alt+8",
+      "circular": false
+    },
+    {
+      "commands": [
+        {
+          "destination": "tyrs",
+          "keySend": "f9"
         }
       ],
       "name": "Buffs",
@@ -246,7 +255,7 @@
       "commands": [
         {
           "destination": "bish",
-          "keySend": "F3"
+          "keySend": "f3"
         }
       ],
       "name": "battle heal",
@@ -255,8 +264,74 @@
     {
       "commands": [
         {
+          "destination": "ee",
+          "keySend": "tab",
+          "holdKeys": "alt",
+          "delay": 300
+        },
+        {
+          "destination": "ee",
+          "keySend": "f5",
+          "delay": 100
+        },
+        {
+          "destination": "ee",
+          "keySend": "tab",
+          "holdKeys": "alt"
+        }
+      ],
+      "name": "ee Heal Poison",
+      "shortCut": "Alt+h"
+    },
+    {
+      "commands": [
+        {
+          "destination": "ee",
+          "keySend": "tab",
+          "holdKeys": "alt",
+          "delay": 300
+        },
+        {
+          "destination": "ee",
+          "keySend": "f12",
+          "delay": 100
+        },
+        {
+          "destination": "ee",
+          "keySend": "tab",
+          "holdKeys": "alt"
+        }
+      ],
+      "name": "EE TP all",
+      "shortCut": "Alt+p"
+    },
+    {
+      "commands": [
+        {
+          "destination": "ee",
+          "keySend": "tab",
+          "holdKeys": "alt",
+          "delay": 300
+        },
+        {
+          "destination": "ee",
+          "keySend": "f7",
+          "delay": 100
+        },
+        {
+          "destination": "ee",
+          "keySend": "tab",
+          "holdKeys": "alt"
+        }
+      ],
+      "name": "Mana Cardinal",
+      "shortCut": "Alt+m"
+    },
+    {
+      "commands": [
+        {
           "destination": "bish",
-          "keySend": "F4"
+          "keySend": "f4"
         }
       ],
       "name": "greater heal",
@@ -266,7 +341,7 @@
       "commands": [
         {
           "destination": "bish",
-          "keySend": "F5"
+          "keySend": "f5"
         }
       ],
       "name": "restore life",
@@ -276,7 +351,7 @@
       "commands": [
         {
           "destination": "bish",
-          "keySend": "F9"
+          "keySend": "f9"
         }
       ],
       "name": "Heal all",
@@ -306,7 +381,7 @@
       "commands": [
         {
           "destination": "bish",
-          "keySend": "F8"
+          "keySend": "f8"
         }
       ],
       "name": "balance life",
@@ -316,10 +391,20 @@
       "commands": [
         {
           "destination": "bish",
-          "keySend": "F10"
+          "keySend": "f10"
         }
       ],
-      "name": "Benediction",
+      "name": "Chain heal",
+      "shortCut": "Alt+r"
+    },
+    {
+      "commands": [
+        {
+          "destination": "bish",
+          "keySend": "f10"
+        }
+      ],
+      "name": "Chain heal",
       "shortCut": "Alt+g"
     },
     {
@@ -335,36 +420,32 @@
     {
       "commands": [
         {
-          "destination": "bish",
-          "id": "l2.CustomKeys",
-          "run": {
-            "Name": "alt_tab"
-          }
+          "destination": "ee",
+          "holdKeys": "alt",
+          "keySend": "tab"
         },
         {
-          "destination": "bish",
-          "keySend": "F9"
+          "destination": "ee",
+          "keySend": "f12"
         },
         {
-          "destination": "bish",
-          "id": "l2.CustomKeys",
-          "run": {
-            "Name": "alt_tab"
-          }
+          "destination": "ee",
+          "holdKeys": "alt",
+          "keySend": "tab"
         }
       ],
-      "name": "EE mass",
-      "shortCut": "Alt+R"
+      "name": "EE mass tp",
+      "shortCut": "Alt+."
     },
     {
       "commands": [
         {
           "destination": "bish",
-          "keySend": "F6"
+          "keySend": "f6"
         },
         {
           "destination": "wc",
-          "keySend": "F6"
+          "keySend": "f6"
         }
       ],
       "shuffle": true,
@@ -375,32 +456,70 @@
       "commands": [
         {
           "destination": "tyrs",
-          "keySend": "3"
-        },
-        {
-          "destination": "tyrs",
-          "keySend": "F11"
-        },
-        {
-          "destination": "se",
-          "keySend": "8"
-        },
-        {
-          "destination": "se",
-          "keySend": "F11"
-        },
-        {
-          "destination": "craft",
-          "keySend": "3"
-        },
-        {
-          "destination": "craft",
-          "keySend": "F11"
+          "keySend": "7"
         }
       ],
-      "name": "Tyrs use form and kostochka",
-      "shortCut": "Alt+g",
-      "circular": false
+      "name": "Tyrs target each other",
+      "shortCut": "Alt+y"
+    },
+    {
+      "threads": [
+        [
+          {
+            "destination": "tyrs",
+            "keySend": "f2",
+            "holdKeys": "control"
+          }
+        ],
+        [
+          {
+            "destination": "tyrs",
+            "keySend": "f2",
+            "holdKeys": "control"
+          }
+        ],
+        [
+          {
+            "destination": "tyrs",
+            "keySend": "f2",
+            "holdKeys": "control"
+          }
+        ]
+      ],
+      "name": "Tyrs attack each other",
+      "shortCut": "Alt+u"
+    },
+    {
+      "commands": [
+        {
+          "destination": "tyrs",
+          "keySend": "2"
+        }
+      ],
+      "name": "Tyrs target each other",
+      "shortCut": "Alt+i"
+    },
+    {
+      "commands": [
+        {
+          "destination": "bish",
+          "keySend": "3"
+        }
+      ],
+      "shuffle": true,
+      "name": "Purify (anchor/bleed/pois)",
+      "shortCut": "Alt+x"
+    },
+    {
+      "commands": [
+        {
+          "destination": "bish",
+          "keySend": "4"
+        }
+      ],
+      "shuffle": true,
+      "name": "Cleanse  (debuffs)",
+      "shortCut": "Alt+v"
     }
   ]
 }

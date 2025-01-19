@@ -41,15 +41,13 @@ export class LogicService {
   async runCommand(currRec: Command): Promise<void> {
     const ip = this.configService.getIps()[(currRec as BaseCommand).destination];
     const keySend: KeyPressCommand = currRec as KeyPressCommand;
-    if (keySend) {
+    if (keySend.keySend) {
       let holdKeys: Key[] = [];
       if (Array.isArray(keySend.holdKeys)) {
         // eslint-disable-next-line @typescript-eslint/prefer-destructuring
         holdKeys = keySend.holdKeys;
       } else if (typeof keySend.holdKeys === 'string') {
         holdKeys = [keySend.holdKeys as Key];
-      } else {
-        throw Error(`Unknown holdKeys type ${JSON.stringify(keySend)}`);
       }
       await this.clientService.keyPress(ip, {
         keys: (Array.isArray(keySend.keySend) ? keySend.keySend : [keySend.keySend]) as Key[],

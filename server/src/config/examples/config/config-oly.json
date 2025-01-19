@@ -58,7 +58,7 @@
       "commands": [
         {
           "destination": "se",
-          "keySend": "F3"
+          "keySend": "f3"
         }
       ],
       "name": "mana",
@@ -80,7 +80,7 @@
       "commands": [
         {
           "destination": "all",
-          "keySend": "F6"
+          "keySend": "f6"
         }
       ],
       "name": "to me",

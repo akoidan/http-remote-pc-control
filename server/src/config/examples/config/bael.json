@@ -26,7 +26,7 @@
       "commands": [
         {
           "destination": "sags",
-          "keySend": "F5"
+          "keySend": "f5"
         }
       ],
       "name": "stun",
@@ -37,7 +37,7 @@
       "commands": [
         {
           "destination": "sags",
-          "keySend": "F4"
+          "keySend": "f4"
         }
       ],
       "shuffle": true,
@@ -78,15 +78,15 @@
       "commands": [
         {
           "destination": "sags",
-          "keySend": "F6"
+          "keySend": "f6"
         },
         {
           "destination": "bish",
-          "keySend": "F6"
+          "keySend": "f6"
         },
         {
           "destination": "wc",
-          "keySend": "F6"
+          "keySend": "f6"
         }
       ],
       "shuffle": true,
@@ -141,7 +141,7 @@
       "commands": [
         {
           "destination": "sags",
-          "keySend": "F9"
+          "keySend": "f9"
         }
       ],
       "shuffle": true,
@@ -166,7 +166,7 @@
       "commands": [
         {
           "destination": "bish",
-          "keySend": "F3"
+          "keySend": "f3"
         }
       ],
       "name": "battle heal",
@@ -176,7 +176,7 @@
       "commands": [
         {
           "destination": "bish",
-          "keySend": "F4"
+          "keySend": "f4"
         }
       ],
       "name": "greater heal",
@@ -186,7 +186,7 @@
       "commands": [
         {
           "destination": "bish",
-          "keySend": "F5"
+          "keySend": "f5"
         }
       ],
       "name": "restore life",
@@ -201,7 +201,7 @@
         },
         {
           "destination": "bish",
-          "keySend": "F9"
+          "keySend": "f9"
         },
          {
           "destination": "bish",
@@ -226,7 +226,7 @@
       "commands": [
         {
           "destination": "bish",
-          "keySend": "F9"
+          "keySend": "f9"
         }
       ],
       "name": "Heal all",
@@ -256,7 +256,7 @@
       "commands": [
         {
           "destination": "bish",
-          "keySend": "F8"
+          "keySend": "f8"
         }
       ],
       "name": "balance life",
@@ -266,7 +266,7 @@
       "commands": [
         {
           "destination": "bish",
-          "keySend": "F10"
+          "keySend": "f10"
         }
       ],
       "name": "Benediction",
@@ -276,11 +276,11 @@
       "commands": [
         {
           "destination": "bish",
-          "keySend": "F6"
+          "keySend": "f6"
         },
         {
           "destination": "wc",
-          "keySend": "F6"
+          "keySend": "f6"
         }
       ],
       "shuffle": true,

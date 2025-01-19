@@ -7,7 +7,7 @@
       "commands": [
         {
           "destination": "tyrs",
-          "keySend": "F5"
+          "keySend": "f5"
         }
       ],
       "shortCut": "Alt+1",
@@ -17,7 +17,7 @@
       "commands": [
         {
           "destination": "tyrs",
-          "keySend": "F4"
+          "keySend": "f4"
         }
       ],
       "shortCut": "Alt+2",
@@ -27,7 +27,7 @@
       "commands": [
         {
           "destination": "tyrs",
-          "keySend": "F3"
+          "keySend": "f3"
         }
       ],
       "shortCut": "Alt+3",
@@ -37,7 +37,7 @@
       "commands": [
         {
           "destination": "tyrs",
-          "keySend": "F7"
+          "keySend": "f7"
         }
       ],
       "shortCut": "Alt+4",
@@ -47,7 +47,7 @@
       "commands": [
         {
           "destination": "tyrs",
-          "keySend": "F6"
+          "keySend": "f6"
         },
       ],
       "shortCut": "Alt+6",
@@ -57,7 +57,7 @@
       "commands": [
         {
           "destination": "tyrs",
-          "keySend": "F9"
+          "keySend": "f9"
         }
       ],
       "shortCut": "Alt+9",
