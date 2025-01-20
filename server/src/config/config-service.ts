@@ -125,6 +125,7 @@ export class ConfigService {
 
   public setVariable(name: string, value: string|number): Promise<void> {
     this.variables[name] = value;
+    this.logger.debug(`Writting new config file to ${this.variablesFilePath}`);
     return fs.writeFile(this.variablesFilePath, JSON.stringify(this.variables, null, 2));
   }
 
