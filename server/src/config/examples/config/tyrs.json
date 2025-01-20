@@ -8,20 +8,6 @@
     "this": "127.0.0.1"
   },
   "delay": 200,
-  "variables": {
-    "se": {
-      "type": "number",
-      "defaultValue": 21816
-    },
-    "ee": {
-      "type": "number",
-      "defaultValue": 21512
-    },
-    "wc": {
-      "type": "number",
-      "defaultValue": 21540
-    }
-  },
   "aliases": {
     "se": "desktop",
     "wc": "desktop",

@@ -30,7 +30,6 @@ export class LogicService {
   }
 
   private activeFighterIndex = 0;
-  private readonly localVariables: Record<string, any> = {};
 
   async pingClients(): Promise<unknown[]> {
     this.logger.debug('Pinging clients...');
@@ -72,7 +71,7 @@ export class LogicService {
         waitTillFinish: (currRec as ExecuteCommand).waitTillFinish ?? false,
       });
       if ((currRec as ExecuteCommand).assignId) {
-        this.localVariables[(currRec as ExecuteCommand).assignId!] = response.pid;
+        await this.configService.setVariable((currRec as ExecuteCommand).assignId!, response.pid);
       }
     } else if ((currRec as TypeTextCommand).typeText) {
       await this.clientService.typeText(ip, {
@@ -110,16 +109,12 @@ export class LogicService {
         const globalVars = this.configService.getGlobalVars();
         const scriptVars = this.configService.getVariables();
         const varName = value.slice(2, -2);
-        if (this.localVariables[varName]) {
-          result[key] = this.localVariables[varName] as T[keyof T];
+        if (this.configService.getVariables()[varName]) {
+          result[key] = this.configService.getVariables()[varName] as T[keyof T];
         } else if (globalVars[varName]) {
-          if (scriptVars[varName]?.type === 'number') {
-            result[key] = parseInt(globalVars[varName]) as T[keyof T];
-          } else {
-            result[key] = globalVars[varName] as T[keyof T];
-          }
+          result[key] = globalVars[varName] as T[keyof T];
         } else if (scriptVars[varName]) {
-          result[key] = scriptVars[varName].defaultValue as T[keyof T];
+          result[key] = scriptVars[varName] as T[keyof T];
         } else {
           throw Error(`Unknown environment variable ${value}`);
         }

@@ -15,6 +15,7 @@ import * as process from 'node:process';
       useFactory: (logger: Logger): ConfigService => new ConfigService(
         path.join(__dirname, 'config.jsonc'),
         path.join(__dirname, 'macros.jsonc'),
+        path.join(__dirname, 'variables.jsonc'),
         logger,
         process.env
       ),

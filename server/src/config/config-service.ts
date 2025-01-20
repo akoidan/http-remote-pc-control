@@ -7,6 +7,7 @@ import {
   MacroList,
   macrosMapSchema,
   Variables,
+  variablesSchema,
 } from '@/config/types/schema';
 import {parse} from 'jsonc-parser';
 import {
@@ -24,9 +25,12 @@ interface ConfigCombination {
 export class ConfigService {
   private configData: ConfigData | null = null;
 
+  private variables: Variables = {};
+
   constructor(
     private readonly configFilePath: string,
     private readonly macroFilePath: string,
+    private readonly variablesFilePath: string,
     private readonly logger: Logger,
     private readonly envVars: Record<string, string | undefined>,
   ) {
@@ -39,8 +43,12 @@ export class ConfigService {
     }
     const configValue = await this.loadConfigString();
     const macroConfigValue = await this.loadMacroConfigString();
+    const variablesConfigValue = await this.loadVariablesConfigString();
+
     const conf = parse(configValue) as ConfigData;
     const globalMacroConf = macroConfigValue ? parse(macroConfigValue) as MacroList : {};
+
+    this.variables = variablesConfigValue ? parse(variablesConfigValue) as Variables : {};
 
     this.logger.debug('Validating global config');
     await macrosMapSchema.parseAsync(globalMacroConf);
@@ -48,6 +56,9 @@ export class ConfigService {
     this.logger.debug('Validating macro config');
     conf.macros = {...globalMacroConf, ...conf.macros};
     await aARootSchema.parseAsync(conf);
+
+    this.logger.debug('Validating variables config');
+    await variablesSchema.parseAsync(this.variables);
 
     const combinations = (conf.combinations as EventData[])
       .map((combination): ConfigCombination => ({
@@ -78,6 +89,16 @@ export class ConfigService {
     }
   }
 
+  public async loadVariablesConfigString(): Promise<string | null> {
+    this.logger.debug(`Loading variable config from ${this.variablesFilePath}`);
+    try {
+      return await fs.readFile(this.variablesFilePath, 'utf8');
+    } catch (error) {
+      this.logger.warn(`Unable to load global macros from ${this.variablesFilePath} because of ${error?.message ?? error}`);
+      return null;
+    }
+  }
+
   public getIps(): Ips {
     return this.configData!.ips;
   }
@@ -99,7 +120,12 @@ export class ConfigService {
   }
 
   public getVariables(): NonNullable<Variables> {
-    return this.configData!.variables ?? {};
+    return this.variables;
+  }
+
+  public setVariable(name: string, value: string|number): Promise<void> {
+    this.variables[name] = value;
+    return fs.writeFile(this.variablesFilePath, JSON.stringify(this.variables, null, 2));
   }
 
   public getGlobalVars(): Record<string, string | undefined> {
