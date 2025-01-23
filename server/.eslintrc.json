@@ -38,6 +38,7 @@
     ],
     "max-lines": ["error", { "max": 155 }], // untill we refactor hra-quiz
     "indent": 0,
+    "no-await-in-loop": 0,
     "filenames/match-regex": [1, "^[a-z0-9\\-]+(\\.[a-z]+)?$", true],
     "dot-location": [1, "property"],
     "no-warning-comments": 0,

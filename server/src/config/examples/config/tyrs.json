@@ -130,8 +130,7 @@
         ]
       ],
       "name": "Launch l2 clients",
-      "shortCut": "Alt+f11",
-      "circular": false
+      "shortCut": "Alt+f11"
     },
     {
       "threads": [
@@ -177,8 +176,7 @@
         ]
       ],
       "name": "Kill all L2 no main",
-      "shortCut": "Alt+f10",
-      "circular": false
+      "shortCut": "Alt+f10"
     },
     {
       "commands": [

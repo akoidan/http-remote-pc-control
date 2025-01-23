@@ -61,7 +61,7 @@ export class FetchClient {
         req.write(payloadstr);
         req.end();
       });
-      this.logger.debug(`POST:OK ${client}${url} ${payloadstr}: ${result}`);
+      this.logger.log(`POST:OK ${client}${url} ${payloadstr}: ${result}`);
       if (withParse) {
         try {
           return JSON.parse(result) as T;

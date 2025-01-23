@@ -6,7 +6,7 @@
       "cflags_cc!": [ "-fno-exceptions" ],
       "conditions":[
         ["OS=='win'", {
-      	  "sources": [ "src/native/window.c" ]
+      	  "sources": [ "src/native/win32/window.cc", "src/native/win32/keypress.c" ]
       	}],
       ],
       "include_dirs": [

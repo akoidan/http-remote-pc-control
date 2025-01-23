@@ -4,16 +4,31 @@
 
 _Object containing the following properties:_
 
-| Property                | Description                                                                                                                                                                                                     | Type                                                                             |
-| :---------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------- |
-| **`ips`** (\*)          | Definition of remote PCs where keys are PC names and values are their IP addresses. The IP address should be available to a remote PC. You can also use https://ngrok.com/ to get public address or create VPN  | _Object with dynamic keys of type_ `string` _and values of type_ `string` (_IP_) |
-| `aliases`               | A map for extra layer above destination property. E.g. you can define PC name in IPS section and instead of specifying PC name directly you can use aliases from this section that points to the PC name.       | `Record<string, Array<string> \| string>`                                        |
-| `variables`             | Set of variable desciption along with default values                                                                                                                                                            | [Variables](#variables)                                                          |
-| **`delay`** (\*)        | Global delay in miliseconds between commands in order to prevent spam. Could be set to 0                                                                                                                        | `number`                                                                         |
-| **`combinations`** (\*) | Shorcuts mappings. Main logic                                                                                                                                                                                   | _Array of [ShortCutMapping](#shortcutmapping) items_                             |
-| `macros`                | A map of macros where a key is the macro name and value is its body                                                                                                                                             | [MacrosMap](#macrosmap)                                                          |
+| Property                | Description                                                                                                                                                                                                     | Type                                  |
+| :---------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------ |
+| **`ips`** (\*)          | Definition of remote PCs where keys are PC names and values are their IP addresses. The IP address should be available to a remote PC. You can also use https://ngrok.com/ to get public address or create VPN  | [Ips](#ips)                           |
+| `aliases`               | A map for extra layer above destination property. E.g. you can define PC name in IPS section and instead of specifying PC name directly you can use aliases from this section that points to the PC name.       | [Aliases](#aliases)                   |
+| **`delay`** (\*)        | Global delay in miliseconds between commands in order to prevent spam. Could be set to 0                                                                                                                        | `number`                              |
+| **`combinations`** (\*) | Shorcuts mappings. Main logic                                                                                                                                                                                   | [CombinationList](#combinationlist)   |
+| `macros`                | A map of macros where a key is the macro name and value is its body                                                                                                                                             | [MacrosDefinition](#macrosdefinition) |
 
 _(\*) Required._
+
+## Aliases
+
+A map for extra layer above destination property. E.g. you can define PC name in IPS section and instead of specifying PC name directly you can use aliases from this section that points to the PC name.
+
+_Object record with dynamic keys:_
+
+- _keys of type_ `string`
+- _values of type_ `Array<string> | string`
+ (_optional_)
+
+## CombinationList
+
+Shorcuts mappings. Main logic
+
+_Array of [ShortcutMappingWithMacro](#shortcutmappingwithmacro) _or_ [RandomShortCutMapping](#randomshortcutmapping) items._
 
 ## CommandOrMacro
 
@@ -37,19 +52,38 @@ _Union of the following possible types:_
 - [TypeTextCommand](#typetextcommand)
 - [KillExeCommand](#killexecommand)
 
+## CommandsAndMacrosArray
+
+A set of events that executed sequentially in this thread
+
+_Array of [CommandOrMacro](#commandormacro) items._
+
+## Commands
+
+_Array of [Command](#command) items._
+
 ## FocusWindowCommand
 
 Focuses window with the provided PID, making it active
 
 _Object containing the following properties:_
 
-| Property               | Description                                                   | Type                                               |
-| :--------------------- | :------------------------------------------------------------ | :------------------------------------------------- |
-| **`focusPid`** (\*)    | Pid of the process that has this window                       | `string` (_regex: `/\{\{\w+\}\}/u`_) _or_ `number` |
-| **`destination`** (\*) | Remote PC from ips or aliases section to send this command to | `string` _or_ `string` (_regex: `/\{\{\w+\}\}/u`_) |
-| `delay`                | Delay in milliseconds before the next command.                | `number` _or_ `string` (_regex: `/\{\{\w+\}\}/u`_) |
+| Property               | Description                                                   | Type                                          |
+| :--------------------- | :------------------------------------------------------------ | :-------------------------------------------- |
+| **`focusPid`** (\*)    | Pid of the process that has this window                       | [VariableValue](#variablevalue) _or_ `number` |
+| **`destination`** (\*) | Remote PC from ips or aliases section to send this command to | `string` _or_ [VariableValue](#variablevalue) |
+| `delay`                | Delay in milliseconds before the next command.                | `number` _or_ [VariableValue](#variablevalue) |
 
 _(\*) Required._
+
+## Ips
+
+Definition of remote PCs where keys are PC names and values are their IP addresses. The IP address should be available to a remote PC. You can also use https://ngrok.com/ to get public address or create VPN 
+
+_Object record with dynamic keys:_
+
+- _keys of type_ `string`
+- _values of type_ `string` (_IP_)
 
 ## KeyPressCommand
 
@@ -57,12 +91,12 @@ Sends a keyPress to a remote PC.
 
 _Object containing the following properties:_
 
-| Property               | Description                                                   | Type                                                                                |
-| :--------------------- | :------------------------------------------------------------ | :---------------------------------------------------------------------------------- |
-| **`keySend`** (\*)     |                                                               | [Key](#key), `string` (_regex: `/\{\{\w+\}\}/u`_) _or_ _Array of [Key](#key) items_ |
-| `holdKeys`             | A key to be sent.                                             | [Key](#key), `string` (_regex: `/\{\{\w+\}\}/u`_) _or_ _Array of [Key](#key) items_ |
-| **`destination`** (\*) | Remote PC from ips or aliases section to send this command to | `string` _or_ `string` (_regex: `/\{\{\w+\}\}/u`_)                                  |
-| `delay`                | Delay in milliseconds before the next command.                | `number` _or_ `string` (_regex: `/\{\{\w+\}\}/u`_)                                  |
+| Property               | Description                                                   | Type                                                                           |
+| :--------------------- | :------------------------------------------------------------ | :----------------------------------------------------------------------------- |
+| **`keySend`** (\*)     |                                                               | [Key](#key), [VariableValue](#variablevalue) _or_ _Array of [Key](#key) items_ |
+| `holdKeys`             | A key to be sent.                                             | [Key](#key), [VariableValue](#variablevalue) _or_ _Array of [Key](#key) items_ |
+| **`destination`** (\*) | Remote PC from ips or aliases section to send this command to | `string` _or_ [VariableValue](#variablevalue)                                  |
+| `delay`                | Delay in milliseconds before the next command.                | `number` _or_ [VariableValue](#variablevalue)                                  |
 
 _(\*) Required._
 
@@ -216,11 +250,11 @@ Kills a process on the remote PC.
 
 _Object containing the following properties:_
 
-| Property               | Description                                                   | Type                                               |
-| :--------------------- | :------------------------------------------------------------ | :------------------------------------------------- |
-| **`kill`** (\*)        | Executable file name. E.g. Chrome.exe                         | `string` _or_ `string` (_regex: `/\{\{\w+\}\}/u`_) |
-| **`destination`** (\*) | Remote PC from ips or aliases section to send this command to | `string` _or_ `string` (_regex: `/\{\{\w+\}\}/u`_) |
-| `delay`                | Delay in milliseconds before the next command.                | `number` _or_ `string` (_regex: `/\{\{\w+\}\}/u`_) |
+| Property               | Description                                                   | Type                                          |
+| :--------------------- | :------------------------------------------------------------ | :-------------------------------------------- |
+| **`kill`** (\*)        | Executable file name. E.g. Chrome.exe                         | `string` _or_ [VariableValue](#variablevalue) |
+| **`destination`** (\*) | Remote PC from ips or aliases section to send this command to | `string` _or_ [VariableValue](#variablevalue) |
+| `delay`                | Delay in milliseconds before the next command.                | `number` _or_ [VariableValue](#variablevalue) |
 
 _(\*) Required._
 
@@ -230,14 +264,14 @@ Starts a program on a remote PC.
 
 _Object containing the following properties:_
 
-| Property               | Description                                                            | Type                                               |
-| :--------------------- | :--------------------------------------------------------------------- | :------------------------------------------------- |
-| **`launch`** (\*)      | Full path to an executable.                                            | `string`                                           |
-| `arguments`            | Array of arguments to an executable                                    | `Array<string>`                                    |
-| `waitTillFinish`       | Waits until executable finishes to run before running the next command | `boolean`                                          |
-| `assignId`             | Assigns PID of launched command to a variable that can be used after   | `string`                                           |
-| **`destination`** (\*) | Remote PC from ips or aliases section to send this command to          | `string` _or_ `string` (_regex: `/\{\{\w+\}\}/u`_) |
-| `delay`                | Delay in milliseconds before the next command.                         | `number` _or_ `string` (_regex: `/\{\{\w+\}\}/u`_) |
+| Property               | Description                                                            | Type                                          |
+| :--------------------- | :--------------------------------------------------------------------- | :-------------------------------------------- |
+| **`launch`** (\*)      | Full path to an executable.                                            | `string`                                      |
+| `arguments`            | Array of arguments to an executable                                    | `Array<string>`                               |
+| `waitTillFinish`       | Waits until executable finishes to run before running the next command | `boolean`                                     |
+| `assignId`             | Assigns PID of launched command to a variable that can be used after   | `string`                                      |
+| **`destination`** (\*) | Remote PC from ips or aliases section to send this command to          | `string` _or_ [VariableValue](#variablevalue) |
+| `delay`                | Delay in milliseconds before the next command.                         | `number` _or_ [VariableValue](#variablevalue) |
 
 _(\*) Required._
 
@@ -247,14 +281,23 @@ A macro that can be injected instead of command. That will run commands from its
 
 _Object containing the following properties:_
 
-| Property            | Description                                                                                                                                                      | Type                                 |
-| :------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------------- |
-| **`commands`** (\*) | Set of commands for this macro                                                                                                                                   | _Array of [Command](#command) items_ |
-| `variables`         | Variables that are used in macros. If you set a option value to {{varName}} in this macro section. If this varName is present in this array, it will be replaced | `Array<string>`                      |
+| Property             | Description                            | Type                                                    |
+| :------------------- | :------------------------------------- | :------------------------------------------------------ |
+| **`commands`** (\*)  | Set of commands for this macro         | _Array of [CommandOrMacro](#commandormacro) items_      |
+| **`variables`** (\*) | Set of variables descriptors for macro | [MacroVariablesDescription](#macrovariablesdescription) |
 
 _(\*) Required._
 
-## MacrosMap
+## MacroVariablesDescription
+
+Set of variables descriptors for macro
+
+_Object record with dynamic keys:_
+
+- _keys of type_ `string`
+- _values of type_ _Object with properties:_<ul><li>`type`: `'string' | 'number'` - To validate the type, or cast from env variables</li><li>`optional`: `boolean` - If set to true, the key is be removed is var is not passed</li></ul> (_optional_)
+
+## MacrosDefinition
 
 A map of macros where a key is the macro name and value is its body
 
@@ -270,20 +313,32 @@ Moves mouse to specified coordinates and clicks with left button
 
 _Object containing the following properties:_
 
-| Property               | Description                                                   | Type                                               |
-| :--------------------- | :------------------------------------------------------------ | :------------------------------------------------- |
-| **`mouseMoveX`** (\*)  | X coordinate                                                  | `number` _or_ `string` (_regex: `/\{\{\w+\}\}/u`_) |
-| **`mouseMoveY`** (\*)  | Y coordinate                                                  | `number` _or_ `string` (_regex: `/\{\{\w+\}\}/u`_) |
-| **`destination`** (\*) | Remote PC from ips or aliases section to send this command to | `string` _or_ `string` (_regex: `/\{\{\w+\}\}/u`_) |
-| `delay`                | Delay in milliseconds before the next command.                | `number` _or_ `string` (_regex: `/\{\{\w+\}\}/u`_) |
+| Property               | Description                                                   | Type                                          |
+| :--------------------- | :------------------------------------------------------------ | :-------------------------------------------- |
+| **`mouseMoveX`** (\*)  | X coordinate                                                  | `number` _or_ [VariableValue](#variablevalue) |
+| **`mouseMoveY`** (\*)  | Y coordinate                                                  | `number` _or_ [VariableValue](#variablevalue) |
+| **`destination`** (\*) | Remote PC from ips or aliases section to send this command to | `string` _or_ [VariableValue](#variablevalue) |
+| `delay`                | Delay in milliseconds before the next command.                | `number` _or_ [VariableValue](#variablevalue) |
 
 _(\*) Required._
 
-## ReceiversAndMacrosArray
+## RandomShortCutMapping
 
-A set of events that executed sequentially in this thread
+An event schema that represent a set of commands that is executed when a cirtain shortkey is pressed
 
-_Array of [CommandOrMacro](#commandormacro) items._
+_Object containing the following properties:_
+
+| Property            | Description                                                                                                                                                   | Type                                   |
+| :------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------ | :------------------------------------- |
+| `circular`          | If set to true. Commands in this chain will be executed in a circular way. So each press = 1 command. Instead of full commands                                | `boolean`                              |
+| `shuffle`           | If circular set to true, commands in this event would be executed randomly by 1                                                                               | `boolean`                              |
+| `commands`          | List of commands for different commands                                                                                                                       | _Array of [Command](#command) items_   |
+| `threads`           | This option should be defined only if commands attribute is absent. Same as commands but array of arrays of commands. Top level of array executes in parallel | _Array of [Commands](#commands) items_ |
+| `delay`             | Delay in milliseconds between commands for this shorcut                                                                                                       | `number`                               |
+| **`name`** (\*)     | Name that is printed during startup with a shorcut                                                                                                            | `string`                               |
+| **`shortCut`** (\*) | A shorcut to be pressed. E.g. Alt+1                                                                                                                           | `string`                               |
+
+_(\*) Required._
 
 ## RunMacroCommand
 
@@ -291,29 +346,25 @@ Runs a macro from the macros section.
 
 _Object containing the following properties:_
 
-| Property         | Description                                        | Type                                               |
-| :--------------- | :------------------------------------------------- | :------------------------------------------------- |
-| **`macro`** (\*) | Name of the macro (key from macros section object) | `string`                                           |
-| `variables`      | Object of a key-values of variable name and value  | `Record<string, string \| number>`                 |
-| `delay`          | Delay in milliseconds before the next command.     | `number` _or_ `string` (_regex: `/\{\{\w+\}\}/u`_) |
+| Property         | Description                                        | Type                                          |
+| :--------------- | :------------------------------------------------- | :-------------------------------------------- |
+| **`macro`** (\*) | Name of the macro (key from macros section object) | `string`                                      |
+| `variables`      | Object of a key-values of variable name and value  | `Record<string, string \| number>`            |
+| `delay`          | Delay in milliseconds before the next command.     | `number` _or_ [VariableValue](#variablevalue) |
 
 _(\*) Required._
 
-## ShortCutMapping
-
-An event schema that represent a set of commands that is executed when a cirtain shortkey is pressed
+## ShortcutMappingWithMacro
 
 _Object containing the following properties:_
 
-| Property            | Description                                                                                                                                                   | Type                                                                 |
-| :------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------ | :------------------------------------------------------------------- |
-| `commands`          | List of commands for different commands                                                                                                                       | _Array of [CommandOrMacro](#commandormacro) items_                   |
-| `threads`           | This option should be defined only if commands attribute is absent. Same as commands but array of arrays of commands. Top level of array executes in parallel | _Array of [ReceiversAndMacrosArray](#receiversandmacrosarray) items_ |
-| `shuffle`           | If circular set to true, commands in this event would be executed randomly by 1                                                                               | `boolean`                                                            |
-| `delay`             | Delay in milliseconds between commands for this shorcut                                                                                                       | `number`                                                             |
-| **`name`** (\*)     | Name that is printed during startup with a shorcut                                                                                                            | `string`                                                             |
-| **`shortCut`** (\*) | A shorcut to be pressed. E.g. Alt+1                                                                                                                           | `string`                                                             |
-| `circular`          | If set to true. Commands in this chain will be executed in a circular way. So each press = 1 command. Instead of full commands                                | `boolean`                                                            |
+| Property            | Description                                                                                                                                                   | Type                                                               |
+| :------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------ | :----------------------------------------------------------------- |
+| `commands`          | List of commands for different commands                                                                                                                       | [CommandsAndMacrosArray](#commandsandmacrosarray)                  |
+| `threads`           | This option should be defined only if commands attribute is absent. Same as commands but array of arrays of commands. Top level of array executes in parallel | _Array of [CommandsAndMacrosArray](#commandsandmacrosarray) items_ |
+| `delay`             | Delay in milliseconds between commands for this shorcut                                                                                                       | `number`                                                           |
+| **`name`** (\*)     | Name that is printed during startup with a shorcut                                                                                                            | `string`                                                           |
+| **`shortCut`** (\*) | A shorcut to be pressed. E.g. Alt+1                                                                                                                           | `string`                                                           |
 
 _(\*) Required._
 
@@ -323,33 +374,23 @@ Types text on the remote PC.
 
 _Object containing the following properties:_
 
-| Property               | Description                                                   | Type                                               |
-| :--------------------- | :------------------------------------------------------------ | :------------------------------------------------- |
-| **`typeText`** (\*)    | Any string to type                                            | `string` _or_ `string` (_regex: `/\{\{\w+\}\}/u`_) |
-| **`destination`** (\*) | Remote PC from ips or aliases section to send this command to | `string` _or_ `string` (_regex: `/\{\{\w+\}\}/u`_) |
-| `delay`                | Delay in milliseconds before the next command.                | `number` _or_ `string` (_regex: `/\{\{\w+\}\}/u`_) |
+| Property               | Description                                                   | Type                                          |
+| :--------------------- | :------------------------------------------------------------ | :-------------------------------------------- |
+| **`typeText`** (\*)    | Any string to type                                            | `string` _or_ [VariableValue](#variablevalue) |
+| **`destination`** (\*) | Remote PC from ips or aliases section to send this command to | `string` _or_ [VariableValue](#variablevalue) |
+| `delay`                | Delay in milliseconds before the next command.                | `number` _or_ [VariableValue](#variablevalue) |
 
 _(\*) Required._
 
-## VariableDescription
+## VariableValue
 
-A variable that can be injected instead of command
+Inject variable with this name. Either can be an environment variable, either a variables passed to a macro from variables section
 
-_Object containing the following properties:_
-
-| Property        | Description                              | Type                   |
-| :-------------- | :--------------------------------------- | :--------------------- |
-| **`type`** (\*) | if number, parseInt will be used         | `'string' \| 'number'` |
-| `defaultValue`  | default value if not others are provided | `any` (_nullable_)     |
-
-_(\*) Required._
+_String which matches the regular expression `/\{\{\w+\}\}/u`._
 
 ## Variables
-
-Set of variable desciption along with default values
 
 _Object record with dynamic keys:_
 
 - _keys of type_ `string`
-- _values of type_ [VariableDescription](#variabledescription)
- (_optional_)
+- _values of type_ `string | number`

@@ -1,6 +1,6 @@
 import os from 'os';
 
-const addon = os.platform() === 'win32' ? require('./window.node') : new Proxy({}, {
+const addon = os.platform() === 'win32' ? require('./win32/window.node') : new Proxy({}, {
   get(_, property) {
     return () => {
       throw new Error(`OS ${os.platform()} is not support to call ${property as string}`);
@@ -13,6 +13,14 @@ interface Window {
   id: number;
   processId: number;
   path: string;
+}
+
+export async function keyPress(key: string): Promise<void> {
+  return addon.simulateKeypressAsync(key.charAt(0));
+}
+
+export function type(text: string) {
+  return addon.simulateTyping(text);
 }
 
 export function getAllWindows(): Window[] {

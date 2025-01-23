@@ -48,7 +48,7 @@
         {
           "destination": "tyrs",
           "keySend": "f6"
-        },
+        }
       ],
       "shortCut": "Alt+6",
       "circular": false

@@ -7,3 +7,4 @@ src/config/variables.jsonc
 l2-win32-x64
 certs
 !certs/.gitkeep
+coverage

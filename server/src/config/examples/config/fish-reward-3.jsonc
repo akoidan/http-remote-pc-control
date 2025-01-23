@@ -16,7 +16,7 @@
             "macro": "killLaunchL2",
             "variables": {
               "destination": "touchpad",
-              "login": "deathangel9",
+              "login": "deathangel2",
               "delay": 10000
             }
           }
@@ -36,7 +36,7 @@
             "macro": "killLaunchL2",
             "variables": {
               "destination": "lenovo",
-              "login": "deathangelq",
+              "login": "deathangel",
               "delay": 18000
             }
           }
@@ -52,6 +52,16 @@
           }
         ],
         [
+          {
+            "macro": "killLaunchL2",
+            "variables": {
+              "destination": "asus",
+              "login": "deathangelq",
+              "delay": 18000
+            }
+          }
+        ],
+         [
           {
             "macro": "killLaunchL2",
             "variables": {

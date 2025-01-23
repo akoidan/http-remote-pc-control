@@ -1,12 +1,9 @@
 import {
   aARootSchema,
-  Aliases,
+  AliasesData,
   ConfigData,
-  EventData,
-  Ips,
-  MacroList,
-  macrosMapSchema,
-  Variables,
+  IpsData,
+  macrosDefinitionSchema,
   variablesSchema,
 } from '@/config/types/schema';
 import {parse} from 'jsonc-parser';
@@ -15,6 +12,11 @@ import {
   Logger,
 } from '@nestjs/common';
 import {promises as fs} from 'fs';
+import {schemaRootCache} from '@/config/types/cache';
+import {Variables} from '@/config/types/variables';
+import {MacroList} from '@/config/types/macros';
+import { ShortsData } from '@/config/types/shortcut';
+import { ConfigProvider } from '@/config/interfaces';
 
 interface ConfigCombination {
   shortCut: string;
@@ -22,11 +24,12 @@ interface ConfigCombination {
 }
 
 @Injectable()
-export class ConfigService {
+export class ConfigService implements ConfigProvider {
   private configData: ConfigData | null = null;
 
   private variables: Variables = {};
 
+  // eslint-disable-next-line @typescript-eslint/max-params
   constructor(
     private readonly configFilePath: string,
     private readonly macroFilePath: string,
@@ -51,7 +54,8 @@ export class ConfigService {
     this.variables = variablesConfigValue ? parse(variablesConfigValue) as Variables : {};
 
     this.logger.debug('Validating global config');
-    await macrosMapSchema.parseAsync(globalMacroConf);
+    schemaRootCache.data = conf;
+    await macrosDefinitionSchema.parseAsync(globalMacroConf);
 
     this.logger.debug('Validating macro config');
     conf.macros = {...globalMacroConf, ...conf.macros};
@@ -60,7 +64,7 @@ export class ConfigService {
     this.logger.debug('Validating variables config');
     await variablesSchema.parseAsync(this.variables);
 
-    const combinations = (conf.combinations as EventData[])
+    const combinations = (conf.combinations as ShortsData[])
       .map((combination): ConfigCombination => ({
         shortCut: combination.shortCut,
         name: combination.name,
@@ -99,15 +103,15 @@ export class ConfigService {
     }
   }
 
-  public getIps(): Ips {
+  public getIps(): IpsData {
     return this.configData!.ips;
   }
 
-  public getCombinations(): EventData[] {
+  public getCombinations(): ShortsData[] {
     return this.configData!.combinations;
   }
 
-  public getAliases(): NonNullable<Aliases> {
+  public getAliases(): NonNullable<AliasesData> {
     return this.configData!.aliases ?? {};
   }
 
@@ -123,7 +127,7 @@ export class ConfigService {
     return this.variables;
   }
 
-  public setVariable(name: string, value: string|number): Promise<void> {
+  public async setVariable(name: string, value: string | number): Promise<void> {
     this.variables[name] = value;
     this.logger.debug(`Writting new config file to ${this.variablesFilePath}`);
     return fs.writeFile(this.variablesFilePath, JSON.stringify(this.variables, null, 2));

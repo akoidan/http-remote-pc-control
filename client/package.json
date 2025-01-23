@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "start": "rm -rf ./dist/ && node -r tsconfig-paths/register -r ts-node/register src/main.ts",
-    "prebuild": "rm -rf ./dist/ && nest build && cp ./src/native/window.node ./dist/native/window.node",
+    "prebuild": "rm -rf ./dist/ && nest build && mkdir ./dist/native/win32 && cp ./src/native/win32/window.node ./dist/native/win32/window.node",
     "build": "pkg . --targets win --output app.exe",
     "wine": "wine app.exe",
     "win32": "node-gyp rebuild && cp ./build/Release/window.node ./src/native/window.node",

@@ -1,3 +1,11 @@
+/*
+ * This file was originally sourced from the node-window-manager library
+ * (https://github.com/sentialx/node-window-manager).
+ *
+ * Licensed under the MIT License. See LICENSE file in the root of this repository
+ * or https://github.com/sentialx/node-window-manager?tab=MIT-1-ov-file#readme for details.
+ */
+
 #include <cmath>
 #include <cstdint>
 #include <iostream>

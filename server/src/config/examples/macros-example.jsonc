@@ -11,9 +11,11 @@
         ]
       }
     ],
-    "variables": [
-      "destination"
-    ]
+    "variables": {
+      "destination": {
+        "type": "string"
+      }
+    }
   },
   "killL2": {
     "commands": [
@@ -23,9 +25,11 @@
         "delay": 2000
       }
     ],
-    "variables": [
-      "destination"
-    ]
+    "variables": {
+      "destination": {
+        "type": "string"
+      }
+    }
   },
   "killLaunchL2": {
     "commands": [
@@ -73,12 +77,21 @@
         "delay": 1500
       }
     ],
-    "variables": [
-      "destination",
-      "login",
-      "delay",
-      "assignId"
-    ]
+    "variables": {
+      "destination": {
+        "type": "string"
+      },
+      "login": {
+        "type": "string"
+      },
+      "delay": {
+        "type": "number"
+      },
+      "assignId": {
+        "type": "string",
+        "optional": true
+      }
+    }
   },
   "launchL2": {
     "commands": [
@@ -121,12 +134,21 @@
         "delay": 1500
       }
     ],
-    "variables": [
-      "destination",
-      "login",
-      "delay",
-      "assignId"
-    ]
+    "variables": {
+      "destination": {
+        "type": "string"
+      },
+      "login": {
+        "type": "string"
+      },
+      "delay": {
+        "type": "number"
+      },
+      "assignId": {
+        "type": "string",
+        "optional": true
+      }
+    }
   },
   "killLaunchL2Wine": {
     "commands": [
@@ -141,6 +163,8 @@
         "arguments": [
           "/home/andrew/ntfs/Games/l2dion/system/L2.exe"
         ],
+
+        "assignId": "{{assignId}}",
         "delay": "{{delay}}"
       },
       {
@@ -176,12 +200,21 @@
         "delay": 1500
       }
     ],
-
-    "variables": [
-      "destination",
-      "login",
-      "delay"
-    ]
+    "variables": {
+      "destination": {
+        "type": "string"
+      },
+      "login": {
+        "type": "string"
+      },
+      "delay": {
+        "type": "number"
+      },
+      "assignId": {
+        "type": "string",
+        "optional": true
+      }
+    }
   },
   "launchL2Wine": {
     "commands": [
@@ -191,7 +224,8 @@
         "arguments": [
           "/home/andrew/ntfs/Games/l2dion/system/L2.exe"
         ],
-        "delay": "{{delay}}"
+        "delay": "{{delay}}",
+        "assignId": "{{assignId}}"
       },
       {
         "destination": "{{destination}}",
@@ -226,10 +260,20 @@
         "delay": 1500
       }
     ],
-    "variables": [
-      "destination",
-      "login",
-      "delay"
-    ]
+    "variables": {
+      "destination": {
+        "type": "string"
+      },
+      "login": {
+        "type": "string"
+      },
+      "delay": {
+        "type": "number"
+      },
+      "assignId": {
+        "type": "string",
+        "optional": true
+      }
+    }
   }
 }
