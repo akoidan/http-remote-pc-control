@@ -73,8 +73,7 @@
         ]
       ],
       "name": "Launch l2 clients",
-      "shortCut": "Alt+F11",
-      "circular": false
+      "shortCut": "Alt+F11"
     }
   ]
 }
