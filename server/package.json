@@ -11,7 +11,7 @@
     "schema:json": "node -r tsconfig-paths/register -r ts-node/register src/config/generate-schema.ts",
     "lint": "eslint --ext .ts --max-warnings=0 src",
     "autoformat": "eslint --ext .ts --max-warnings=0 --fix src",
-    "schema": "zod2md --entry ./src/config/types/schema.ts --title 'Schema for config.jsonc' --output README.md",
+    "schema:doc": "zod2md --entry ./src/config/types/schema.ts --title 'Schema for config.jsonc' --output README.md",
     "test": "jest --coverage  --detectOpenHandles --testTimeout=10000"
   },
   "devDependencies": {

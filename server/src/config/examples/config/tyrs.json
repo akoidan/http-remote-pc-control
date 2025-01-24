@@ -31,15 +31,15 @@
       "threads": [
         [
           {
-            "macro": "launchL2Wine",
+            "macro": "killLaunchL2Wine",
             "variables": {
               "destination": "this",
               "login": "deathangel9",
-              "delay": 10000
+              "delay": 12000
             }
           },
           {
-            "macro": "killLaunchL2Wine",
+            "macro": "launchL2Wine",
             "variables": {
               "destination": "this",
               "login": "deathangel2",
@@ -61,7 +61,7 @@
             "variables": {
               "destination": "desktop",
               "login": "deathangelq",
-              "delay": 10000,
+              "delay": 8000,
               "assignId": "pp"
             }
           },
@@ -90,7 +90,7 @@
             "variables": {
               "destination": "asus",
               "login": "deathangel6",
-              "delay": 10000,
+              "delay": 16000,
               "assignId": "bish"
             }
           }
@@ -101,7 +101,7 @@
             "variables": {
               "destination": "touchpad",
               "login": "deathangell",
-              "delay": 14000,
+              "delay": 20000,
               "assignId": "tyr"
             }
           }
@@ -112,7 +112,7 @@
             "variables": {
               "destination": "msi",
               "login": "deathangelm",
-              "delay": 16000,
+              "delay": 24000,
               "assignId": "monk"
             }
           }
@@ -123,7 +123,7 @@
             "variables": {
               "destination": "lenovo",
               "login": "deathangeln",
-              "delay": 16000,
+              "delay": 28000,
               "assignId": "raider"
             }
           }
@@ -255,12 +255,46 @@
     {
       "commands": [
         {
-          "destination": "this",
-          "focusPid": "{{se}}"
+          "destination": "desktop",
+          "focusPid": "{{ee}}"
+        },
+        {
+          "destination": "ee",
+          "keySend": "4"
+        },
+        {
+          "destination": "desktop",
+          "focusPid": "{{wc}}"
+        },
+        {
+          "destination": "wc",
+          "keySend": "f8",
+          "delay": 1500
+        },
+        {
+          "destination": "wc",
+          "keySend": "f9"
+        },
+        {
+          "destination": "desktop",
+          "focusPid": "{{pp}}"
+        },
+        {
+          "destination": "pp",
+          "keySend": "4"
+        },
+        {
+          "destination": "desktop",
+          "focusPid": "{{ee}}",
+          "delay": 10000
+        },
+        {
+          "destination": "bish",
+          "keySend": "f12"
         }
       ],
       "name": "Stigma",
-      "shortCut": "Alt+-",
+      "shortCut": "Alt+=",
       "circular": false
     },
     {
@@ -274,7 +308,7 @@
           "keySend": "f6"
         },
         {
-          "focusPid": "{{se}}",
+          "focusPid": "{{pp}}",
           "destination": "desktop"
         },
         {
@@ -358,28 +392,6 @@
       ],
       "name": "ee Heal Poison",
       "shortCut": "Alt+h"
-    },
-    {
-      "commands": [
-        {
-          "destination": "ee",
-          "keySend": "tab",
-          "holdKeys": "alt",
-          "delay": 300
-        },
-        {
-          "destination": "ee",
-          "keySend": "f12",
-          "delay": 100
-        },
-        {
-          "destination": "ee",
-          "keySend": "tab",
-          "holdKeys": "alt"
-        }
-      ],
-      "name": "EE TP all",
-      "shortCut": "Alt+p"
     },
     {
       "commands": [
@@ -506,6 +518,20 @@
       ],
       "name": "EE mass tp",
       "shortCut": "Alt+."
+    },
+     {
+      "commands": [
+        {
+          "destination": "ee",
+          "focusPid": "{{ee}}"
+        },
+        {
+          "destination": "ee",
+          "keySend": "f12"
+        }
+      ],
+      "name": "EE mass tp",
+      "shortCut": "Alt+/"
     },
     {
       "commands": [

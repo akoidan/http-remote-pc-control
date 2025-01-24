@@ -1,0 +1,464 @@
+{
+  "$ref": "#/definitions/macros",
+  "definitions": {
+    "macros": {
+      "anyOf": [
+        {
+          "not": {}
+        },
+        {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "commands": {
+                "type": "array",
+                "items": {
+                  "anyOf": [
+                    {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "keySend": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "enum": [
+                                    "a",
+                                    "b",
+                                    "c",
+                                    "d",
+                                    "e",
+                                    "f",
+                                    "g",
+                                    "h",
+                                    "i",
+                                    "j",
+                                    "k",
+                                    "l",
+                                    "m",
+                                    "n",
+                                    "o",
+                                    "p",
+                                    "q",
+                                    "r",
+                                    "s",
+                                    "t",
+                                    "u",
+                                    "v",
+                                    "w",
+                                    "x",
+                                    "y",
+                                    "z",
+                                    "f1",
+                                    "f2",
+                                    "f3",
+                                    "f4",
+                                    "f5",
+                                    "f6",
+                                    "f7",
+                                    "f8",
+                                    "f9",
+                                    "f10",
+                                    "f11",
+                                    "f12",
+                                    "f13",
+                                    "f14",
+                                    "f15",
+                                    "f16",
+                                    "f17",
+                                    "f18",
+                                    "f19",
+                                    "f20",
+                                    "f21",
+                                    "f22",
+                                    "f23",
+                                    "f24",
+                                    "0",
+                                    "1",
+                                    "2",
+                                    "3",
+                                    "4",
+                                    "5",
+                                    "6",
+                                    "7",
+                                    "8",
+                                    "9",
+                                    "numpad_0",
+                                    "numpad_1",
+                                    "numpad_2",
+                                    "numpad_3",
+                                    "numpad_4",
+                                    "numpad_5",
+                                    "numpad_6",
+                                    "numpad_7",
+                                    "numpad_8",
+                                    "numpad_9",
+                                    "numpad_decimal",
+                                    "space",
+                                    "escape",
+                                    "tab",
+                                    "alt",
+                                    "control",
+                                    "right_alt",
+                                    "right_control",
+                                    "win",
+                                    "right_win",
+                                    "cmd",
+                                    "right_cmd",
+                                    "menu",
+                                    "fn",
+                                    "shift",
+                                    "command",
+                                    "right_shift",
+                                    "command",
+                                    "`",
+                                    "-",
+                                    "=",
+                                    "backspace",
+                                    "[",
+                                    "]",
+                                    "\\",
+                                    ";",
+                                    "'",
+                                    "enter",
+                                    ",",
+                                    ".",
+                                    "/",
+                                    "left",
+                                    "up",
+                                    "right",
+                                    "down",
+                                    "printscreen",
+                                    "insert",
+                                    "delete",
+                                    "home",
+                                    "end",
+                                    "pageup",
+                                    "pagedown",
+                                    "add",
+                                    "subtract",
+                                    "multiply",
+                                    "divide",
+                                    "enter",
+                                    "caps_lock",
+                                    "scroll_lock",
+                                    "num_lock",
+                                    "audio_mute",
+                                    "audio_vol_down",
+                                    "audio_vol_up",
+                                    "audio_play",
+                                    "audio_stop",
+                                    "audio_pause",
+                                    "audio_prev",
+                                    "audio_next",
+                                    "audio_rewind",
+                                    "audio_forward",
+                                    "audio_repeat",
+                                    "audio_random"
+                                  ],
+                                  "description": "A key to be sent."
+                                },
+                                {
+                                  "type": "string",
+                                  "pattern": "\\{\\{\\w+\\}\\}",
+                                  "description": "Inject variable with this name. Either can be an environment variable, either a variables passed to a macro from variables section"
+                                },
+                                {
+                                  "type": "array",
+                                  "items": {
+                                    "$ref": "#/definitions/macros/anyOf/1/additionalProperties/properties/commands/items/anyOf/0/anyOf/0/properties/keySend/anyOf/0"
+                                  }
+                                }
+                              ]
+                            },
+                            "holdKeys": {
+                              "anyOf": [
+                                {
+                                  "$ref": "#/definitions/macros/anyOf/1/additionalProperties/properties/commands/items/anyOf/0/anyOf/0/properties/keySend/anyOf/0"
+                                },
+                                {
+                                  "$ref": "#/definitions/macros/anyOf/1/additionalProperties/properties/commands/items/anyOf/0/anyOf/0/properties/keySend/anyOf/1"
+                                },
+                                {
+                                  "type": "array",
+                                  "items": {
+                                    "$ref": "#/definitions/macros/anyOf/1/additionalProperties/properties/commands/items/anyOf/0/anyOf/0/properties/keySend/anyOf/0"
+                                  }
+                                }
+                              ],
+                              "description": "A key to be sent."
+                            },
+                            "destination": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "$ref": "#/definitions/macros/anyOf/1/additionalProperties/properties/commands/items/anyOf/0/anyOf/0/properties/keySend/anyOf/1"
+                                }
+                              ],
+                              "description": "Remote PC from ips or aliases section to send this command to"
+                            },
+                            "delay": {
+                              "anyOf": [
+                                {
+                                  "type": "number"
+                                },
+                                {
+                                  "$ref": "#/definitions/macros/anyOf/1/additionalProperties/properties/commands/items/anyOf/0/anyOf/0/properties/keySend/anyOf/1"
+                                }
+                              ],
+                              "description": "Delay in milliseconds before the next command."
+                            }
+                          },
+                          "required": [
+                            "keySend",
+                            "destination"
+                          ],
+                          "additionalProperties": false,
+                          "description": "Sends a keyPress to a remote PC."
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "mouseMoveX": {
+                              "anyOf": [
+                                {
+                                  "type": "number"
+                                },
+                                {
+                                  "$ref": "#/definitions/macros/anyOf/1/additionalProperties/properties/commands/items/anyOf/0/anyOf/0/properties/keySend/anyOf/1"
+                                }
+                              ],
+                              "description": "X coordinate"
+                            },
+                            "mouseMoveY": {
+                              "anyOf": [
+                                {
+                                  "type": "number"
+                                },
+                                {
+                                  "$ref": "#/definitions/macros/anyOf/1/additionalProperties/properties/commands/items/anyOf/0/anyOf/0/properties/keySend/anyOf/1"
+                                }
+                              ],
+                              "description": "Y coordinate"
+                            },
+                            "destination": {
+                              "$ref": "#/definitions/macros/anyOf/1/additionalProperties/properties/commands/items/anyOf/0/anyOf/0/properties/destination"
+                            },
+                            "delay": {
+                              "$ref": "#/definitions/macros/anyOf/1/additionalProperties/properties/commands/items/anyOf/0/anyOf/0/properties/delay"
+                            }
+                          },
+                          "required": [
+                            "mouseMoveX",
+                            "mouseMoveY",
+                            "destination"
+                          ],
+                          "additionalProperties": false,
+                          "description": "Moves mouse to specified coordinates and clicks with left button"
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "launch": {
+                              "type": "string",
+                              "description": "Full path to an executable."
+                            },
+                            "arguments": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              },
+                              "description": "Array of arguments to an executable"
+                            },
+                            "waitTillFinish": {
+                              "type": "boolean",
+                              "description": "Waits until executable finishes to run before running the next command"
+                            },
+                            "assignId": {
+                              "type": "string",
+                              "description": "Assigns PID of launched command to a variable that can be used after"
+                            },
+                            "destination": {
+                              "$ref": "#/definitions/macros/anyOf/1/additionalProperties/properties/commands/items/anyOf/0/anyOf/0/properties/destination"
+                            },
+                            "delay": {
+                              "$ref": "#/definitions/macros/anyOf/1/additionalProperties/properties/commands/items/anyOf/0/anyOf/0/properties/delay"
+                            }
+                          },
+                          "required": [
+                            "launch",
+                            "destination"
+                          ],
+                          "additionalProperties": false,
+                          "description": "Starts a program on a remote PC."
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "focusPid": {
+                              "anyOf": [
+                                {
+                                  "$ref": "#/definitions/macros/anyOf/1/additionalProperties/properties/commands/items/anyOf/0/anyOf/0/properties/keySend/anyOf/1"
+                                },
+                                {
+                                  "type": "number"
+                                }
+                              ],
+                              "description": "Pid of the process that has this window"
+                            },
+                            "destination": {
+                              "$ref": "#/definitions/macros/anyOf/1/additionalProperties/properties/commands/items/anyOf/0/anyOf/0/properties/destination"
+                            },
+                            "delay": {
+                              "$ref": "#/definitions/macros/anyOf/1/additionalProperties/properties/commands/items/anyOf/0/anyOf/0/properties/delay"
+                            }
+                          },
+                          "required": [
+                            "focusPid",
+                            "destination"
+                          ],
+                          "additionalProperties": false,
+                          "description": "Focuses window with the provided PID, making it active"
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "typeText": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "$ref": "#/definitions/macros/anyOf/1/additionalProperties/properties/commands/items/anyOf/0/anyOf/0/properties/keySend/anyOf/1"
+                                }
+                              ],
+                              "description": "Any string to type"
+                            },
+                            "destination": {
+                              "$ref": "#/definitions/macros/anyOf/1/additionalProperties/properties/commands/items/anyOf/0/anyOf/0/properties/destination"
+                            },
+                            "delay": {
+                              "$ref": "#/definitions/macros/anyOf/1/additionalProperties/properties/commands/items/anyOf/0/anyOf/0/properties/delay"
+                            }
+                          },
+                          "required": [
+                            "typeText",
+                            "destination"
+                          ],
+                          "additionalProperties": false,
+                          "description": "Types text on the remote PC."
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "kill": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "$ref": "#/definitions/macros/anyOf/1/additionalProperties/properties/commands/items/anyOf/0/anyOf/0/properties/keySend/anyOf/1"
+                                }
+                              ],
+                              "description": "Executable file name. E.g. Chrome.exe"
+                            },
+                            "destination": {
+                              "$ref": "#/definitions/macros/anyOf/1/additionalProperties/properties/commands/items/anyOf/0/anyOf/0/properties/destination"
+                            },
+                            "delay": {
+                              "$ref": "#/definitions/macros/anyOf/1/additionalProperties/properties/commands/items/anyOf/0/anyOf/0/properties/delay"
+                            }
+                          },
+                          "required": [
+                            "kill",
+                            "destination"
+                          ],
+                          "additionalProperties": false,
+                          "description": "Kills a process on the remote PC."
+                        }
+                      ],
+                      "description": "A remote command"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "macro": {
+                          "type": "string",
+                          "description": "Name of the macro (key from macros section object)"
+                        },
+                        "variables": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": [
+                              "string",
+                              "number"
+                            ]
+                          },
+                          "description": "Object of a key-values of variable name and value"
+                        },
+                        "delay": {
+                          "$ref": "#/definitions/macros/anyOf/1/additionalProperties/properties/commands/items/anyOf/0/anyOf/0/properties/delay"
+                        }
+                      },
+                      "required": [
+                        "macro"
+                      ],
+                      "additionalProperties": false,
+                      "description": "Runs a macro from the macros section."
+                    }
+                  ],
+                  "description": "A remote command or a macro name"
+                },
+                "description": "Set of commands for this macro"
+              },
+              "variables": {
+                "type": "object",
+                "additionalProperties": {
+                  "anyOf": [
+                    {
+                      "not": {}
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "string",
+                            "number"
+                          ],
+                          "description": "To validate the type, or cast from env variables"
+                        },
+                        "optional": {
+                          "type": "boolean",
+                          "description": "If set to true, the key is be removed is var is not passed"
+                        }
+                      },
+                      "required": [
+                        "type"
+                      ],
+                      "additionalProperties": false
+                    }
+                  ]
+                },
+                "description": "Set of variables descriptors for macro"
+              }
+            },
+            "required": [
+              "commands",
+              "variables"
+            ],
+            "additionalProperties": false,
+            "description": "A macro that can be injected instead of command. That will run commands from its body. Can be also injected with variables. Think of it like a function"
+          }
+        }
+      ],
+      "description": "A map of macros where a key is the macro name and value is its body"
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

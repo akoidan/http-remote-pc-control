@@ -13,7 +13,7 @@ import {
   LaunchPidResponse,
 } from '@/execution/execution-dto';
 import {ZodBody} from '@/validation/zod-validator';
-import { WindowsService } from '@/execution/windows-service';
+import {WindowsService} from '@/execution/windows-service';
 
 @Controller()
 export class ExecutionController {

@@ -15,7 +15,7 @@ const runMacroCommandSchema = z.object({
   .strict()
   .merge(delaySchema)
   .superRefine((command, ctx) => {
-    const definedMacros: NonNullable<MacroList> = schemaRootCache.data?.macros ?? {};
+    const definedMacros: NonNullable<MacroList>  = {...(schemaRootCache.data?.macros ?? {}), ...(schemaRootCache?.macros ?? {})};
     if (!definedMacros[command.macro]) {
       ctx.addIssue({
         code: ZodIssueCode.custom,
@@ -33,7 +33,11 @@ const runMacroCommandSchema = z.object({
         }
       }
       for (const [key, value] of Object.entries(definedMacros[command.macro]?.variables)) {
-        if (command.variables?.[key] && value!.type !== typeof command.variables?.[key]) {
+        let isVariable = false;
+        if (typeof command.variables?.[key] === 'string' && command.variables?.[key].startsWith('{{') && command.variables?.[key].endsWith('}}')) {
+          isVariable = true;
+        }
+        if (command.variables?.[key] && value!.type !== typeof command.variables?.[key] && !isVariable) {
           ctx.addIssue({
             code: ZodIssueCode.custom,
             path: ['variables'],

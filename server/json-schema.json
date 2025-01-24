@@ -1,7 +1,7 @@
 {
-  "$ref": "#/definitions/mySchema",
+  "$ref": "#/definitions/config",
   "definitions": {
-    "mySchema": {
+    "config": {
       "type": "object",
       "properties": {
         "ips": {
@@ -204,7 +204,7 @@
                                     {
                                       "type": "array",
                                       "items": {
-                                        "$ref": "#/definitions/mySchema/properties/combinations/items/anyOf/0/properties/commands/items/anyOf/0/anyOf/0/properties/keySend/anyOf/0"
+                                        "$ref": "#/definitions/config/properties/combinations/items/anyOf/0/properties/commands/items/anyOf/0/anyOf/0/properties/keySend/anyOf/0"
                                       }
                                     }
                                   ]
@@ -212,15 +212,15 @@
                                 "holdKeys": {
                                   "anyOf": [
                                     {
-                                      "$ref": "#/definitions/mySchema/properties/combinations/items/anyOf/0/properties/commands/items/anyOf/0/anyOf/0/properties/keySend/anyOf/0"
+                                      "$ref": "#/definitions/config/properties/combinations/items/anyOf/0/properties/commands/items/anyOf/0/anyOf/0/properties/keySend/anyOf/0"
                                     },
                                     {
-                                      "$ref": "#/definitions/mySchema/properties/combinations/items/anyOf/0/properties/commands/items/anyOf/0/anyOf/0/properties/keySend/anyOf/1"
+                                      "$ref": "#/definitions/config/properties/combinations/items/anyOf/0/properties/commands/items/anyOf/0/anyOf/0/properties/keySend/anyOf/1"
                                     },
                                     {
                                       "type": "array",
                                       "items": {
-                                        "$ref": "#/definitions/mySchema/properties/combinations/items/anyOf/0/properties/commands/items/anyOf/0/anyOf/0/properties/keySend/anyOf/0"
+                                        "$ref": "#/definitions/config/properties/combinations/items/anyOf/0/properties/commands/items/anyOf/0/anyOf/0/properties/keySend/anyOf/0"
                                       }
                                     }
                                   ],
@@ -232,7 +232,7 @@
                                       "type": "string"
                                     },
                                     {
-                                      "$ref": "#/definitions/mySchema/properties/combinations/items/anyOf/0/properties/commands/items/anyOf/0/anyOf/0/properties/keySend/anyOf/1"
+                                      "$ref": "#/definitions/config/properties/combinations/items/anyOf/0/properties/commands/items/anyOf/0/anyOf/0/properties/keySend/anyOf/1"
                                     }
                                   ],
                                   "description": "Remote PC from ips or aliases section to send this command to"
@@ -243,7 +243,7 @@
                                       "type": "number"
                                     },
                                     {
-                                      "$ref": "#/definitions/mySchema/properties/combinations/items/anyOf/0/properties/commands/items/anyOf/0/anyOf/0/properties/keySend/anyOf/1"
+                                      "$ref": "#/definitions/config/properties/combinations/items/anyOf/0/properties/commands/items/anyOf/0/anyOf/0/properties/keySend/anyOf/1"
                                     }
                                   ],
                                   "description": "Delay in milliseconds before the next command."
@@ -265,7 +265,7 @@
                                       "type": "number"
                                     },
                                     {
-                                      "$ref": "#/definitions/mySchema/properties/combinations/items/anyOf/0/properties/commands/items/anyOf/0/anyOf/0/properties/keySend/anyOf/1"
+                                      "$ref": "#/definitions/config/properties/combinations/items/anyOf/0/properties/commands/items/anyOf/0/anyOf/0/properties/keySend/anyOf/1"
                                     }
                                   ],
                                   "description": "X coordinate"
@@ -276,16 +276,16 @@
                                       "type": "number"
                                     },
                                     {
-                                      "$ref": "#/definitions/mySchema/properties/combinations/items/anyOf/0/properties/commands/items/anyOf/0/anyOf/0/properties/keySend/anyOf/1"
+                                      "$ref": "#/definitions/config/properties/combinations/items/anyOf/0/properties/commands/items/anyOf/0/anyOf/0/properties/keySend/anyOf/1"
                                     }
                                   ],
                                   "description": "Y coordinate"
                                 },
                                 "destination": {
-                                  "$ref": "#/definitions/mySchema/properties/combinations/items/anyOf/0/properties/commands/items/anyOf/0/anyOf/0/properties/destination"
+                                  "$ref": "#/definitions/config/properties/combinations/items/anyOf/0/properties/commands/items/anyOf/0/anyOf/0/properties/destination"
                                 },
                                 "delay": {
-                                  "$ref": "#/definitions/mySchema/properties/combinations/items/anyOf/0/properties/commands/items/anyOf/0/anyOf/0/properties/delay"
+                                  "$ref": "#/definitions/config/properties/combinations/items/anyOf/0/properties/commands/items/anyOf/0/anyOf/0/properties/delay"
                                 }
                               },
                               "required": [
@@ -319,10 +319,10 @@
                                   "description": "Assigns PID of launched command to a variable that can be used after"
                                 },
                                 "destination": {
-                                  "$ref": "#/definitions/mySchema/properties/combinations/items/anyOf/0/properties/commands/items/anyOf/0/anyOf/0/properties/destination"
+                                  "$ref": "#/definitions/config/properties/combinations/items/anyOf/0/properties/commands/items/anyOf/0/anyOf/0/properties/destination"
                                 },
                                 "delay": {
-                                  "$ref": "#/definitions/mySchema/properties/combinations/items/anyOf/0/properties/commands/items/anyOf/0/anyOf/0/properties/delay"
+                                  "$ref": "#/definitions/config/properties/combinations/items/anyOf/0/properties/commands/items/anyOf/0/anyOf/0/properties/delay"
                                 }
                               },
                               "required": [
@@ -338,7 +338,7 @@
                                 "focusPid": {
                                   "anyOf": [
                                     {
-                                      "$ref": "#/definitions/mySchema/properties/combinations/items/anyOf/0/properties/commands/items/anyOf/0/anyOf/0/properties/keySend/anyOf/1"
+                                      "$ref": "#/definitions/config/properties/combinations/items/anyOf/0/properties/commands/items/anyOf/0/anyOf/0/properties/keySend/anyOf/1"
                                     },
                                     {
                                       "type": "number"
@@ -347,10 +347,10 @@
                                   "description": "Pid of the process that has this window"
                                 },
                                 "destination": {
-                                  "$ref": "#/definitions/mySchema/properties/combinations/items/anyOf/0/properties/commands/items/anyOf/0/anyOf/0/properties/destination"
+                                  "$ref": "#/definitions/config/properties/combinations/items/anyOf/0/properties/commands/items/anyOf/0/anyOf/0/properties/destination"
                                 },
                                 "delay": {
-                                  "$ref": "#/definitions/mySchema/properties/combinations/items/anyOf/0/properties/commands/items/anyOf/0/anyOf/0/properties/delay"
+                                  "$ref": "#/definitions/config/properties/combinations/items/anyOf/0/properties/commands/items/anyOf/0/anyOf/0/properties/delay"
                                 }
                               },
                               "required": [
@@ -369,16 +369,16 @@
                                       "type": "string"
                                     },
                                     {
-                                      "$ref": "#/definitions/mySchema/properties/combinations/items/anyOf/0/properties/commands/items/anyOf/0/anyOf/0/properties/keySend/anyOf/1"
+                                      "$ref": "#/definitions/config/properties/combinations/items/anyOf/0/properties/commands/items/anyOf/0/anyOf/0/properties/keySend/anyOf/1"
                                     }
                                   ],
                                   "description": "Any string to type"
                                 },
                                 "destination": {
-                                  "$ref": "#/definitions/mySchema/properties/combinations/items/anyOf/0/properties/commands/items/anyOf/0/anyOf/0/properties/destination"
+                                  "$ref": "#/definitions/config/properties/combinations/items/anyOf/0/properties/commands/items/anyOf/0/anyOf/0/properties/destination"
                                 },
                                 "delay": {
-                                  "$ref": "#/definitions/mySchema/properties/combinations/items/anyOf/0/properties/commands/items/anyOf/0/anyOf/0/properties/delay"
+                                  "$ref": "#/definitions/config/properties/combinations/items/anyOf/0/properties/commands/items/anyOf/0/anyOf/0/properties/delay"
                                 }
                               },
                               "required": [
@@ -397,16 +397,16 @@
                                       "type": "string"
                                     },
                                     {
-                                      "$ref": "#/definitions/mySchema/properties/combinations/items/anyOf/0/properties/commands/items/anyOf/0/anyOf/0/properties/keySend/anyOf/1"
+                                      "$ref": "#/definitions/config/properties/combinations/items/anyOf/0/properties/commands/items/anyOf/0/anyOf/0/properties/keySend/anyOf/1"
                                     }
                                   ],
                                   "description": "Executable file name. E.g. Chrome.exe"
                                 },
                                 "destination": {
-                                  "$ref": "#/definitions/mySchema/properties/combinations/items/anyOf/0/properties/commands/items/anyOf/0/anyOf/0/properties/destination"
+                                  "$ref": "#/definitions/config/properties/combinations/items/anyOf/0/properties/commands/items/anyOf/0/anyOf/0/properties/destination"
                                 },
                                 "delay": {
-                                  "$ref": "#/definitions/mySchema/properties/combinations/items/anyOf/0/properties/commands/items/anyOf/0/anyOf/0/properties/delay"
+                                  "$ref": "#/definitions/config/properties/combinations/items/anyOf/0/properties/commands/items/anyOf/0/anyOf/0/properties/delay"
                                 }
                               },
                               "required": [
@@ -437,7 +437,7 @@
                               "description": "Object of a key-values of variable name and value"
                             },
                             "delay": {
-                              "$ref": "#/definitions/mySchema/properties/combinations/items/anyOf/0/properties/commands/items/anyOf/0/anyOf/0/properties/delay"
+                              "$ref": "#/definitions/config/properties/combinations/items/anyOf/0/properties/commands/items/anyOf/0/anyOf/0/properties/delay"
                             }
                           },
                           "required": [
@@ -454,7 +454,7 @@
                   "threads": {
                     "type": "array",
                     "items": {
-                      "$ref": "#/definitions/mySchema/properties/combinations/items/anyOf/0/properties/commands"
+                      "$ref": "#/definitions/config/properties/combinations/items/anyOf/0/properties/commands"
                     },
                     "description": "This option should be defined only if commands attribute is absent. Same as commands but array of arrays of commands. Top level of array executes in parallel"
                   },
@@ -491,18 +491,18 @@
                   "commands": {
                     "type": "array",
                     "items": {
-                      "$ref": "#/definitions/mySchema/properties/combinations/items/anyOf/0/properties/commands/items/anyOf/0"
+                      "$ref": "#/definitions/config/properties/combinations/items/anyOf/0/properties/commands/items/anyOf/0"
                     },
                     "description": "List of commands for different commands"
                   },
                   "delay": {
-                    "$ref": "#/definitions/mySchema/properties/combinations/items/anyOf/0/properties/delay"
+                    "$ref": "#/definitions/config/properties/combinations/items/anyOf/0/properties/delay"
                   },
                   "name": {
-                    "$ref": "#/definitions/mySchema/properties/combinations/items/anyOf/0/properties/name"
+                    "$ref": "#/definitions/config/properties/combinations/items/anyOf/0/properties/name"
                   },
                   "shortCut": {
-                    "$ref": "#/definitions/mySchema/properties/combinations/items/anyOf/0/properties/shortCut"
+                    "$ref": "#/definitions/config/properties/combinations/items/anyOf/0/properties/shortCut"
                   }
                 },
                 "required": [
@@ -525,7 +525,7 @@
               "commands": {
                 "type": "array",
                 "items": {
-                  "$ref": "#/definitions/mySchema/properties/combinations/items/anyOf/0/properties/commands/items"
+                  "$ref": "#/definitions/config/properties/combinations/items/anyOf/0/properties/commands/items"
                 },
                 "description": "Set of commands for this macro"
               },

@@ -1,9 +1,9 @@
 import {
   Injectable,
-  Logger
+  Logger,
 } from '@nestjs/common';
-import { ConfigService } from '@/config/config-service';
-import { VariablesDefinition } from '@/config/types/macros';
+import {ConfigService} from '@/config/config-service';
+import {VariablesDefinition} from '@/config/types/macros';
 
 @Injectable()
 export class VariableResolutionService {
@@ -25,14 +25,27 @@ export class VariableResolutionService {
         if (definition[varName]) {
           if (values[varName]) {
             result[commandKey] = values[varName] as any;
-            this.logger.debug(`Replaced  variable ${varName} for command  ${JSON.stringify(command)} to ${values[varName]}`)
+            this.logger.debug(`Replaced  variable ${varName} for command  ${JSON.stringify(command)} to ${values[varName]}`);
           } else if (!definition[varName]!.optional) {
             throw Error(`Unable to resolve macros variable${commandValueForKey} when running ${JSON.stringify(command)}`);
           } else {
-            this.logger.debug(`Omitting variable ${varName} from ${JSON.stringify(command)} since it's optional`)
+            this.logger.debug(`Omitting variable ${varName} from ${JSON.stringify(command)} since it's optional`);
           }
         } else {
           result[commandKey] = commandValueForKey;
+        }
+      } else if (commandKey === 'variables' && typeof commandValueForKey === 'object') {
+        result[commandKey] = {...commandValueForKey};
+        for (const [innerCommand, innerCommandValueForKey] of Object.entries(commandValueForKey as object)) {
+          if (typeof innerCommandValueForKey === 'string' && innerCommandValueForKey.startsWith('{{') && innerCommandValueForKey.endsWith('}}')) {
+            const varName = innerCommandValueForKey.slice(2, -2);
+            if (values[varName]) {
+              (result[commandKey] as any)[innerCommand] = values[varName] as any;
+              this.logger.debug(`Replaced  variable ${varName} for command  ${JSON.stringify(command)} to ${values[varName]}`);
+            } else {
+              throw Error(`Unable to resolve macros variable${innerCommandValueForKey} when running ${JSON.stringify(command)}`);
+            }
+          }
         }
       } else {
         result[commandKey] = commandValueForKey;

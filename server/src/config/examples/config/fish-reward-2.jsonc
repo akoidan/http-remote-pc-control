@@ -45,16 +45,6 @@
           {
             "macro": "killLaunchL2",
             "variables": {
-              "destination": "desktop",
-              "login": "deathangel6",
-              "delay": 16000
-            }
-          }
-        ],
-        [
-          {
-            "macro": "killLaunchL2",
-            "variables": {
               "destination": "asus",
               "login": "deathangel7",
               "delay": 18000
@@ -66,15 +56,14 @@
             "macro": "killLaunchL2Wine",
             "variables": {
               "destination": "this",
-              "login": "deathangel9",
+              "login": "deathangelj",
               "delay": 18000
             }
           }
         ]
       ],
       "name": "Launch l2 clients",
-      "shortCut": "Alt+F11",
-      "circular": false
+      "shortCut": "Alt+F11"
     }
   ]
 }

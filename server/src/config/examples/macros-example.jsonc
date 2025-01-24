@@ -31,19 +31,8 @@
       }
     }
   },
-  "killLaunchL2": {
+  "loginProceed": {
     "commands": [
-      {
-        "destination": "{{destination}}",
-        "kill": "L2.exe",
-        "delay": 200
-      },
-      {
-        "destination": "{{destination}}",
-        "launch": "C:\\l2dion\\system\\L2.exe",
-        "delay": "{{delay}}",
-        "assignId": "{{assignId}}"
-      },
       {
         "destination": "{{destination}}",
         "typeText": "{{login}}"
@@ -86,6 +75,40 @@
       },
       "delay": {
         "type": "number"
+      }
+    }
+  },
+  "killLaunchL2": {
+    "commands": [
+      {
+        "destination": "{{destination}}",
+        "kill": "L2.exe",
+        "delay": 200
+      },
+      {
+        "destination": "{{destination}}",
+        "launch": "C:\\l2dion\\system\\L2.exe",
+        "delay": "{{delay}}",
+        "assignId": "{{assignId}}"
+      },
+      {
+        "macro": "loginProceed",
+        "variables": {
+          "destination": "{{destination}}",
+          "login": "{{login}}",
+          "delay": "{{delay}}"
+        }
+      }
+    ],
+    "variables": {
+      "destination": {
+        "type": "string"
+      },
+      "login": {
+        "type": "string"
+      },
+      "delay": {
+        "type": "number"
       },
       "assignId": {
         "type": "string",
@@ -102,36 +125,12 @@
         "assignId": "{{assignId}}"
       },
       {
-        "destination": "{{destination}}",
-        "typeText": "{{login}}"
-      },
-      {
-        "destination": "{{destination}}",
-        "keySend": "tab"
-      },
-      {
-        "destination": "{{destination}}",
-        "typeText": "{{PASSWORD}}"
-      },
-      {
-        "destination": "{{destination}}",
-        "keySend": "enter",
-        "delay": 8000
-      },
-      {
-        "destination": "{{destination}}",
-        "keySend": "enter",
-        "delay": 1500
-      },
-      {
-        "destination": "{{destination}}",
-        "keySend": "enter",
-        "delay": 1500
-      },
-      {
-        "destination": "{{destination}}",
-        "keySend": "enter",
-        "delay": 1500
+        "macro": "loginProceed",
+        "variables": {
+          "destination": "{{destination}}",
+          "login": "{{login}}",
+          "delay": "{{delay}}"
+        }
       }
     ],
     "variables": {
@@ -163,41 +162,16 @@
         "arguments": [
           "/home/andrew/ntfs/Games/l2dion/system/L2.exe"
         ],
-
         "assignId": "{{assignId}}",
         "delay": "{{delay}}"
       },
       {
-        "destination": "{{destination}}",
-        "typeText": "{{login}}"
-      },
-      {
-        "destination": "{{destination}}",
-        "keySend": "tab"
-      },
-      {
-        "destination": "{{destination}}",
-        "typeText": "{{PASSWORD}}"
-      },
-      {
-        "destination": "{{destination}}",
-        "keySend": "enter",
-        "delay": 8000
-      },
-      {
-        "destination": "{{destination}}",
-        "keySend": "enter",
-        "delay": 1500
-      },
-      {
-        "destination": "{{destination}}",
-        "keySend": "enter",
-        "delay": 1500
-      },
-      {
-        "destination": "{{destination}}",
-        "keySend": "enter",
-        "delay": 1500
+        "macro": "loginProceed",
+        "variables": {
+          "destination": "{{destination}}",
+          "login": "{{login}}",
+          "delay": "{{delay}}"
+        }
       }
     ],
     "variables": {
@@ -228,36 +202,12 @@
         "assignId": "{{assignId}}"
       },
       {
-        "destination": "{{destination}}",
-        "typeText": "{{login}}"
-      },
-      {
-        "destination": "{{destination}}",
-        "keySend": "tab"
-      },
-      {
-        "destination": "{{destination}}",
-        "typeText": "{{PASSWORD}}"
-      },
-      {
-        "destination": "{{destination}}",
-        "keySend": "enter",
-        "delay": 8000
-      },
-      {
-        "destination": "{{destination}}",
-        "keySend": "enter",
-        "delay": 1500
-      },
-      {
-        "destination": "{{destination}}",
-        "keySend": "enter",
-        "delay": 1500
-      },
-      {
-        "destination": "{{destination}}",
-        "keySend": "enter",
-        "delay": 1500
+        "macro": "loginProceed",
+        "variables": {
+          "destination": "{{destination}}",
+          "login": "{{login}}",
+          "delay": "{{delay}}"
+        }
       }
     ],
     "variables": {

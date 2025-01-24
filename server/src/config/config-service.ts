@@ -55,6 +55,7 @@ export class ConfigService implements ConfigProvider {
 
     this.logger.debug('Validating global config');
     schemaRootCache.data = conf;
+    schemaRootCache.macros = globalMacroConf;
     await macrosDefinitionSchema.parseAsync(globalMacroConf);
 
     this.logger.debug('Validating macro config');

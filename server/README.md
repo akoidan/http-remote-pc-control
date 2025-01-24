@@ -324,19 +324,18 @@ _(\*) Required._
 
 ## RandomShortCutMapping
 
-An event schema that represent a set of commands that is executed when a cirtain shortkey is pressed
+An event schema that represent a set of commands that is executed when a certain shortkey is pressed
 
 _Object containing the following properties:_
 
-| Property            | Description                                                                                                                                                   | Type                                   |
-| :------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------ | :------------------------------------- |
-| `circular`          | If set to true. Commands in this chain will be executed in a circular way. So each press = 1 command. Instead of full commands                                | `boolean`                              |
-| `shuffle`           | If circular set to true, commands in this event would be executed randomly by 1                                                                               | `boolean`                              |
-| `commands`          | List of commands for different commands                                                                                                                       | _Array of [Command](#command) items_   |
-| `threads`           | This option should be defined only if commands attribute is absent. Same as commands but array of arrays of commands. Top level of array executes in parallel | _Array of [Commands](#commands) items_ |
-| `delay`             | Delay in milliseconds between commands for this shorcut                                                                                                       | `number`                               |
-| **`name`** (\*)     | Name that is printed during startup with a shorcut                                                                                                            | `string`                               |
-| **`shortCut`** (\*) | A shorcut to be pressed. E.g. Alt+1                                                                                                                           | `string`                               |
+| Property            | Description                                                                                                                    | Type                  |
+| :------------------ | :----------------------------------------------------------------------------------------------------------------------------- | :-------------------- |
+| `circular`          | If set to true. Commands in this chain will be executed in a circular way. So each press = 1 command. Instead of full commands | `boolean`             |
+| `shuffle`           | If circular set to true, commands in this event would be executed randomly by 1                                                | `boolean`             |
+| **`commands`** (\*) | List of commands for different commands                                                                                        | [Commands](#commands) |
+| `delay`             | Delay in milliseconds between commands for this shorcut                                                                        | `number`              |
+| **`name`** (\*)     | Name that is printed during startup with a shorcut                                                                             | `string`              |
+| **`shortCut`** (\*) | A shorcut to be pressed. E.g. Alt+1                                                                                            | `string`              |
 
 _(\*) Required._
 
