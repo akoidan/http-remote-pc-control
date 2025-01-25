@@ -368,7 +368,7 @@
             "destination": "ee",
             "keySend": "8"
           },
-          "delay": 11000
+          "delay": 13000
         },
         {
           "macro": "keySend",
@@ -384,15 +384,6 @@
             "focusPid": "{{ee}}",
             "destination": "ee",
             "keySend": "9"
-          },
-          "delay": 10000
-        },
-        {
-          "macro": "keySend",
-          "variables": {
-            "focusPid": "{{ee}}",
-            "destination": "ee",
-            "keySend": "0"
           }
         }
       ],
@@ -460,13 +451,30 @@
     {
       "commands": [
         {
-          "destination": "tyrs",
-          "keySend": "f7"
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{spoil}}",
+            "destination": "spoil",
+            "keySend": "f4"
+          }
         }
       ],
-      "name": "Greater Potion",
-      "shortCut": "Alt+7",
-      "circular": false
+      "name": "Spoil",
+      "shortCut": "Alt+7"
+    },
+     {
+      "commands": [
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{spoil}}",
+            "destination": "spoil",
+            "keySend": "f4"
+          }
+        }
+      ],
+      "name": "sweep",
+      "shortCut": "Alt+y"
     },
     {
       "commands": [
@@ -651,7 +659,7 @@
         }
       ],
       "name": "Tyrs target each other",
-      "shortCut": "Alt+y"
+      "shortCut": "Alt+u"
     },
     {
       "threads": [
@@ -678,7 +686,7 @@
         ]
       ],
       "name": "Tyrs attack each other",
-      "shortCut": "Alt+u"
+      "shortCut": "Alt+i"
     },
     {
       "commands": [
@@ -688,7 +696,7 @@
         }
       ],
       "name": "Tyrs target each other",
-      "shortCut": "Alt+i"
+      "shortCut": "Alt+o"
     },
     {
       "commands": [
