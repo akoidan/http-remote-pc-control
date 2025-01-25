@@ -53,10 +53,20 @@
         ],
          [
           {
+            "macro": "killLaunchL2",
+            "variables": {
+              "destination": "desktop",
+              "login": "deathangelj",
+              "delay": 18000
+            }
+          }
+        ],
+         [
+          {
             "macro": "killLaunchL2Wine",
             "variables": {
               "destination": "this",
-              "login": "deathangelj",
+              "login": "deathangelo",
               "delay": 18000
             }
           }

@@ -5,13 +5,13 @@
     "lenovo": "192.168.100.33",
     "desktop": "192.168.100.9",
     "asus": "192.168.100.27",
+    "medion": "192.168.100.62",
     "this": "127.0.0.1"
   },
   "delay": 200,
   "aliases": {
     "se": "desktop",
     "wc": "desktop",
-    "pp": "desktop",
     "tyrs": [
       "touchpad",
       "lenovo",
@@ -21,7 +21,9 @@
     "bd": "this",
     "sws": "this",
     "ee": "desktop",
-    "bish": "asus",
+    "bish": "medion",
+    "pp": "asus",
+    "spoil": "asus",
     "monk": "touchpad",
     "tyrant": "msi",
     "raider": "lenovo"
@@ -31,27 +33,50 @@
       "threads": [
         [
           {
+            "macro": "killLaunchL2",
+            "variables": {
+              "destination": "spoil",
+              "login": "deathangel7",
+              "delay": 14000,
+              "assignId": "spoil"
+            }
+          },
+          {
+            "macro": "launchL2",
+            "variables": {
+              "destination": "pp",
+              "login": "deathangelq",
+              "delay": 14000,
+              "assignId": "pp"
+            }
+          }
+        ],
+        [
+          {
             "macro": "killLaunchL2Wine",
             "variables": {
-              "destination": "this",
+              "destination": "da",
               "login": "deathangel9",
-              "delay": 12000
+              "delay": 12000,
+              "assignId": "da"
             }
           },
           {
             "macro": "launchL2Wine",
             "variables": {
-              "destination": "this",
+              "destination": "sws",
               "login": "deathangel2",
-              "delay": 10000
+              "delay": 10000,
+              "assignId": "sws"
             }
           },
           {
             "macro": "launchL2Wine",
             "variables": {
-              "destination": "this",
+              "destination": "bd",
               "login": "deathangel",
-              "delay": 10000
+              "delay": 10000,
+              "assignId": "bd"
             }
           }
         ],
@@ -59,16 +84,16 @@
           {
             "macro": "killLaunchL2",
             "variables": {
-              "destination": "desktop",
-              "login": "deathangelq",
+              "destination": "se",
+              "login": "deathangelk",
               "delay": 8000,
-              "assignId": "pp"
+              "assignId": "se"
             }
           },
           {
             "macro": "launchL2",
             "variables": {
-              "destination": "desktop",
+              "destination": "wc",
               "login": "deathangel1",
               "delay": 10000,
               "assignId": "wc"
@@ -77,7 +102,7 @@
           {
             "macro": "launchL2",
             "variables": {
-              "destination": "desktop",
+              "destination": "ee",
               "login": "deathangel8",
               "delay": 10000,
               "assignId": "ee"
@@ -88,7 +113,7 @@
           {
             "macro": "killLaunchL2",
             "variables": {
-              "destination": "asus",
+              "destination": "bish",
               "login": "deathangel6",
               "delay": 16000,
               "assignId": "bish"
@@ -139,6 +164,14 @@
             "macro": "killL2",
             "variables": {
               "destination": "touchpad"
+            }
+          }
+        ],
+        [
+          {
+            "macro": "killL2",
+            "variables": {
+              "destination": "medion"
             }
           }
         ],
@@ -214,88 +247,157 @@
     {
       "commands": [
         {
-          "destination": "se",
-          "keySend": "3"
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{wc}}",
+            "destination": "wc",
+            "keySend": "3"
+          }
         }
       ],
       "name": "WC Fear",
-      "shortCut": "Alt+3",
-      "circular": false
+      "shortCut": "Alt+3"
     },
     {
       "commands": [
         {
-          "focusPid": "{{wc}}",
-          "destination": "wc"
-        },
-        {
-          "destination": "wc",
-          "keySend": "2"
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{wc}}",
+            "destination": "wc",
+            "keySend": "2"
+          }
         }
       ],
       "name": "WC Sleep",
-      "shortCut": "Alt+4",
-      "circular": false
+      "shortCut": "Alt+4"
     },
     {
       "commands": [
         {
-          "destination": "se",
-          "focusPid": "{{se}}"
-        },
-        {
-          "destination": "se",
-          "keySend": "f5"
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{se}}",
+            "destination": "se",
+            "keySend": "f5"
+          }
         }
       ],
       "name": "Stigma",
-      "shortCut": "Alt+5",
-      "circular": false
+      "shortCut": "Alt+5"
     },
     {
       "commands": [
         {
-          "destination": "desktop",
-          "focusPid": "{{ee}}"
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{ee}}",
+            "destination": "ee",
+            "keySend": "6"
+          }
         },
         {
-          "destination": "ee",
-          "keySend": "4"
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{wc}}",
+            "destination": "wc",
+            "keySend": "f9"
+          }
+        }
+      ],
+      "name": "Buff #1",
+      "shortCut": "Alt+0"
+    },
+    {
+      "commands": [
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{pp}}",
+            "destination": "pp",
+            "keySend": "2"
+          }
         },
         {
-          "destination": "desktop",
-          "focusPid": "{{wc}}"
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{wc}}",
+            "destination": "wc",
+            "keySend": "f10"
+          }
         },
         {
-          "destination": "wc",
-          "keySend": "f8",
-          "delay": 1500
-        },
-        {
-          "destination": "wc",
-          "keySend": "f9"
-        },
-        {
-          "destination": "desktop",
-          "focusPid": "{{pp}}"
-        },
-        {
-          "destination": "pp",
-          "keySend": "4"
-        },
-        {
-          "destination": "desktop",
-          "focusPid": "{{ee}}",
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{ee}}",
+            "destination": "ee",
+            "keySend": "7"
+          },
           "delay": 10000
         },
         {
-          "destination": "bish",
-          "keySend": "f12"
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{pp}}",
+            "destination": "pp",
+            "keySend": "3"
+          }
         }
       ],
-      "name": "Stigma",
-      "shortCut": "Alt+=",
-      "circular": false
+      "name": "Buff #2",
+      "shortCut": "Alt+-"
+    },
+    {
+      "commands": [
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{pp}}",
+            "destination": "pp",
+            "keySend": "5"
+          }
+        },
+        {
+          "keySend": "f12",
+          "destination": "bish"
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{ee}}",
+            "destination": "ee",
+            "keySend": "8"
+          },
+          "delay": 11000
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{pp}}",
+            "destination": "pp",
+            "keySend": "6"
+          }
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{ee}}",
+            "destination": "ee",
+            "keySend": "9"
+          },
+          "delay": 10000
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{ee}}",
+            "destination": "ee",
+            "keySend": "0"
+          }
+        }
+      ],
+      "name": "Buff #3",
+      "shortCut": "Alt+="
     },
     {
       "commands": [
@@ -304,32 +406,52 @@
           "keySend": "f6"
         },
         {
-          "destination": "asus",
-          "keySend": "f6"
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{bish}}",
+            "destination": "bish",
+            "keySend": "f6"
+          }
         },
         {
-          "focusPid": "{{pp}}",
-          "destination": "desktop"
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{se}}",
+            "destination": "se",
+            "keySend": "f6"
+          }
         },
         {
-          "destination": "desktop",
-          "keySend": "f6"
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{wc}}",
+            "destination": "wc",
+            "keySend": "f6"
+          }
         },
         {
-          "focusPid": "{{wc}}",
-          "destination": "desktop"
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{ee}}",
+            "destination": "ee",
+            "keySend": "f6"
+          }
         },
         {
-          "destination": "desktop",
-          "keySend": "f6"
-        },
-       {
-          "focusPid": "{{ee}}",
-          "destination": "desktop"
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{spoil}}",
+            "destination": "spoil",
+            "keySend": "f6"
+          }
         },
         {
-          "destination": "desktop",
-          "keySend": "f6"
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{pp}}",
+            "destination": "pp",
+            "keySend": "f6"
+          }
         }
       ],
       "name": "To Me",
@@ -381,13 +503,12 @@
     {
       "commands": [
         {
-          "destination": "ee",
-          "focusPid": "{{ee}}"
-        },
-        {
-          "destination": "ee",
-          "keySend": "f9",
-          "delay": 100
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{ee}}",
+            "destination": "ee",
+            "keySend": "f9"
+          }
         }
       ],
       "name": "ee Heal Poison",
@@ -396,20 +517,12 @@
     {
       "commands": [
         {
-          "destination": "ee",
-          "keySend": "tab",
-          "holdKeys": "alt",
-          "delay": 300
-        },
-        {
-          "destination": "ee",
-          "keySend": "f7",
-          "delay": 100
-        },
-        {
-          "destination": "ee",
-          "keySend": "tab",
-          "holdKeys": "alt"
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{ee}}",
+            "destination": "ee",
+            "keySend": "f7"
+          }
         }
       ],
       "name": "Mana Cardinal",
@@ -489,10 +602,10 @@
       "commands": [
         {
           "destination": "bish",
-          "keySend": "f10"
+          "keySend": "f11"
         }
       ],
-      "name": "Chain heal",
+      "name": "Heal <30mp",
       "shortCut": "Alt+g"
     },
     {
@@ -508,39 +621,21 @@
     {
       "commands": [
         {
-          "destination": "ee",
-          "focusPid": "{{ee}}"
-        },
-        {
-          "destination": "ee",
-          "keySend": "f12"
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{ee}}",
+            "destination": "ee",
+            "keySend": "f12"
+          }
         }
       ],
       "name": "EE mass tp",
       "shortCut": "Alt+."
     },
-     {
-      "commands": [
-        {
-          "destination": "ee",
-          "focusPid": "{{ee}}"
-        },
-        {
-          "destination": "ee",
-          "keySend": "f12"
-        }
-      ],
-      "name": "EE mass tp",
-      "shortCut": "Alt+/"
-    },
     {
       "commands": [
         {
           "destination": "bish",
-          "keySend": "f6"
-        },
-        {
-          "destination": "wc",
           "keySend": "f6"
         }
       ],
@@ -602,7 +697,6 @@
           "keySend": "3"
         }
       ],
-      "shuffle": true,
       "name": "Purify (anchor/bleed/pois)",
       "shortCut": "Alt+x"
     },

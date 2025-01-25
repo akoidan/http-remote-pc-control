@@ -7,6 +7,7 @@ import {
 } from '@/config/types/schema';
 import {schemaRootCache} from '@/config/types/cache';
 import {delaySchema} from '@/config/types/commands';
+import { variableRegex } from '@/config/types/variables';
 
 const runMacroCommandSchema = z.object({
   macro: z.string().describe('Name of the macro (key from macros section object)'),
@@ -34,7 +35,7 @@ const runMacroCommandSchema = z.object({
       }
       for (const [key, value] of Object.entries(definedMacros[command.macro]?.variables)) {
         let isVariable = false;
-        if (typeof command.variables?.[key] === 'string' && command.variables?.[key].startsWith('{{') && command.variables?.[key].endsWith('}}')) {
+        if (typeof command.variables?.[key] === 'string' && variableRegex.test(command.variables?.[key])) {
           isVariable = true;
         }
         if (command.variables?.[key] && value!.type !== typeof command.variables?.[key] && !isVariable) {

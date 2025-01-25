@@ -4,6 +4,7 @@ import {
 } from '@nestjs/common';
 import {ConfigService} from '@/config/config-service';
 import {VariablesDefinition} from '@/config/types/macros';
+import { variableRegex } from '@/config/types/variables';
 
 @Injectable()
 export class VariableResolutionService {
@@ -20,7 +21,7 @@ export class VariableResolutionService {
 
     const result: Partial<T> = {};
     for (const [commandKey, commandValueForKey] of Object.entries(command) as [keyof T, T[keyof T]][]) {
-      if (typeof commandValueForKey === 'string' && commandValueForKey.startsWith('{{') && commandValueForKey.endsWith('}}')) {
+      if (typeof commandValueForKey === 'string' && variableRegex.test(commandValueForKey)) {
         const varName = commandValueForKey.slice(2, -2);
         if (definition[varName]) {
           if (values[varName]) {
@@ -37,7 +38,7 @@ export class VariableResolutionService {
       } else if (commandKey === 'variables' && typeof commandValueForKey === 'object') {
         result[commandKey] = {...commandValueForKey};
         for (const [innerCommand, innerCommandValueForKey] of Object.entries(commandValueForKey as object)) {
-          if (typeof innerCommandValueForKey === 'string' && innerCommandValueForKey.startsWith('{{') && innerCommandValueForKey.endsWith('}}')) {
+          if (typeof innerCommandValueForKey === 'string' && variableRegex.test(innerCommandValueForKey)) {
             const varName = innerCommandValueForKey.slice(2, -2);
             if (values[varName]) {
               (result[commandKey] as any)[innerCommand] = values[varName] as any;
@@ -57,7 +58,7 @@ export class VariableResolutionService {
   replaceEnvVars<T extends object>(obj: T): T {
     const result: Partial<T> = {};
     for (const [key, value] of Object.entries(obj) as [keyof T, T[keyof T]][]) {
-      if (typeof value === 'string' && value.startsWith('{{') && value.endsWith('}}')) {
+      if (typeof value === 'string' && variableRegex.test(value)) {
         const globalVars = this.configService.getGlobalVars();
         const scriptVars = this.configService.getVariables();
         const varName = value.slice(2, -2);

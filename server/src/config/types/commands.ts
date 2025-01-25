@@ -4,7 +4,10 @@ import {
 } from 'zod';
 import {schemaRootCache} from '@/config/types/cache';
 import type {ConfigData} from '@/config/types/schema';
-import {variableValueSchema} from '@/config/types/variables';
+import {
+  variableRegex,
+  variableValueSchema
+} from '@/config/types/variables';
 
 // import KeyboardAction from '@nut-tree-fork/libnut/dist/lib/libnut-keyboard.class.js';
 // const possibleKeys: string[] = [...KeyboardAction.KeyLookupMap.values()] as string[];
@@ -22,7 +25,7 @@ const baseSchema = z.object({
     const alisesKeys = new Set(Object.keys(data.aliases ?? {}));
     const ipsKeys = new Set(Object.keys(data.ips));
 
-    if (!alisesKeys.has(destination) && !data.ips[destination]) {
+    if (!alisesKeys.has(destination) && !data.ips[destination] && !variableRegex.test(destination)) {
       const allOptions = JSON.stringify([...Array.from(alisesKeys), ...Array.from(ipsKeys)]);
       ctx.addIssue({
         code: ZodIssueCode.custom,

@@ -2,14 +2,15 @@ import {
   Injectable,
   Logger,
 } from '@nestjs/common';
-import {ConfigService} from '@/config/config-service';
-import {Command} from '@/config/types/commands';
+import { ConfigService } from '@/config/config-service';
+import { Command } from '@/config/types/commands';
 import {
   CommandOrMacro,
   MacroCommand,
 } from '@/config/types/macros';
-import {VariableResolutionService} from 'src/logic/variable-resolution.service';
-import {BaseCommandHandler} from 'src/logic/commands/base-command-handler';
+import { VariableResolutionService } from 'src/logic/variable-resolution.service';
+import { BaseCommandHandler } from 'src/logic/commands/base-command-handler';
+import { input } from 'zod';
 
 @Injectable()
 export class CommandProcessingService {
@@ -32,6 +33,11 @@ export class CommandProcessingService {
           executable.variables
         );
         await this.resolveMacroAndAlias(preparedCommand, true, (preparedCommand.delay as number | undefined) ?? combDelay);
+      }
+      // and then await this delay before every command in macro, only on first iteration
+      if (typeof input.delay === 'number' ) { // ignore if it's a variable or undefined
+        await this.awaitDelay(input.delay as number, undefined); // if it's a macro, delay in this macro won't be passed down
+        // but would be await after all commands in this macro as expected, this is why on top we are not passing it
       }
     } else if (resolveAlias) {
       const commands = this.resolveAliases(input as Command);
@@ -65,14 +71,14 @@ export class CommandProcessingService {
 
   resolveAliases(rec: Command): Command[] {
     if (this.configService.getIps()[rec.destination]) {
-      return [{...rec, destination: rec.destination}];
+      return [{ ...rec, destination: rec.destination }];
     }
     const destination = this.configService.getAliases()[rec.destination];
     if (typeof destination === 'string') {
-      return this.resolveAliases({...rec, destination});
+      return this.resolveAliases({ ...rec, destination });
     }
     if (Array.isArray(destination)) {
-      return destination.flatMap(dest => this.resolveAliases({...rec, destination: dest}));
+      return destination.flatMap(dest => this.resolveAliases({ ...rec, destination: dest }));
     }
     throw Error(`Unknown destination ${rec.destination}`);
   }
