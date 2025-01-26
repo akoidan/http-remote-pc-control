@@ -31,10 +31,10 @@ export class CustomLogger extends ConsoleLogger {
     console.info(CustomLogger.logFormat('INFO', message, clc.bold.blue, clc.xterm(90)));
   }
 
-  error(message: string, trace?: string): void {
-    console.error(CustomLogger.logFormat('ERROR', message, clc.bold.redBright, clc.red));
-    if (trace) {
-      console.error(clc.red(trace));
+  error(message: string|Error, trace?: string): void {
+    console.error(CustomLogger.logFormat('ERROR', (message as Error)?.message ?? message, clc.bold.redBright, clc.red));
+    if (trace ?? (message as Error)?.stack) {
+      console.error(clc.red(trace ?? (message as Error)?.stack));
     }
   }
 

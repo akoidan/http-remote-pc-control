@@ -3,8 +3,11 @@ import {
   Logger,
 } from '@nestjs/common';
 import {ConfigService} from '@/config/config-service';
-import {VariablesDefinition} from '@/config/types/macros';
-import {variableRegex} from '@/config/types/variables';
+import {
+  MacroCommand,
+  VariablesDefinition,
+} from '@/config/types/macros';
+import {extractVariableName} from '@/config/types/variables';
 
 @Injectable()
 export class VariableResolutionService {
@@ -20,55 +23,61 @@ export class VariableResolutionService {
     }
 
     const result: Partial<T> = {};
-    for (const [commandKey, commandValueForKey] of Object.entries(command) as [keyof T, T[keyof T]][]) {
-      if (typeof commandValueForKey === 'string' && variableRegex.test(commandValueForKey)) {
-        const varName = commandValueForKey.slice(2, -2);
-        if (definition[varName]) {
-          if (values[varName]) {
-            result[commandKey] = values[varName] as any;
-            this.logger.debug(`Replaced  variable ${varName} for command  ${JSON.stringify(command)} to ${values[varName]}`);
-          } else if (!definition[varName]!.optional) {
-            throw Error(`Unable to resolve macros variable${commandValueForKey} when running ${JSON.stringify(command)}`);
-          } else {
-            this.logger.debug(`Omitting variable ${varName} from ${JSON.stringify(command)} since it's optional`);
-          }
-        } else {
-          result[commandKey] = commandValueForKey;
-        }
-      } else if (commandKey === 'variables' && typeof commandValueForKey === 'object') {
-        result[commandKey] = {...commandValueForKey};
-        for (const [innerCommand, innerCommandValueForKey] of Object.entries(commandValueForKey as object)) {
-          if (typeof innerCommandValueForKey === 'string' && variableRegex.test(innerCommandValueForKey)) {
-            const varName = innerCommandValueForKey.slice(2, -2);
-            if (values[varName]) {
-              (result[commandKey] as any)[innerCommand] = values[varName] as any;
-              this.logger.debug(`Replaced  variable ${varName} for command  ${JSON.stringify(command)} to ${values[varName]}`);
-            } else {
-              throw Error(`Unable to resolve macros variable${innerCommandValueForKey} when running ${JSON.stringify(command)}`);
-            }
-          }
-        }
+    for (const [key, value] of Object.entries(command) as [keyof T, T[keyof T]][]) {
+      if ((command as MacroCommand).variables && key === 'variables') {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        result[key] = this.handleVariablesObject(value as VariablesDefinition, values) as any;
       } else {
-        result[commandKey] = commandValueForKey;
+        const varName = extractVariableName(value)!;
+        if (!definition[varName]) {
+          result[key] = value;
+        } else if (values[varName]) {
+          this.logger.debug(`Replaced variable ${varName}  to ${values[varName] as string}`);
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          result[key] = values[varName] as any;
+        } else if (definition[varName]!.optional) {
+          this.logger.debug(`Omitting variable ${varName} from ${JSON.stringify(command)} since it's optional`);
+        } else {
+          throw Error(`Unable to resolve macros variable ${varName} when running ${JSON.stringify(command)}`);
+        }
       }
     }
+
     return result as T;
+  }
+
+  private handleVariablesObject(
+    variables: VariablesDefinition,
+    values: Record<string, unknown>
+  ): VariablesDefinition {
+    const result: VariablesDefinition = {...variables};
+    for (const [key, value] of Object.entries(variables)) {
+      const varName = extractVariableName(value);
+      if (varName) {
+        if (!values[varName]) {
+          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+          throw Error(`Unable to resolve macros variable ${value}`);
+        }
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        result[key] = values[varName] as any;
+      }
+    }
+    return result;
   }
 
   replaceEnvVars<T extends object>(obj: T): T {
     const result: Partial<T> = {};
     for (const [key, value] of Object.entries(obj) as [keyof T, T[keyof T]][]) {
-      if (typeof value === 'string' && variableRegex.test(value)) {
+      const varName = extractVariableName(value);
+      if (varName) {
         const globalVars = this.configService.getGlobalVars();
         const scriptVars = this.configService.getVariables();
-        const varName = value.slice(2, -2);
-
         if (scriptVars[varName]) {
           result[key] = scriptVars[varName] as T[keyof T];
         } else if (globalVars[varName]) {
           result[key] = globalVars[varName] as T[keyof T];
         } else {
-          throw Error(`Unknown environment variable ${value}`);
+          throw Error(`Unknown environment variable ${value as string}`);
         }
       } else {
         result[key] = value;
