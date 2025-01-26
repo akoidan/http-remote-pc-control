@@ -496,7 +496,7 @@
           "destination": "tyrs",
           "keySend": "f9"
         },
-         {
+        {
           "macro": "keySend",
           "variables": {
             "focusPid": "{{spoil}}",
@@ -527,6 +527,14 @@
             "destination": "ee",
             "keySend": "f9"
           }
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{se}}",
+            "destination": "se",
+            "keySend": "f9"
+          }
         }
       ],
       "name": "ee Heal Poison",
@@ -534,6 +542,14 @@
     },
     {
       "commands": [
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{ee}}",
+            "destination": "ee",
+            "keySend": "f7"
+          }
+        },
         {
           "macro": "keySend",
           "variables": {
@@ -655,11 +671,32 @@
         {
           "destination": "bish",
           "keySend": "f6"
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{wc}}",
+            "destination": "wc",
+            "keySend": "f6"
+          }
         }
       ],
-      "shuffle": true,
       "name": "bish to me",
       "shortCut": "Alt+z"
+    },
+    {
+      "commands": [
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{wc}}",
+            "destination": "wc",
+            "keySend": "4"
+          }
+        }
+      ],
+      "name": "Chant of ViKtory",
+      "shortCut": "Alt+k"
     },
     {
       "commands": [
@@ -725,9 +762,22 @@
           "keySend": "4"
         }
       ],
-      "shuffle": true,
       "name": "Cleanse  (debuffs)",
       "shortCut": "Alt+v"
+    },
+    {
+      "commands": [
+        {
+          "macro": "keySend",
+          "variables": {
+            "destination": "se",
+            "focusPid": "{{se}}",
+            "keySend": "3"
+          }
+        }
+      ],
+      "name": "Dryad Root",
+      "shortCut": "Alt+b"
     }
   ]
 }

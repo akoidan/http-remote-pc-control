@@ -15,8 +15,8 @@ import {promises as fs} from 'fs';
 import {schemaRootCache} from '@/config/types/cache';
 import {Variables} from '@/config/types/variables';
 import {MacroList} from '@/config/types/macros';
-import { ShortsData } from '@/config/types/shortcut';
-import { ConfigProvider } from '@/config/interfaces';
+import {ShortsData} from '@/config/types/shortcut';
+import {ConfigProvider} from '@/config/interfaces';
 
 interface ConfigCombination {
   shortCut: string;
@@ -28,6 +28,9 @@ export class ConfigService implements ConfigProvider {
   private configData: ConfigData | null = null;
 
   private variables: Variables = {};
+
+  private variablesSaveLock: Promise<any> | null = null;
+  private variablesSaveLockIteration: number = 1;
 
   // eslint-disable-next-line @typescript-eslint/max-params
   constructor(
@@ -130,8 +133,28 @@ export class ConfigService implements ConfigProvider {
 
   public async setVariable(name: string, value: string | number): Promise<void> {
     this.variables[name] = value;
-    this.logger.debug(`Writting new config file to ${this.variablesFilePath}`);
-    return fs.writeFile(this.variablesFilePath, JSON.stringify(this.variables, null, 2));
+    this.variablesSaveLockIteration++;
+    const iteration = this.variablesSaveLockIteration;
+    if (this.variablesSaveLock) {
+      this.logger.debug(`Save variables #${iteration}. Awaiting lock release`);
+      await this.variablesSaveLock;
+      this.logger.debug(`Save variables #${iteration}. Locked release`);
+    } else {
+      this.logger.debug(`Save variables #${iteration}. Lock doesn't exist. Commiting to main thread`);
+    }
+    if (iteration !== this.variablesSaveLockIteration) {
+      this.logger.debug(`Save variables #${iteration}. Dropping current iteration to save variable for more prior one`);
+      return;
+    }
+    this.logger.debug(`Save variables #${iteration}. Caching new variables to file ${this.variablesFilePath}`);
+    let resolve: any = null;
+    this.variablesSaveLock = new Promise(r => {
+      resolve = r;
+    });
+    await fs.writeFile(this.variablesFilePath, JSON.stringify(this.variables, null, 2));
+    this.logger.debug(`Save variables #${iteration}. Iteration finished, releasing lock`);
+    this.variablesSaveLock = null;
+    resolve();
   }
 
   public getGlobalVars(): Record<string, string | undefined> {
