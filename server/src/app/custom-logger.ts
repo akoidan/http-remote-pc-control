@@ -6,10 +6,10 @@ import {
 import clc from 'cli-color';
 import {AsyncLocalStorage} from 'async_hooks';
 
-export const asyncLocalStorage = new AsyncLocalStorage<Map<string, any>>();
+const asyncLocalStorage = new AsyncLocalStorage<Map<string, any>>();
 
 @Injectable()
-export class CustomLogger extends ConsoleLogger {
+class CustomLogger extends ConsoleLogger {
   private static logFormat(
     level: string,
     message: string,
@@ -17,12 +17,9 @@ export class CustomLogger extends ConsoleLogger {
     messageStyle?: (text: string) => string
   ): string {
     const timestamp = clc.xterm(100)(`[${CustomLogger.getCurrentTime()}]`);
-    let id = '';
-    if (asyncLocalStorage.getStore()) {
-      id = levelColor(asyncLocalStorage.getStore()!.get('comb'));
-    } else {
-      id = levelColor(level);
-    }
+
+    const store = asyncLocalStorage.getStore();
+    const id =  store ?  levelColor(store.get('comb') as string):  levelColor(level);
     return `${timestamp} ${id}: ${messageStyle ? messageStyle(message) : message}`;
   }
 
@@ -59,3 +56,5 @@ export class CustomLogger extends ConsoleLogger {
     console.log(CustomLogger.logFormat('VERBOSE', message, clc.bold.magenta, clc.xterm(7)));
   }
 }
+
+export {asyncLocalStorage, CustomLogger};
