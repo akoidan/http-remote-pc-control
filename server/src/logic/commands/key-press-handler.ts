@@ -11,9 +11,13 @@ export class KeyPressHandler extends BaseCommandHandler {
   }
 
   async execute(ip: string, command: KeyPressCommand): Promise<void> {
-    const holdKeys: Key[] = (Array.isArray(command.holdKeys)
-      ? command.holdKeys
-      : command.holdKeys ? [command.holdKeys] : []) as Key[];
+    let holdKeys: Key[] = [];
+    if (Array.isArray(command.holdKeys)) {
+      // eslint-disable-next-line @typescript-eslint/prefer-destructuring
+      holdKeys = command.holdKeys;
+    } else if (command.holdKeys) {
+      holdKeys = [command.holdKeys as Key];
+    }
 
     await this.clientService.keyPress(ip, {
       keys: (Array.isArray(command.keySend) ? command.keySend : [command.keySend]) as Key[],

@@ -36,7 +36,7 @@
         "message": "You must call logger.[log,warning,debug,trace,error](\"message\")() as a function 2 times"
       }
     ],
-    "max-lines": ["error", { "max": 155 }], // untill we refactor hra-quiz
+    "max-lines": ["error", { "max": 180 }],
     "indent": 0,
     "no-await-in-loop": 0,
     "filenames/match-regex": [1, "^[a-z0-9\\-]+(\\.[a-z]+)?$", true],
@@ -154,7 +154,21 @@
     "line-comment-position": 0,
     "arrow-body-style": 0,
     "sonarjs/no-duplicate-string": 1,
+    "@typescript-eslint/parameter-properties": 0,
+    "@typescript-eslint/max-params": 0,
+    "max-params": 0,
     "@typescript-eslint/unbound-method": 0, // composition api
     "@typescript-eslint/no-use-before-define": 1
-  }
+  },
+   "overrides": [
+    {
+      "files": ["src/tests/**/*"],
+      "rules": {
+        "max-lines-per-function": 0,
+        "@typescript-eslint/require-await": 0,
+        "no-console": 0,
+        "@typescript-eslint/explicit-function-return-type": 0
+      }
+    }
+  ]
 }

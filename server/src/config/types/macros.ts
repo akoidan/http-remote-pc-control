@@ -7,7 +7,7 @@ import {
 } from '@/config/types/schema';
 import {schemaRootCache} from '@/config/types/cache';
 import {delaySchema} from '@/config/types/commands';
-import { variableRegex } from '@/config/types/variables';
+import {variableRegex} from '@/config/types/variables';
 
 const runMacroCommandSchema = z.object({
   macro: z.string().describe('Name of the macro (key from macros section object)'),
@@ -16,46 +16,54 @@ const runMacroCommandSchema = z.object({
   .strict()
   .merge(delaySchema)
   .superRefine((command, ctx) => {
-    const definedMacros: NonNullable<MacroList>  = {...(schemaRootCache.data?.macros ?? {}), ...(schemaRootCache?.macros ?? {})};
+    const definedMacros: NonNullable<MacroList> = {...(schemaRootCache.data?.macros ?? {}), ...(schemaRootCache?.macros ?? {})};
     if (!definedMacros[command.macro]) {
       ctx.addIssue({
         code: ZodIssueCode.custom,
         path: ['macro'],
         message: `Macro ${command.macro} doesn't exist. Available macros are ${Object.keys(definedMacros).join(', ')}`,
       });
-    } else if (command.variables) {
-      for (const [key, value] of Object.entries(command.variables!)) {
-        if (!definedMacros[command.macro]?.variables?.[key]) {
-          ctx.addIssue({
-            code: ZodIssueCode.custom,
-            path: ['variables'],
-            message: `Passed variable ${key}=${value} doesn't have a description on macro`,
-          });
-        }
-      }
-      for (const [key, value] of Object.entries(definedMacros[command.macro]?.variables)) {
-        let isVariable = false;
-        if (typeof command.variables?.[key] === 'string' && variableRegex.test(command.variables?.[key])) {
-          isVariable = true;
-        }
-        if (command.variables?.[key] && value!.type !== typeof command.variables?.[key] && !isVariable) {
-          ctx.addIssue({
-            code: ZodIssueCode.custom,
-            path: ['variables'],
-            message: `Passed variable ${key}=${command.variables?.[key]} type of ${typeof command.variables?.[key]}, expected ${value!.type}`,
-          });
-        }
-        if (!value!.optional && !command.variables?.[key]) {
-          ctx.addIssue({
-            code: ZodIssueCode.custom,
-            path: ['variables'],
-            message: `macro ${command.macro} requires variable ${key} but only ${JSON.stringify(command.variables)} were passed`,
-          });
-        }
+    }
+  }).superRefine((command, ctx) => {
+    const definedMacros: NonNullable<MacroList> = {...(schemaRootCache.data?.macros ?? {}), ...(schemaRootCache?.macros ?? {})};
+    if (!definedMacros[command.macro] || !command.variables) {
+      return;
+    }
+    for (const [key, value] of Object.entries(command.variables!)) {
+      if (!definedMacros[command.macro]?.variables?.[key]) {
+        ctx.addIssue({
+          code: ZodIssueCode.custom,
+          path: ['variables'],
+          message: `Passed variable ${key}=${value} doesn't have a description on macro`,
+        });
       }
     }
-  })
-  .describe('Runs a macro from the macros section.');
+  }).superRefine((command, ctx) => {
+    const definedMacros: NonNullable<MacroList> = {...(schemaRootCache.data?.macros ?? {}), ...(schemaRootCache?.macros ?? {})};
+    if (!definedMacros[command.macro] || !command.variables) {
+      return;
+    }
+    for (const [key, value] of Object.entries(definedMacros[command.macro]?.variables)) {
+      let isVariable = false;
+      if (typeof command.variables?.[key] === 'string' && variableRegex.test(command.variables?.[key])) {
+        isVariable = true;
+      }
+      if (command.variables?.[key] && value!.type !== typeof command.variables?.[key] && !isVariable) {
+        ctx.addIssue({
+          code: ZodIssueCode.custom,
+          path: ['variables'],
+          message: `Passed variable ${key}=${command.variables?.[key]} type of ${typeof command.variables?.[key]}, expected ${value!.type}`,
+        });
+      }
+      if (!value!.optional && !command.variables?.[key]) {
+        ctx.addIssue({
+          code: ZodIssueCode.custom,
+          path: ['variables'],
+          message: `macro ${command.macro} requires variable ${key} but only ${JSON.stringify(command.variables)} were passed`,
+        });
+      }
+    }
+  }).describe('Runs a macro from the macros section.');
 
 const commandOrMacroSchema = z.union([
   commandSchema,
@@ -76,7 +84,8 @@ const macroSchema = z.object({
   variables: macroVariablesDescriptionSchema,
 })
   .strict()
-  .describe('A macro that can be injected instead of command. That will run commands from its body. Can be also injected with variables. Think of it like a function');
+  .describe('A macro that can be injected instead of command. That will run commands from its body. Can be also injected with variables.' +
+    ' Think of it like a function');
 
 const macrosDefinitionSchema = z.record(macroSchema)
   .optional()

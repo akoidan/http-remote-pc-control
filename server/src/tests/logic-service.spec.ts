@@ -1,16 +1,15 @@
 import {Test} from '@nestjs/testing';
-import {LogicService} from '@/app/logic-service';
+import {ShortcutProcessingService} from '@/logic/shortcut-processing.service';
 import {ClientService} from '@/client/client-service';
 import {Logger} from '@nestjs/common';
 import {ConfigService} from '@/config/config-service';
 import {
   createConfigTyrsMock,
 } from '@/tests/mocks/config-provider';
-import { LogicModule } from '@/logic/logic.module';
+import {LogicModule} from '@/logic/logic.module';
 
 describe('logic-service', () => {
   it('should demo curl request', async() => {
-
     const testModule = await Test.createTestingModule({
       imports: [LogicModule],
       providers: [
@@ -27,15 +26,15 @@ describe('logic-service', () => {
         },
         {
           provide: ConfigService,
-          useFactory: (logger) => createConfigTyrsMock(logger),
+          useFactory: (logger: Logger) => createConfigTyrsMock(logger),
           inject: [Logger],
         },
         Logger,
-        LogicService,
+        ShortcutProcessingService,
       ],
     }).compile();
 
-    const photoService = testModule.get<LogicService>(LogicService);
+    const photoService = testModule.get<ShortcutProcessingService>(ShortcutProcessingService);
     const tyrs = testModule.get<ConfigService>(ConfigService);
     await tyrs.parseConfig();
     await photoService.processUnknownShortCut({

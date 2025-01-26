@@ -1,7 +1,7 @@
 import {zodToJsonSchema} from 'zod-to-json-schema';
 import {
   aARootSchema,
-  macrosDefinitionSchema
+  macrosDefinitionSchema,
 } from '@/config/types/schema';
 import {promises as fs} from 'fs';
 import path from 'path';

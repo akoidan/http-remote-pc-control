@@ -4,7 +4,7 @@ import {
 } from '@nestjs/common';
 import {ConfigService} from '@/config/config-service';
 import {VariablesDefinition} from '@/config/types/macros';
-import { variableRegex } from '@/config/types/variables';
+import {variableRegex} from '@/config/types/variables';
 
 @Injectable()
 export class VariableResolutionService {

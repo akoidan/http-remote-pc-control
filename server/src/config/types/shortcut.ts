@@ -38,7 +38,9 @@ const randomShortCutMappingSchema = z.object({
     ' So each press = 1 command. Instead of full commands'),
   shuffle: z.boolean().optional().describe('If circular set to true, commands in this event would be executed randomly by 1'),
   commands: z.array(commandSchema).describe('List of commands for different commands'),
-}).merge(baseShortCutMappingSchema).describe('An event schema that represent a set of commands that is executed when a certain shortkey is pressed');
+})
+  .merge(baseShortCutMappingSchema)
+  .describe('An event schema that represent a set of commands that is executed when a certain shortkey is pressed');
 
 
 const shortCutMappingSchema = z.union([shortcutMappingWithMacroSchema, randomShortCutMappingSchema]);

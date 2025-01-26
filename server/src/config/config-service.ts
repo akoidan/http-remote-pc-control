@@ -147,7 +147,7 @@ export class ConfigService implements ConfigProvider {
       return;
     }
     this.logger.debug(`Save variables #${iteration}. Caching new variables to file ${this.variablesFilePath}`);
-    let resolve: any = null;
+    let resolve: (a?: unknown)=> void = null!;
     this.variablesSaveLock = new Promise(r => {
       resolve = r;
     });

@@ -2,15 +2,14 @@ import {
   Injectable,
   Logger,
 } from '@nestjs/common';
-import { ConfigService } from '@/config/config-service';
-import { Command } from '@/config/types/commands';
+import {ConfigService} from '@/config/config-service';
+import {Command} from '@/config/types/commands';
 import {
   CommandOrMacro,
   MacroCommand,
 } from '@/config/types/macros';
-import { VariableResolutionService } from 'src/logic/variable-resolution.service';
-import { BaseCommandHandler } from 'src/logic/commands/base-command-handler';
-import { input } from 'zod';
+import {VariableResolutionService} from 'src/logic/variable-resolution.service';
+import {BaseCommandHandler} from 'src/logic/commands/base-command-handler';
 
 @Injectable()
 export class CommandProcessingService {
@@ -71,14 +70,14 @@ export class CommandProcessingService {
 
   resolveAliases(rec: Command): Command[] {
     if (this.configService.getIps()[rec.destination]) {
-      return [{ ...rec, destination: rec.destination }];
+      return [{...rec, destination: rec.destination}];
     }
     const destination = this.configService.getAliases()[rec.destination];
     if (typeof destination === 'string') {
-      return this.resolveAliases({ ...rec, destination });
+      return this.resolveAliases({...rec, destination});
     }
     if (Array.isArray(destination)) {
-      return destination.flatMap(dest => this.resolveAliases({ ...rec, destination: dest }));
+      return destination.flatMap(dest => this.resolveAliases({...rec, destination: dest}));
     }
     throw Error(`Unknown destination ${rec.destination}`);
   }

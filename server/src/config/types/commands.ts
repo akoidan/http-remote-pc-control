@@ -6,7 +6,7 @@ import {schemaRootCache} from '@/config/types/cache';
 import type {ConfigData} from '@/config/types/schema';
 import {
   variableRegex,
-  variableValueSchema
+  variableValueSchema,
 } from '@/config/types/variables';
 
 // import KeyboardAction from '@nut-tree-fork/libnut/dist/lib/libnut-keyboard.class.js';
@@ -111,6 +111,6 @@ export {
   typeTextCommandSchema,
   mouseClickCommandSchema,
   killExeCommandSchema,
-  commandSchema
+  commandSchema,
 };
 

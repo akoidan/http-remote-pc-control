@@ -60,7 +60,7 @@
     "array-element-newline": [1, "consistent"],
     "comma-dangle": 0, // using typescript-eslint/comma-dangle
     "function-call-argument-newline": [1, "consistent"],
-    "max-len": [1, { "code": 140, "ignoreTrailingComments": true}], // override 80 that is too low
+    "max-len": [1, { "code": 180, "ignoreTrailingComments": true}], // override 80 that is too low
     "padded-blocks": [1, "never"],
     "max-statements": [1, 25],
     "quotes": [1, "single"],
@@ -68,7 +68,7 @@
     "no-inline-comments": 0,
     "capitalized-comments": 0,
     "no-confusing-arrow": 0, // conflict with no-extra-parens
-    "max-params": [1, 5],
+    "max-params": 0,
     "no-void": [0], // allow void for void promise
     "@typescript-eslint/no-untyped-public-signature": 0, // this breaks a lot: constructions public, ES6 settsetter should have return type etc
     "@typescript-eslint/ban-ts-ignore": 0, // who cares, we explicitly define it.
@@ -93,6 +93,7 @@
     "@typescript-eslint/no-parameter-properties": 0,
     "@typescript-eslint/no-magic-numbers": 0,
     "@typescript-eslint/no-explicit-any": 0,
+    "@typescript-eslint/parameter-properties": 0,
     "@typescript-eslint/adjacent-overload-signatures": 0,
     "@typescript-eslint/comma-dangle": [1, "always-multiline"],
     "@typescript-eslint/method-signature-style": [1, "method"],
@@ -100,7 +101,7 @@
     "@typescript-eslint/prefer-readonly-parameter-types": 0, // too many issues, we can't mofidy arguments, we can' use type like number[], because rule @typescript-eslint/array-type
     "@typescript-eslint/naming-convention": [1, {"selector": "property", "format": ["PascalCase", "camelCase"],  "filter": {"regex": "update:\\w+", "match": false}}],
     "babel/object-curly-spacing": 1,
-    "@typescript-eslint/max-params": [1, {"max": 4}],
+    "@typescript-eslint/max-params": 0,
     "babel/quotes": 0,
     "@typescript-eslint/quotes": [1, "single"],
     "babel/semi": 1,
@@ -158,5 +159,12 @@
     "sonarjs/no-duplicate-string": 1,
     "@typescript-eslint/unbound-method": 0, // composition api
     "@typescript-eslint/no-use-before-define": 1
-  }
+  },
+  "overrides": [
+    {
+      "files": ["src/test/**"],
+      "rules": {
+      }
+    }
+  ]
 }

@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import os from 'os';
 
 const addon = os.platform() === 'win32' ? require('./win32/window.node') : new Proxy({}, {
@@ -9,7 +11,7 @@ const addon = os.platform() === 'win32' ? require('./win32/window.node') : new P
 });
 
 
-interface Window {
+export interface Window {
   id: number;
   processId: number;
   path: string;

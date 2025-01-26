@@ -3,7 +3,7 @@ import {AppModule} from '@/app/app.module';
 import {CustomLogger} from '@/app/custom-logger';
 
 async function start(): Promise<void> {
-  const app = await NestFactory.createApplicationContext(AppModule, {
+  await NestFactory.createApplicationContext(AppModule, {
     logger: new CustomLogger(),
   });
 }
