@@ -4,6 +4,9 @@ import {
   Injectable,
 } from '@nestjs/common';
 import clc from 'cli-color';
+import {AsyncLocalStorage} from 'async_hooks';
+
+export const asyncLocalStorage = new AsyncLocalStorage<Map<string, any>>();
 
 @Injectable()
 export class CustomLogger extends ConsoleLogger {
@@ -14,7 +17,13 @@ export class CustomLogger extends ConsoleLogger {
     messageStyle?: (text: string) => string
   ): string {
     const timestamp = clc.xterm(100)(`[${CustomLogger.getCurrentTime()}]`);
-    return `${timestamp} ${levelColor(level)}: ${messageStyle ? messageStyle(message) : message}`;
+    let id = '';
+    if (asyncLocalStorage.getStore()) {
+      id = levelColor(asyncLocalStorage.getStore()!.get('comb'));
+    } else {
+      id = levelColor(level);
+    }
+    return `${timestamp} ${id}: ${messageStyle ? messageStyle(message) : message}`;
   }
 
   private static getCurrentTime(): string {

@@ -10,6 +10,7 @@ import {ClientModule} from '@/client/client-module';
 import {ClientService} from '@/client/client-service';
 import {ShortcutProcessingService} from '@/logic/shortcut-processing.service';
 import {LogicModule} from '@/logic/logic.module';
+import {asyncLocalStorage} from '@/app/custom-logger';
 
 @Module({
   imports: [ConfigModule, ClientModule, LogicModule],
@@ -36,7 +37,10 @@ export class AppModule implements OnModuleInit {
       await this.hotKeyService.init();
       this.configService.getCombinations().forEach((comb) => {
         this.hotKeyService.registerShortcut(comb.shortCut, () => {
-          this.logicService.processUnknownShortCut(comb).catch((err: unknown) => this.logger.error(err));
+          asyncLocalStorage.run(new Map(), () => {
+            asyncLocalStorage.getStore()!.set('comb', Math.random().toString(36).substring(2, 6));
+            this.logicService.processUnknownShortCut(comb).catch((err: unknown) => this.logger.error(err));
+          });
         });
       });
       this.logger.log('App has sucessfully started');

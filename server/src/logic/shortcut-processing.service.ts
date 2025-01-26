@@ -9,6 +9,7 @@ import {
   ShortsData,
 } from '@/config/types/shortcut';
 import {CommandOrMacro} from '@/config/types/macros';
+import {asyncLocalStorage} from '@/app/custom-logger';
 
 @Injectable()
 export class ShortcutProcessingService {
@@ -27,9 +28,14 @@ export class ShortcutProcessingService {
       await this.processShortcutsWoMacro(comb);
     } else if (this.isMacroMapping(comb)) {
       if (comb.threads) {
-        await Promise.all(comb.threads.map(async receiver => {
-          await this.processCommandWithMacro(receiver, comb.delay);
-        }));
+        await Promise.all(comb.threads.map(async(receiver, i) => new Promise((resolv, rej) => {
+          const newStorageMap = new Map().set('comb', `${asyncLocalStorage.getStore()!.get('comb')}-${i + 1}`);
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          asyncLocalStorage.run(newStorageMap, () => {
+            // eslint-disable-next-line @typescript-eslint/use-unknown-in-catch-callback-variable
+            this.processCommandWithMacro(receiver, comb.delay).then(resolv).catch(rej);
+          });
+        })));
       } else if (comb.commands) {
         await this.processCommandWithMacro(comb.commands, comb.delay);
       }
@@ -54,7 +60,7 @@ export class ShortcutProcessingService {
   }
 
 
-  private async processCommandWithMacro(commands: CommandOrMacro[], combDelay: number|undefined): Promise<void> {
+  private async processCommandWithMacro(commands: CommandOrMacro[], combDelay: number | undefined): Promise<void> {
     for (const command of commands) {
       await this.commandProcessor.resolveMacroAndAlias(command, true, combDelay);
     }

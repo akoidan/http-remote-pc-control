@@ -547,20 +547,42 @@
           "variables": {
             "focusPid": "{{ee}}",
             "destination": "ee",
-            "keySend": "f7"
+            "keySend": "1"
           }
         },
         {
           "macro": "keySend",
           "variables": {
-            "focusPid": "{{ee}}",
-            "destination": "ee",
-            "keySend": "f7"
+            "focusPid": "{{se}}",
+            "destination": "se",
+            "keySend": "1"
           }
         }
       ],
       "name": "Mana Cardinal",
       "shortCut": "Alt+m"
+    },
+    {
+      "commands": [
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{ee}}",
+            "destination": "ee",
+            "keySend": "2"
+          }
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{se}}",
+            "destination": "se",
+            "keySend": "2"
+          }
+        }
+      ],
+      "name": "Mana WC",
+      "shortCut": "Alt+n"
     },
     {
       "commands": [
@@ -646,10 +668,10 @@
       "commands": [
         {
           "destination": "bish",
-          "keySend": "3"
+          "keySend": "7"
         }
       ],
-      "name": "paralych",
+      "name": "Bish res",
       "shortCut": "Alt+T"
     },
     {
@@ -763,7 +785,7 @@
         }
       ],
       "name": "Cleanse  (debuffs)",
-      "shortCut": "Alt+v"
+      "shortCut": "Alt+b"
     },
     {
       "commands": [
@@ -777,7 +799,7 @@
         }
       ],
       "name": "Dryad Root",
-      "shortCut": "Alt+b"
+      "shortCut": "Alt+v"
     }
   ]
 }
