@@ -5,7 +5,8 @@
     "lenovo": "192.168.100.33",
     "desktop": "192.168.100.9",
     "asus": "192.168.100.27",
-    "this": "127.0.0.1"
+    "this": "127.0.0.1",
+    "medion": "192.168.100.62"
   },
   "delay": 200,
   "combinations": [
@@ -68,6 +69,16 @@
             "variables": {
               "destination": "this",
               "login": "deathangelo",
+              "delay": 18000
+            }
+          }
+        ],
+         [
+          {
+            "macro": "killLaunchL2",
+            "variables": {
+              "destination": "medion",
+              "login": "deathangelp",
               "delay": 18000
             }
           }

@@ -238,11 +238,18 @@
         {
           "destination": "tyrs",
           "keySend": "f4"
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{spoil}}",
+            "destination": "spoil",
+            "keySend": "2"
+          }
         }
       ],
       "name": "Attack",
-      "shortCut": "Alt+2",
-      "circular": false
+      "shortCut": "Alt+2"
     },
     {
       "commands": [
@@ -397,12 +404,8 @@
           "keySend": "f6"
         },
         {
-          "macro": "keySend",
-          "variables": {
-            "focusPid": "{{bish}}",
-            "destination": "bish",
-            "keySend": "f6"
-          }
+          "keySend": "f6",
+          "destination": "bish"
         },
         {
           "macro": "keySend",
@@ -431,16 +434,16 @@
         {
           "macro": "keySend",
           "variables": {
-            "focusPid": "{{spoil}}",
-            "destination": "spoil",
+            "focusPid": "{{pp}}",
+            "destination": "pp",
             "keySend": "f6"
           }
         },
         {
           "macro": "keySend",
           "variables": {
-            "focusPid": "{{pp}}",
-            "destination": "pp",
+            "focusPid": "{{spoil}}",
+            "destination": "spoil",
             "keySend": "f6"
           }
         }
@@ -462,14 +465,14 @@
       "name": "Spoil",
       "shortCut": "Alt+7"
     },
-     {
+    {
       "commands": [
         {
           "macro": "keySend",
           "variables": {
             "focusPid": "{{spoil}}",
             "destination": "spoil",
-            "keySend": "f4"
+            "keySend": "f5"
           }
         }
       ],
@@ -492,11 +495,18 @@
         {
           "destination": "tyrs",
           "keySend": "f9"
+        },
+         {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{spoil}}",
+            "destination": "spoil",
+            "keySend": "f11"
+          }
         }
       ],
       "name": "Buffs",
-      "shortCut": "Alt+9",
-      "circular": false
+      "shortCut": "Alt+9"
     },
     {
       "commands": [
