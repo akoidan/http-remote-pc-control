@@ -32,7 +32,7 @@ export class VariableResolutionService {
         if (!definition[varName]) {
           result[key] = value;
         } else if (values[varName]) {
-          this.logger.debug(`Replaced variable ${varName}  to ${values[varName] as string}`);
+          this.logger.debug(`Replaced variable ${varName} to ${values[varName] as string} for ${JSON.stringify(command)}`);
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           result[key] = values[varName] as any;
         } else if (definition[varName]!.optional) {

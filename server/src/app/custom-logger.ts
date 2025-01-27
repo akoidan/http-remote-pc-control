@@ -34,7 +34,7 @@ class CustomLogger extends ConsoleLogger {
 
   log(message: string): void {
     // Make message more prominent with bright text and underline
-    console.info(CustomLogger.logFormat('INFO', message, clc.bold.blue, clc.xterm(90)));
+    console.info(CustomLogger.logFormat('INFO', message, clc.bold.blue, clc.cyan));
   }
 
   error(message: string|Error, trace?: string): void {
@@ -49,7 +49,7 @@ class CustomLogger extends ConsoleLogger {
   }
 
   debug(message: string): void {
-    console.debug(CustomLogger.logFormat('DEBUG', message, clc.bold.green, clc.xterm(7)));
+    console.debug(CustomLogger.logFormat('DEBUG', message, clc.xterm(2), clc.xterm(7)));
   }
 
   verbose(message: string): void {
