@@ -1,6 +1,7 @@
 import {
   Injectable,
   InternalServerErrorException,
+  Logger,
   NotImplementedException,
   ServiceUnavailableException,
 } from '@nestjs/common';
@@ -10,22 +11,17 @@ import {
   spawn,
 } from 'child_process';
 import {promisify} from 'util';
-import {
-  InjectPinoLogger,
-  PinoLogger,
-} from 'nestjs-pino';
 
 @Injectable()
 export class ExecutionService {
   constructor(
-    @InjectPinoLogger(ExecutionService.name)
-    private readonly logger: PinoLogger
+    private readonly logger: Logger
   ) {
   }
 
   async launchExe(pathToExe: string, args: string[], waitTillFinish: boolean): Promise<number> {
     return new Promise((resolve, reject) => {
-      this.logger.info(`Launching ${pathToExe} ${args.join(' ')}`);
+      this.logger.log(`Launching: \u001b[35m${pathToExe} ${args.join(' ')}`);
 
       try {
         const process = spawn(pathToExe, args, {
@@ -42,7 +38,7 @@ export class ExecutionService {
 
         // Detect if the process exits quickly after starting
         const startupTimeout = setTimeout(() => {
-          this.logger.info(`Process started successfully: ${pathToExe}`);
+          this.logger.debug(`Process started successfully: ${pathToExe}`);
           resolve(process.pid!); // Resolve only after some time has passed without errors
         }, waitTillFinish ? 60_000 : 300);
 
@@ -64,7 +60,7 @@ export class ExecutionService {
   }
 
   async killExe(name: string): Promise<boolean> {
-    this.logger.info(`Kill ${name}`);
+    this.logger.log(`Kill ${name}`);
     const platform = os.platform(); // Detect OS
     let command: string;
 
@@ -78,12 +74,12 @@ export class ExecutionService {
     }
     try {
       const {stdout, stderr} = await promisify(exec)(command);
-      this.logger.info(`Process "${name}" killed successfully:`, stdout || stderr);
+      this.logger.debug(`Process "${name}" killed successfully:`, stdout || stderr);
       return true;
     } catch (e) {
       if ((platform === 'win32' && e?.message.includes(`process "${name}" not found`))
         || (platform === 'linux' && e?.code === 1)) {
-        this.logger.info(`Process "${name}" is not up. Skipping it`);
+        this.logger.debug(`Process "${name}" is not up. Skipping it`);
         return false;
       }
       throw new InternalServerErrorException(e);

@@ -12,7 +12,6 @@ const focusExeRequestSchema = z.object({
 });
 
 
-
 const killExeRequestSchema = z.object({
   name: z.string(),
 });

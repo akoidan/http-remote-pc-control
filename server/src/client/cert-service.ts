@@ -61,17 +61,17 @@ export class CertService {
 
 
   public async getPrivateKey(): Promise<string> {
-    this.logger.log(`Loading private key from ${this.privateKeyPath}`);
+    this.logger.debug(`Loading private key from ${this.privateKeyPath}`);
     return readFile(this.privateKeyPath, 'utf8');
   }
 
   public async getCert(): Promise<string> {
-    this.logger.log(`Loading certicate key from ${this.certificatePath}`);
+    this.logger.debug(`Loading certicate key from ${this.certificatePath}`);
     return readFile(this.certificatePath, 'utf8');
   }
 
   public async getCaCert(): Promise<string> {
-    this.logger.log(`Loading CA certificate from ${this.caCertificatePath}`);
+    this.logger.debug(`Loading CA certificate from ${this.caCertificatePath}`);
     return readFile(this.caCertificatePath, 'utf8');
   }
 }

@@ -43,7 +43,7 @@ export class ConfigService implements ConfigProvider {
   }
 
   public async parseConfig(): Promise<void> {
-    this.logger.log('parsing config');
+    this.logger.debug('parsing config');
     if (this.configData) {
       throw new Error('Config already loaded');
     }

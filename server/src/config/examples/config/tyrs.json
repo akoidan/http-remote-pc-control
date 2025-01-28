@@ -509,11 +509,31 @@
       "shortCut": "Alt+9"
     },
     {
-      "commands": [
-        {
-          "destination": "bish",
-          "keySend": "f3"
-        }
+      "threads": [
+        [
+          {
+            "destination": "bish",
+            "keySend": "f3"
+          }
+        ],
+        [
+          {
+            "macro": "keySend",
+            "variables": {
+              "focusPid": "{{se}}",
+              "destination": "se",
+              "keySend": "f4"
+            }
+          },
+          {
+            "macro": "keySend",
+            "variables": {
+              "focusPid": "{{ee}}",
+              "destination": "ee",
+              "keySend": "f4"
+            }
+          }
+        ]
       ],
       "name": "battle heal",
       "shortCut": "Alt+q"
@@ -547,7 +567,7 @@
           "variables": {
             "focusPid": "{{ee}}",
             "destination": "ee",
-            "keySend": "1"
+            "keySend": "4"
           }
         },
         {
@@ -555,51 +575,69 @@
           "variables": {
             "focusPid": "{{se}}",
             "destination": "se",
-            "keySend": "1"
+            "keySend": "4"
           }
         }
       ],
-      "name": "Mana Cardinal",
+      "name": "Mana on target (alt+d required)",
       "shortCut": "Alt+m"
     },
     {
-      "commands": [
-        {
-          "macro": "keySend",
-          "variables": {
-            "focusPid": "{{ee}}",
-            "destination": "ee",
-            "keySend": "2"
+      "threads": [
+        [
+          {
+            "destination": "bish",
+            "keySend": "f4"
           }
-        },
-        {
-          "macro": "keySend",
-          "variables": {
-            "focusPid": "{{se}}",
-            "destination": "se",
-            "keySend": "2"
+        ],
+        [
+          {
+            "macro": "keySend",
+            "variables": {
+              "focusPid": "{{se}}",
+              "destination": "se",
+              "keySend": "f4"
+            }
+          },
+          {
+            "macro": "keySend",
+            "variables": {
+              "focusPid": "{{ee}}",
+              "destination": "ee",
+              "keySend": "f4"
+            }
           }
-        }
+        ]
       ],
-      "name": "Mana WC",
-      "shortCut": "Alt+n"
-    },
-    {
-      "commands": [
-        {
-          "destination": "bish",
-          "keySend": "f4"
-        }
-      ],
-      "name": "greater heal",
+      "name": "Greater heal",
       "shortCut": "Alt+w"
     },
     {
-      "commands": [
-        {
-          "destination": "bish",
-          "keySend": "f5"
-        }
+        "threads": [
+        [
+          {
+            "destination": "bish",
+            "keySend": "f5"
+          }
+        ],
+        [
+          {
+            "macro": "keySend",
+            "variables": {
+              "focusPid": "{{se}}",
+              "destination": "se",
+              "keySend": "f4"
+            }
+          },
+          {
+            "macro": "keySend",
+            "variables": {
+              "focusPid": "{{ee}}",
+              "destination": "ee",
+              "keySend": "f4"
+            }
+          }
+        ]
       ],
       "name": "restore life",
       "shortCut": "Alt+e"
@@ -615,21 +653,63 @@
       "shortCut": "Alt+a"
     },
     {
-      "commands": [
-        {
-          "destination": "bish",
-          "keySend": "1"
-        }
+      "threads": [
+        [
+          {
+            "destination": "bish",
+            "keySend": "1"
+          }
+        ],
+        [
+          {
+            "macro": "keySend",
+            "variables": {
+              "focusPid": "{{se}}",
+              "destination": "se",
+              "keySend": "1"
+            }
+          }
+        ],
+        [
+          {
+            "macro": "keySend",
+            "variables": {
+              "focusPid": "{{ee}}",
+              "destination": "ee",
+              "keySend": "1"
+            }
+          }
+        ]
       ],
       "name": "Target me",
       "shortCut": "Alt+s"
     },
     {
-      "commands": [
-        {
-          "destination": "bish",
-          "keySend": "2"
-        }
+      "threads": [
+        [
+          {
+            "destination": "bish",
+            "keySend": "2"
+          }
+        ],
+        [
+          {
+            "macro": "keySend",
+            "variables": {
+              "focusPid": "{{se}}",
+              "destination": "se",
+              "keySend": "2"
+            }
+          },
+          {
+            "macro": "keySend",
+            "variables": {
+              "focusPid": "{{ee}}",
+              "destination": "ee",
+              "keySend": "2"
+            }
+          }
+        ]
       ],
       "name": "destination",
       "shortCut": "Alt+d"
@@ -699,6 +779,30 @@
           "variables": {
             "focusPid": "{{wc}}",
             "destination": "wc",
+            "keySend": "f6"
+          }
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{se}}",
+            "destination": "se",
+            "keySend": "f6"
+          }
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{ee}}",
+            "destination": "ee",
+            "keySend": "f6"
+          }
+        },
+         {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{pp}}",
+            "destination": "pp",
             "keySend": "f6"
           }
         }

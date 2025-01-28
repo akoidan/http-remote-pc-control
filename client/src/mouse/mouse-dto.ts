@@ -7,7 +7,6 @@ const mouseClickRequestSchema = z.object({
 
 type MouseClickRequest = z.infer<typeof mouseClickRequestSchema>
 
-
 export {
   mouseClickRequestSchema,
 };
