@@ -1,4 +1,5 @@
 import {
+  Inject,
   Logger,
   Module,
   OnModuleInit,
@@ -11,9 +12,11 @@ import {ClientService} from '@/client/client-service';
 import {ShortcutProcessingService} from '@/logic/shortcut-processing.service';
 import {LogicModule} from '@/logic/logic.module';
 import {asyncLocalStorage} from '@/app/custom-logger';
+import {NativeModule} from "@/native/native-module";
+import {INativeModule, Native} from "@/native/native-model";
 
 @Module({
-  imports: [ConfigModule, ClientModule, LogicModule],
+  imports: [ConfigModule, ClientModule, LogicModule, NativeModule],
   providers: [Logger, HotkeyService],
   exports: [],
 })
@@ -24,6 +27,8 @@ export class AppModule implements OnModuleInit {
     private readonly logicService: ShortcutProcessingService,
     private readonly configService: ConfigService,
     private readonly clientService: ClientService,
+    @Inject(Native)
+    private readonly native: INativeModule,
   ) {
   }
 
@@ -34,7 +39,6 @@ export class AppModule implements OnModuleInit {
         Object.entries(this.configService.getIps())
           .map(async([_, ip]) => this.clientService.ping(ip))
       );
-      await this.hotKeyService.init();
       this.configService.getCombinations().forEach((comb) => {
         this.hotKeyService.registerShortcut(comb.shortCut, () => {
           asyncLocalStorage.run(new Map(), () => {
@@ -46,7 +50,7 @@ export class AppModule implements OnModuleInit {
       this.logger.log('App has sucessfully started');
     } catch (err) {
       this.logger.error(`Unable to init main module: ${(err as Error).message}`, (err as Error).stack);
-      this.hotKeyService.shutdown();
+      this.hotKeyService.unregister();
     }
   }
 }

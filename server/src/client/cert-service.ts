@@ -17,7 +17,8 @@ export class CertService {
   }
 
   private get certDir(): string {
-    return path.join(process.execPath.endsWith('electron') ? process.cwd() : path.dirname(process.execPath), 'certs');
+    return path.join(process.execPath.endsWith('node') || process.execPath.endsWith('node.exe')
+        ? process.cwd() : path.dirname(process.execPath), 'certs');
   }
 
   private get privateKeyPath(): string {

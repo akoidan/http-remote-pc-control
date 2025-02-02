@@ -11,7 +11,7 @@ import bindings from 'bindings';
       provide: Native,
       useFactory: (): INativeModule => {
         // eslint-disable-next-line
-        return bindings('native');
+        return bindings('server');
       },
     },
   ],
