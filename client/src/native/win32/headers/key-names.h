@@ -1,10 +1,5 @@
-//
-// Created by andrew on 2/2/25.
-//
-
 #ifndef NATIVE_KEY_NAMES_H
 #define NATIVE_KEY_NAMES_H
-
 
 typedef struct {
     const char* name;
@@ -13,4 +8,4 @@ typedef struct {
 
 extern KeyNames key_names[];
 
-#endif //NATIVE_KEY_NAMES_H
+#endif

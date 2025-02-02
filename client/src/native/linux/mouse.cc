@@ -1,5 +1,5 @@
-#include "./display.h"
-#include "./mouse.h"
+#include "./headers/display.h"
+#include "./headers/mouse.h"
 #include <napi.h>
 
 /**

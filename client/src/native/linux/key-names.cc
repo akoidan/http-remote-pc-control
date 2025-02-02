@@ -1,6 +1,7 @@
 #include <X11/Xutil.h>
 #include <X11/XF86keysym.h>
-#include "./key-names.h"
+#include "./headers/key-names.h"
+#include <map>
 
 KeyNames key_names[] = {
     {"backspace",         XK_BackSpace},
@@ -143,4 +144,45 @@ KeyNames key_names[] = {
     {"lights_kbd_up",    XF86XK_KbdBrightnessUp},
     {"lights_kbd_down",  XF86XK_KbdBrightnessDown},
     {NULL,               0}
+};
+
+
+std::map<char, KeySym> XSpecialCharacterMap = {
+        {'[', XK_bracketleft},
+        {']', XK_bracketright},
+        {',', XK_comma},
+        {'-', XK_minus},
+        {'.', XK_period},
+        {'=', XK_equal},
+        {';', XK_semicolon},
+        {'\\', XK_backslash},
+        {'`', XK_grave},
+        {'/', XK_slash},
+        {' ', XK_space},
+        {'\t', XK_Tab},
+        {'\n', XK_Return}
+};
+
+std::map<char, KeySym> XShiftRequiredMap = {
+        {'~', XK_asciitilde},
+        {'_', XK_underscore},
+        {'!', XK_exclam},
+        {'@', XK_at},
+        {'#', XK_numbersign},
+        {'$', XK_dollar},
+        {'%', XK_percent},
+        {'^', XK_asciicircum},
+        {'&', XK_ampersand},
+        {'*', XK_asterisk},
+        {'(', XK_parenleft},
+        {')', XK_parenright},
+        {'+', XK_plus},
+        {'{', XK_braceleft},
+        {'}', XK_braceright},
+        {'|', XK_bar},
+        {':', XK_colon},
+        {'"', XK_quotedbl},
+        {'<', XK_comma},      // Use comma key for <
+        {'>', XK_period},     // Use period key for >
+        {'?', XK_question}
 };

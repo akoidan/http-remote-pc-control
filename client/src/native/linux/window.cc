@@ -6,7 +6,7 @@
 #include <cstring>
 #include <xcb/xcb.h>
 #include <xcb/xcb_ewmh.h>
-#include "./window.h"
+#include "./headers/window.h"
 
 #define DEBUG_LOG(fmt, ...) fprintf(stderr, "[window-linux] " fmt "\n", ##__VA_ARGS__)
 

@@ -1,5 +1,5 @@
 #include <windows.h>
-#include "./key-names.h"
+#include "./headers/key-names.h"
 
 KeyNames key_names[] = {
     {"numpad_decimal",           VK_DECIMAL},

@@ -1,6 +1,6 @@
 //
 // Created by andrew on 2/2/25.
-#include "display.h"
+#include "./headers/display.h"
 #include <X11/extensions/XTest.h>
 #include <iostream>
 

@@ -5,9 +5,9 @@
 #include <string.h>
 #include <iostream>
 #include <map>
-#include "./key-names.h"
-#include "./display.h"
-#include "./keypress.h"
+#include "./headers/key-names.h"
+#include "./headers/display.h"
+#include "./headers/keypress.h"
 
 #define X_KEY_EVENT(display, key, is_press)                \
     (XTestFakeKeyEvent(display, XKeysymToKeycode(display, key), is_press, CurrentTime), XSync(display, false))
@@ -33,46 +33,6 @@ void toggleKeyCode(KeySym code, const bool down, unsigned int flags) {
     }
 
 }
-
-static std::map<char, KeySym> XSpecialCharacterMap = {
-        {'[', XK_bracketleft},
-        {']', XK_bracketright},
-        {',', XK_comma},
-        {'-', XK_minus},
-        {'.', XK_period},
-        {'=', XK_equal},
-        {';', XK_semicolon},
-        {'\\', XK_backslash},
-        {'`', XK_grave},
-        {'/', XK_slash},
-        {' ', XK_space},
-        {'\t', XK_Tab},
-        {'\n', XK_Return}
-};
-
-static std::map<char, KeySym> XShiftRequiredMap = {
-        {'~', XK_asciitilde},
-        {'_', XK_underscore},
-        {'!', XK_exclam},
-        {'@', XK_at},
-        {'#', XK_numbersign},
-        {'$', XK_dollar},
-        {'%', XK_percent},
-        {'^', XK_asciicircum},
-        {'&', XK_ampersand},
-        {'*', XK_asterisk},
-        {'(', XK_parenleft},
-        {')', XK_parenright},
-        {'+', XK_plus},
-        {'{', XK_braceleft},
-        {'}', XK_braceright},
-        {'|', XK_bar},
-        {':', XK_colon},
-        {'"', XK_quotedbl},
-        {'<', XK_comma},      // Use comma key for <
-        {'>', XK_period},     // Use period key for >
-        {'?', XK_question}
-};
 
 KeySym keyCodeForChar(const char c) {
     KeySym code;
@@ -196,7 +156,7 @@ unsigned int assignKeyCode(std::string &keyName) {
     unsigned int res = 0;
     KeyNames *kn = key_names;
     while (kn->name) {
-        if (keyName.compare((kn->name)) == 0) {
+        if (keyName == kn->name) {
             return kn->key;
         }
         kn++;

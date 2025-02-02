@@ -1,6 +1,6 @@
 #include <napi.h>
-#include "./keypress.h"
-#include "./window.h"
+#include "./headers/keypress.h"
+#include "./headers/window.h"
 
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
     // Initialize window management
