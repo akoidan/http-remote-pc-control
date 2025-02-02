@@ -14,6 +14,7 @@
     "pkg:linux": "pkg . --targets linux --output app",
     "build:win32": "npm-run-all -s clean native:configure native:build transpile pkg:win32",
     "build:linux": "npm-run-all -s clean native:configure native:build transpile pkg:linux",
+    "vs2022": "cmake-js configure --generator \"Visual Studio 17 2022\" --debug",
     "wine": "wine app.exe",
     "native:configure": "cmake-js configure",
     "native:build": "cmake-js compile",
@@ -29,8 +30,8 @@
     ]
   },
   "devDependencies": {
-    "@types/bindings": "^1.5.5",
     "@nestjs/cli": "^10.4.9",
+    "@types/bindings": "^1.5.5",
     "@types/cli-color": "^2.0.6",
     "@types/express": "^5.0.0",
     "@typescript-eslint/eslint-plugin": "^7.7.2",
