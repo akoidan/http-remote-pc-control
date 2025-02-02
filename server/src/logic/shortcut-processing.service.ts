@@ -5,11 +5,13 @@ import {
 import {CommandProcessingService} from 'src/logic/command-processing.service';
 import {
   MacroShortcutMapping,
+  MacroShortcutMappingCircular,
   RandomShortcutMapping,
   ShortsData,
 } from '@/config/types/shortcut';
 import {CommandOrMacro} from '@/config/types/macros';
 import {asyncLocalStorage} from '@/app/custom-logger';
+import {Command} from '@/config/types/commands';
 
 @Injectable()
 export class ShortcutProcessingService {
@@ -24,26 +26,28 @@ export class ShortcutProcessingService {
   async processUnknownShortCut(comb: ShortsData): Promise<void> {
     this.logger.log(`${comb.shortCut} pressed`);
 
-    if (this.isRandomMapping(comb)) {
-      await this.processShortcutsWoMacro(comb);
-    } else if (this.isMacroMapping(comb)) {
-      if (comb.threads) {
-        await Promise.all(comb.threads.map(async(receiver, i) => new Promise((resolv, rej) => {
-          const newStorageMap = new Map().set('comb', `${asyncLocalStorage.getStore()!.get('comb')}-${i + 1}`);
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-          asyncLocalStorage.run(newStorageMap, () => {
-            // eslint-disable-next-line @typescript-eslint/use-unknown-in-catch-callback-variable
-            this.processCommandWithMacro(receiver, comb.delay).then(resolv).catch(rej);
-          });
-        })));
-      } else if (comb.commands) {
-        await this.processCommandWithMacro(comb.commands, comb.delay);
-      }
+    if (Boolean((comb as RandomShortcutMapping).circular) || Boolean((comb as RandomShortcutMapping).shuffle)) {
+      await this.processShortcutsWoMacro((comb as RandomShortcutMapping));
+    } else if ((comb as MacroShortcutMappingCircular).threadsCircular) {
+      await this.processShortcutsThreadWoMacro((comb as MacroShortcutMappingCircular));
+    } else if ((comb as MacroShortcutMapping).threads) {
+      await Promise.all((comb as MacroShortcutMapping).threads!.map(async(receiver, i) => new Promise((resolv, rej) => {
+        const newStorageMap = new Map().set('comb', `${asyncLocalStorage.getStore()!.get('comb')}-${i + 1}`);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        asyncLocalStorage.run(newStorageMap, () => {
+          // eslint-disable-next-line @typescript-eslint/use-unknown-in-catch-callback-variable
+          this.processCommandWithMacro(receiver, comb.delay).then(resolv).catch(rej);
+        });
+      })));
+    } else if ((comb as MacroShortcutMapping).commands) {
+      await this.processCommandWithMacro((comb as MacroShortcutMapping).commands!, comb.delay);
+    } else {
+      throw Error(`Unknown shortcut ${JSON.stringify(comb)}`);
     }
   }
 
   private async processShortcutsWoMacro(comb: RandomShortcutMapping): Promise<void> {
-    const commands = comb.commands.flatMap(comm => this.commandProcessor.resolveAliases(comm));
+    const commands: Command[] = comb.commands.flatMap(comm => this.commandProcessor.resolveAliases(comm));
     if (comb.circular && commands.length > 0) {
       await this.commandProcessor.resolveMacroAndAlias(commands[this.activeFighterIndex], false, comb.delay);
       if (this.activeFighterIndex >= commands.length - 1) {
@@ -56,6 +60,18 @@ export class ShortcutProcessingService {
         this.shuffle(commands);
       }
       await this.processCommandWithMacro(commands, comb.delay);
+    }
+  }
+
+  private async processShortcutsThreadWoMacro(comb: MacroShortcutMappingCircular): Promise<void> {
+    if (this.activeFighterIndex >= comb.threadsCircular.length - 1) {
+      this.activeFighterIndex = 0;
+    } else {
+      this.activeFighterIndex++;
+    }
+    const commands: Command[] = comb.threadsCircular[this.activeFighterIndex].flatMap(comm => this.commandProcessor.resolveAliases(comm));
+    for (const command of commands) {
+      await this.commandProcessor.resolveMacroAndAlias(command, false, comb.delay);
     }
   }
 
@@ -72,13 +88,5 @@ export class ShortcutProcessingService {
       [array[i], array[j]] = [array[j], array[i]];
     }
     return array;
-  }
-
-  private isRandomMapping(shortcut: ShortsData): shortcut is RandomShortcutMapping {
-    return Boolean((shortcut as RandomShortcutMapping).circular) || Boolean((shortcut as RandomShortcutMapping).shuffle);
-  }
-
-  private isMacroMapping(shortcut: ShortsData): shortcut is MacroShortcutMapping {
-    return Boolean((shortcut as MacroShortcutMapping).commands) || Boolean((shortcut as MacroShortcutMapping).threads);
   }
 }

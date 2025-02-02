@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "build": "rm -rf ./l2-win32-x64 && electron-packager . l2 --platform=win32 --arch=x64",
-    "start": "rm -rf ./dist/ && electron ./src/index.js",
+    "start": "rm -rf ./dist/ &&  electron ./src/index.js",
     "schema:json": "node -r tsconfig-paths/register -r ts-node/register src/config/generate-schema.ts",
     "lint": "eslint --ext .ts --max-warnings=0 src",
     "autoformat": "eslint --ext .ts --max-warnings=0 --fix src",

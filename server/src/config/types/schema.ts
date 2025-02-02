@@ -31,6 +31,7 @@ import {
   commandsAndMacrosArraySchema,
   commandsSchema,
   combinationList,
+  threadCircularShortCutMappingSchema,
 } from '@/config/types/shortcut';
 
 const ipsSchema = z.record(z.string().ip())
@@ -94,6 +95,7 @@ export {
   macrosDefinitionSchema,
   macroVariablesDescriptionSchema,
   randomShortCutMappingSchema,
+  threadCircularShortCutMappingSchema,
   shortcutMappingWithMacroSchema,
   commandSchema,
   ipsSchema,

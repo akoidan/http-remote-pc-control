@@ -171,7 +171,8 @@
                                     "$ref": "#/definitions/macros/anyOf/1/additionalProperties/properties/commands/items/anyOf/0/anyOf/0/properties/keySend/anyOf/0"
                                   }
                                 }
-                              ]
+                              ],
+                              "description": "Key that will be pressed"
                             },
                             "holdKeys": {
                               "anyOf": [
@@ -188,7 +189,7 @@
                                   }
                                 }
                               ],
-                              "description": "A key to be sent."
+                              "description": "Keys that will be hold during pressing main key. E.g if you need to send Alt+1, here goes Alt"
                             },
                             "destination": {
                               "anyOf": [
@@ -218,7 +219,7 @@
                             "destination"
                           ],
                           "additionalProperties": false,
-                          "description": "Sends a keyPress to a remote PC."
+                          "description": "Sends a key press event (like you pressed on a keyboard) to a remote PC."
                         },
                         {
                           "type": "object",

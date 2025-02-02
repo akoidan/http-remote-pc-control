@@ -46,7 +46,7 @@
             "macro": "killLaunchL2",
             "variables": {
               "destination": "asus",
-              "login": "deathangel7",
+              "login": "deathangelp",
               "delay": 18000
             }
           }
@@ -57,16 +57,6 @@
             "variables": {
               "destination": "desktop",
               "login": "deathangelj",
-              "delay": 18000
-            }
-          }
-        ],
-         [
-          {
-            "macro": "killLaunchL2Wine",
-            "variables": {
-              "destination": "this",
-              "login": "deathangelo",
               "delay": 18000
             }
           }

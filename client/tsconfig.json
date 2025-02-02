@@ -1,5 +1,6 @@
 {
   "exclude": ["dist"],
+  "include": ["src/**/*.ts", "src/**/*.node"],
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {

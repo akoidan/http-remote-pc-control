@@ -1,5 +1,6 @@
 import {
   Controller,
+  Inject,
   Post,
 } from '@nestjs/common';
 import {
@@ -8,13 +9,14 @@ import {
   TypeTextRequest,
   typeTextRequestSchema,
 } from '@/keyboard/keyboard-dto';
-import {KeyboardService} from '@/keyboard/keyboard-service';
 import {ZodBody} from '@/validation/zod-validator';
+import {IKeyboardService, KeyboardService} from '@/keyboard/keyboard-model';
 
 @Controller()
 export class KeyboardController {
   constructor(
-    private readonly keyboardService: KeyboardService,
+    @Inject(KeyboardService)
+    private readonly keyboardService: IKeyboardService,
   ) {
   }
 

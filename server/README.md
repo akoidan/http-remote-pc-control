@@ -28,7 +28,7 @@ _Object record with dynamic keys:_
 
 Shorcuts mappings. Main logic
 
-_Array of [ShortcutMappingWithMacro](#shortcutmappingwithmacro) _or_ [RandomShortCutMapping](#randomshortcutmapping) items._
+_Array of [ShortcutMappingWithMacro](#shortcutmappingwithmacro), [RandomShortCutMapping](#randomshortcutmapping) _or_ [ThreadCircularShortCutMapping](#threadcircularshortcutmapping) items._
 
 ## CommandOrMacro
 
@@ -87,16 +87,16 @@ _Object record with dynamic keys:_
 
 ## KeyPressCommand
 
-Sends a keyPress to a remote PC.
+Sends a key press event (like you pressed on a keyboard) to a remote PC.
 
 _Object containing the following properties:_
 
-| Property               | Description                                                   | Type                                                                           |
-| :--------------------- | :------------------------------------------------------------ | :----------------------------------------------------------------------------- |
-| **`keySend`** (\*)     |                                                               | [Key](#key), [VariableValue](#variablevalue) _or_ _Array of [Key](#key) items_ |
-| `holdKeys`             | A key to be sent.                                             | [Key](#key), [VariableValue](#variablevalue) _or_ _Array of [Key](#key) items_ |
-| **`destination`** (\*) | Remote PC from ips or aliases section to send this command to | `string` _or_ [VariableValue](#variablevalue)                                  |
-| `delay`                | Delay in milliseconds before the next command.                | `number` _or_ [VariableValue](#variablevalue)                                  |
+| Property               | Description                                                                                   | Type                                                                           |
+| :--------------------- | :-------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------- |
+| **`keySend`** (\*)     | Key that will be pressed                                                                      | [Key](#key), [VariableValue](#variablevalue) _or_ _Array of [Key](#key) items_ |
+| `holdKeys`             | Keys that will be hold during pressing main key. E.g if you need to send Alt+1, here goes Alt | [Key](#key), [VariableValue](#variablevalue) _or_ _Array of [Key](#key) items_ |
+| **`destination`** (\*) | Remote PC from ips or aliases section to send this command to                                 | `string` _or_ [VariableValue](#variablevalue)                                  |
+| `delay`                | Delay in milliseconds before the next command.                                                | `number` _or_ [VariableValue](#variablevalue)                                  |
 
 _(\*) Required._
 
@@ -364,6 +364,21 @@ _Object containing the following properties:_
 | `delay`             | Delay in milliseconds between commands for this shorcut                                                                                                       | `number`                                                           |
 | **`name`** (\*)     | Name that is printed during startup with a shorcut                                                                                                            | `string`                                                           |
 | **`shortCut`** (\*) | A shorcut to be pressed. E.g. Alt+1                                                                                                                           | `string`                                                           |
+
+_(\*) Required._
+
+## ThreadCircularShortCutMapping
+
+An event schema that represent a set of commands that is executed when a certain shortkey is pressed
+
+_Object containing the following properties:_
+
+| Property                   | Description                                                                                                      | Type                                   |
+| :------------------------- | :--------------------------------------------------------------------------------------------------------------- | :------------------------------------- |
+| **`threadsCircular`** (\*) | Similar to circular in commands but will run only one thread upon activation. Each time the next thead will run. | _Array of [Commands](#commands) items_ |
+| `delay`                    | Delay in milliseconds between commands for this shorcut                                                          | `number`                               |
+| **`name`** (\*)            | Name that is printed during startup with a shorcut                                                               | `string`                               |
+| **`shortCut`** (\*)        | A shorcut to be pressed. E.g. Alt+1                                                                              | `string`                               |
 
 _(\*) Required._
 

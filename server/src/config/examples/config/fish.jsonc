@@ -68,7 +68,7 @@
             "macro": "killLaunchL2Wine",
             "variables": {
               "destination": "this",
-              "login": "deathangelo",
+              "login": "deathangelj",
               "delay": 18000
             }
           }

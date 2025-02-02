@@ -212,15 +212,38 @@
       "shortCut": "Alt+f10"
     },
     {
-      "commands": [
-        {
-          "destination": "tyrs",
-          "keySend": "f5"
-        }
+      "threadsCircular": [
+        [
+          {
+            "destination": "tyrant",
+            "keySend": "f5"
+          }
+        ],
+        [
+          {
+            "destination": "monk",
+            "keySend": "f5"
+          }
+        ],
+        [
+          {
+            "destination": "raider",
+            "keySend": "f5"
+          }
+        ],
+        [
+          {
+            "focusPid": "{{spoil}}",
+            "destination": "spoil"
+          },
+          {
+            "destination": "spoil",
+            "keySend": "f4"
+          }
+        ]
       ],
       "name": "Stun",
-      "shortCut": "Alt+1",
-      "circular": true
+      "shortCut": "Alt+1"
     },
     {
       "commands": [
@@ -303,12 +326,24 @@
             "keySend": "6"
           }
         },
-        {
+         {
           "macro": "keySend",
           "variables": {
             "focusPid": "{{wc}}",
             "destination": "wc",
-            "keySend": "f9"
+            "keySend": "f8"
+          }
+        },
+        {
+          "keySend": "f9",
+          "destination": "wc"
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{se}}",
+            "destination": "se",
+            "keySend": "5"
           }
         }
       ],
@@ -472,7 +507,7 @@
           "variables": {
             "focusPid": "{{spoil}}",
             "destination": "spoil",
-            "keySend": "f5"
+            "keySend": "4"
           }
         }
       ],
@@ -502,6 +537,30 @@
             "focusPid": "{{spoil}}",
             "destination": "spoil",
             "keySend": "f11"
+          }
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{se}}",
+            "destination": "se",
+            "keySend": "="
+          }
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{ee}}",
+            "destination": "ee",
+            "keySend": "="
+          }
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{bish}}",
+            "destination": "bish",
+            "keySend": "="
           }
         }
       ],
@@ -613,31 +672,11 @@
       "shortCut": "Alt+w"
     },
     {
-        "threads": [
-        [
-          {
-            "destination": "bish",
-            "keySend": "f5"
-          }
-        ],
-        [
-          {
-            "macro": "keySend",
-            "variables": {
-              "focusPid": "{{se}}",
-              "destination": "se",
-              "keySend": "f4"
-            }
-          },
-          {
-            "macro": "keySend",
-            "variables": {
-              "focusPid": "{{ee}}",
-              "destination": "ee",
-              "keySend": "f4"
-            }
-          }
-        ]
+      "commands": [
+        {
+          "destination": "bish",
+          "keySend": "f5"
+        }
       ],
       "name": "restore life",
       "shortCut": "Alt+e"
@@ -798,7 +837,7 @@
             "keySend": "f6"
           }
         },
-         {
+        {
           "macro": "keySend",
           "variables": {
             "focusPid": "{{pp}}",

@@ -11,6 +11,8 @@ import {commandOrMacroSchema} from '@/config/types/macros';
 const commandsAndMacrosArraySchema = z.array(commandOrMacroSchema)
   .describe('A set of events that executed sequentially in this thread');// Define the schema for the 'combinations'
 
+const commandWoMacroArraySchema = z.array(commandSchema).describe('A set of events that executed sequentially in this thread');
+
 const baseShortCutMappingSchema = z.object({
   delay: z.number().optional().describe('Delay in milliseconds between commands for this shorcut'),
   name: z.string().describe('Name that is printed during startup with a shorcut'),
@@ -43,7 +45,15 @@ const randomShortCutMappingSchema = z.object({
   .describe('An event schema that represent a set of commands that is executed when a certain shortkey is pressed');
 
 
-const shortCutMappingSchema = z.union([shortcutMappingWithMacroSchema, randomShortCutMappingSchema]);
+const threadCircularShortCutMappingSchema = z.object({
+  threadsCircular: z.array(commandWoMacroArraySchema)
+    .describe('Similar to circular in commands but will run only one thread upon activation. Each time the next thead will run.'),
+})
+  .merge(baseShortCutMappingSchema)
+  .describe('An event schema that represent a set of commands that is executed when a certain shortkey is pressed');
+
+
+const shortCutMappingSchema = z.union([shortcutMappingWithMacroSchema, randomShortCutMappingSchema, threadCircularShortCutMappingSchema]);
 
 const combinationList = z.array(shortCutMappingSchema)
   .superRefine((combinations, ctx) => {
@@ -63,16 +73,19 @@ const combinationList = z.array(shortCutMappingSchema)
 type ShortsData = z.infer<typeof shortCutMappingSchema>;
 type RandomShortcutMapping = z.infer<typeof randomShortCutMappingSchema>;
 type MacroShortcutMapping = z.infer<typeof shortcutMappingWithMacroSchema>;
+type MacroShortcutMappingCircular = z.infer<typeof threadCircularShortCutMappingSchema>;
 
 export type {
   ShortsData,
   RandomShortcutMapping,
   MacroShortcutMapping,
+  MacroShortcutMappingCircular,
 };
 
 export {
   randomShortCutMappingSchema,
   shortcutMappingWithMacroSchema,
+  threadCircularShortCutMappingSchema,
   commandSchema,
   commandsAndMacrosArraySchema,
   commandsSchema,

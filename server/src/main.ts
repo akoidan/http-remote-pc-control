@@ -7,7 +7,7 @@ import {
 import * as process from 'node:process';
 
 
-asyncLocalStorage.run(new Map().set('comb', 'init'), () => {
+asyncLocalStorage.run(new Map<string, string>().set('comb', 'init'), () => {
   const customLogger = new CustomLogger();
   NestFactory.createApplicationContext(AppModule, {
     logger: customLogger,

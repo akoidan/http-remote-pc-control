@@ -38,11 +38,12 @@ const baseSchema = z.object({
 
 
 const keyPressCommandSchema = z.object({
-  keySend: z.union([keySchema, variableValueSchema, z.array(keySchema)]),
+  keySend: z.union([keySchema, variableValueSchema, z.array(keySchema)])
+    .describe('Key that will be pressed'),
   holdKeys: z.union([keySchema, variableValueSchema, z.array(keySchema)])
     .optional()
-    .describe('A key to be sent.'),
-}).strict().merge(baseSchema).describe('Sends a keyPress to a remote PC.');
+    .describe('Keys that will be hold during pressing main key. E.g if you need to send Alt+1, here goes Alt'),
+}).strict().merge(baseSchema).describe('Sends a key press event (like you pressed on a keyboard) to a remote PC.');
 
 const launchExeCommandSchema = z.object({
   launch: z.string().describe('Full path to an executable.'),

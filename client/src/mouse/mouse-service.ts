@@ -3,10 +3,6 @@ import {
   Logger,
 } from '@nestjs/common';
 
-import {
-  mouse,
-  Point,
-} from '@nut-tree-fork/nut-js';
 
 @Injectable()
 export class MouseService {
@@ -15,9 +11,9 @@ export class MouseService {
   ) {
   }
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   async click(x: number, y: number): Promise<void> {
     this.logger.log(`Left click: \u001b[35m[${x},${y}]`);
-    await mouse.setPosition(new Point(x,y));
-    await mouse.leftClick();
+    throw new Error('Not implemented');
   }
 }

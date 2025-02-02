@@ -4,7 +4,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 import clc from 'cli-color';
-import { AsyncLocalStorage } from 'async_hooks';
+import {AsyncLocalStorage} from 'async_hooks';
 
 const asyncLocalStorage = new AsyncLocalStorage<Map<string, any>>();
 

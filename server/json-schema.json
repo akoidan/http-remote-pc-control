@@ -207,7 +207,8 @@
                                         "$ref": "#/definitions/config/properties/combinations/items/anyOf/0/properties/commands/items/anyOf/0/anyOf/0/properties/keySend/anyOf/0"
                                       }
                                     }
-                                  ]
+                                  ],
+                                  "description": "Key that will be pressed"
                                 },
                                 "holdKeys": {
                                   "anyOf": [
@@ -224,7 +225,7 @@
                                       }
                                     }
                                   ],
-                                  "description": "A key to be sent."
+                                  "description": "Keys that will be hold during pressing main key. E.g if you need to send Alt+1, here goes Alt"
                                 },
                                 "destination": {
                                   "anyOf": [
@@ -254,7 +255,7 @@
                                 "destination"
                               ],
                               "additionalProperties": false,
-                              "description": "Sends a keyPress to a remote PC."
+                              "description": "Sends a key press event (like you pressed on a keyboard) to a remote PC."
                             },
                             {
                               "type": "object",
@@ -507,6 +508,38 @@
                 },
                 "required": [
                   "commands",
+                  "name",
+                  "shortCut"
+                ],
+                "additionalProperties": false,
+                "description": "An event schema that represent a set of commands that is executed when a certain shortkey is pressed"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "threadsCircular": {
+                    "type": "array",
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions/config/properties/combinations/items/anyOf/0/properties/commands/items/anyOf/0"
+                      },
+                      "description": "A set of events that executed sequentially in this thread"
+                    },
+                    "description": "Similar to circular in commands but will run only one thread upon activation. Each time the next thead will run."
+                  },
+                  "delay": {
+                    "$ref": "#/definitions/config/properties/combinations/items/anyOf/0/properties/delay"
+                  },
+                  "name": {
+                    "$ref": "#/definitions/config/properties/combinations/items/anyOf/0/properties/name"
+                  },
+                  "shortCut": {
+                    "$ref": "#/definitions/config/properties/combinations/items/anyOf/0/properties/shortCut"
+                  }
+                },
+                "required": [
+                  "threadsCircular",
                   "name",
                   "shortCut"
                 ],

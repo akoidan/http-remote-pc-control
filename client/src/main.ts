@@ -8,9 +8,9 @@ import {
 } from '@/app/custom-logger';
 import process from 'node:process';
 
-asyncLocalStorage.run(new Map().set('comb', 'init'), () => {
+asyncLocalStorage.run(new Map<string, string>().set('comb', 'init'), () => {
   const customLogger = new CustomLogger();
-  (async function() {
+  (async function startApp(): Promise<void> {
     const logger = new CustomLogger();
     const mtls = await NestFactory.create(MtlsModule, {
       logger,
@@ -30,8 +30,8 @@ asyncLocalStorage.run(new Map().set('comb', 'init'), () => {
       },
     });
     await app.listen(5000);
-  })().catch((err) => {
-    customLogger.error(err);
+  })().catch((err: unknown) => {
+    customLogger.error(err as string|Error);
     process.exit(98);
   });
 });

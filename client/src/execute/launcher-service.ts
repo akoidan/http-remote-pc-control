@@ -1,19 +1,12 @@
 import {
   Injectable,
-  InternalServerErrorException,
   Logger,
-  NotImplementedException,
   ServiceUnavailableException,
 } from '@nestjs/common';
-import os from 'os';
-import {
-  exec,
-  spawn,
-} from 'child_process';
-import {promisify} from 'util';
+import {spawn} from 'child_process';
 
 @Injectable()
-export class ExecutionService {
+export class LauncherService {
   constructor(
     private readonly logger: Logger
   ) {
@@ -57,33 +50,6 @@ export class ExecutionService {
         reject(new ServiceUnavailableException(`${pathToExe} ${args.join(' ')} failed with: ${e.message}`, (e as Error).stack));
       }
     });
-  }
-
-  async killExe(name: string): Promise<boolean> {
-    this.logger.log(`Kill ${name}`);
-    const platform = os.platform(); // Detect OS
-    let command: string;
-
-    // Determine the command based on OS
-    if (platform === 'win32') {
-      command = `taskkill /IM ${name} /F`; // Windows
-    } else if (platform === 'linux' || platform === 'darwin') {
-      command = `pkill -9 ${name}`; // Linux and macOS
-    } else {
-      throw new NotImplementedException(`Unsupported platform: ${platform}`);
-    }
-    try {
-      const {stdout, stderr} = await promisify(exec)(command);
-      this.logger.debug(`Process "${name}" killed successfully:`, stdout || stderr);
-      return true;
-    } catch (e) {
-      if ((platform === 'win32' && e?.message.includes(`process "${name}" not found`))
-        || (platform === 'linux' && e?.code === 1)) {
-        this.logger.debug(`Process "${name}" is not up. Skipping it`);
-        return false;
-      }
-      throw new InternalServerErrorException(e);
-    }
   }
 }
 
