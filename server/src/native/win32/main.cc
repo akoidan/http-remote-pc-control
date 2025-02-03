@@ -1,11 +1,7 @@
 #include <napi.h>
-#include "./headers/keypress.h"
 #include "./headers/listen-shortcut.h"
 
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
-
-    // Initialize keyboard functions
-    keyboard_init(env, exports);
     
     // Initialize hotkey manager
     hotkey_init(env, exports);

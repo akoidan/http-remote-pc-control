@@ -4,19 +4,23 @@
 #include <thread>
 #include <atomic>
 #include <unordered_map>
+#include <cctype>
+#include "./headers/key-names.h"
+#include "./headers/modifier-names.h"
 
 const wchar_t* WINDOW_CLASS_NAME = L"HotkeyMessageWindow";
 
 struct HotkeyContext {
     std::atomic<bool> running{true};
+    Napi::ThreadSafeFunction tsfn;
+    std::thread messageThread;
     HWND hwnd;
     int modifiers;
     int key;
-    std::thread messageThread;
-    Napi::Reference<Napi::Value> ref; // Keep Node.js alive
+    Napi::Reference<Napi::Value> ref;
 };
 
-static std::unordered_map<int, HotkeyContext*> hotkeyContexts;
+static std::map<int, HotkeyContext*> hotkeyContexts;
 static int nextHotkeyId = 1;
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
@@ -25,8 +29,10 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         std::cout << "HOTKEY PRESSED! ID: " << hotkeyId << std::endl;
         auto it = hotkeyContexts.find(hotkeyId);
         if (it != hotkeyContexts.end()) {
-            std::cout << "Found registered hotkey with modifiers: 0x" << std::hex << it->second->modifiers 
-                      << " key: 0x" << it->second->key << std::dec << std::endl;
+            auto callback = [](Napi::Env env, Napi::Function jsCallback) {
+                jsCallback.Call({});
+            };
+            it->second->tsfn.BlockingCall(callback);
             return 0;
         }
     }
@@ -34,8 +40,6 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 }
 
 HWND CreateMessageWindow() {
-    std::cout << "Creating message window..." << std::endl;
-    
     WNDCLASSEXW wc = {};
     wc.cbSize = sizeof(WNDCLASSEXW);
     wc.lpfnWndProc = WindowProc;
@@ -47,7 +51,6 @@ HWND CreateMessageWindow() {
         return NULL;
     }
     
-    // Create a message-only window
     HWND hwnd = CreateWindowExW(
         0,
         WINDOW_CLASS_NAME,
@@ -62,39 +65,30 @@ HWND CreateMessageWindow() {
     
     if (hwnd == NULL) {
         std::cout << "Failed to create message window. Error: " << GetLastError() << std::endl;
-    } else {
-        std::cout << "Message window created successfully" << std::endl;
     }
     
     return hwnd;
 }
 
 void MessageLoop(HotkeyContext* context) {
-    std::cout << "Message loop started" << std::endl;
-    
     context->hwnd = CreateMessageWindow();
     if (!context->hwnd) {
         std::cout << "Failed to create message window, message loop exiting" << std::endl;
         return;
     }
     
-    // Try registering with NULL first (global)
-    int hotkeyId = nextHotkeyId - 1; // Get current hotkey ID
+    // Register hotkey
+    int hotkeyId = nextHotkeyId - 1;
     if (!RegisterHotKey(NULL, hotkeyId, context->modifiers, context->key)) {
         DWORD error = GetLastError();
         std::cout << "Failed to register global hotkey. Error: " << error << std::endl;
         
-        // If global fails, try with our window
         if (!RegisterHotKey(context->hwnd, hotkeyId, context->modifiers, context->key)) {
             error = GetLastError();
             std::cout << "Failed to register window hotkey. Error: " << error << std::endl;
             return;
         }
     }
-    
-    std::cout << "Hotkey registered successfully - ID: " << hotkeyId << std::endl;
-    std::cout << "Modifiers: 0x" << std::hex << context->modifiers << std::dec << std::endl;
-    std::cout << "Key: 0x" << std::hex << context->key << std::dec << std::endl;
     
     MSG msg;
     while (context->running && GetMessage(&msg, NULL, 0, 0)) {
@@ -105,45 +99,91 @@ void MessageLoop(HotkeyContext* context) {
     if (context->hwnd) {
         DestroyWindow(context->hwnd);
     }
-    
-    std::cout << "Message loop ended" << std::endl;
 }
 
 Napi::Value RegisterHotkey(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
-
-    if (info.Length() < 2 || !info[0].IsNumber() || !info[1].IsNumber()) {
-        Napi::TypeError::New(env, "Wrong arguments: expected (modifiers, key)").ThrowAsJavaScriptException();
+    
+    if (info.Length() < 3) {
+        Napi::TypeError::New(env, "Wrong number of arguments").ThrowAsJavaScriptException();
         return env.Null();
     }
 
-    int modifiers = info[0].As<Napi::Number>().Int32Value();
-    int key = info[1].As<Napi::Number>().Int32Value();
+    // Get key string
+    if (!info[0].IsString()) {
+        Napi::TypeError::New(env, "First argument must be a string (key)").ThrowAsJavaScriptException();
+        return env.Null();
+    }
+    std::string keyStr = info[0].As<Napi::String>().Utf8Value();
+
+    // Get modifiers array
+    if (!info[1].IsArray()) {
+        Napi::TypeError::New(env, "Second argument must be an array of modifiers").ThrowAsJavaScriptException();
+        return env.Null();
+    }
+
+    // Get callback
+    if (!info[2].IsFunction()) {
+        Napi::TypeError::New(env, "Third argument must be a callback function").ThrowAsJavaScriptException();
+        return env.Null();
+    }
+
+    // Convert key string to virtual key code
+    int vk = 0;
     
-    int hotkeyId = nextHotkeyId++;
+    // First check named keys
+    auto key_it = key_names.find(keyStr);
+    if (key_it != key_names.end()) {
+        vk = key_it->second;
+    }
+    
+    // If not found, try as single character
+    if (vk == 0 && keyStr.length() == 1) {
+        char c = toupper(keyStr[0]);
+        vk = c;  // For letters A-Z, the virtual key code is the same as the ASCII code
+    }
 
-    std::cout << "Registering hotkey with details:" << std::endl;
-    std::cout << "  ID: " << hotkeyId << std::endl;
-    std::cout << "  Modifiers (hex): 0x" << std::hex << modifiers << std::dec << std::endl;
-    std::cout << "  Key (hex): 0x" << std::hex << key << std::dec << std::endl;
-    std::cout << "  Alt flag: " << ((modifiers & MOD_ALT) ? "Yes" : "No") << std::endl;
-    std::cout << "  Ctrl flag: " << ((modifiers & MOD_CONTROL) ? "Yes" : "No") << std::endl;
-    std::cout << "  Shift flag: " << ((modifiers & MOD_SHIFT) ? "Yes" : "No") << std::endl;
-    std::cout << "  Win flag: " << ((modifiers & MOD_WIN) ? "Yes" : "No") << std::endl;
+    if (vk == 0) {
+        Napi::Error::New(env, "Invalid key name").ThrowAsJavaScriptException();
+        return env.Null();
+    }
 
+    // Convert modifiers array to Windows modifier flags
+    Napi::Array modArray = info[1].As<Napi::Array>();
+    int modifiers = 0;
+    
+    for (uint32_t i = 0; i < modArray.Length(); i++) {
+        Napi::Value mod = modArray[i];
+        if (!mod.IsString()) continue;
+        
+        std::string modStr = mod.As<Napi::String>().Utf8Value();
+        auto mod_it = key_names.find(modStr);
+        if (mod_it != key_names.end()) {
+            modifiers |= mod_it->second;
+        }
+    }
+
+    // Create hotkey context
     auto context = new HotkeyContext();
     context->modifiers = modifiers;
-    context->key = key;
+    context->key = vk;
+    context->tsfn = Napi::ThreadSafeFunction::New(
+        env,
+        info[2].As<Napi::Function>(),
+        "Hotkey Callback",
+        0,
+        1
+    );
     
-    // Create a reference to keep Node.js alive
-    std::cout << "Creating Node.js reference to keep process alive..." << std::endl;
+    // Keep Node.js alive
     context->ref = Napi::Reference<Napi::Value>::New(env.Global(), 1);
-    std::cout << "Node.js reference created successfully" << std::endl;
-    
-    std::cout << "Starting message loop thread" << std::endl;
+
+    // Start message loop thread
     context->messageThread = std::thread(MessageLoop, context);
     
+    int hotkeyId = nextHotkeyId++;
     hotkeyContexts[hotkeyId] = context;
+
     return Napi::Number::New(env, hotkeyId);
 }
 
@@ -169,15 +209,11 @@ Napi::Value UnregisterHotkey(const Napi::CallbackInfo& info) {
         }
         
         if (context->messageThread.joinable()) {
-            std::cout << "Waiting for message loop thread to finish..." << std::endl;
             context->messageThread.join();
-            std::cout << "Message loop thread finished" << std::endl;
         }
         
-        std::cout << "Removing Node.js reference..." << std::endl;
+        context->tsfn.Release();
         context->ref.Unref();
-        std::cout << "Node.js reference removed" << std::endl;
-        
         delete context;
         hotkeyContexts.erase(it);
     }
@@ -199,15 +235,11 @@ Napi::Value CleanupHotkeys(const Napi::CallbackInfo& info) {
         }
         
         if (context->messageThread.joinable()) {
-            std::cout << "Waiting for message loop thread to finish..." << std::endl;
             context->messageThread.join();
-            std::cout << "Message loop thread finished" << std::endl;
         }
         
-        std::cout << "Removing Node.js reference..." << std::endl;
+        context->tsfn.Release();
         context->ref.Unref();
-        std::cout << "Node.js reference removed" << std::endl;
-        
         delete context;
     }
     hotkeyContexts.clear();

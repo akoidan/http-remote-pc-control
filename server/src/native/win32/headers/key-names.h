@@ -1,11 +1,9 @@
 #ifndef NATIVE_KEY_NAMES_H
 #define NATIVE_KEY_NAMES_H
 
-typedef struct {
-    const char* name;
-    int key;
-} KeyNames;
+#include <map>
+#include <string>
 
-extern KeyNames key_names[];
+extern std::map<std::string, int> key_names;
 
 #endif
