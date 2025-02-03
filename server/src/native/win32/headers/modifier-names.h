@@ -1,11 +1,9 @@
 #ifndef NATIVE_MODIFIER_NAMES_H
 #define NATIVE_MODIFIER_NAMES_H
 
-typedef struct {
-    const char* name;
-    int modifier;
-} ModifierNames;
+#include <map>
+#include <string>
 
-extern ModifierNames modifier_names[];
+extern std::map<std::string, int> modifier_names;
 
 #endif

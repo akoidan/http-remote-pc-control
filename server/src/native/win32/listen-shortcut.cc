@@ -157,11 +157,16 @@ Napi::Value RegisterHotkey(const Napi::CallbackInfo& info) {
         if (!mod.IsString()) continue;
         
         std::string modStr = mod.As<Napi::String>().Utf8Value();
-        auto mod_it = key_names.find(modStr);
-        if (mod_it != key_names.end()) {
+        auto mod_it = modifier_names.find(modStr);
+        if (mod_it != modifier_names.end()) {
             modifiers |= mod_it->second;
+        } else {
+            std::cout << "Warning: Unknown modifier '" << modStr << "'" << std::endl;
         }
     }
+
+    // Add MOD_NOREPEAT to prevent auto-repeat
+    modifiers |= MOD_NOREPEAT;
 
     // Create hotkey context
     auto context = new HotkeyContext();
