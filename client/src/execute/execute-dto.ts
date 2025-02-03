@@ -1,4 +1,4 @@
-import {z} from 'zod';
+import { z } from 'zod';
 
 
 const launchExeRequestSchema = z.object({
@@ -12,11 +12,16 @@ const focusExeRequestSchema = z.object({
 });
 
 
-const killExeRequestSchema = z.object({
+const killExeByNameRequestSchema = z.object({
   name: z.string(),
 });
 
-type KillExeRequest = z.infer<typeof killExeRequestSchema>
+const killExeByPidRequestSchema = z.object({
+  pid: z.number(),
+});
+
+type KillExeByNameRequest = z.infer<typeof killExeByNameRequestSchema>
+type KillExeByPidRequest = z.infer<typeof killExeByPidRequestSchema>
 type LaunchExeRequest = z.infer<typeof launchExeRequestSchema>;
 type FocusExeRequest = z.infer<typeof focusExeRequestSchema>;
 
@@ -26,13 +31,15 @@ interface LaunchPidResponse {
 
 export {
   launchExeRequestSchema,
-  killExeRequestSchema,
+  killExeByNameRequestSchema,
+  killExeByPidRequestSchema,
   focusExeRequestSchema,
 };
 
 export type {
   LaunchPidResponse,
   FocusExeRequest,
-  KillExeRequest,
+  KillExeByNameRequest,
+  KillExeByPidRequest,
   LaunchExeRequest,
 };

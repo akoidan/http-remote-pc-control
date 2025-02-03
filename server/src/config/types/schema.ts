@@ -9,7 +9,8 @@ import {
   focusWindowCommandSchema,
   keyPressCommandSchema,
   keySchema,
-  killExeCommandSchema,
+  killExeByNameCommandSchema,
+  killExeByPidCommandSchema,
   launchExeCommandSchema,
   mouseClickCommandSchema,
   typeTextCommandSchema,
@@ -111,7 +112,8 @@ export {
   combinationList,
   mouseClickCommandSchema,
   variablesSchema,
-  killExeCommandSchema,
+  killExeByNameCommandSchema,
+  killExeByPidCommandSchema,
   commandOrMacroSchema,
 };
 

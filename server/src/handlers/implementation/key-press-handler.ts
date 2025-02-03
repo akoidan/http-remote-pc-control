@@ -3,9 +3,9 @@ import type {
   Key,
   KeyPressCommand,
 } from '@/config/types/commands';
-import {BaseCommandHandler} from 'src/logic/commands/base-command-handler';
+import {CommandHandler} from '@/handlers/command-handler.service';
 
-export class KeyPressHandler extends BaseCommandHandler {
+export class KeyPressHandler extends CommandHandler {
   canHandle(command: Command): command is KeyPressCommand {
     return 'keySend' in command;
   }

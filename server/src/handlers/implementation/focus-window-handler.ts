@@ -2,9 +2,9 @@ import type {
   Command,
   FocusWindowCommand,
 } from '@/config/types/commands';
-import {BaseCommandHandler} from 'src/logic/commands/base-command-handler';
+import {CommandHandler} from '@/handlers/command-handler.service';
 
-export class FocusWindowHandler extends BaseCommandHandler {
+export class FocusWindowHandler extends CommandHandler {
   canHandle(command: Command): command is FocusWindowCommand {
     return 'focusPid' in command;
   }

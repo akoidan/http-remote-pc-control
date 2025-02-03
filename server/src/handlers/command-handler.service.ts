@@ -3,13 +3,13 @@ import {ClientService} from '@/client/client-service';
 import {Injectable} from '@nestjs/common';
 
 @Injectable()
-export abstract class BaseCommandHandler {
-  private next: BaseCommandHandler | null = null;
+export abstract class CommandHandler {
+  private next: CommandHandler | null = null;
 
   constructor(protected readonly clientService: ClientService) {
   }
 
-  setNext(handler: BaseCommandHandler): BaseCommandHandler {
+  setNext(handler: CommandHandler): CommandHandler {
     this.next = handler;
     return handler;
   }
