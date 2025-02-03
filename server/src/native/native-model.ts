@@ -1,13 +1,12 @@
-
 interface HotkeyNativeModule {
   /**
    * Registers a global hotkey
-   * @param modifiers - Modifier keys (e.g. MOD_ALT = 1, MOD_CONTROL = 2, MOD_SHIFT = 4, MOD_WIN = 8)
-   * @param key - Virtual key code
+   * @param key - Key name (e.g. 'a', 'escape', 'return', etc)
+   * @param modifiers - Array of modifier keys
    * @param callback - Function to call when hotkey is pressed
    * @returns Hotkey ID that can be used to unregister the hotkey
    */
-  registerHotkey(modifiers: number, key: number, callback: () => void): number;
+  registerHotkey(key: string, modifiers: ModifierKey[], callback: () => void): number;
 
   /**
    * Unregisters a previously registered hotkey
@@ -24,8 +23,11 @@ interface HotkeyNativeModule {
 interface INativeModule extends  HotkeyNativeModule {
 }
 
+type ModifierKey = 'alt' | 'ctrl' | 'shift' | 'super' | 'win';
+
 export const Native = 'Native';
 
 export type {
   INativeModule,
+  ModifierKey,
 };

@@ -12,8 +12,8 @@ struct HotkeyContext {
     Napi::ThreadSafeFunction tsfn;
     std::thread messageThread;
     HWND hwnd;
-    int modifiers;
-    int key;
+    UINT modifiers;
+    UINT key;
 };
 
 static std::unordered_map<int, HotkeyContext*> hotkeyContexts;
@@ -25,30 +25,20 @@ LRESULT CALLBACK KeyboardProc(int nCode, WPARAM wParam, LPARAM lParam) {
     if (nCode >= 0) {
         KBDLLHOOKSTRUCT* kbd = reinterpret_cast<KBDLLHOOKSTRUCT*>(lParam);
         
-        // Check if Alt is pressed
-        bool altPressed = (GetAsyncKeyState(VK_MENU) & 0x8000) != 0;
-        
-        std::cout << "Key event - vkCode: 0x" << std::hex << kbd->vkCode 
-                  << " scanCode: 0x" << kbd->scanCode 
-                  << " flags: 0x" << kbd->flags 
-                  << " Alt pressed: " << (altPressed ? "Yes" : "No") << std::dec << std::endl;
+        // Get current modifier state
+        UINT modifiers = 0;
+        if (GetAsyncKeyState(VK_MENU) & 0x8000) modifiers |= MOD_ALT;
+        if (GetAsyncKeyState(VK_CONTROL) & 0x8000) modifiers |= MOD_CONTROL;
+        if (GetAsyncKeyState(VK_SHIFT) & 0x8000) modifiers |= MOD_SHIFT;
+        if (GetAsyncKeyState(VK_LWIN) & 0x8000 || GetAsyncKeyState(VK_RWIN) & 0x8000) modifiers |= MOD_WIN;
         
         // Check all registered hotkeys
         for (const auto& pair : hotkeyContexts) {
             HotkeyContext* context = pair.second;
-            bool modMatch = false;
-            
-            // Check modifiers
-            if (context->modifiers & MOD_ALT) {
-                modMatch = altPressed;
-            }
             
             // If modifiers match and the key matches
-            if (modMatch && kbd->vkCode == context->key) {
-                std::cout << "Hotkey match found! Calling callback for ID: " << pair.first << std::endl;
-                
+            if (modifiers == context->modifiers && kbd->vkCode == context->key) {
                 auto callback = [](Napi::Env env, Napi::Function jsCallback) {
-                    std::cout << "Executing JavaScript callback" << std::endl;
                     jsCallback.Call({});
                 };
                 
@@ -56,7 +46,8 @@ LRESULT CALLBACK KeyboardProc(int nCode, WPARAM wParam, LPARAM lParam) {
             }
         }
     }
-    return CallNextHookEx(keyboardHook, nCode, wParam, lParam);
+    
+    return CallNextHookEx(NULL, nCode, wParam, lParam);
 }
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
@@ -153,58 +144,113 @@ void MessageLoop(HotkeyContext* context) {
 
 Napi::Value RegisterHotkey(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
-
-    if (info.Length() < 3 || !info[0].IsNumber() || !info[1].IsNumber() || !info[2].IsFunction()) {
-        Napi::TypeError::New(env, "Wrong arguments: expected (modifiers, key, callback)").ThrowAsJavaScriptException();
+    
+    if (info.Length() < 3) {
+        Napi::TypeError::New(env, "Wrong number of arguments").ThrowAsJavaScriptException();
         return env.Null();
     }
 
-    int modifiers = info[0].As<Napi::Number>().Int32Value();
-    int key = info[1].As<Napi::Number>().Int32Value();
-    Napi::Function callback = info[2].As<Napi::Function>();
+    // Get key string
+    if (!info[0].IsString()) {
+        Napi::TypeError::New(env, "First argument must be a string (key)").ThrowAsJavaScriptException();
+        return env.Null();
+    }
+    std::string keyStr = info[0].As<Napi::String>().Utf8Value();
 
-    int hotkeyId = nextHotkeyId++;
+    // Get modifiers array
+    if (!info[1].IsArray()) {
+        Napi::TypeError::New(env, "Second argument must be an array of modifiers").ThrowAsJavaScriptException();
+        return env.Null();
+    }
 
-    std::cout << "Registering hotkey with details:" << std::endl;
-    std::cout << "  ID: " << hotkeyId << std::endl;
-    std::cout << "  Modifiers (hex): 0x" << std::hex << modifiers << std::dec << std::endl;
-    std::cout << "  Key (hex): 0x" << std::hex << key << std::dec << std::endl;
-    std::cout << "  Alt flag: " << ((modifiers & MOD_ALT) ? "Yes" : "No") << std::endl;
-    std::cout << "  Ctrl flag: " << ((modifiers & MOD_CONTROL) ? "Yes" : "No") << std::endl;
-    std::cout << "  Shift flag: " << ((modifiers & MOD_SHIFT) ? "Yes" : "No") << std::endl;
-    std::cout << "  Win flag: " << ((modifiers & MOD_WIN) ? "Yes" : "No") << std::endl;
+    // Get callback
+    if (!info[2].IsFunction()) {
+        Napi::TypeError::New(env, "Third argument must be a callback function").ThrowAsJavaScriptException();
+        return env.Null();
+    }
 
-    auto context = new HotkeyContext();
+    // Convert key string to virtual key code
+    UINT vkCode = 0;
+    if (keyStr.length() == 1) {
+        char c = toupper(keyStr[0]);
+        if (c >= 'A' && c <= 'Z') {
+            vkCode = c;
+        } else if (c >= '0' && c <= '9') {
+            vkCode = c;
+        }
+    } else {
+        // Handle special keys
+        if (keyStr == "backspace") vkCode = VK_BACK;
+        else if (keyStr == "tab") vkCode = VK_TAB;
+        else if (keyStr == "return") vkCode = VK_RETURN;
+        else if (keyStr == "escape") vkCode = VK_ESCAPE;
+        else if (keyStr == "space") vkCode = VK_SPACE;
+        else if (keyStr == "pageup") vkCode = VK_PRIOR;
+        else if (keyStr == "pagedown") vkCode = VK_NEXT;
+        else if (keyStr == "end") vkCode = VK_END;
+        else if (keyStr == "home") vkCode = VK_HOME;
+        else if (keyStr == "left") vkCode = VK_LEFT;
+        else if (keyStr == "up") vkCode = VK_UP;
+        else if (keyStr == "right") vkCode = VK_RIGHT;
+        else if (keyStr == "down") vkCode = VK_DOWN;
+        else if (keyStr == "delete") vkCode = VK_DELETE;
+    }
+
+    if (vkCode == 0) {
+        Napi::Error::New(env, "Invalid key name").ThrowAsJavaScriptException();
+        return env.Null();
+    }
+
+    // Convert modifiers array to mask
+    Napi::Array modArray = info[1].As<Napi::Array>();
+    UINT modifiers = 0;
+    for (uint32_t i = 0; i < modArray.Length(); i++) {
+        Napi::Value mod = modArray[i];
+        if (!mod.IsString()) continue;
+        
+        std::string modStr = mod.As<Napi::String>().Utf8Value();
+        if (modStr == "alt") modifiers |= MOD_ALT;
+        else if (modStr == "ctrl") modifiers |= MOD_CONTROL;
+        else if (modStr == "shift") modifiers |= MOD_SHIFT;
+        else if (modStr == "win") modifiers |= MOD_WIN;
+    }
+
+    // Create window for messages if not already created
+    HWND hwnd = CreateTestWindow();
+    if (!hwnd) {
+        Napi::Error::New(env, "Failed to create window").ThrowAsJavaScriptException();
+        return env.Null();
+    }
+
+    // Create keyboard hook if not already created
+    if (!keyboardHook) {
+        keyboardHook = SetWindowsHookEx(WH_KEYBOARD_LL, KeyboardProc, NULL, 0);
+        if (!keyboardHook) {
+            DestroyWindow(hwnd);
+            Napi::Error::New(env, "Failed to create keyboard hook").ThrowAsJavaScriptException();
+            return env.Null();
+        }
+    }
+
+    // Create hotkey context
+    HotkeyContext* context = new HotkeyContext();
+    context->hwnd = hwnd;
     context->modifiers = modifiers;
-    context->key = key;
-    
-    std::cout << "Creating thread-safe function wrapper for JavaScript callback" << std::endl;
+    context->key = vkCode;
     context->tsfn = Napi::ThreadSafeFunction::New(
         env,
-        callback,
+        info[2].As<Napi::Function>(),
         "Hotkey Callback",
         0,
         1
     );
 
-    std::cout << "Starting message loop thread" << std::endl;
+    // Start message thread
     context->messageThread = std::thread(MessageLoop, context);
-    hotkeyContexts[hotkeyId] = context;
-    
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    
-    // Try both registration methods
-    if (!RegisterHotKey(NULL, hotkeyId, modifiers, key)) {
-        DWORD error = GetLastError();
-        std::cout << "Failed to register global hotkey. Error: " << error << std::endl;
-        
-        if (!RegisterHotKey(context->hwnd, hotkeyId, modifiers, key)) {
-            error = GetLastError();
-            std::cout << "Failed to register window hotkey. Error: " << error << std::endl;
-        }
-    }
 
-    std::cout << "Hotkey registration complete - ID: " << hotkeyId << std::endl;
+    int hotkeyId = nextHotkeyId++;
+    hotkeyContexts[hotkeyId] = context;
+
     return Napi::Number::New(env, hotkeyId);
 }
 

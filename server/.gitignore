@@ -9,3 +9,4 @@ certs
 !certs/.gitkeep
 coverage
 build
+cmake-build-debug
