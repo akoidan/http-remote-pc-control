@@ -31,6 +31,29 @@
       }
     }
   },
+  "keySend": {
+    "commands": [
+      {
+        "destination": "{{destination}}",
+        "focusPid": "{{focusPid}}"
+      },
+      {
+        "destination": "{{destination}}",
+        "keySend": "{{keySend}}"
+      }
+    ],
+    "variables": {
+      "destination": {
+        "type": "string"
+      },
+      "focusPid": {
+        "type": "number"
+      },
+      "keySend": {
+        "type": "string"
+      }
+    }
+  },
   "loginProceed": {
     "commands": [
       {
