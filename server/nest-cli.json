@@ -2,8 +2,8 @@
   "collection": "@nestjs/schematics",
   "sourceRoot": "src",
   "compilerOptions": {
-    "assets": [],
-    "watchAssets": true,
-    "deleteOutDir": true
+    "assets": ["**/*.node"],
+    "deleteOutDir": true,
+    "watchAssets": true
   }
 }

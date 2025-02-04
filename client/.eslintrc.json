@@ -131,7 +131,6 @@
     "import/no-deprecated":1,
     "import/no-dynamic-require": 1,
     "import/no-extraneous-dependencies":1,
-    "import/no-internal-modules": [ 1, {"allow": [ "@nut-tree-fork/**"]} ],
     "import/no-mutable-exports":1,
     "import/no-named-default": 1,
     "max-classes-per-file": 0,

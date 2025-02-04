@@ -3,6 +3,7 @@
   "sourceRoot": "src",
   "compilerOptions": {
     "assets": ["**/*.node"],
-    "watchAssets": true
+    "watchAssets": true,
+    "deleteOutDir": true
   }
 }

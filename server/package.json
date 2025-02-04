@@ -50,7 +50,9 @@
     "ts-jest": "^29.2.5",
     "typescript": "^5.4.5",
     "zod-to-json-schema": "^3.24.1",
-    "zod2md": "^0.1.4"
+    "zod2md": "^0.1.4",
+    "tsconfig-paths": "^4.2.0",
+    "ts-node": "^10.9.2"
   },
   "engines": {
     "node": ">=18.0.0 <19",
@@ -68,6 +70,11 @@
       "node18-win-x64"
     ]
   },
+  "binary": {
+    "napi_versions": [
+      8
+    ]
+  },
   "bin": "dist/main.js",
   "dependencies": {
     "@nestjs/common": "^10.4.15",
@@ -77,8 +84,6 @@
     "jsonc-parser": "^3.3.1",
     "reflect-metadata": "^0.2.2",
     "rxjs": "7.1.0",
-    "ts-node": "^10.9.2",
-    "tsconfig-paths": "^4.2.0",
     "zod": "^3.23.8"
   }
 }

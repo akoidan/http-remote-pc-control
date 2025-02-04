@@ -24,7 +24,6 @@ export class KeyboardWin32LinuxService implements IKeyboardService {
   }
 
   public async sendKey(keys: string[], holdKeys: string[]): Promise<void> {
-    // const libnut = require('@nut-tree-fork/libnut-win32/build/Release/libnut.node')
     for (const key of holdKeys) {
       this.logger.log(`HoldKey: \u001b[35m${key}`);
       await sleep(10);
