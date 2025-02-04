@@ -5,17 +5,20 @@ import {
 } from '@nestjs/common';
 import {ConfigService} from '@/config/config-service';
 import * as process from 'node:process';
+import {ConfigsPathService} from '@/config/configs-path.service';
 
 @Module({
   providers: [
     Logger,
+    ConfigsPathService,
     {
       provide: ConfigService,
-      useFactory: (logger: Logger): ConfigService => new ConfigService(
+      useFactory: (logger: Logger, configPath: ConfigsPathService): ConfigService => new ConfigService(
         logger,
-        process.env
+        process.env,
+        configPath,
       ),
-      inject: [Logger],
+      inject: [Logger, ConfigsPathService],
     },
   ],
   exports: [ConfigService],

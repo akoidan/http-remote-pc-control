@@ -20,8 +20,7 @@ interface HotkeyNativeModule {
   cleanupHotkeys(): void;
 }
 
-interface INativeModule extends  HotkeyNativeModule {
-}
+type INativeModule = HotkeyNativeModule
 
 type ModifierKey = 'alt' | 'ctrl' | 'shift' | 'super' | 'win';
 

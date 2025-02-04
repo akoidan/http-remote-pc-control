@@ -64,4 +64,4 @@ jobs:
       - name: Build
         run: |
           cd server
-          yarn build
+          yarn transpile

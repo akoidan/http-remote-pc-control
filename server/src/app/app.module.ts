@@ -12,8 +12,8 @@ import {ClientService} from '@/client/client-service';
 import {ShortcutProcessingService} from '@/logic/shortcut-processing.service';
 import {LogicModule} from '@/logic/logic.module';
 import {asyncLocalStorage} from '@/app/custom-logger';
-import {NativeModule} from "@/native/native-module";
-import {INativeModule, Native} from "@/native/native-model";
+import {NativeModule} from '@/native/native-module';
+import {INativeModule, Native} from '@/native/native-model';
 
 @Module({
   imports: [ConfigModule, ClientModule, LogicModule, NativeModule],

@@ -44,5 +44,5 @@ export type {
   LaunchExeRequest,
   TypeTextRequest,
   KillExeByNameRequest,
-  KillExeByPidRequest
+  KillExeByPidRequest,
 };

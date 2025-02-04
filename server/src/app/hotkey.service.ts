@@ -6,7 +6,7 @@ import {
 import {
   INativeModule,
   ModifierKey,
-  Native
+  Native,
 } from '@/native/native-model';
 
 @Injectable()

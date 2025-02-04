@@ -2,16 +2,16 @@ import {
   Injectable,
   Logger,
 } from '@nestjs/common';
-import { CommandProcessingService } from 'src/logic/command-processing.service';
+import {CommandProcessingService} from 'src/logic/command-processing.service';
 import {
   MacroShortcutMapping,
   MacroShortcutMappingCircular,
   RandomShortcutMapping,
   ShortsData,
 } from '@/config/types/shortcut';
-import { CommandOrMacro } from '@/config/types/macros';
-import { asyncLocalStorage } from '@/app/custom-logger';
-import { Command } from '@/config/types/commands';
+import {CommandOrMacro} from '@/config/types/macros';
+import {asyncLocalStorage} from '@/app/custom-logger';
+import {Command} from '@/config/types/commands';
 
 @Injectable()
 export class ShortcutProcessingService {
