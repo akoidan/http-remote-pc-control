@@ -8,6 +8,8 @@
 static std::thread* g_printerThread = nullptr;
 static std::atomic<bool> g_threadRunning{false};
 static Napi::ThreadSafeFunction g_tsfn;
+static UINT g_modifiers = 0;
+static int g_vk = 0;
 
 // Window procedure
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
@@ -51,13 +53,13 @@ void PrinterThread() {
 
     std::cout << "Window created: " << std::hex << hwnd << std::dec << std::endl;
 
-    // Register Alt+1 hotkey
-    if (!RegisterHotKey(hwnd, 1, MOD_ALT, '1')) {
+    // Register hotkey
+    if (!RegisterHotKey(hwnd, 1, g_modifiers, g_vk)) {
         std::cout << "Failed to register hotkey. Error: " << GetLastError() << std::endl;
         return;
     }
 
-    std::cout << "Hotkey registered successfully. Press Alt+1..." << std::endl;
+    std::cout << "Hotkey registered successfully. Press " << (g_modifiers & MOD_ALT ? "Alt+" : "") << (g_modifiers & MOD_CONTROL ? "Ctrl+" : "") << (g_modifiers & MOD_SHIFT ? "Shift+" : "") << (g_modifiers & MOD_WIN ? "Win+" : "") << char(g_vk) << std::endl;
 
     // Message loop with periodic callback to keep Node.js alive
     MSG msg = {};
@@ -89,6 +91,46 @@ void PrinterThread() {
 // Register hotkey (just starts the printer thread)
 Napi::Value RegisterHotkey(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
+
+    if (info.Length() < 2) {
+        Napi::TypeError::New(env, "Wrong number of arguments").ThrowAsJavaScriptException();
+        return env.Null();
+    }
+
+    if (!info[0].IsString() || !info[1].IsArray()) {
+        Napi::TypeError::New(env, "Wrong arguments").ThrowAsJavaScriptException();
+        return env.Null();
+    }
+
+    // Get key
+    std::string keyStr = info[0].As<Napi::String>().Utf8Value();
+    int vk = 0;
+    if (keyStr.length() == 1) {
+        vk = keyStr[0];  // Use character directly
+        std::cout << "Using key: " << keyStr << std::endl;
+    }
+
+    if (vk == 0) {
+        Napi::Error::New(env, "Invalid key").ThrowAsJavaScriptException();
+        return env.Null();
+    }
+
+    // Get modifiers
+    UINT modifiers = 0;
+    Napi::Array modArray = info[1].As<Napi::Array>();
+    for (uint32_t i = 0; i < modArray.Length(); i++) {
+        Napi::Value mod = modArray[i];
+        if (!mod.IsString()) continue;
+        
+        std::string modStr = mod.As<Napi::String>().Utf8Value();
+        if (modStr == "alt") modifiers |= MOD_ALT;
+        else if (modStr == "ctrl" || modStr == "control") modifiers |= MOD_CONTROL;
+        else if (modStr == "shift") modifiers |= MOD_SHIFT;
+        else if (modStr == "win" || modStr == "meta") modifiers |= MOD_WIN;
+    }
+
+    g_modifiers = modifiers;
+    g_vk = vk;
 
     if (!g_printerThread) {
         // Create a ThreadSafeFunction that will keep Node.js alive
