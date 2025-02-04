@@ -27,7 +27,7 @@
     "native:build:debug": "cmake-js build --debug"
   },
   "devDependencies": {
-    "@nestjs/cli": "^11.0.2",
+    "@nestjs/cli": "^10.4.9",
     "@nestjs/testing": "^11.0.3",
     "@types/bindings": "^1.5.5",
     "@types/cli-color": "^2.0.6",
