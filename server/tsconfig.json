@@ -19,5 +19,12 @@
     "removeComments": true,
     "preserveConstEnums": true,
     "sourceMap": true
-  }
+  },
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build",
+    "build/**/*",
+    "cmake-build-debug"
+  ]
 }
