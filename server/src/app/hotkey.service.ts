@@ -27,8 +27,8 @@ export class HotkeyService {
     const key = modifiers.pop() as string;
     const ret = this.native.registerHotkey(key, modifiers, cb);
     this.logger.debug(`registering ${shortCut} shortcut`);
-    if (!ret) {
-      throw Error(`Cannot bind ${shortCut} shortcut`);
-    }
+    // if (!ret) {
+    //   throw Error(`Cannot bind ${shortCut} shortcut`);
+    // }
   }
 }
