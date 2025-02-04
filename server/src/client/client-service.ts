@@ -1,7 +1,8 @@
 import {FetchClient} from '@/client/http-client';
 import {
   FocusExeRequest,
-  KillExeRequest,
+  KillExeByNameRequest,
+  KillExeByPidRequest,
   LaunchExeRequest,
   LaunchPidResponse,
   MouseClickRequest,
@@ -36,8 +37,19 @@ export class ClientService {
     return this.client.post(client, '/launch-exe', request, 3000, true);
   }
 
-  async killExe(client: string, request: KillExeRequest): Promise<void> {
+  /**
+   @deprecated use @{ClientService.killExeByName}
+   */
+  async killExe(client: string, request: KillExeByNameRequest): Promise<void> {
     return this.client.post(client, '/kill-exe', request);
+  }
+
+  async killExeByName(client: string, request: KillExeByNameRequest): Promise<void> {
+    return this.client.post(client, '/kill-exe-by-name', request);
+  }
+
+  async killExeById(client: string, request: KillExeByPidRequest): Promise<void> {
+    return this.client.post(client, '/kill-exe-by-pid', request);
   }
 
   async typeText(client: string, request: TypeTextRequest): Promise<void> {

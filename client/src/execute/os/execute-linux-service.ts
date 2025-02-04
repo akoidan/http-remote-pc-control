@@ -20,7 +20,7 @@ export class ExecuteLinuxService implements IExecuteService {
     return this.launcher.launchExe(pathToExe, args, waitTillFinish);
   }
 
-  async killExe(name: string): Promise<boolean> {
+  async killExeByName(name: string): Promise<boolean> {
     this.logger.log(`Kill ${name}`);
     try {
       const {stdout, stderr} = await promisify(exec)(`pkill -9 ${name}`);
@@ -29,6 +29,21 @@ export class ExecuteLinuxService implements IExecuteService {
     } catch (e) {
       if (e?.code === 1) {
         this.logger.debug(`Process "${name}" is not up. Skipping it`);
+        return false;
+      }
+      throw new InternalServerErrorException(e);
+    }
+  }
+
+    async killExeByPid(pid: number): Promise<boolean> {
+    this.logger.log(`Kill ${pid}`);
+    try {
+      const {stdout, stderr} = await promisify(exec)(`kill -9 ${pid}`);
+      this.logger.debug(`Process "${pid}" killed successfully:`, stdout || stderr);
+      return true;
+    } catch (e) {
+      if (e?.code === 1) {
+        this.logger.debug(`Process "${pid}" is not up. Skipping it`);
         return false;
       }
       throw new InternalServerErrorException(e);

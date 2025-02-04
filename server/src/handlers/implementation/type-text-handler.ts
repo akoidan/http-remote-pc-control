@@ -2,9 +2,9 @@ import type {
   Command,
   TypeTextCommand,
 } from '@/config/types/commands';
-import {BaseCommandHandler} from 'src/logic/commands/base-command-handler';
+import {CommandHandler} from '@/handlers/command-handler.service';
 
-export class TypeTextHandler extends BaseCommandHandler {
+export class TypeTextHandler extends CommandHandler {
   canHandle(command: Command): command is TypeTextCommand {
     return 'typeText' in command;
   }

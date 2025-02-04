@@ -16,9 +16,14 @@ bash ./gen-cert.sh
 It will generate:
  - self-sign CA certificate with its private key and put CA cert into both ./server/certs/ca-cert.pem and ./client/certs/ca-cert.pem
  - server and client private key in the ./server/certs/key.pem and ./client/certs/key.pem
- - server and client certificate that is signed with CA private key and put it into  ./server/certs/cert.pem and ./server/certs/cert.pem
+ - server and client certificate thatis signed with CA private key and put it into  ./server/certs/cert.pem and ./server/certs/cert.pem
 
 **If you don't care about security** you can grab certificates directories from [poc/mtls/client](/pocs/mtls/client/certs) and [poc/mtls/server](/pocs/mtls/server/certs).
+
+### Config
+Create a config mapper file in the PC that you want to controll other PCs from. We call it server (see [Server](#server)) .The file should be named as **config.jsonc** ans be with the same directory as server app.exe. You can get examples of config files [here](server/src/config/examples) and documentation [here](./server/README.md#root). 
+
+Also you can find json schema here [json-schema.json](server/json-schema.json). You can use any editor that support json schema. E.g. [jsonschemavalidator.net](https://www.jsonschemavalidator.net/). Just paste the content from [json-schema.json](server/json-schema.json) into the left panel of it, and you can write your config in the right panel. After it as I mentioned above put it into **config.jsonc** with the same directory you have you app.exe for the server.
 
 ### Client
  - Download client you want to receive shorcuts [releases](https://github.com/akoidan/l2/releases).
@@ -30,10 +35,9 @@ It will generate:
  
 ### Server
  - Download server you want to send shortcuts [releases](https://github.com/akoidan/l2/releases)
- - Unpack archive
- - Create a config file inside **/resources/app/src/config/config.jsonc**. You can find examples [here](server/src/config/examples) and documentation [here](./server/README.md#root) 
- - Copy ./server/certs directory into a current directory. So pwd contains `certs` directory
- - run **l2.exe** as regular user.
+ - You already have your config.jsonc described in [config](#config)
+ - Put server sertificate into `certs` directory which is in the same directory as app.exe
+ - run **app.exe** as regular user.
  - If it crasher, run it from cmd to get output
 
 ## Security

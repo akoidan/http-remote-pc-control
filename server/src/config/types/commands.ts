@@ -65,8 +65,12 @@ const mouseClickCommandSchema = z.object({
   mouseMoveY: z.union([z.number(), variableValueSchema]).describe('Y coordinate'),
 }).strict().merge(baseSchema).describe('Moves mouse to specified coordinates and clicks with left button');
 
-const killExeCommandSchema = z.object({
-  kill: z.union([z.string(), variableValueSchema]).describe('Executable file name. E.g. Chrome.exe'),
+const killExeByNameCommandSchema = z.object({
+  killByName: z.union([z.string(), variableValueSchema]).describe('Executable file name. E.g. Chrome.exe'),
+}).strict().merge(baseSchema).describe('Kills a process on the remote PC.');
+
+const killExeByPidCommandSchema = z.object({
+  killByPid: z.union([z.number(), variableValueSchema]).describe('Executalbe process ID. E.g. 1234'),
 }).strict().merge(baseSchema).describe('Kills a process on the remote PC.');
 
 const commandSchema = z.union([
@@ -75,7 +79,8 @@ const commandSchema = z.union([
   launchExeCommandSchema,
   focusWindowCommandSchema,
   typeTextCommandSchema,
-  killExeCommandSchema,
+  killExeByPidCommandSchema,
+  killExeByNameCommandSchema,
 ]).describe('A remote command');
 
 
@@ -88,7 +93,8 @@ type ExecuteCommand = z.infer<typeof launchExeCommandSchema>
 type Command = z.infer<typeof commandSchema>
 type Key = z.infer<typeof keySchema>;
 
-type KillCommand = z.infer<typeof killExeCommandSchema>
+type KillExeByPidCommand = z.infer<typeof killExeByPidCommandSchema>
+type KillExeByNameCommand = z.infer<typeof killExeByNameCommandSchema>
 
 export type {
   TypeTextCommand,
@@ -99,7 +105,8 @@ export type {
   ExecuteCommand,
   Command,
   Key,
-  KillCommand,
+  KillExeByPidCommand,
+  KillExeByNameCommand,
 };
 
 export {
@@ -111,7 +118,8 @@ export {
   focusWindowCommandSchema,
   typeTextCommandSchema,
   mouseClickCommandSchema,
-  killExeCommandSchema,
+  killExeByNameCommandSchema,
+  killExeByPidCommandSchema,
   commandSchema,
 };
 

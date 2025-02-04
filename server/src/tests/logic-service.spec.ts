@@ -3,10 +3,8 @@ import {ShortcutProcessingService} from '@/logic/shortcut-processing.service';
 import {ClientService} from '@/client/client-service';
 import {Logger} from '@nestjs/common';
 import {ConfigService} from '@/config/config-service';
-import {
-  createConfigTyrsMock,
-} from '@/tests/mocks/config-provider';
 import {LogicModule} from '@/logic/logic.module';
+import {ConfigsPathService} from '@/config/configs-path.service';
 
 describe('logic-service', () => {
   it('should demo curl request', async() => {
@@ -26,7 +24,7 @@ describe('logic-service', () => {
         },
         {
           provide: ConfigService,
-          useFactory: (logger: Logger) => createConfigTyrsMock(logger),
+          useFactory: (logger: Logger) => new ConfigService(logger, process.env, new ConfigsPathService()),
           inject: [Logger],
         },
         Logger,

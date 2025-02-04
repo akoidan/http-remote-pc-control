@@ -2,9 +2,9 @@ import type {
   Command,
   MouseClickCommand,
 } from '@/config/types/commands';
-import {BaseCommandHandler} from 'src/logic/commands/base-command-handler';
+import {CommandHandler} from '@/handlers/command-handler.service';
 
-export class MouseClickHandler extends BaseCommandHandler {
+export class MouseClickHandler extends CommandHandler {
   canHandle(command: Command): command is MouseClickCommand {
     return 'mouseMoveX' in command;
   }

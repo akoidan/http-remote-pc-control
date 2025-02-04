@@ -9,7 +9,7 @@ import {
   MacroCommand,
 } from '@/config/types/macros';
 import {VariableResolutionService} from 'src/logic/variable-resolution.service';
-import {BaseCommandHandler} from 'src/logic/commands/base-command-handler';
+import {CommandHandler} from '@/handlers/command-handler.service';
 
 @Injectable()
 export class CommandProcessingService {
@@ -17,7 +17,7 @@ export class CommandProcessingService {
     private readonly configService: ConfigService,
     private readonly variableService: VariableResolutionService,
     private readonly logger: Logger,
-    private readonly commandChain: BaseCommandHandler
+    private readonly comandHandler: CommandHandler
   ) {
 
   }
@@ -52,7 +52,7 @@ export class CommandProcessingService {
     const currRec = this.variableService.replaceEnvVars(input);
     const ip = this.configService.getIps()[(currRec as Command).destination];
     this.logger.debug(`Running ${JSON.stringify(input)}`);
-    await this.commandChain.handle(ip, currRec);
+    await this.comandHandler.handle(ip, currRec);
     await this.awaitDelay(combDelay, input.delay as number | undefined);
   }
 

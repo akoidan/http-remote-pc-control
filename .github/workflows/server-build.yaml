@@ -6,9 +6,41 @@ on:
     paths:
       - 'server/**'
       - '.github/workflows/server-build.yaml'
+  workflow_dispatch:
+    inputs:
+      release_name:
+        description: 'Release Name'
+        required: true
 
 jobs:
-  build:
+  create_release:
+    runs-on: ubuntu-22.04
+    permissions: write-all
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+    steps:
+    - name: Set Short SHA
+      run: echo "SHORT_SHA=${GITHUB_SHA::7}" >> $GITHUB_ENV
+
+    - name: Set Release Name from Input
+      if: github.event_name == 'workflow_dispatch'
+      run: echo "RELEASE_NAME=${{ github.event.inputs.release_name }}" >> $GITHUB_ENV
+
+    - name: Set Release Name for Push Trigger
+      if: github.event_name == 'push'
+      run: echo "RELEASE_NAME=${{ env.SHORT_SHA }}" >> $GITHUB_ENV
+    - name: Create GitHub Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: server-${{ env.RELEASE_NAME }}
+        release_name: server-${{ env.RELEASE_NAME }}
+        draft: false
+        prerelease: false
+  win32:
+    needs: [ create_release]
     runs-on: windows-2022
     permissions: write-all
     steps:
@@ -31,28 +63,64 @@ jobs:
       - name: Build
         run: |
           cd server
-          yarn build
-      - name: Set Short SHA
-        shell: bash
-        run: echo "SHORT_SHA=${GITHUB_SHA::7}" >> $GITHUB_ENV
-      - name: Create Release
-        id: create_release
-        uses: comnoco/create-release-action@v2.0.5
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: server-${{ env.SHORT_SHA }}
-          release_name: server-${{ env.SHORT_SHA }}
-          draft: false
-          prerelease: false
-      - name: Compress Directory
-        run: tar -czvf l2-win32-x64.tar.gz -C ./server/l2-win32-x64 .
+          yarn build:win32
+
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: l2-win32-x64.tar.gz
-          asset_name: server.tar.gz
-          asset_content_type: application/gzip
+          upload_url: ${{ needs.create_release.outputs.upload_url }}
+          asset_path: ./server/app.exe
+          asset_name: app.exe
+          asset_content_type: application/vnd.microsoft.portable-executable
+  linux:
+    runs-on: ubuntu-22.04
+    needs: [ create_release ]
+    permissions: write-all
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Cache APT Packages
+        uses: actions/cache@v4
+        with:
+          path: /var/cache/apt/archives
+          key: apt-cache-${{ runner.os }}-${{ hashFiles('.github/workflows/server-build.yaml') }}
+          restore-keys: |
+            apt-cache-${{ runner.os }}-
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libx11-dev libxtst-dev libxcb-ewmh-dev libxcb1-dev cmake g++ make
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Cache node_modules cache
+        id: cache-node
+        uses: actions/cache@v4
+        with:
+          path: |
+            server/node_modules
+          key: ${{ runner.os }}-node-modules-server-${{ hashFiles('server/yarn.lock') }}
+      - name: Install yarn deps
+        if: steps.cache-node.outputs.cache-hit != 'true'
+        run: |
+          cd server
+          yarn install --frozen-lockfile
+      - name: Build
+        run: |
+          cd server
+          yarn build:linux
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create_release.outputs.upload_url }}
+          asset_path: ./server/app
+          asset_name: app.elf
+          asset_content_type: application/x-executable

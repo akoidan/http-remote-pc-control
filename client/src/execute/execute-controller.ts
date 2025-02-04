@@ -4,12 +4,13 @@ import {
   Post,
 } from '@nestjs/common';
 import {
-  KillExeRequest,
-  killExeRequestSchema,
+  KillExeByNameRequest,
+  KillExeByPidRequest,
+  killExeByPidRequestSchema,
   LaunchExeRequest,
   launchExeRequestSchema,
   LaunchPidResponse,
-} from '@/execute/execute-dto';
+ killExeByNameRequestSchema} from '@/execute/execute-dto';
 import {ZodBody} from '@/validation/zod-validator';
 import {
   ExecuteService,
@@ -30,8 +31,21 @@ export class ExecuteController {
     return {pid};
   }
 
+  /**
+   * @deprecated This endpoint will be removed in the next version. Use `/new-endpoint` instead.
+   */
   @Post('kill-exe')
-  async killExe(@ZodBody(killExeRequestSchema) body: KillExeRequest): Promise<void> {
-    await this.executionService.killExe(body.name);
+  async killExe(@ZodBody(killExeByNameRequestSchema) body: KillExeByNameRequest): Promise<void> {
+    await this.executionService.killExeByName(body.name);
+  }
+
+  @Post('kill-exe-by-name')
+  async killExeByName(@ZodBody(killExeByNameRequestSchema) body: KillExeByNameRequest): Promise<void> {
+    await this.executionService.killExeByName(body.name);
+  }
+
+  @Post('kill-exe-by-pid')
+  async killExeByPid(@ZodBody(killExeByPidRequestSchema) body: KillExeByPidRequest): Promise<void> {
+    await this.executionService.killExeByPid(body.pid);
   }
 }

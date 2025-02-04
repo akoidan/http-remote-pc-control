@@ -1,35 +1,35 @@
 import {
-  app,
-  globalShortcut,
-} from 'electron';
-import {
+  Inject,
   Injectable,
   Logger,
 } from '@nestjs/common';
+import {
+  INativeModule,
+  ModifierKey,
+  Native,
+} from '@/native/native-model';
 
 @Injectable()
 export class HotkeyService {
-  constructor(private readonly logger: Logger) {
+  constructor(
+      private readonly logger: Logger,
+      @Inject(Native)
+      private readonly native: INativeModule
+  ) {
   }
 
-  async init(): Promise<void> {
-    this.logger.debug('Waiting for electron app to init...');
-    await app.whenReady();
-    app.on('will-quit', () => {
-      globalShortcut.unregisterAll();
-    });
-  }
-
-  shutdown(): void {
-    this.logger.log('Shutting down electron service...');
-    app.exit(1);
+  unregister(): void {
+    this.native.cleanupHotkeys();
   }
 
   registerShortcut(shortCut: string, cb: () => void): void {
-    const ret = globalShortcut.register(shortCut, cb);
+    const modifiers: ModifierKey[] = shortCut.split('+').map(a => a.toLowerCase()) as ModifierKey[];
+    const key = modifiers.pop() as string;
     this.logger.debug(`registering ${shortCut} shortcut`);
-    if (!ret) {
-      throw Error(`Cannot bind ${shortCut} shortcut`);
+    try {
+      this.native.registerHotkey(key, modifiers, cb);
+    } catch (e) {
+      throw new Error(`Unable to register ${shortCut} becase ${e.message}`);
     }
   }
 }

@@ -21,12 +21,35 @@
     "commands": [
       {
         "destination": "{{destination}}",
-        "kill": "L2.exe",
+        "killByName": "L2.exe",
         "delay": 2000
       }
     ],
     "variables": {
       "destination": {
+        "type": "string"
+      }
+    }
+  },
+  "keySend": {
+    "commands": [
+      {
+        "destination": "{{destination}}",
+        "focusPid": "{{focusPid}}"
+      },
+      {
+        "destination": "{{destination}}",
+        "keySend": "{{keySend}}"
+      }
+    ],
+    "variables": {
+      "destination": {
+        "type": "string"
+      },
+      "focusPid": {
+        "type": "number"
+      },
+      "keySend": {
         "type": "string"
       }
     }
@@ -82,7 +105,7 @@
     "commands": [
       {
         "destination": "{{destination}}",
-        "kill": "L2.exe",
+        "killByName": "L2.exe",
         "delay": 200
       },
       {
@@ -153,7 +176,7 @@
     "commands": [
       {
         "destination": "{{destination}}",
-        "kill": "L2.exe",
+        "killByName": "L2.exe",
         "delay": 2000
       },
       {

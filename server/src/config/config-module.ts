@@ -3,23 +3,24 @@ import {
   Module,
   OnModuleInit,
 } from '@nestjs/common';
-import * as path from 'path';
 import {ConfigService} from '@/config/config-service';
 import * as process from 'node:process';
+import {ConfigsPathService} from '@/config/configs-path.service';
+import {ConfigReaderService} from '@/config/config-reader-service';
 
 @Module({
   providers: [
     Logger,
+    ConfigsPathService,
+    ConfigReaderService,
     {
       provide: ConfigService,
-      useFactory: (logger: Logger): ConfigService => new ConfigService(
-        path.join(__dirname, 'config.jsonc'),
-        path.join(__dirname, 'macros.jsonc'),
-        path.join(__dirname, 'variables.jsonc'),
+      useFactory: (logger: Logger, reader: ConfigReaderService): ConfigService => new ConfigService(
         logger,
-        process.env
+        process.env,
+        reader,
       ),
-      inject: [Logger],
+      inject: [Logger, ConfigReaderService],
     },
   ],
   exports: [ConfigService],

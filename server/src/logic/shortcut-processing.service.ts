@@ -15,7 +15,7 @@ import {Command} from '@/config/types/commands';
 
 @Injectable()
 export class ShortcutProcessingService {
-  private activeFighterIndex = 0;
+  private activeFighterIndex: Record<string, number> = {};
 
   constructor(
     private readonly commandProcessor: CommandProcessingService,
@@ -49,12 +49,8 @@ export class ShortcutProcessingService {
   private async processShortcutsWoMacro(comb: RandomShortcutMapping): Promise<void> {
     const commands: Command[] = comb.commands.flatMap(comm => this.commandProcessor.resolveAliases(comm));
     if (comb.circular && commands.length > 0) {
-      await this.commandProcessor.resolveMacroAndAlias(commands[this.activeFighterIndex], false, comb.delay);
-      if (this.activeFighterIndex >= commands.length - 1) {
-        this.activeFighterIndex = 0;
-      } else {
-        this.activeFighterIndex++;
-      }
+      const command = this.getNextFighterIndex(comb, commands);
+      await this.commandProcessor.resolveMacroAndAlias(command, false, comb.delay);
     } else {
       if (comb.shuffle) {
         this.shuffle(commands);
@@ -63,13 +59,26 @@ export class ShortcutProcessingService {
     }
   }
 
-  private async processShortcutsThreadWoMacro(comb: MacroShortcutMappingCircular): Promise<void> {
-    if (this.activeFighterIndex >= comb.threadsCircular.length - 1) {
-      this.activeFighterIndex = 0;
-    } else {
-      this.activeFighterIndex++;
+  getNextFighterIndex<T>(comb: unknown, commands: T[]): T {
+    const key = JSON.stringify(comb);
+    // if not initialized, or index out of bounds
+    if (commands.length === 0) {
+      throw Error(`No commands found for ${key}`);
     }
-    const commands: Command[] = comb.threadsCircular[this.activeFighterIndex].flatMap(comm => this.commandProcessor.resolveAliases(comm));
+    if (typeof this.activeFighterIndex[key] === 'undefined') {
+      this.activeFighterIndex[key] = 0;
+    } else {
+      this.activeFighterIndex[key]++;
+    }
+    if (this.activeFighterIndex[key] >= commands.length) {
+      this.activeFighterIndex[key] = 0;
+    }
+    return commands[this.activeFighterIndex[key]];
+  }
+
+  private async processShortcutsThreadWoMacro(comb: MacroShortcutMappingCircular): Promise<void> {
+    const thread = this.getNextFighterIndex(comb, comb.threadsCircular);
+    const commands: Command[] = thread.flatMap(comm => this.commandProcessor.resolveAliases(comm));
     for (const command of commands) {
       await this.commandProcessor.resolveMacroAndAlias(command, false, comb.delay);
     }

@@ -206,6 +206,20 @@
               "destination": "desktop"
             }
           }
+        ],
+        [
+          {
+            "destination": "bd",
+            "killByPid": "{{bd}}",
+            "delay": 2000
+          }
+        ],
+        [
+          {
+            "destination": "sws",
+            "killByPid": "{{sws}}",
+            "delay": 2000
+          }
         ]
       ],
       "name": "Kill all L2 no main",
@@ -326,7 +340,7 @@
             "keySend": "6"
           }
         },
-         {
+        {
           "macro": "keySend",
           "variables": {
             "focusPid": "{{wc}}",

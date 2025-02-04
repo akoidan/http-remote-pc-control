@@ -2,13 +2,13 @@ import {
   Command,
   ExecuteCommand,
 } from '@/config/types/commands';
-import {BaseCommandHandler} from 'src/logic/commands/base-command-handler';
+import {CommandHandler} from '@/handlers/command-handler.service';
 import {ConfigService} from '@/config/config-service';
 import {Injectable} from '@nestjs/common';
 import {ClientService} from '@/client/client-service';
 
 @Injectable()
-export class ExecuteHandler extends BaseCommandHandler {
+export class ExecuteHandler extends CommandHandler {
   constructor(
     clientService: ClientService,
     private readonly configService: ConfigService,

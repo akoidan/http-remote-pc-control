@@ -20,8 +20,12 @@ interface LaunchExeRequest {
   waitTillFinish: boolean;
 }
 
-interface KillExeRequest {
+interface KillExeByNameRequest {
   name: string;
+}
+
+interface KillExeByPidRequest {
+  pid: number;
 }
 
 interface TypeTextRequest {
@@ -39,5 +43,6 @@ export type {
   LaunchPidResponse,
   LaunchExeRequest,
   TypeTextRequest,
-  KillExeRequest,
+  KillExeByNameRequest,
+  KillExeByPidRequest,
 };
