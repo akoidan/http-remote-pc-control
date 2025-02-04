@@ -20,6 +20,7 @@ struct RegistrationRequest {
     bool pending = true;
     bool success = false;
     int hotkeyId = -1;
+    std::string errorMessage;  // Added field for error message
 };
 
 static std::thread* g_printerThread = nullptr;
@@ -116,15 +117,14 @@ void PrinterThread() {
 
                 if (!success) {
                     DWORD error = GetLastError();
-                    std::string errorMsg;
                     
                     if (error == ERROR_HOTKEY_ALREADY_REGISTERED) {
-                        errorMsg = "Hotkey is already registered by another application";
+                        g_currentRequest->errorMessage = "Hotkey is already registered by another application";
                     } else {
-                        errorMsg = "Failed to register hotkey. Error code: " + std::to_string(error);
+                        g_currentRequest->errorMessage = "Failed to register hotkey. Error code: " + std::to_string(error);
                     }
                     
-                    std::cout << "[Thread] " << errorMsg << std::endl;
+                    std::cout << "[Thread] " << g_currentRequest->errorMessage << std::endl;
                 } else {
                     std::cout << "[Thread] Hotkey " << hotkeyId << " registered successfully. Press " 
                              << (g_currentRequest->modifiers & MOD_ALT ? "Alt+" : "") 
@@ -251,7 +251,7 @@ Napi::Value RegisterHotkey(const Napi::CallbackInfo& info) {
     // Return result
     if (!request.success) {
         request.callback.Release();
-        Napi::Error::New(env, errorMessage.empty() ? "Failed to register hotkey" : errorMessage)
+        Napi::Error::New(env, request.errorMessage.empty() ? "Failed to register hotkey" : request.errorMessage)
             .ThrowAsJavaScriptException();
         return env.Null();
     }

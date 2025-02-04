@@ -26,6 +26,10 @@ export class HotkeyService {
     const modifiers: ModifierKey[] = shortCut.split('+').map(a => a.toLowerCase()) as ModifierKey[];
     const key = modifiers.pop() as string;
     this.logger.debug(`registering ${shortCut} shortcut`);
-    this.native.registerHotkey(key, modifiers, cb);
+    try {
+      this.native.registerHotkey(key, modifiers, cb);
+    } catch (e) {
+      throw new Error(`Unable to register ${shortCut} becase ${e.message}`);
+    }
   }
 }
