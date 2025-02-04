@@ -16,7 +16,8 @@ export class CertService {
   }
 
   private get certDir(): string {
-    return path.join(process.execPath.endsWith('node') || process.execPath.endsWith('node.exe') ? process.cwd() : path.dirname(process.execPath), 'certs');
+   const isNodeJs = process.execPath.endsWith('node') || process.execPath.endsWith('node.exe');
+    return path.join(isNodeJs ? process.cwd() : path.dirname(process.execPath), 'certs');
   }
 
   private get privateKeyPath(): string {

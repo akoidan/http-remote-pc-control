@@ -3,7 +3,6 @@ import {
   Module,
   OnModuleInit,
 } from '@nestjs/common';
-import * as path from 'path';
 import {ConfigService} from '@/config/config-service';
 import * as process from 'node:process';
 
@@ -13,9 +12,6 @@ import * as process from 'node:process';
     {
       provide: ConfigService,
       useFactory: (logger: Logger): ConfigService => new ConfigService(
-        path.join(__dirname, 'config.jsonc'),
-        path.join(__dirname, 'macros.jsonc'),
-        path.join(__dirname, 'variables.jsonc'),
         logger,
         process.env
       ),

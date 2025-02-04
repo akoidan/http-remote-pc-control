@@ -17,6 +17,7 @@ import {Variables} from '@/config/types/variables';
 import {MacroList} from '@/config/types/macros';
 import {ShortsData} from '@/config/types/shortcut';
 import {ConfigProvider} from '@/config/interfaces';
+import path from 'path';
 
 interface ConfigCombination {
   shortCut: string;
@@ -34,12 +35,27 @@ export class ConfigService implements ConfigProvider {
 
   // eslint-disable-next-line @typescript-eslint/max-params
   constructor(
-    private readonly configFilePath: string,
-    private readonly macroFilePath: string,
-    private readonly variablesFilePath: string,
     private readonly logger: Logger,
     private readonly envVars: Record<string, string | undefined>,
   ) {
+  }
+
+  private get configDir():string {
+    // eslint-disable-next-line max-len
+    const isNodeJs = process.execPath.endsWith('node') || process.execPath.endsWith('node.exe');
+    return isNodeJs ? process.cwd() : path.dirname(process.execPath);
+  }
+
+  private get configFilePath(): string {
+    return path.join(this.configDir, 'config.jsonc');
+  }
+
+  private get macroFilePath(): string {
+    return path.join(this.configDir, 'macros.jsonc');
+  }
+
+  private get variablesFilePath(): string {
+    return path.join(this.configDir, 'variables.jsonc');
   }
 
   public async parseConfig(): Promise<void> {
@@ -147,7 +163,7 @@ export class ConfigService implements ConfigProvider {
       return;
     }
     this.logger.debug(`Save variables #${iteration}. Caching new variables to file ${this.variablesFilePath}`);
-    let resolve: (a?: unknown)=> void = null!;
+    let resolve: (a?: unknown) => void = null!;
     this.variablesSaveLock = new Promise(r => {
       resolve = r;
     });
