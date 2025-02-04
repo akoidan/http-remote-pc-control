@@ -6,8 +6,10 @@
 #include <atomic>
 #include <map>
 #include "./headers/modifier-names.h"
+#include "./headers/key-names.h"
 
 extern std::map<std::string, int> modifier_names;
+extern std::map<std::string, int> key_names;
 
 static std::thread* g_printerThread = nullptr;
 static std::atomic<bool> g_threadRunning{false};
@@ -115,14 +117,16 @@ Napi::Value RegisterHotkey(const Napi::CallbackInfo& info) {
 
     // Get key
     std::string keyStr = info[0].As<Napi::String>().Utf8Value();
+    std::transform(keyStr.begin(), keyStr.end(), keyStr.begin(), ::tolower);  // Convert to lowercase
+    
     int vk = 0;
-    if (keyStr.length() == 1) {
-        vk = keyStr[0];  // Use character directly
-        std::cout << "Using key: " << keyStr << std::endl;
+    auto key_it = key_names.find(keyStr);
+    if (key_it != key_names.end()) {
+        vk = key_it->second;
     }
 
     if (vk == 0) {
-        Napi::Error::New(env, "Invalid key").ThrowAsJavaScriptException();
+        Napi::Error::New(env, "Invalid key name: " + keyStr).ThrowAsJavaScriptException();
         return env.Null();
     }
 
