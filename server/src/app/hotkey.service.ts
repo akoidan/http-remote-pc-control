@@ -25,10 +25,7 @@ export class HotkeyService {
   registerShortcut(shortCut: string, cb: () => void): void {
     const modifiers: ModifierKey[] = shortCut.split('+').map(a => a.toLowerCase()) as ModifierKey[];
     const key = modifiers.pop() as string;
-    const ret = this.native.registerHotkey(key, modifiers, cb);
     this.logger.debug(`registering ${shortCut} shortcut`);
-    if (!ret) {
-      throw Error(`Cannot bind ${shortCut} shortcut`);
-    }
+    this.native.registerHotkey(key, modifiers, cb);
   }
 }
