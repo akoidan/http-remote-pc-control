@@ -6,19 +6,21 @@ import {
 import {ConfigService} from '@/config/config-service';
 import * as process from 'node:process';
 import {ConfigsPathService} from '@/config/configs-path.service';
+import {ConfigReaderService} from '@/config/config-reader-service';
 
 @Module({
   providers: [
     Logger,
     ConfigsPathService,
+    ConfigReaderService,
     {
       provide: ConfigService,
-      useFactory: (logger: Logger, configPath: ConfigsPathService): ConfigService => new ConfigService(
+      useFactory: (logger: Logger, reader: ConfigReaderService): ConfigService => new ConfigService(
         logger,
         process.env,
-        configPath,
+        reader,
       ),
-      inject: [Logger, ConfigsPathService],
+      inject: [Logger, ConfigReaderService],
     },
   ],
   exports: [ConfigService],

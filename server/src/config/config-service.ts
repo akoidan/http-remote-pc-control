@@ -18,6 +18,7 @@ import {MacroList} from '@/config/types/macros';
 import {ShortsData} from '@/config/types/shortcut';
 import {ConfigProvider} from '@/config/interfaces';
 import {ConfigsPathService} from '@/config/configs-path.service';
+import {ConfigReaderService} from '@/config/config-reader-service';
 
 interface ConfigCombination {
   shortCut: string;
@@ -37,7 +38,7 @@ export class ConfigService implements ConfigProvider {
   constructor(
     private readonly logger: Logger,
     private readonly envVars: Record<string, string | undefined>,
-    private readonly configsPathSerivice: ConfigsPathService,
+    private readonly configReader: ConfigReaderService,
   ) {
   }
 
@@ -46,9 +47,9 @@ export class ConfigService implements ConfigProvider {
     if (this.configData) {
       throw new Error('Config already loaded');
     }
-    const configValue = await this.loadConfigString();
-    const macroConfigValue = await this.loadMacroConfigString();
-    const variablesConfigValue = await this.loadVariablesConfigString();
+    const configValue = await this.configReader.loadConfigString();
+    const macroConfigValue = await this.configReader.loadMacroConfigString();
+    const variablesConfigValue = await this.configReader.loadVariablesConfigString();
 
     const conf = parse(configValue) as ConfigData;
     const globalMacroConf = macroConfigValue ? parse(macroConfigValue) as MacroList : {};
@@ -79,31 +80,6 @@ export class ConfigService implements ConfigProvider {
     });
 
     this.configData = conf;
-  }
-
-  public async loadConfigString(): Promise<string> {
-    this.logger.debug(`Loading config from ${this.configsPathSerivice.configFilePath}`);
-    return fs.readFile(this.configsPathSerivice.configFilePath, 'utf8');
-  }
-
-  public async loadMacroConfigString(): Promise<string | null> {
-    this.logger.debug(`Loading macro config from ${this.configsPathSerivice.macroFilePath}`);
-    try {
-      return await fs.readFile(this.configsPathSerivice.macroFilePath, 'utf8');
-    } catch (error) {
-      this.logger.warn(`Unable to load global macros from ${this.configsPathSerivice.macroFilePath} because of ${error?.message ?? error}`);
-      return null;
-    }
-  }
-
-  public async loadVariablesConfigString(): Promise<string | null> {
-    this.logger.debug(`Loading variable config from ${this.configsPathSerivice.variablesFilePath}`);
-    try {
-      return await fs.readFile(this.configsPathSerivice.variablesFilePath, 'utf8');
-    } catch (error) {
-      this.logger.warn(`Unable to load global macros from ${this.configsPathSerivice.variablesFilePath} because of ${error?.message ?? error}`);
-      return null;
-    }
   }
 
   public getIps(): IpsData {
@@ -145,12 +121,11 @@ export class ConfigService implements ConfigProvider {
       this.logger.debug(`Save variables #${iteration}. Dropping current iteration to save variable for more prior one`);
       return;
     }
-    this.logger.debug(`Save variables #${iteration}. Caching new variables to file ${this.configsPathSerivice.variablesFilePath}`);
     let resolve: (a?: unknown) => void = null!;
     this.variablesSaveLock = new Promise(r => {
       resolve = r;
     });
-    await fs.writeFile(this.configsPathSerivice.variablesFilePath, JSON.stringify(this.variables, null, 2));
+    await this.configReader.saveVariablesConfigString(this.variables);
     this.logger.debug(`Save variables #${iteration}. Iteration finished, releasing lock`);
     this.variablesSaveLock = null;
     resolve();

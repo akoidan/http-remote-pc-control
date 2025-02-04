@@ -22,7 +22,7 @@ openssl genrsa -out ./client/certs/key.pem 2048
 openssl req -new -key ./client/certs/key.pem -out ./client/certs/csr.pem -subj "/C=US/ST=CA/L=SF/O=Example Org/CN=Client"
 
 # Sign Client Certificate with CA
-openssl x509 -req -in ./client/certs/-csr.pem -CA ca-cert.pem -CAkey ca-key.pem -CAcreateserial -out ./client/certs/cert.pem -days 365
+openssl x509 -req -in ./client/certs/csr.pem -CA ca-cert.pem -CAkey ca-key.pem -CAcreateserial -out ./client/certs/cert.pem -days 365
 cp ./ca-cert.pem ./client/certs/ca-cert.pem
 cp ./ca-cert.pem ./server/certs/ca-cert.pem
 rm ./ca-key.pem
