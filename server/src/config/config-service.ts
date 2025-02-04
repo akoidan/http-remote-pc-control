@@ -11,13 +11,11 @@ import {
   Injectable,
   Logger,
 } from '@nestjs/common';
-import {promises as fs} from 'fs';
 import {schemaRootCache} from '@/config/types/cache';
 import {Variables} from '@/config/types/variables';
 import {MacroList} from '@/config/types/macros';
 import {ShortsData} from '@/config/types/shortcut';
 import {ConfigProvider} from '@/config/interfaces';
-import {ConfigsPathService} from '@/config/configs-path.service';
 import {ConfigReaderService} from '@/config/config-reader-service';
 
 interface ConfigCombination {
