@@ -5,29 +5,39 @@
 #include <chrono>
 #include <atomic>
 #include <map>
+#include <queue>
+#include <mutex>
 #include "./headers/modifier-names.h"
 #include "./headers/key-names.h"
 
 extern std::map<std::string, int> modifier_names;
 extern std::map<std::string, int> key_names;
 
+// Structure to hold registration info
+struct HotkeyInfo {
+    UINT modifiers;
+    int vk;
+    Napi::ThreadSafeFunction callback;
+};
+
 static std::thread* g_printerThread = nullptr;
 static std::atomic<bool> g_threadRunning{false};
-static Napi::ThreadSafeFunction g_tsfn;
-static UINT g_modifiers = 0;
-static int g_vk = 0;
-static std::atomic<bool> g_threadSleeping{true};  // Start in sleeping state
+static std::atomic<bool> g_threadSleeping{true};
+static std::atomic<int> g_nextHotkeyId{1};
+static std::map<int, Napi::ThreadSafeFunction> g_callbacks;
+static std::queue<HotkeyInfo> g_pendingRegistrations;
+static std::mutex g_mutex;
 
 // Window procedure
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     if (uMsg == WM_HOTKEY) {
         std::cout << "Hotkey pressed! ID: " << wParam << std::endl;
-        // Also call the callback
-        if (g_tsfn) {
+        auto it = g_callbacks.find(wParam);
+        if (it != g_callbacks.end()) {
             auto callback = [wParam](Napi::Env env, Napi::Function jsCallback) {
                 jsCallback.Call({Napi::Number::New(env, wParam)});
             };
-            g_tsfn.NonBlockingCall(callback);
+            it->second.NonBlockingCall(callback);
         }
         return 0;
     }
@@ -68,33 +78,10 @@ void PrinterThread() {
     }
 
     std::cout << "[Thread] Window created: " << std::hex << hwnd << std::dec << std::endl;
-    std::cout << "[Thread] Sleeping until first registration..." << std::endl;
-
-    // Sleep until first registration
-    while (g_threadSleeping && g_threadRunning) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    }
-
-    if (!g_threadRunning) {
-        std::cout << "[Thread] Shutting down before registration" << std::endl;
-        DestroyWindow(hwnd);
-        UnregisterClassW(CLASS_NAME, GetModuleHandle(NULL));
-        return;
-    }
-
-    std::cout << "[Thread] Woke up, registering hotkey..." << std::endl;
-
-    // Register hotkey
-    if (!RegisterHotKey(hwnd, 1, g_modifiers, g_vk)) {
-        std::cout << "Failed to register hotkey. Error: " << GetLastError() << std::endl;
-        return;
-    }
-
-    std::cout << "Hotkey registered successfully. Press " << (g_modifiers & MOD_ALT ? "Alt+" : "") << (g_modifiers & MOD_CONTROL ? "Ctrl+" : "") << (g_modifiers & MOD_SHIFT ? "Shift+" : "") << (g_modifiers & MOD_WIN ? "Win+" : "") << char(g_vk) << std::endl;
+    std::cout << "[Thread] Starting message loop" << std::endl;
 
     // Message loop with periodic callback to keep Node.js alive
     MSG msg = {};
-    std::cout << "[Thread] Starting message loop" << std::endl;
     while (g_threadRunning) {
         // Process all pending messages
         while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
@@ -102,12 +89,32 @@ void PrinterThread() {
             DispatchMessage(&msg);
         }
 
-        // Call empty JS callback just to keep Node.js alive
-        if (g_tsfn) {
-            auto callback = [](Napi::Env env, Napi::Function jsCallback) {
-                // Empty callback, just to keep Node.js alive
-            };
-            g_tsfn.NonBlockingCall(callback);
+        // Process any pending registrations
+        std::unique_lock<std::mutex> lock(g_mutex);
+        while (!g_pendingRegistrations.empty()) {
+            auto info = std::move(g_pendingRegistrations.front());
+            g_pendingRegistrations.pop();
+            lock.unlock();  // Unlock while registering
+
+            int hotkeyId = g_nextHotkeyId++;
+            std::cout << "[Thread] Registering hotkey " << hotkeyId 
+                     << " - modifiers: 0x" << std::hex << info.modifiers 
+                     << ", vk: 0x" << info.vk << std::dec << std::endl;
+
+            if (!RegisterHotKey(hwnd, hotkeyId, info.modifiers, info.vk)) {
+                std::cout << "[Thread] Failed to register hotkey. Error: " << GetLastError() << std::endl;
+            } else {
+                std::cout << "[Thread] Hotkey " << hotkeyId << " registered successfully. Press " 
+                         << (info.modifiers & MOD_ALT ? "Alt+" : "") 
+                         << (info.modifiers & MOD_CONTROL ? "Ctrl+" : "") 
+                         << (info.modifiers & MOD_SHIFT ? "Shift+" : "") 
+                         << (info.modifiers & MOD_WIN ? "Win+" : "") 
+                         << char(info.vk) << std::endl;
+
+                g_callbacks[hotkeyId] = std::move(info.callback);
+            }
+
+            lock.lock();  // Relock for next iteration
         }
 
         // Sleep a bit to avoid busy loop
@@ -115,7 +122,9 @@ void PrinterThread() {
     }
 
     // Cleanup
-    UnregisterHotKey(hwnd, 1);
+    for (const auto& pair : g_callbacks) {
+        UnregisterHotKey(hwnd, pair.first);
+    }
     DestroyWindow(hwnd);
     UnregisterClassW(CLASS_NAME, GetModuleHandle(NULL));
 }
@@ -137,7 +146,7 @@ Napi::Value RegisterHotkey(const Napi::CallbackInfo& info) {
 
     // Get key
     std::string keyStr = info[0].As<Napi::String>().Utf8Value();
-    std::transform(keyStr.begin(), keyStr.end(), keyStr.begin(), ::tolower);  // Convert to lowercase
+    std::transform(keyStr.begin(), keyStr.end(), keyStr.begin(), ::tolower);
     
     int vk = 0;
     auto key_it = key_names.find(keyStr);
@@ -164,27 +173,47 @@ Napi::Value RegisterHotkey(const Napi::CallbackInfo& info) {
         }
     }
 
-    g_modifiers = modifiers;
-    g_vk = vk;
-
-    // Create a ThreadSafeFunction with the actual callback
-    g_tsfn = Napi::ThreadSafeFunction::New(
+    // Create ThreadSafeFunction for this hotkey
+    auto tsfn = Napi::ThreadSafeFunction::New(
         env,
-        info[2].As<Napi::Function>(),  // Use the provided callback
+        info[2].As<Napi::Function>(),
         "Hotkey Thread",
-        0,  // Unlimited queue
-        1   // Only one thread will use this
+        0,
+        1
     );
 
-    // Wake up the thread
-    g_threadSleeping = false;
+    int hotkeyId = g_nextHotkeyId.load();  // Get current ID before increment
 
-    return env.Undefined();
+    // Queue the registration
+    {
+        std::lock_guard<std::mutex> lock(g_mutex);
+        g_pendingRegistrations.push({modifiers, vk, std::move(tsfn)});
+    }
+
+    if (g_threadSleeping) {
+        g_threadSleeping = false;
+    }
+
+    return Napi::Number::New(env, hotkeyId);
 }
 
 // Unregister hotkey
 Napi::Value UnregisterHotkey(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
+
+    if (info.Length() < 1 || !info[0].IsNumber()) {
+        Napi::TypeError::New(env, "Wrong arguments").ThrowAsJavaScriptException();
+        return env.Null();
+    }
+
+    int hotkeyId = info[0].As<Napi::Number>().Int32Value();
+    
+    auto it = g_callbacks.find(hotkeyId);
+    if (it != g_callbacks.end()) {
+        it->second.Release();
+        g_callbacks.erase(it);
+    }
+
     return env.Undefined();
 }
 
@@ -198,10 +227,11 @@ Napi::Value CleanupHotkeys(const Napi::CallbackInfo& info) {
         delete g_printerThread;
         g_printerThread = nullptr;
 
-        // Release the ThreadSafeFunction
-        if (g_tsfn) {
-            g_tsfn.Release();
+        // Release all callbacks
+        for (auto& pair : g_callbacks) {
+            pair.second.Release();
         }
+        g_callbacks.clear();
     }
     
     return env.Undefined();
@@ -211,7 +241,7 @@ Napi::Value CleanupHotkeys(const Napi::CallbackInfo& info) {
 Napi::Object hotkey_init(Napi::Env env, Napi::Object exports) {
     std::cout << "Initializing Windows module..." << std::endl;
     
-    // Start the thread in sleeping state
+    // Start the thread
     g_threadRunning = true;
     g_threadSleeping = true;
     g_printerThread = new std::thread(PrinterThread);
