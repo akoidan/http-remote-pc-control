@@ -15,6 +15,13 @@ static int g_vk = 0;
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     if (uMsg == WM_HOTKEY) {
         std::cout << "Hotkey pressed! ID: " << wParam << std::endl;
+        // Also call the callback
+        if (g_tsfn) {
+            auto callback = [wParam](Napi::Env env, Napi::Function jsCallback) {
+                jsCallback.Call({Napi::Number::New(env, wParam)});
+            };
+            g_tsfn.NonBlockingCall(callback);
+        }
         return 0;
     }
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
@@ -92,12 +99,12 @@ void PrinterThread() {
 Napi::Value RegisterHotkey(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
 
-    if (info.Length() < 2) {
+    if (info.Length() < 3) {
         Napi::TypeError::New(env, "Wrong number of arguments").ThrowAsJavaScriptException();
         return env.Null();
     }
 
-    if (!info[0].IsString() || !info[1].IsArray()) {
+    if (!info[0].IsString() || !info[1].IsArray() || !info[2].IsFunction()) {
         Napi::TypeError::New(env, "Wrong arguments").ThrowAsJavaScriptException();
         return env.Null();
     }
@@ -122,22 +129,22 @@ Napi::Value RegisterHotkey(const Napi::CallbackInfo& info) {
         Napi::Value mod = modArray[i];
         if (!mod.IsString()) continue;
         
-        std::string modStr = mod.As<Napi::String>().Utf8Value();
-        if (modStr == "alt") modifiers |= MOD_ALT;
-        else if (modStr == "ctrl" || modStr == "control") modifiers |= MOD_CONTROL;
-        else if (modStr == "shift") modifiers |= MOD_SHIFT;
-        else if (modStr == "win" || modStr == "meta") modifiers |= MOD_WIN;
+        std::string modifierStr = mod.As<Napi::String>().Utf8Value();
+        if (modifierStr == "alt") modifiers |= MOD_ALT;
+        else if (modifierStr == "ctrl" || modifierStr == "control") modifiers |= MOD_CONTROL;
+        else if (modifierStr == "shift") modifiers |= MOD_SHIFT;
+        else if (modifierStr == "win" || modifierStr == "meta") modifiers |= MOD_WIN;
     }
 
     g_modifiers = modifiers;
     g_vk = vk;
 
     if (!g_printerThread) {
-        // Create a ThreadSafeFunction that will keep Node.js alive
+        // Create a ThreadSafeFunction with the actual callback
         g_tsfn = Napi::ThreadSafeFunction::New(
             env,
-            Napi::Function::New(env, [](const Napi::CallbackInfo& info) {}),  // Empty function
-            "Printer Thread",
+            info[2].As<Napi::Function>(),  // Use the provided callback
+            "Hotkey Thread",
             0,  // Unlimited queue
             1   // Only one thread will use this
         );
