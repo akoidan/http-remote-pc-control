@@ -4,6 +4,10 @@
 #include <thread>
 #include <chrono>
 #include <atomic>
+#include <map>
+#include "./headers/modifier-names.h"
+
+extern std::map<std::string, int> modifier_names;
 
 static std::thread* g_printerThread = nullptr;
 static std::atomic<bool> g_threadRunning{false};
@@ -130,10 +134,10 @@ Napi::Value RegisterHotkey(const Napi::CallbackInfo& info) {
         if (!mod.IsString()) continue;
         
         std::string modifierStr = mod.As<Napi::String>().Utf8Value();
-        if (modifierStr == "alt") modifiers |= MOD_ALT;
-        else if (modifierStr == "ctrl" || modifierStr == "control") modifiers |= MOD_CONTROL;
-        else if (modifierStr == "shift") modifiers |= MOD_SHIFT;
-        else if (modifierStr == "win" || modifierStr == "meta") modifiers |= MOD_WIN;
+        auto mod_it = modifier_names.find(modifierStr);
+        if (mod_it != modifier_names.end()) {
+            modifiers |= mod_it->second;
+        }
     }
 
     g_modifiers = modifiers;
