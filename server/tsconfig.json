@@ -20,11 +20,6 @@
     "preserveConstEnums": true,
     "sourceMap": true
   },
-  "exclude": [
-    "node_modules",
-    "dist",
-    "build",
-    "build/**/*",
-    "cmake-build-debug"
-  ]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "build"]
 }
