@@ -63,8 +63,8 @@
     "scripts": "dist/main.js",
     "assets": [
       "node_modules/thread-stream/lib/worker.js",
-      "build/Release/native.node",
-      "build/Debug/native.node"
+      "build/Release/server.node",
+      "build/Debug/server.node"
     ],
     "targets": [
       "node18-win-x64"
