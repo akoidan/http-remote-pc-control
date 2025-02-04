@@ -16,6 +16,7 @@ static std::atomic<bool> g_threadRunning{false};
 static Napi::ThreadSafeFunction g_tsfn;
 static UINT g_modifiers = 0;
 static int g_vk = 0;
+static std::atomic<bool> g_threadSleeping{true};  // Start in sleeping state
 
 // Window procedure
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
@@ -34,6 +35,8 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 }
 
 void PrinterThread() {
+    std::cout << "[Thread] Starting..." << std::endl;
+    
     // Register window class
     const wchar_t CLASS_NAME[] = L"HotkeyTest";
     WNDCLASSW wc = {};
@@ -64,7 +67,22 @@ void PrinterThread() {
         return;
     }
 
-    std::cout << "Window created: " << std::hex << hwnd << std::dec << std::endl;
+    std::cout << "[Thread] Window created: " << std::hex << hwnd << std::dec << std::endl;
+    std::cout << "[Thread] Sleeping until first registration..." << std::endl;
+
+    // Sleep until first registration
+    while (g_threadSleeping && g_threadRunning) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+
+    if (!g_threadRunning) {
+        std::cout << "[Thread] Shutting down before registration" << std::endl;
+        DestroyWindow(hwnd);
+        UnregisterClassW(CLASS_NAME, GetModuleHandle(NULL));
+        return;
+    }
+
+    std::cout << "[Thread] Woke up, registering hotkey..." << std::endl;
 
     // Register hotkey
     if (!RegisterHotKey(hwnd, 1, g_modifiers, g_vk)) {
@@ -76,6 +94,7 @@ void PrinterThread() {
 
     // Message loop with periodic callback to keep Node.js alive
     MSG msg = {};
+    std::cout << "[Thread] Starting message loop" << std::endl;
     while (g_threadRunning) {
         // Process all pending messages
         while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
@@ -101,8 +120,9 @@ void PrinterThread() {
     UnregisterClassW(CLASS_NAME, GetModuleHandle(NULL));
 }
 
-// Register hotkey (just starts the printer thread)
+// Register hotkey
 Napi::Value RegisterHotkey(const Napi::CallbackInfo& info) {
+    std::cout << "[Main] Registering new hotkey" << std::endl;
     Napi::Env env = info.Env();
 
     if (info.Length() < 3) {
@@ -147,30 +167,28 @@ Napi::Value RegisterHotkey(const Napi::CallbackInfo& info) {
     g_modifiers = modifiers;
     g_vk = vk;
 
-    if (!g_printerThread) {
-        // Create a ThreadSafeFunction with the actual callback
-        g_tsfn = Napi::ThreadSafeFunction::New(
-            env,
-            info[2].As<Napi::Function>(),  // Use the provided callback
-            "Hotkey Thread",
-            0,  // Unlimited queue
-            1   // Only one thread will use this
-        );
+    // Create a ThreadSafeFunction with the actual callback
+    g_tsfn = Napi::ThreadSafeFunction::New(
+        env,
+        info[2].As<Napi::Function>(),  // Use the provided callback
+        "Hotkey Thread",
+        0,  // Unlimited queue
+        1   // Only one thread will use this
+    );
 
-        g_threadRunning = true;
-        g_printerThread = new std::thread(PrinterThread);
-    }
+    // Wake up the thread
+    g_threadSleeping = false;
 
     return env.Undefined();
 }
 
-// Unregister hotkey (does nothing in this simplified version)
+// Unregister hotkey
 Napi::Value UnregisterHotkey(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
     return env.Undefined();
 }
 
-// Cleanup (stops the printer thread)
+// Cleanup
 Napi::Value CleanupHotkeys(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
     
@@ -192,6 +210,12 @@ Napi::Value CleanupHotkeys(const Napi::CallbackInfo& info) {
 // Initialize module
 Napi::Object hotkey_init(Napi::Env env, Napi::Object exports) {
     std::cout << "Initializing Windows module..." << std::endl;
+    
+    // Start the thread in sleeping state
+    g_threadRunning = true;
+    g_threadSleeping = true;
+    g_printerThread = new std::thread(PrinterThread);
+    
     exports.Set("registerHotkey", Napi::Function::New(env, RegisterHotkey));
     exports.Set("unregisterHotkey", Napi::Function::New(env, UnregisterHotkey));
     exports.Set("cleanupHotkeys", Napi::Function::New(env, CleanupHotkeys));
