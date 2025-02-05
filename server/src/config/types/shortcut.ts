@@ -21,21 +21,21 @@ const modifierKeys = ['control', 'ctrl', 'alt', 'shift', 'meta', 'command', 'win
 const shortCut = z
   .string()
   .refine((value) => {
-      const modifiers = value.toLowerCase().split('+');
-      // Must have at least 2 parts: one modifier and one main key
-      if (modifiers.length < 2 || modifiers.length > 4) {
-        return false;
-      }
-      const mainKey = modifiers.pop();
-      // Ensure modifiers are unique and valid
-      if (new Set(modifiers).size !== modifiers.length) {
-        return false;
-      }
-      if (!modifiers.every((mod) => modifierKeys.includes(mod))) {
-        return false;
-      }
-      return allowedKeys.includes(mainKey!);
-    }, 'Invalid shortcut format')
+    const modifiers = value.toLowerCase().split('+');
+    // Must have at least 2 parts: one modifier and one main key
+    if (modifiers.length < 2 || modifiers.length > 4) {
+      return false;
+    }
+    const mainKey = modifiers.pop();
+    // Ensure modifiers are unique and valid
+    if (new Set(modifiers).size !== modifiers.length) {
+      return false;
+    }
+    if (!modifiers.every((mod) => modifierKeys.includes(mod))) {
+      return false;
+    }
+    return allowedKeys.includes(mainKey!);
+  }, `Shortcut requires format Modifier+Key. E.g. 'Alt+1'. Allowed modifiers: '${modifierKeys.join('\', \'')}'. Allowed keys: '${allowedKeys.join('\', \'')}'.`)
   .describe('A shorcut to be pressed. E.g. Alt+1');
 
 
