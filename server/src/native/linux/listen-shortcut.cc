@@ -1,5 +1,6 @@
-#include "headers/listen-shortcut.h"
-#include "headers/key-names.h"
+#include "./headers/listen-shortcut.h"
+#include "./headers/key-names.h"
+#include "./headers/modifier-names.h"
 #include <napi.h>
 #include <X11/Xlib.h>
 #include <iostream>
@@ -131,10 +132,10 @@ Napi::Value RegisterHotkey(const Napi::CallbackInfo& info) {
         if (!mod.IsString()) continue;
         
         std::string modStr = mod.As<Napi::String>().Utf8Value();
-        if (modStr == "alt") modifiers |= Mod1Mask;
-        if (modStr == "ctrl") modifiers |= ControlMask;
-        if (modStr == "shift") modifiers |= ShiftMask;
-        if (modStr == "super") modifiers |= Mod4Mask;
+        auto it = modifier_names.find(modStr);
+        if (it != modifier_names.end()) {
+            modifiers |= it->second;
+        }
     }
 
     KeyCode keycode = XKeysymToKeycode(display, keysym);
