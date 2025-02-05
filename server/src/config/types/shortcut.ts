@@ -35,7 +35,8 @@ const shortCut = z
       return false;
     }
     return allowedKeys.includes(mainKey!);
-  }, `Shortcut requires format Modifier+Key. E.g. 'Alt+1'. Allowed modifiers: '${modifierKeys.join('\', \'')}'. Allowed keys: '${allowedKeys.join('\', \'')}'.`)
+    // eslint-disable-next-line max-len
+    }, `Shortcut requires format Modifier+Key. E.g. 'Alt+1'. Allowed modifiers: '${modifierKeys.join('\', \'')}'. Allowed keys: '${allowedKeys.join('\', \'')}'.`)
   .describe('A shorcut to be pressed. E.g. Alt+1');
 
 
