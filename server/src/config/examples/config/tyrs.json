@@ -57,7 +57,7 @@
             "variables": {
               "destination": "da",
               "login": "deathangel9",
-              "delay": 12000,
+              "delay": 7000,
               "assignId": "da"
             }
           },
@@ -66,7 +66,7 @@
             "variables": {
               "destination": "sws",
               "login": "deathangel2",
-              "delay": 10000,
+              "delay": 6000,
               "assignId": "sws"
             }
           },
@@ -332,6 +332,14 @@
     },
     {
       "commands": [
+         {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{pp}}",
+            "destination": "pp",
+            "keySend": "2"
+          }
+        },
         {
           "macro": "keySend",
           "variables": {
@@ -371,7 +379,7 @@
           "variables": {
             "focusPid": "{{pp}}",
             "destination": "pp",
-            "keySend": "2"
+            "keySend": "3"
           }
         },
         {
@@ -388,15 +396,6 @@
             "focusPid": "{{ee}}",
             "destination": "ee",
             "keySend": "7"
-          },
-          "delay": 10000
-        },
-        {
-          "macro": "keySend",
-          "variables": {
-            "focusPid": "{{pp}}",
-            "destination": "pp",
-            "keySend": "3"
           }
         }
       ],
