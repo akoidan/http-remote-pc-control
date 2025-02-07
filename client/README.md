@@ -9,7 +9,8 @@
   - **Unix/Posix**:
     - Clang or GCC
     - Ninja or Make (Ninja will be picked if both present)
-
+  - **MacOs**:  
+    - brew install cmake
 
   
 # Runtime
@@ -34,3 +35,5 @@ yarn
 yarn build:local
 yarn start
 ```
+
+x

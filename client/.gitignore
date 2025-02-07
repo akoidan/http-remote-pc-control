@@ -4,7 +4,6 @@ app.exe
 node_modules
 certs
 !certs/.gitkeep
-libnut-core
 .vs
 Project1
 app
