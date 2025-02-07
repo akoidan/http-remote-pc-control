@@ -17,7 +17,8 @@ const CGEventFlags modifierFlagMap[] = {
 // Convert key name to Carbon virtual key code
 unsigned int assignKeyCode(const char* keyName) {
     if (strlen(keyName) == 1) {
-        return KeyTranslate(GetScriptManagerVariable(smKeyboardLayout), keyName[0]);
+        // Use a fixed keyboard layout instead of GetScriptManagerVariable
+        return KeyTranslate(GetKbdType(), keyName[0]);
     }
     
     auto it = key_names.find(keyName);
@@ -86,7 +87,7 @@ void toggleKeyCode(unsigned int code, const bool down, unsigned int flags) {
 
 // Toggle a character key
 void toggleKey(char c, const bool down, unsigned int flags) {
-    unsigned int keyCode = KeyTranslate(GetScriptManagerVariable(smKeyboardLayout), c);
+    unsigned int keyCode = KeyTranslate(GetKbdType(), c);
     toggleKeyCode(keyCode, down, flags);
 }
 
