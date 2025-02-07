@@ -20,12 +20,9 @@ unsigned int assignKeyCode(const char* keyName) {
         return KeyTranslate(GetScriptManagerVariable(smKeyboardLayout), keyName[0]);
     }
     
-    KeyNames *kn = key_names;
-    while (kn->name) {
-        if (strcasecmp(keyName, kn->name) == 0) {
-            return kn->key;
-        }
-        kn++;
+    auto it = key_names.find(keyName);
+    if (it != key_names.end()) {
+        return it->second;
     }
     return 0;
 }

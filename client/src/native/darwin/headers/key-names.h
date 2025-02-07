@@ -1,11 +1,10 @@
-#ifndef NATIVE_KEY_NAMES_H
-#define NATIVE_KEY_NAMES_H
+#ifndef KEY_NAMES_H
+#define KEY_NAMES_H
 
-typedef struct {
-    const char* name;
-    int key;
-} KeyNames;
+#include <map>
+#include <string>
+#include <Carbon/Carbon.h>
 
-extern KeyNames key_names[];
+extern std::map<std::string, CGKeyCode> key_names;
 
-#endif
+#endif // KEY_NAMES_H
