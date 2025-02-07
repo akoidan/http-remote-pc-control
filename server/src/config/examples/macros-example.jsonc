@@ -71,22 +71,22 @@
       {
         "destination": "{{destination}}",
         "keySend": "enter",
-        "delay": 8000
+        "delay": 6000
       },
       {
         "destination": "{{destination}}",
         "keySend": "enter",
-        "delay": 1500
+        "delay": 3000
       },
       {
         "destination": "{{destination}}",
         "keySend": "enter",
-        "delay": 1500
+        "delay": 3000
       },
       {
         "destination": "{{destination}}",
         "keySend": "enter",
-        "delay": 1500
+        "delay": 3000
       }
     ],
     "variables": {
