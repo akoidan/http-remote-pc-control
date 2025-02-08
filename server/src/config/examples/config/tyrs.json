@@ -20,7 +20,7 @@
     "da": "this",
     "bd": "this",
     "sws": "this",
-    "ee": "desktop",
+    "ee": "medion",
     "bish": "medion",
     "pp": "asus",
     "spoil": "asus",
@@ -98,15 +98,6 @@
               "delay": 10000,
               "assignId": "wc"
             }
-          },
-          {
-            "macro": "launchL2",
-            "variables": {
-              "destination": "ee",
-              "login": "deathangel8",
-              "delay": 10000,
-              "assignId": "ee"
-            }
           }
         ],
         [
@@ -117,6 +108,15 @@
               "login": "deathangel6",
               "delay": 16000,
               "assignId": "bish"
+            }
+          },
+          {
+            "macro": "launchL2",
+            "variables": {
+              "destination": "ee",
+              "login": "deathangel8",
+              "delay": 10000,
+              "assignId": "ee"
             }
           }
         ],
@@ -332,7 +332,7 @@
     },
     {
       "commands": [
-         {
+        {
           "macro": "keySend",
           "variables": {
             "focusPid": "{{pp}}",
@@ -413,8 +413,12 @@
           }
         },
         {
-          "keySend": "f12",
-          "destination": "bish"
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{bish}}",
+            "destination": "bish",
+            "keySend": "f12"
+          }
         },
         {
           "macro": "keySend",
@@ -452,8 +456,12 @@
           "keySend": "f6"
         },
         {
-          "keySend": "f6",
-          "destination": "bish"
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{bish}}",
+            "destination": "bish",
+            "keySend": "f6"
+          }
         },
         {
           "macro": "keySend",
@@ -584,8 +592,20 @@
       "threads": [
         [
           {
-            "destination": "bish",
-            "keySend": "f3"
+            "macro": "keySend",
+            "variables": {
+              "focusPid": "{{bish}}",
+              "destination": "bish",
+              "keySend": "f3"
+            }
+          },
+          {
+            "macro": "keySend",
+            "variables": {
+              "focusPid": "{{ee}}",
+              "destination": "ee",
+              "keySend": "f4"
+            }
           }
         ],
         [
@@ -594,14 +614,6 @@
             "variables": {
               "focusPid": "{{se}}",
               "destination": "se",
-              "keySend": "f4"
-            }
-          },
-          {
-            "macro": "keySend",
-            "variables": {
-              "focusPid": "{{ee}}",
-              "destination": "ee",
               "keySend": "f4"
             }
           }
@@ -611,55 +623,15 @@
       "shortCut": "Alt+q"
     },
     {
-      "commands": [
-        {
-          "macro": "keySend",
-          "variables": {
-            "focusPid": "{{ee}}",
-            "destination": "ee",
-            "keySend": "f9"
-          }
-        },
-        {
-          "macro": "keySend",
-          "variables": {
-            "focusPid": "{{se}}",
-            "destination": "se",
-            "keySend": "f9"
-          }
-        }
-      ],
-      "name": "ee Heal Poison",
-      "shortCut": "Alt+h"
-    },
-    {
-      "commands": [
-        {
-          "macro": "keySend",
-          "variables": {
-            "focusPid": "{{ee}}",
-            "destination": "ee",
-            "keySend": "4"
-          }
-        },
-        {
-          "macro": "keySend",
-          "variables": {
-            "focusPid": "{{se}}",
-            "destination": "se",
-            "keySend": "4"
-          }
-        }
-      ],
-      "name": "Mana on target (alt+d required)",
-      "shortCut": "Alt+m"
-    },
-    {
       "threads": [
         [
           {
-            "destination": "bish",
-            "keySend": "f4"
+            "macro": "keySend",
+            "variables": {
+              "focusPid": "{{ee}}",
+              "destination": "ee",
+              "keySend": "f9"
+            }
           }
         ],
         [
@@ -668,6 +640,48 @@
             "variables": {
               "focusPid": "{{se}}",
               "destination": "se",
+              "keySend": "f9"
+            }
+          }
+        ]
+      ],
+      "name": "ee Heal Poison",
+      "shortCut": "Alt+h"
+    },
+    {
+      "threads": [
+        [
+          {
+            "macro": "keySend",
+            "variables": {
+              "focusPid": "{{ee}}",
+              "destination": "ee",
+              "keySend": "4"
+            }
+          }
+        ],
+        [
+          {
+            "macro": "keySend",
+            "variables": {
+              "focusPid": "{{se}}",
+              "destination": "se",
+              "keySend": "4"
+            }
+          }
+        ]
+      ],
+      "name": "Mana on target (alt+d required)",
+      "shortCut": "Alt+m"
+    },
+    {
+      "threads": [
+        [
+          {
+            "macro": "keySend",
+            "variables": {
+              "focusPid": "{{bish}}",
+              "destination": "bish",
               "keySend": "f4"
             }
           },
@@ -676,6 +690,16 @@
             "variables": {
               "focusPid": "{{ee}}",
               "destination": "ee",
+              "keySend": "f4"
+            }
+          }
+        ],
+        [
+          {
+            "macro": "keySend",
+            "variables": {
+              "focusPid": "{{se}}",
+              "destination": "se",
               "keySend": "f4"
             }
           }
@@ -687,8 +711,12 @@
     {
       "commands": [
         {
-          "destination": "bish",
-          "keySend": "f5"
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{bish}}",
+            "destination": "bish",
+            "keySend": "f5"
+          }
         }
       ],
       "name": "restore life",
@@ -697,8 +725,12 @@
     {
       "commands": [
         {
-          "destination": "bish",
-          "keySend": "f9"
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{bish}}",
+            "destination": "bish",
+            "keySend": "f9"
+          }
         }
       ],
       "name": "Heal all",
@@ -708,16 +740,18 @@
       "threads": [
         [
           {
-            "destination": "bish",
-            "keySend": "1"
-          }
-        ],
-        [
+            "macro": "keySend",
+            "variables": {
+              "focusPid": "{{bish}}",
+              "destination": "bish",
+              "keySend": "1"
+            }
+          },
           {
             "macro": "keySend",
             "variables": {
-              "focusPid": "{{se}}",
-              "destination": "se",
+              "focusPid": "{{ee}}",
+              "destination": "ee",
               "keySend": "1"
             }
           }
@@ -726,8 +760,8 @@
           {
             "macro": "keySend",
             "variables": {
-              "focusPid": "{{ee}}",
-              "destination": "ee",
+              "focusPid": "{{se}}",
+              "destination": "se",
               "keySend": "1"
             }
           }
@@ -740,16 +774,10 @@
       "threads": [
         [
           {
-            "destination": "bish",
-            "keySend": "2"
-          }
-        ],
-        [
-          {
             "macro": "keySend",
             "variables": {
-              "focusPid": "{{se}}",
-              "destination": "se",
+              "focusPid": "{{bish}}",
+              "destination": "bish",
               "keySend": "2"
             }
           },
@@ -761,6 +789,16 @@
               "keySend": "2"
             }
           }
+        ],
+        [
+          {
+            "macro": "keySend",
+            "variables": {
+              "focusPid": "{{se}}",
+              "destination": "se",
+              "keySend": "2"
+            }
+          }
         ]
       ],
       "name": "destination",
@@ -769,8 +807,12 @@
     {
       "commands": [
         {
-          "destination": "bish",
-          "keySend": "f8"
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{bish}}",
+            "destination": "bish",
+            "keySend": "f8"
+          }
         }
       ],
       "name": "balance life",
@@ -779,8 +821,12 @@
     {
       "commands": [
         {
-          "destination": "bish",
-          "keySend": "f10"
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{bish}}",
+            "destination": "bish",
+            "keySend": "f10"
+          }
         }
       ],
       "name": "Chain heal",
@@ -789,8 +835,12 @@
     {
       "commands": [
         {
-          "destination": "bish",
-          "keySend": "f11"
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{bish}}",
+            "destination": "bish",
+            "keySend": "f11"
+          }
         }
       ],
       "name": "Heal <30mp",
@@ -799,8 +849,12 @@
     {
       "commands": [
         {
-          "destination": "bish",
-          "keySend": "7"
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{bish}}",
+            "destination": "bish",
+            "keySend": "7"
+          }
         }
       ],
       "name": "Bish res",
@@ -823,8 +877,12 @@
     {
       "commands": [
         {
-          "destination": "bish",
-          "keySend": "f6"
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{bish}}",
+            "destination": "bish",
+            "keySend": "f6"
+          }
         },
         {
           "macro": "keySend",
@@ -926,8 +984,12 @@
     {
       "commands": [
         {
-          "destination": "bish",
-          "keySend": "3"
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{bish}}",
+            "destination": "bish",
+            "keySend": "3"
+          }
         }
       ],
       "name": "Purify (anchor/bleed/pois)",
@@ -936,8 +998,12 @@
     {
       "commands": [
         {
-          "destination": "bish",
-          "keySend": "4"
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{bish}}",
+            "destination": "bish",
+            "keySend": "4"
+          }
         }
       ],
       "name": "Cleanse  (debuffs)",
