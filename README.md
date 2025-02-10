@@ -80,24 +80,25 @@ echo Failed to add program to startup.
 pause
 ```
 
-## Build manually
+## Develop locally
 
-### Remote PC
-To build the client you need [nvm](https://github.com/nvm-sh/nvm) and [yarn](https://yarnpkg.com/) installed.
+### Client PC
+To build the client you need [nvm](https://github.com/nvm-sh/nvm), [yarn](https://yarnpkg.com/), [cmake](https://cmake.org/download/), [g++](https://visualstudio.microsoft.com/ru/visual-cpp-build-tools/)
 ```bash
 cd client
 nvm use
-yarn 
-yarn build
+yarn
+yarn build:local
+yarn start
 ```
 You'll get app.exe in client directory. Put it into remote PCs and run with admin permissions. For different OS  use `yarn pkg . --targets linux --output app.exe`. All targets are listed [here](https://www.npmjs.com/package/pkg#targets)
 
 
-### Local PC
+### Server PC
 
 Copy an example config and fill it with your data.
 ```bash
-cp ./server/src/config/examples/config-ss-2.jsonc ./server/src/config/config.jsonc
+cp ./server/src/config/examples/config-ss-2.jsonc ./server/config.jsonc
 ```
 
 You'll have to define ip address of the receiver and configure aliases and combinations.  
@@ -106,6 +107,7 @@ Run the server. You need [nvm](https://github.com/nvm-sh/nvm) and [yarn](https:/
 cd server
 nvm use
 yarn
+yarn build:local
 yarn start
 ```
 
