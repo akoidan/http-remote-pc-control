@@ -56,7 +56,7 @@ Client apps should be available withing the address provided in config. So eithe
 - Linux
 - Mac
 
-This product has 2 apps: Client and Server. Client app is built via [pkg](https://www.npmjs.com/package/pkg) and server app is built via [electron](https://www.npmjs.com/package/electron). Electron has proper binary implementation that can capture global keystroke even if a game is active in full screen mode, while pkg provides an easy manipulation withing the keyboard and mouse and lightweight binary. Both packages support Window/Linux/Mac.
+This product has 2 apps: Client and Server. Both apps are built via [pkg](https://www.npmjs.com/package/pkg). Both packages support Window/Linux/Mac.
 
 ## Autostart
 Add a script to autostart in Windows with admin petrmissions: Replace path to your app.exe:
