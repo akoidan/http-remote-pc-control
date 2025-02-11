@@ -392,10 +392,19 @@
         },
         {
           "macro": "keySend",
+          "delay": 10000,
           "variables": {
             "focusPid": "{{ee}}",
             "destination": "ee",
             "keySend": "7"
+          }
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{pp}}",
+            "destination": "pp",
+            "keySend": "4"
           }
         }
       ],
@@ -514,7 +523,7 @@
           "variables": {
             "focusPid": "{{spoil}}",
             "destination": "spoil",
-            "keySend": "f4"
+            "keySend": "f5"
           }
         }
       ],
