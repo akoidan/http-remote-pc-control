@@ -460,6 +460,26 @@
     },
     {
       "commands": [
+         {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{bd}}",
+            "destination": "bd",
+            "keySend": "f6"
+          }
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{sws}}",
+            "destination": "sws",
+            "keySend": "f6"
+          }
+        },
+         {
+          "focusPid": "{{da}}",
+          "destination": "da"
+        },
         {
           "destination": "tyrs",
           "keySend": "f6"
@@ -658,27 +678,15 @@
       "shortCut": "Alt+h"
     },
     {
-      "threads": [
-        [
-          {
-            "macro": "keySend",
-            "variables": {
-              "focusPid": "{{ee}}",
-              "destination": "ee",
-              "keySend": "4"
-            }
+      "commands": [
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{ee}}",
+            "destination": "ee",
+            "keySend": "4"
           }
-        ],
-        [
-          {
-            "macro": "keySend",
-            "variables": {
-              "focusPid": "{{se}}",
-              "destination": "se",
-              "keySend": "4"
-            }
-          }
-        ]
+        }
       ],
       "name": "Mana on target (alt+d required)",
       "shortCut": "Alt+m"
@@ -924,7 +932,7 @@
             "destination": "pp",
             "keySend": "f6"
           }
-        }
+        },
       ],
       "name": "bish to me",
       "shortCut": "Alt+z"
