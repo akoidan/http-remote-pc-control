@@ -476,7 +476,7 @@
             "keySend": "f6"
           }
         },
-         {
+        {
           "focusPid": "{{da}}",
           "destination": "da"
         },
@@ -484,53 +484,9 @@
           "destination": "tyrs",
           "keySend": "f6"
         },
-        {
-          "macro": "keySend",
-          "variables": {
-            "focusPid": "{{bish}}",
-            "destination": "bish",
-            "keySend": "f6"
-          }
-        },
-        {
-          "macro": "keySend",
-          "variables": {
-            "focusPid": "{{se}}",
-            "destination": "se",
-            "keySend": "f6"
-          }
-        },
-        {
-          "macro": "keySend",
-          "variables": {
-            "focusPid": "{{wc}}",
-            "destination": "wc",
-            "keySend": "f6"
-          }
-        },
-        {
-          "macro": "keySend",
-          "variables": {
-            "focusPid": "{{ee}}",
-            "destination": "ee",
-            "keySend": "f6"
-          }
-        },
-        {
-          "macro": "keySend",
-          "variables": {
-            "focusPid": "{{pp}}",
-            "destination": "pp",
-            "keySend": "f6"
-          }
-        },
-        {
-          "macro": "keySend",
-          "variables": {
-            "focusPid": "{{spoil}}",
-            "destination": "spoil",
-            "keySend": "f6"
-          }
+         {
+          "destination": "spoil",
+          "keySend": "f6"
         }
       ],
       "name": "To Me",
@@ -934,7 +890,7 @@
           }
         },
       ],
-      "name": "bish to me",
+      "name": "Supp to me",
       "shortCut": "Alt+z"
     },
     {
