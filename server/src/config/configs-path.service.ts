@@ -5,9 +5,9 @@ import path from 'path';
 @Injectable()
 export class ConfigsPathService {
   public get configDir():string {
-    // eslint-disable-next-line max-len
     const isNodeJs = process.execPath.endsWith('node') || process.execPath.endsWith('node.exe');
-    return isNodeJs ? process.cwd() : path.dirname(process.execPath);
+    const configDirs =  isNodeJs ? process.cwd() : path.dirname(process.execPath);
+    return path.join(configDirs, 'configs');
   }
 
   public get configFilePath(): string {

@@ -21,7 +21,7 @@ It will generate:
 **If you don't care about security** you can grab certificates directories from [poc/mtls/client](/pocs/mtls/client/certs) and [poc/mtls/server](/pocs/mtls/server/certs).
 
 ### Config
-Create a config mapper file in the PC that you want to controll other PCs from. We call it server (see [Server](#server)) .The file should be named as **config.jsonc** ans be with the same directory as server app.exe. You can get examples of config files [here](server/src/config/examples) and documentation [here](./server/README.md#root). 
+Create a config mapper file in the PC that you want to controll other PCs from. We call it server (see [Server](#server)) .The file should be named as **configs/config.jsonc** ans be with the same directory as server app.exe. You can get examples of config files [examples](./examples) and documentation [here](./server/README.md#root). 
 
 Also you can find json schema here [json-schema.json](server/json-schema.json). You can use any editor that support json schema. E.g. [jsonschemavalidator.net](https://www.jsonschemavalidator.net/). Just paste the content from [json-schema.json](server/json-schema.json) into the left panel of it, and you can write your config in the right panel. After it as I mentioned above put it into **config.jsonc** with the same directory you have you app.exe for the server.
 
@@ -35,7 +35,7 @@ Also you can find json schema here [json-schema.json](server/json-schema.json). 
  
 ### Server
  - Download server you want to send shortcuts [releases](https://github.com/akoidan/l2/releases)
- - You already have your config.jsonc described in [config](#config)
+ - You already have your configs/config.jsonc described in [config](#config)
  - Put server sertificate into `certs` directory which is in the same directory as app.exe
  - run **app.exe** as regular user.
  - If it crasher, run it from cmd to get output
@@ -44,19 +44,12 @@ Also you can find json schema here [json-schema.json](server/json-schema.json). 
 The client server app both use mutual TLS authentication. 
 Client apps should be available withing the address provided in config. So either all apps are within same network. Or clients have public static IP address.
 
-## Config structure
-- ips: a map of a name and ip address of the remote PC.
-- aliases: a map with an alias and a corresponding name of the remote PC (from ips)
-- delay: global delay between multiple commands in receiver section
-- combinations: binding 
-
-
 ## OS support
 - Windows
 - Linux
-- Mac
+- Mac is coming...
 
-This product has 2 apps: Client and Server. Client app is built via [pkg](https://www.npmjs.com/package/pkg) and server app is built via [electron](https://www.npmjs.com/package/electron). Electron has proper binary implementation that can capture global keystroke even if a game is active in full screen mode, while pkg provides an easy manipulation withing the keyboard and mouse and lightweight binary. Both packages support Window/Linux/Mac.
+This product has 2 apps: Client and Server. Native binaries are shipped via [pkg](https://www.npmjs.com/package/pkg) that packs Nodejs inside of the executable. Both apps support Window/Linux and Mac support is coming soon
 
 ## Autostart
 Add a script to autostart in Windows with admin petrmissions: Replace path to your app.exe:
@@ -97,7 +90,7 @@ You'll get app.exe in client directory. Put it into remote PCs and run with admi
 
 Copy an example config and fill it with your data.
 ```bash
-cp ./server/src/config/examples/config-ss-2.jsonc ./server/src/config/config.jsonc
+cp ./server/examples/config/tyrs.jsonc ./server/config/config.jsonc
 ```
 
 You'll have to define ip address of the receiver and configure aliases and combinations.  
