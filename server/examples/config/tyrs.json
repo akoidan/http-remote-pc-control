@@ -534,7 +534,7 @@
           "variables": {
             "focusPid": "{{se}}",
             "destination": "se",
-            "keySend": "="
+            "keySend": "-"
           }
         },
         {
@@ -542,7 +542,7 @@
           "variables": {
             "focusPid": "{{ee}}",
             "destination": "ee",
-            "keySend": "="
+            "keySend": "-"
           }
         },
         {
@@ -550,7 +550,7 @@
           "variables": {
             "focusPid": "{{bish}}",
             "destination": "bish",
-            "keySend": "="
+            "keySend": "-"
           }
         }
       ],
@@ -624,7 +624,7 @@
           "variables": {
             "focusPid": "{{ee}}",
             "destination": "ee",
-            "keySend": "4"
+            "keySend": "3"
           }
         }
       ],
