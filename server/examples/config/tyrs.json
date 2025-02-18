@@ -471,7 +471,7 @@
         {
           "destination": "tyrs",
           "keySend": "f6"
-        },
+        }
       ],
       "name": "To Me",
       "shortCut": "Alt+6"
@@ -849,7 +849,7 @@
             "keySend": "f6"
           }
         },
-         {
+        {
           "focusPid": "{{da}}",
           "destination": "da"
         },
@@ -910,6 +910,64 @@
       ],
       "name": "Chant of ViKtory",
       "shortCut": "Alt+k"
+    },
+    {
+      "commands": [
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{sws}}",
+            "destination": "sws",
+            "keySend": "="
+          }
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{bd}}",
+            "destination": "bd",
+            "keySend": "="
+          }
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{da}}",
+            "destination": "da",
+            "keySend": "="
+          }
+        },
+        {
+          "destination": "tyrs",
+          "keySend": "="
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{spoil}}",
+            "destination": "spoil",
+            "keySend": "="
+          }
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{bish}}",
+            "destination": "bish",
+            "keySend": "="
+          }
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{wc}}",
+            "destination": "wc",
+            "keySend": "="
+          }
+        }
+      ],
+      "name": "EXP",
+      "shortCut": "Alt+l"
     },
     {
       "commands": [
