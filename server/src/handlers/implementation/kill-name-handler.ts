@@ -10,6 +10,6 @@ export class KillNameHandler extends CommandHandler {
   }
 
   async execute(ip: string, command: KillExeByNameCommand): Promise<void> {
-    await this.clientService.killExe(ip, {name: command.killByName});
+    await this.clientService.killExeByName(ip, {name: command.killByName});
   }
 }

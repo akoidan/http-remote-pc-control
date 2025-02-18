@@ -9,6 +9,7 @@ import {KillNameHandler} from '@/handlers/implementation/kill-name-handler';
 import {CommandHandler} from '@/handlers/command-handler.service';
 import {KillPidHandler} from '@/handlers/implementation/kill-pid-handler';
 import {ConfigModule} from '@/config/config-module';
+import {LeftMouseClickHandler} from '@/handlers/implementation/left-mouse-click-handler';
 
 @Module({
   imports: [ClientModule, ConfigModule],
@@ -20,6 +21,7 @@ import {ConfigModule} from '@/config/config-module';
     TypeTextHandler,
     KillNameHandler,
     KillPidHandler,
+    LeftMouseClickHandler,
     {
       provide: CommandHandler,
       inject: [
@@ -30,6 +32,7 @@ import {ConfigModule} from '@/config/config-module';
         TypeTextHandler,
         KillNameHandler,
         KillPidHandler,
+        LeftMouseClickHandler,
       ],
       useFactory: (
         keyPressHandler: CommandHandler,
@@ -39,6 +42,7 @@ import {ConfigModule} from '@/config/config-module';
         typeTextHandler: CommandHandler,
         killByNameHandler: CommandHandler,
         killByPidHandler: CommandHandler,
+        leftMouseClickHandler: CommandHandler,
       ): CommandHandler => {
         keyPressHandler
           .setNext(focusWindowHandler)
@@ -46,7 +50,8 @@ import {ConfigModule} from '@/config/config-module';
           .setNext(executeHandler)
           .setNext(typeTextHandler)
           .setNext(killByNameHandler)
-          .setNext(killByPidHandler);
+          .setNext(killByPidHandler)
+          .setNext(leftMouseClickHandler);
 
         return keyPressHandler;
       },

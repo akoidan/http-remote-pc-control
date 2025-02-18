@@ -8,7 +8,7 @@
     "medion": "192.168.100.62",
     "this": "127.0.0.1"
   },
-  "delay": 200,
+  "delay": 100,
   "aliases": {
     "se": "desktop",
     "wc": "desktop",
@@ -460,34 +460,18 @@
     },
     {
       "commands": [
-         {
-          "macro": "keySend",
-          "variables": {
-            "focusPid": "{{bd}}",
-            "destination": "bd",
-            "keySend": "f6"
-          }
-        },
         {
           "macro": "keySend",
           "variables": {
-            "focusPid": "{{sws}}",
-            "destination": "sws",
+            "focusPid": "{{spoil}}",
+            "destination": "spoil",
             "keySend": "f6"
           }
-        },
-        {
-          "focusPid": "{{da}}",
-          "destination": "da"
         },
         {
           "destination": "tyrs",
           "keySend": "f6"
         },
-         {
-          "destination": "spoil",
-          "keySend": "f6"
-        }
       ],
       "name": "To Me",
       "shortCut": "Alt+6"
@@ -499,11 +483,11 @@
           "variables": {
             "focusPid": "{{spoil}}",
             "destination": "spoil",
-            "keySend": "f5"
+            "keySend": "f4"
           }
         }
       ],
-      "name": "Spoil",
+      "name": "Stun",
       "shortCut": "Alt+7"
     },
     {
@@ -852,6 +836,26 @@
         {
           "macro": "keySend",
           "variables": {
+            "focusPid": "{{bd}}",
+            "destination": "bd",
+            "keySend": "f6"
+          }
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{sws}}",
+            "destination": "sws",
+            "keySend": "f6"
+          }
+        },
+         {
+          "focusPid": "{{da}}",
+          "destination": "da"
+        },
+        {
+          "macro": "keySend",
+          "variables": {
             "focusPid": "{{bish}}",
             "destination": "bish",
             "keySend": "f6"
@@ -888,7 +892,7 @@
             "destination": "pp",
             "keySend": "f6"
           }
-        },
+        }
       ],
       "name": "Supp to me",
       "shortCut": "Alt+z"

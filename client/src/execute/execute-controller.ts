@@ -31,14 +31,6 @@ export class ExecuteController {
     return {pid};
   }
 
-  /**
-   * @deprecated This endpoint will be removed in the next version. Use `/new-endpoint` instead.
-   */
-  @Post('kill-exe')
-  async killExe(@ZodBody(killExeByNameRequestSchema) body: KillExeByNameRequest): Promise<void> {
-    await this.executionService.killExeByName(body.name);
-  }
-
   @Post('kill-exe-by-name')
   async killExeByName(@ZodBody(killExeByNameRequestSchema) body: KillExeByNameRequest): Promise<void> {
     await this.executionService.killExeByName(body.name);

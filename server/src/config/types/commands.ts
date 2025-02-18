@@ -60,10 +60,14 @@ const typeTextCommandSchema = z.object({
   typeText: z.union([z.string(), variableValueSchema]).describe('Any string to type'),
 }).strict().merge(baseSchema).describe('Types text on the remote PC.');
 
-const mouseClickCommandSchema = z.object({
+const mouseMoveClickCommandSchema = z.object({
   mouseMoveX: z.union([z.number(), variableValueSchema]).describe('X coordinate'),
   mouseMoveY: z.union([z.number(), variableValueSchema]).describe('Y coordinate'),
 }).strict().merge(baseSchema).describe('Moves mouse to specified coordinates and clicks with left button');
+
+const leftMouseClickCommandSchema = z.object({
+  leftMouseClick: z.boolean(),
+}).strict().merge(baseSchema).describe('Clicks mouse on current position');
 
 const killExeByNameCommandSchema = z.object({
   killByName: z.union([z.string(), variableValueSchema]).describe('Executable file name. E.g. Chrome.exe'),
@@ -75,7 +79,8 @@ const killExeByPidCommandSchema = z.object({
 
 const commandSchema = z.union([
   keyPressCommandSchema,
-  mouseClickCommandSchema,
+  leftMouseClickCommandSchema,
+  mouseMoveClickCommandSchema,
   launchExeCommandSchema,
   focusWindowCommandSchema,
   typeTextCommandSchema,
@@ -88,7 +93,8 @@ type TypeTextCommand = z.infer<typeof typeTextCommandSchema>
 type FocusWindowCommand = z.infer<typeof focusWindowCommandSchema>
 type KeyPressCommand = z.infer<typeof keyPressCommandSchema>
 type BaseCommand = z.infer<typeof baseSchema>
-type MouseClickCommand = z.infer<typeof mouseClickCommandSchema>
+type MouseMoveClickCommand = z.infer<typeof mouseMoveClickCommandSchema>
+type LeftMouseClickCommand = z.infer<typeof leftMouseClickCommandSchema>
 type ExecuteCommand = z.infer<typeof launchExeCommandSchema>
 type Command = z.infer<typeof commandSchema>
 type Key = z.infer<typeof keySchema>;
@@ -100,7 +106,8 @@ export type {
   TypeTextCommand,
   KeyPressCommand,
   BaseCommand,
-  MouseClickCommand,
+  MouseMoveClickCommand,
+  LeftMouseClickCommand,
   FocusWindowCommand,
   ExecuteCommand,
   Command,
@@ -117,7 +124,8 @@ export {
   launchExeCommandSchema,
   focusWindowCommandSchema,
   typeTextCommandSchema,
-  mouseClickCommandSchema,
+  mouseMoveClickCommandSchema,
+  leftMouseClickCommandSchema,
   killExeByNameCommandSchema,
   killExeByPidCommandSchema,
   commandSchema,

@@ -3,8 +3,8 @@ import {
   Post,
 } from '@nestjs/common';
 import {
-  MouseClickRequest,
-  mouseClickRequestSchema,
+  MouseMoveClickRequest,
+  mouseMoveClickRequestSchema,
 } from '@/mouse/mouse-dto';
 import {MouseService} from '@/mouse/mouse-service';
 import {ZodBody} from '@/validation/zod-validator';
@@ -16,8 +16,13 @@ export class MouseController {
   ) {
   }
 
-  @Post('mouse-click')
-  async mouseClick(@ZodBody(mouseClickRequestSchema) event: MouseClickRequest): Promise<void> {
-    await this.mouseService.click(event.x, event.y);
+  @Post('mouse-move-click')
+  async mouseMoveClick(@ZodBody(mouseMoveClickRequestSchema) event: MouseMoveClickRequest): Promise<void> {
+    await this.mouseService.leftMouseMoveClick(event.x, event.y);
+  }
+
+  @Post('left-mouse-click')
+  async leftMouseClick(): Promise<void> {
+    await this.mouseService.click();
   }
 }

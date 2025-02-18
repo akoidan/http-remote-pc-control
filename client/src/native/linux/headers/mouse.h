@@ -1,5 +1,6 @@
-#ifndef NATIVE_MOUSE_H
-#define NATIVE_MOUSE_H
+#pragma once
+#include "napi.h"
+Napi::Object init_mouse(Napi::Env env, Napi::Object exports);
 
 struct MMPoint {
     int64_t x;
@@ -11,5 +12,3 @@ enum MMMouseButton {
     CENTER_BUTTON = 2,
     RIGHT_BUTTON = 3
 };
-
-#endif

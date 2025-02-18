@@ -74,6 +74,63 @@ jobs:
           asset_path: ./server/app.exe
           asset_name: app.exe
           asset_content_type: application/vnd.microsoft.portable-executable
+  docs:
+    needs: [ create_release]
+    runs-on: ubuntu-22.04
+    permissions: write-all
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Cache node_modules cache
+        id: cache-node
+        uses: actions/cache@v4
+        with:
+          path: |
+            server/node_modules
+          key: ${{ runner.os }}-node-modules-server-${{ hashFiles('server/yarn.lock') }}
+      - name: Install yarn deps
+        if: steps.cache-node.outputs.cache-hit != 'true'
+        run: |
+          cd server
+          yarn install --frozen-lockfile
+      - name: Generate readme
+        run: |
+          cd server
+          yarn schema:doc
+      - name: Generate json schema
+        run: |
+          cd server
+          yarn schema:json
+
+      - name: Upload README
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create_release.outputs.upload_url }}
+          asset_path: ./server/README.md
+          asset_name: README.md
+          asset_content_type: text/markdown
+      - name: Upload json schema
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create_release.outputs.upload_url }}
+          asset_path: ./server/json-schema.json
+          asset_name: json-schema.json
+          asset_content_type: application/json
+      - name: Upload macros json schema
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create_release.outputs.upload_url }}
+          asset_path: ./server/macros-schema.json
+          asset_name: macros-schema.json
+          asset_content_type: application/json
   linux:
     runs-on: ubuntu-22.04
     needs: [ create_release ]

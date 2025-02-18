@@ -29,19 +29,16 @@ export class ClientService {
     return this.client.post(client, '/focus-exe', request);
   }
 
-  async mouseClick(client: string, request: MouseClickRequest): Promise<void> {
-    return this.client.post(client, '/mouse-click', request);
+  async mouseMoveClick(client: string, request: MouseClickRequest): Promise<void> {
+    return this.client.post(client, '/mouse-move-click', request);
+  }
+
+  async leftMouseClick(client: string): Promise<void> {
+    return this.client.post(client, '/left-mouse-click', {});
   }
 
   async launchExe(client: string, request: LaunchExeRequest): Promise<LaunchPidResponse> {
     return this.client.post(client, '/launch-exe', request, 3000, true);
-  }
-
-  /**
-   @deprecated use @{ClientService.killExeByName}
-   */
-  async killExe(client: string, request: KillExeByNameRequest): Promise<void> {
-    return this.client.post(client, '/kill-exe', request);
   }
 
   async killExeByName(client: string, request: KillExeByNameRequest): Promise<void> {

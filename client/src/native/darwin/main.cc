@@ -5,10 +5,11 @@
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
     // Initialize window management
     window_init(env, exports);
-    
+
     // Initialize keyboard functions
     keyboard_init(env, exports);
-    
+    mouse_init(env, exports);
+
     return exports;
 }
 

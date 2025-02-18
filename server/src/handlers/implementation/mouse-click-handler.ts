@@ -1,16 +1,16 @@
 import type {
   Command,
-  MouseClickCommand,
+  MouseMoveClickCommand,
 } from '@/config/types/commands';
 import {CommandHandler} from '@/handlers/command-handler.service';
 
 export class MouseClickHandler extends CommandHandler {
-  canHandle(command: Command): command is MouseClickCommand {
+  canHandle(command: Command): command is MouseMoveClickCommand {
     return 'mouseMoveX' in command;
   }
 
-  async execute(ip: string, command: MouseClickCommand): Promise<void> {
-    await this.clientService.mouseClick(ip, {
+  async execute(ip: string, command: MouseMoveClickCommand): Promise<void> {
+    await this.clientService.mouseMoveClick(ip, {
       x: command.mouseMoveX as number,
       y: command.mouseMoveY as number,
     });

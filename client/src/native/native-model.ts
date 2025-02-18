@@ -20,7 +20,13 @@ interface KeyboardNativeModule {
   keyToggle(key: string, modifier:string[], down: boolean): void;
 }
 
-interface INativeModule extends WindowNativeModule, KeyboardNativeModule {
+interface MouseNativeModule {
+  mouseClick(): void;
+  mouseMove(x: number, y: number): void;
+}
+
+
+interface INativeModule extends WindowNativeModule, KeyboardNativeModule, MouseNativeModule {
 }
 
 export const Native = 'Native';

@@ -12,7 +12,8 @@ import {
   killExeByNameCommandSchema,
   killExeByPidCommandSchema,
   launchExeCommandSchema,
-  mouseClickCommandSchema,
+  leftMouseClickCommandSchema,
+  mouseMoveClickCommandSchema,
   typeTextCommandSchema,
 } from '@/config/types/commands';
 import {
@@ -110,9 +111,10 @@ export {
   typeTextCommandSchema,
   focusWindowCommandSchema,
   commandsSchema,
+  leftMouseClickCommandSchema,
   runMacroCommandSchema,
   combinationList,
-  mouseClickCommandSchema,
+  mouseMoveClickCommandSchema,
   variablesSchema,
   killExeByNameCommandSchema,
   killExeByPidCommandSchema,

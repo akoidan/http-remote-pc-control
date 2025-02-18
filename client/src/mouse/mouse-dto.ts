@@ -1,16 +1,16 @@
 import {z} from 'zod';
 
-const mouseClickRequestSchema = z.object({
+const mouseMoveClickRequestSchema = z.object({
   x: z.number(),
   y: z.number(),
 });
 
-type MouseClickRequest = z.infer<typeof mouseClickRequestSchema>
+type MouseMoveClickRequest = z.infer<typeof mouseMoveClickRequestSchema>
 
 export {
-  mouseClickRequestSchema,
+  mouseMoveClickRequestSchema,
 };
 
 export type {
-  MouseClickRequest,
+  MouseMoveClickRequest,
 };

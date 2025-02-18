@@ -21,9 +21,9 @@ It will generate:
 **If you don't care about security** you can grab certificates directories from [poc/mtls/client](/pocs/mtls/client/certs) and [poc/mtls/server](/pocs/mtls/server/certs).
 
 ### Config
-Create a config mapper file in the PC that you want to controll other PCs from. We call it server (see [Server](#server)) .The file should be named as **configs/config.jsonc** ans be with the same directory as server app.exe. You can get examples of config files [examples](./examples) and documentation [here](./server/README.md#root). 
+Create a config mapper file in the PC that you want to controll other PCs from. We call it server (see [Server](#server)) .The file should be named as **configs/config.jsonc** ans be with the same directory as server app.exe. You can get examples of config files [examples](./examples) and documentation in README.md in release section [here](https://github.com/akoidan/l2/releases). 
 
-Also you can find json schema here [json-schema.json](server/json-schema.json). You can use any editor that support json schema. E.g. [jsonschemavalidator.net](https://www.jsonschemavalidator.net/). Just paste the content from [json-schema.json](server/json-schema.json) into the left panel of it, and you can write your config in the right panel. After it as I mentioned above put it into **config.jsonc** with the same directory you have you app.exe for the server.
+Also you can find json schema in the same release section of the server. You can use any editor that support json schema. E.g. [jsonschemavalidator.net](https://www.jsonschemavalidator.net/). Just paste the content from json-schema.json into the left panel of it, and you can write your config in the right panel. After it as I mentioned above put it into **config.jsonc** with the same directory you have you app.exe for the server.
 
 ### Client
  - Download client you want to receive shorcuts [releases](https://github.com/akoidan/l2/releases).
