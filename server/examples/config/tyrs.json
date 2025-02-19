@@ -12,6 +12,7 @@
   "aliases": {
     "se": "desktop",
     "wc": "desktop",
+    "craft": "desktop",
     "tyrs": [
       "touchpad",
       "lenovo",
@@ -220,6 +221,13 @@
             "killByPid": "{{sws}}",
             "delay": 2000
           }
+        ],
+        [
+          {
+            "destination": "craft",
+            "killByPid": "{{craft}}",
+            "delay": 2000
+          }
         ]
       ],
       "name": "Kill all L2 no main",
@@ -244,16 +252,6 @@
             "destination": "raider",
             "keySend": "f5"
           }
-        ],
-        [
-          {
-            "focusPid": "{{spoil}}",
-            "destination": "spoil"
-          },
-          {
-            "destination": "spoil",
-            "keySend": "f4"
-          }
         ]
       ],
       "name": "Stun",
@@ -273,8 +271,12 @@
     {
       "commands": [
         {
-          "destination": "tyrs",
-          "keySend": "f4"
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{craft}}",
+            "destination": "craft",
+            "keySend": "2"
+          }
         },
         {
           "macro": "keySend",
@@ -283,6 +285,10 @@
             "destination": "spoil",
             "keySend": "2"
           }
+        },
+        {
+          "destination": "tyrs",
+          "keySend": "f4"
         }
       ],
       "name": "Attack",
@@ -345,7 +351,7 @@
           "variables": {
             "focusPid": "{{ee}}",
             "destination": "ee",
-            "keySend": "6"
+            "keySend": "o"
           }
         },
         {
@@ -396,7 +402,7 @@
           "variables": {
             "focusPid": "{{ee}}",
             "destination": "ee",
-            "keySend": "7"
+            "keySend": "p"
           }
         },
         {
@@ -405,6 +411,15 @@
             "focusPid": "{{pp}}",
             "destination": "pp",
             "keySend": "4"
+          },
+          "delay": 2000
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{ee}}",
+            "destination": "ee",
+            "keySend": "l"
           }
         }
       ],
@@ -413,6 +428,14 @@
     },
     {
       "commands": [
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{ee}}",
+            "destination": "ee",
+            "keySend": "h"
+          }
+        },
         {
           "macro": "keySend",
           "variables": {
@@ -427,14 +450,6 @@
             "focusPid": "{{bish}}",
             "destination": "bish",
             "keySend": "f12"
-          }
-        },
-        {
-          "macro": "keySend",
-          "variables": {
-            "focusPid": "{{ee}}",
-            "destination": "ee",
-            "keySend": "8"
           },
           "delay": 13000
         },
@@ -451,8 +466,13 @@
           "variables": {
             "focusPid": "{{ee}}",
             "destination": "ee",
-            "keySend": "9"
-          }
+            "keySend": "j"
+          },
+          "delay": 300
+        },
+        {
+          "focusPid": "{{bish}}",
+          "destination": "bish"
         }
       ],
       "name": "Buff #3",
@@ -469,6 +489,14 @@
           }
         },
         {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{craft}}",
+            "destination": "craft",
+            "keySend": "f6"
+          }
+        },
+        {
           "destination": "tyrs",
           "keySend": "f6"
         }
@@ -481,8 +509,8 @@
         {
           "macro": "keySend",
           "variables": {
-            "focusPid": "{{spoil}}",
-            "destination": "spoil",
+            "focusPid": "{{craft}}",
+            "destination": "craft",
             "keySend": "f4"
           }
         }
@@ -526,6 +554,14 @@
           "variables": {
             "focusPid": "{{spoil}}",
             "destination": "spoil",
+            "keySend": "f11"
+          }
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{craft}}",
+            "destination": "craft",
             "keySend": "f11"
           }
         },
@@ -833,6 +869,22 @@
     },
     {
       "commands": [
+         {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{bish}}",
+            "destination": "bish",
+            "keySend": "f6"
+          }
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{wc}}",
+            "destination": "wc",
+            "keySend": "f6"
+          }
+        },
         {
           "macro": "keySend",
           "variables": {
@@ -852,22 +904,6 @@
         {
           "focusPid": "{{da}}",
           "destination": "da"
-        },
-        {
-          "macro": "keySend",
-          "variables": {
-            "focusPid": "{{bish}}",
-            "destination": "bish",
-            "keySend": "f6"
-          }
-        },
-        {
-          "macro": "keySend",
-          "variables": {
-            "focusPid": "{{wc}}",
-            "destination": "wc",
-            "keySend": "f6"
-          }
         },
         {
           "macro": "keySend",
@@ -913,31 +949,7 @@
     },
     {
       "commands": [
-        {
-          "macro": "keySend",
-          "variables": {
-            "focusPid": "{{sws}}",
-            "destination": "sws",
-            "keySend": "="
-          }
-        },
-        {
-          "macro": "keySend",
-          "variables": {
-            "focusPid": "{{bd}}",
-            "destination": "bd",
-            "keySend": "="
-          }
-        },
-        {
-          "macro": "keySend",
-          "variables": {
-            "focusPid": "{{da}}",
-            "destination": "da",
-            "keySend": "="
-          }
-        },
-        {
+                {
           "destination": "tyrs",
           "keySend": "="
         },
@@ -946,6 +958,32 @@
           "variables": {
             "focusPid": "{{spoil}}",
             "destination": "spoil",
+            "keySend": "="
+          }
+        },
+        { // DO NOT trigger first, otherwise it will triger another shorcut
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{sws}}",
+            "destination": "sws",
+            "keySend": "="
+          },
+          "delay": 500,
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{bd}}",
+            "destination": "bd",
+            "keySend": "="
+          },
+          "delay": 500
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{da}}",
+            "destination": "da",
             "keySend": "="
           }
         },
@@ -962,6 +1000,14 @@
           "variables": {
             "focusPid": "{{wc}}",
             "destination": "wc",
+            "keySend": "="
+          }
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{craft}}",
+            "destination": "craft",
             "keySend": "="
           }
         }
@@ -1015,6 +1061,276 @@
       ],
       "name": "Tyrs target each other",
       "shortCut": "Alt+o"
+    },
+    {
+      "commands": [
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{bd}}",
+            "destination": "bd",
+            "keySend": "8"
+          }
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{sws}}",
+            "destination": "sws",
+            "keySend": "8"
+          }
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{da}}",
+            "destination": "da",
+            "keySend": "8"
+          }
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{spoil}}",
+            "destination": "spoil",
+            "keySend": "8"
+          }
+        },
+        {
+          "destination": "tyrs",
+          "keySend": "8"
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{bish}}",
+            "destination": "bish",
+            "keySend": "8"
+          }
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{wc}}",
+            "destination": "wc",
+            "keySend": "8"
+          }
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{se}}",
+            "destination": "se",
+            "keySend": "8"
+          }
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{ee}}",
+            "destination": "ee",
+            "keySend": "8"
+          }
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{pp}}",
+            "destination": "pp",
+            "keySend": "8"
+          }
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{craft}}",
+            "destination": "craft",
+            "keySend": "8"
+          }
+        }
+      ],
+      "name": "Easy form",
+      "shortCut": "Alt+p"
+    },
+    {
+      "commands": [
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{bd}}",
+            "destination": "bd",
+            "keySend": "9"
+          }
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{sws}}",
+            "destination": "sws",
+            "keySend": "9"
+          }
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{da}}",
+            "destination": "da",
+            "keySend": "9"
+          }
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{spoil}}",
+            "destination": "spoil",
+            "keySend": "9"
+          }
+        },
+        {
+          "destination": "tyrs",
+          "keySend": "9"
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{bish}}",
+            "destination": "bish",
+            "keySend": "9"
+          }
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{wc}}",
+            "destination": "wc",
+            "keySend": "9"
+          }
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{se}}",
+            "destination": "se",
+            "keySend": "9"
+          }
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{ee}}",
+            "destination": "ee",
+            "keySend": "9"
+          }
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{pp}}",
+            "destination": "pp",
+            "keySend": "9"
+          }
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{craft}}",
+            "destination": "craft",
+            "keySend": "9"
+          }
+        }
+      ],
+      "name": "mid  form",
+      "shortCut": "Alt+["
+    },
+    {
+      "commands": [
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{bd}}",
+            "destination": "bd",
+            "keySend": "0"
+          }
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{sws}}",
+            "destination": "sws",
+            "keySend": "0"
+          }
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{da}}",
+            "destination": "da",
+            "keySend": "0"
+          }
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{spoil}}",
+            "destination": "spoil",
+            "keySend": "0"
+          }
+        },
+        {
+          "destination": "tyrs",
+          "keySend": "0"
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{bish}}",
+            "destination": "bish",
+            "keySend": "0"
+          }
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{wc}}",
+            "destination": "wc",
+            "keySend": "0"
+          }
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{se}}",
+            "destination": "se",
+            "keySend": "0"
+          }
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{ee}}",
+            "destination": "ee",
+            "keySend": "0"
+          }
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{pp}}",
+            "destination": "pp",
+            "keySend": "0"
+          }
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{craft}}",
+            "destination": "craft",
+            "keySend": "0"
+          }
+        }
+      ],
+      "name": "heavy form",
+      "shortCut": "Alt+]"
     },
     {
       "commands": [
