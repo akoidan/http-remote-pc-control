@@ -101,7 +101,7 @@
             }
           },
            {
-            "macro": "killLaunchL2",
+            "macro": "launchL2",
             "variables": {
               "destination": "craft",
               "login": "deathangelo",
@@ -278,27 +278,27 @@
       "circular": true
     },
     {
-      "commands": [
-        {
+      "threads": [
+        [{
           "macro": "keySend",
           "variables": {
             "focusPid": "{{craft}}",
             "destination": "craft",
             "keySend": "2"
           }
-        },
-        {
+        }],
+        [{
           "macro": "keySend",
           "variables": {
             "focusPid": "{{spoil}}",
             "destination": "spoil",
             "keySend": "2"
           }
-        },
-        {
+        }],
+        [{
           "destination": "tyrs",
           "keySend": "f4"
-        }
+        }],
       ],
       "name": "Attack",
       "shortCut": "Alt+2"
