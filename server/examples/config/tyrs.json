@@ -99,6 +99,15 @@
               "delay": 10000,
               "assignId": "wc"
             }
+          },
+           {
+            "macro": "killLaunchL2",
+            "variables": {
+              "destination": "craft",
+              "login": "deathangelo",
+              "delay": 10000,
+              "assignId": "craft"
+            }
           }
         ],
         [
