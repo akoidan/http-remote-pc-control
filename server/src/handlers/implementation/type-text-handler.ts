@@ -9,7 +9,7 @@ export class TypeTextHandler extends CommandHandler {
     return 'typeText' in command;
   }
 
-  async execute(ip: string, command: TypeTextCommand): Promise<void> {
-    await this.clientService.typeText(ip, {text: command.typeText});
+  async execute(destination: string, command: TypeTextCommand): Promise<void> {
+    await this.clientService.typeText(destination, {text: command.typeText});
   }
 }

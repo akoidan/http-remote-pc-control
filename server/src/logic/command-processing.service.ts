@@ -50,9 +50,8 @@ export class CommandProcessingService {
 
   private async runCommand(input: Command, combDelay: undefined | number): Promise<void> {
     const currRec = this.variableService.replaceEnvVars(input);
-    const ip = this.configService.getIps()[(currRec as Command).destination];
     this.logger.debug(`Running ${JSON.stringify(input)}`);
-    await this.comandHandler.handle(ip, currRec);
+    await this.comandHandler.handle((currRec as Command).destination, currRec);
     await this.awaitDelay(combDelay, input.delay as number | undefined);
   }
 

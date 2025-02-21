@@ -375,14 +375,6 @@
           "keySend": "f9",
           "destination": "wc"
         },
-        {
-          "macro": "keySend",
-          "variables": {
-            "focusPid": "{{se}}",
-            "destination": "se",
-            "keySend": "5"
-          }
-        }
       ],
       "name": "Buff #1",
       "shortCut": "Alt+0"

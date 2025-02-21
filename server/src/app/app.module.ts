@@ -13,7 +13,7 @@ import {ShortcutProcessingService} from '@/logic/shortcut-processing.service';
 import {LogicModule} from '@/logic/logic.module';
 import {asyncLocalStorage} from '@/app/custom-logger';
 import {NativeModule} from '@/native/native-module';
-import {INativeModule, Native} from '@/native/native-model';
+import clc from 'cli-color';
 
 @Module({
   imports: [ConfigModule, ClientModule, LogicModule, NativeModule],
@@ -27,8 +27,6 @@ export class AppModule implements OnModuleInit {
     private readonly logicService: ShortcutProcessingService,
     private readonly configService: ConfigService,
     private readonly clientService: ClientService,
-    @Inject(Native)
-    private readonly native: INativeModule,
   ) {
   }
 
@@ -36,8 +34,8 @@ export class AppModule implements OnModuleInit {
     try {
       this.logger.debug('Initializing app...');
       await Promise.all(
-        Object.entries(this.configService.getIps())
-          .map(async([_, ip]) => this.clientService.ping(ip))
+        Object.keys(this.configService.getIps())
+          .map(async(desination) => this.clientService.ping(desination))
       );
       this.configService.getCombinations().forEach((comb) => {
         this.hotKeyService.registerShortcut(comb.shortCut, () => {
@@ -47,7 +45,8 @@ export class AppModule implements OnModuleInit {
           });
         });
       });
-      this.logger.log('App has sucessfully started');
+      const shorcuts = this.configService.getCombinations().map(a => a.shortCut);
+      this.logger.log(`App has sucessfully started with following shorcuts: ${clc.bold.green(shorcuts.join(' '))}`);
     } catch (err) {
       this.logger.error(`Unable to init main module: ${(err as Error).message}`, (err as Error).stack);
       this.hotKeyService.unregister();

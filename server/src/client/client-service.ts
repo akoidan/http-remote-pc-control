@@ -14,7 +14,9 @@ import {Injectable} from '@nestjs/common';
 
 @Injectable()
 export class ClientService {
-  constructor(private readonly client: FetchClient) {
+  constructor(
+    private readonly client: FetchClient,
+  ) {
   }
 
   async ping(client: string): Promise<void> {
@@ -25,7 +27,7 @@ export class ClientService {
     return this.client.post(client, '/key-press', request);
   }
 
-   async focusExe(client: string, request: FocusExeRequest): Promise<void> {
+  async focusExe(client: string, request: FocusExeRequest): Promise<void> {
     return this.client.post(client, '/focus-exe', request);
   }
 

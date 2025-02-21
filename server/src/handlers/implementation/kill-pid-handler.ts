@@ -9,10 +9,10 @@ export class KillPidHandler extends CommandHandler {
     return 'killByPid' in command;
   }
 
-  async execute(ip: string, command: KillExeByPidCommand): Promise<void> {
+  async execute(destination: string, command: KillExeByPidCommand): Promise<void> {
     if (!command.killByPid) {
-      throw new Error(`Unable to kill a process in ${ip}, since variable resolved to undefined`);
+      throw new Error(`Unable to kill a process in ${destination}, since variable resolved to undefined`);
     }
-    await this.clientService.killExeById(ip, {pid: command.killByPid as number});
+    await this.clientService.killExeById(destination, {pid: command.killByPid as number});
   }
 }

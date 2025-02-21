@@ -20,8 +20,8 @@ export class ExecuteHandler extends CommandHandler {
     return 'launch' in command;
   }
 
-  async execute(ip: string, command: ExecuteCommand): Promise<void> {
-    const response = await this.clientService.launchExe(ip, {
+  async execute(destination: string, command: ExecuteCommand): Promise<void> {
+    const response = await this.clientService.launchExe(destination, {
       path: command.launch,
       arguments: command.arguments ?? [],
       waitTillFinish: command.waitTillFinish ?? false,

@@ -12,6 +12,7 @@ import {
 import {CommandOrMacro} from '@/config/types/macros';
 import {asyncLocalStorage} from '@/app/custom-logger';
 import {Command} from '@/config/types/commands';
+import clc from 'cli-color';
 
 @Injectable()
 export class ShortcutProcessingService {
@@ -24,7 +25,7 @@ export class ShortcutProcessingService {
   }
 
   async processUnknownShortCut(comb: ShortsData): Promise<void> {
-    this.logger.log(`${comb.shortCut} pressed`);
+    this.logger.log(`${clc.bold.green(comb.shortCut)} pressed`);
 
     if (Boolean((comb as RandomShortcutMapping).circular) || Boolean((comb as RandomShortcutMapping).shuffle)) {
       await this.processShortcutsWoMacro((comb as RandomShortcutMapping));

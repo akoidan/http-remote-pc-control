@@ -9,7 +9,7 @@ export class LeftMouseClickHandler extends CommandHandler {
     return 'leftMouseClick' in command;
   }
 
-  async execute(ip: string): Promise<void> {
-    await this.clientService.leftMouseClick(ip);
+  async execute(destination: string): Promise<void> {
+    await this.clientService.leftMouseClick(destination);
   }
 }

@@ -17,6 +17,7 @@ import {MacroList} from '@/config/types/macros';
 import {ShortsData} from '@/config/types/shortcut';
 import {ConfigProvider} from '@/config/interfaces';
 import {ConfigReaderService} from '@/config/config-reader-service';
+import clc from 'cli-color';
 
 interface ConfigCombination {
   shortCut: string;
@@ -74,7 +75,7 @@ export class ConfigService implements ConfigProvider {
       .sort((a, b) => a.shortCut.localeCompare(b.shortCut));
 
     combinations.forEach((combination) => {
-      this.logger.log(`${combination.shortCut}: ${combination.name}`);
+      this.logger.log(`${clc.green.bold(combination.shortCut)}: ${combination.name}`);
     });
 
     this.configData = conf;

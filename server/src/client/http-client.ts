@@ -6,6 +6,8 @@ import {
   Agent,
   request,
 } from 'https';
+import {ConfigService} from '@/config/config-service';
+import clc from 'cli-color';
 
 interface CustomError extends Error {
   statusCode?: number;
@@ -17,6 +19,7 @@ interface CustomError extends Error {
 export class FetchClient {
   constructor(
     private readonly logger: Logger,
+    private readonly config: ConfigService,
     private readonly agent: Agent,
     private readonly protocol: string,
     private readonly port: number,
@@ -30,11 +33,12 @@ export class FetchClient {
     payloadstr: string,
     controller: AbortController
   ): Promise<[string, number]> {
+    const host = this.config.getIps()[client];
     return new Promise<[string, number]>((resolve, reject) => {
       const req = request({
         agent: this.agent,
         port: this.port,
-        host: client,
+        host,
         signal: controller.signal,
         protocol: this.protocol,
         path: url,
@@ -90,7 +94,9 @@ export class FetchClient {
         }),
       ]);
 
-      this.logger.log(`${method}:${statusCode} ${client}${url}${payloadstr ?? ''} ==>> ${result}`);
+      this.logger.log(
+        `${method}:${statusCode} ${clc.bold.green(client)} ${clc.yellow(url)} ${payloadstr ?? ''} ${clc.xterm(7)('==>>')} ${result}`
+      );
       if (withParse) {
         try {
           return JSON.parse(result) as T;
@@ -103,7 +109,7 @@ export class FetchClient {
       const status: number | 'FAIL' = (error as CustomError).statusCode ?? 'FAIL';
       const fullUrl: string = `${this.protocol}//${client}:${this.port}${url}`;
       throw new Error(
-        `${method}:${status} ${fullUrl} ${(error as Error).message} ${payloadstr ?? ''} ==>> ${(error as CustomError).response ?? ''}`
+        `${method}:${status} ${fullUrl} ${(error as Error).message} ${payloadstr ?? ''} ${clc.xterm(2)('==>>')} ${(error as CustomError).response ?? ''}`
       );
     }
   }

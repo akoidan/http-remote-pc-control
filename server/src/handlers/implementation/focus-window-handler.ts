@@ -9,7 +9,7 @@ export class FocusWindowHandler extends CommandHandler {
     return 'focusPid' in command;
   }
 
-  async execute(ip: string, command: FocusWindowCommand): Promise<void> {
-    await this.clientService.focusExe(ip, {pid: command.focusPid as number});
+  async execute(destination: string, command: FocusWindowCommand): Promise<void> {
+    await this.clientService.focusExe(destination, {pid: command.focusPid as number});
   }
 }

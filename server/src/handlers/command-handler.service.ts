@@ -16,13 +16,13 @@ export abstract class CommandHandler {
 
   abstract canHandle(command: Command): boolean;
 
-  abstract execute(ip: string, command: Command): Promise<void>;
+  abstract execute(destination: string, command: Command): Promise<void>;
 
-  async handle(ip: string, command: Command): Promise<void> {
+  async handle(destination: string, command: Command): Promise<void> {
     if (this.canHandle(command)) {
-      await this.execute(ip, command);
+      await this.execute(destination, command);
     } else if (this.next) {
-      await this.next.handle(ip, command);
+      await this.next.handle(destination, command);
     } else {
       throw new Error(`No handler found for command type: ${JSON.stringify(command)}`);
     }

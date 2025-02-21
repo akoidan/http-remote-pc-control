@@ -9,8 +9,8 @@ export class MouseClickHandler extends CommandHandler {
     return 'mouseMoveX' in command;
   }
 
-  async execute(ip: string, command: MouseMoveClickCommand): Promise<void> {
-    await this.clientService.mouseMoveClick(ip, {
+  async execute(destination: string, command: MouseMoveClickCommand): Promise<void> {
+    await this.clientService.mouseMoveClick(destination, {
       x: command.mouseMoveX as number,
       y: command.mouseMoveY as number,
     });
