@@ -52,8 +52,10 @@ const aARootSchema = z.object({
   ips: ipsSchema,
   aliases: aliasesSchema,
   delayAfter: z.number()
+    .optional()
     .describe('Global delay in miliseconds after execution of every command in order to prevent spam. Could be set to 0'),
   delayBefore: z.number()
+    .optional()
     .describe('Global delay in miliseconds before execution every current commands in order to prevent spam. Could be set to 0'),
   combinations: combinationList,
   macros: macrosDefinitionSchema,

@@ -9,6 +9,7 @@
     "this": "127.0.0.1"
   },
   "delayAfter": 200,
+  "delayBefore": 0,
   "aliases": {
     "se": "desktop",
     "wc": "desktop",
@@ -960,7 +961,7 @@
         {
           "destination": "wc",
           "focusPid": "{{wc}}",
-          "delayAfter": 200,
+          "delayAfter": 500,
         },
         {
           "mouseMoveX": 469,
@@ -976,7 +977,7 @@
         {
           "destination": "pp",
           "focusPid": "{{pp}}",
-          "delayAfter": 200,
+          "delayAfter": 500,
         },
         {
           "mouseMoveX": 1304,

@@ -111,7 +111,7 @@
       {
         "destination": "{{destination}}",
         "launch": "C:\\l2dion\\system\\L2.exe",
-        "delayAfter": "{{delay}}",
+        "delayAfter": "{{delayAfter}}",
         "assignId": "{{assignId}}"
       },
       {
@@ -119,7 +119,7 @@
         "variables": {
           "destination": "{{destination}}",
           "login": "{{login}}",
-          "delayAfter": "{{delay}}"
+          "delayAfter": "{{delayAfter}}"
         }
       }
     ],
@@ -144,7 +144,7 @@
       {
         "destination": "{{destination}}",
         "launch": "C:\\l2dion\\system\\L2.exe",
-        "delayAfter": "{{delay}}",
+        "delayAfter": "{{delayAfter}}",
         "assignId": "{{assignId}}"
       },
       {
@@ -152,7 +152,7 @@
         "variables": {
           "destination": "{{destination}}",
           "login": "{{login}}",
-          "delayAfter": "{{delay}}"
+          "delayAfter": "{{delayAfter}}"
         }
       }
     ],
@@ -186,14 +186,14 @@
           "/home/andrew/ntfs/Games/l2dion/system/L2.exe"
         ],
         "assignId": "{{assignId}}",
-        "delayAfter": "{{delay}}"
+        "delayAfter": "{{delayAfter}}"
       },
       {
         "macro": "loginProceed",
         "variables": {
           "destination": "{{destination}}",
           "login": "{{login}}",
-          "delayAfter": "{{delay}}"
+          "delayAfter": "{{delayAfter}}"
         }
       }
     ],
@@ -221,7 +221,7 @@
         "arguments": [
           "/home/andrew/ntfs/Games/l2dion/system/L2.exe"
         ],
-        "delayAfter": "{{delay}}",
+        "delayAfter": "{{delayAfter}}",
         "assignId": "{{assignId}}"
       },
       {
@@ -229,7 +229,7 @@
         "variables": {
           "destination": "{{destination}}",
           "login": "{{login}}",
-          "delayAfter": "{{delay}}"
+          "delayAfter": "{{delayAfter}}"
         }
       }
     ],

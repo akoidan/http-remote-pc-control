@@ -97,11 +97,11 @@ export class ConfigService implements ConfigProvider {
     return this.configData!.macros ?? {};
   }
 
-  public getDelayAfter(): number {
+  public getDelayAfter(): number |undefined {
     return this.configData!.delayAfter;
   }
 
-  public getDelayBefore(): number {
+  public getDelayBefore(): number|undefined {
     return this.configData!.delayBefore;
   }
 
