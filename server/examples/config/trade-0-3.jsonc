@@ -6,7 +6,7 @@
     "desktop": "192.168.100.9",
     "asus": "192.168.100.27"
   },
-  "delay": 200,
+  "delayAfter": 200,
   "combinations": [
     {
       "threads": [
@@ -16,7 +16,7 @@
             "variables": {
               "destination": "asus",
               "login": "deathangela",
-              "delay": 10000
+              "delayAfter": 10000
             }
           }
         ],
@@ -26,7 +26,7 @@
             "variables": {
               "destination": "msi",
               "login": "deathangelb",
-              "delay": 12000
+              "delayAfter": 12000
             }
           }
         ],
@@ -36,7 +36,7 @@
             "variables": {
               "destination": "desktop",
               "login": "deathangel0",
-              "delay": 18000
+              "delayAfter": 18000
             }
           }
         ]

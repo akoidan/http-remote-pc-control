@@ -41,7 +41,8 @@ const shortCut = z
 
 
 const baseShortCutMappingSchema = z.object({
-  delay: z.number().optional().describe('Delay in milliseconds between commands for this shorcut'),
+  delayAfter: z.number().optional().describe('Delay in milliseconds after each command for this shorcut'),
+  delayBefore: z.number().optional().describe('Delay in milliseconds before each command for this shorcut'),
   name: z.string().describe('Name that is printed during startup with a shorcut'),
   shortCut,
 }).strict();

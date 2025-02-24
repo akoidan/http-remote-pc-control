@@ -6,7 +6,7 @@
     "desktop": "192.168.100.9",
     "asus": "192.168.100.27"
   },
-  "delay": 300,
+  "delayAfter": 300,
   "aliases": {
     "sags": [
       "touchpad",
@@ -111,7 +111,7 @@
           "destination": "bish",
           "id": "l2.CustomKeys",
           "run":  {"Name": "alt_tab"},
-          "delay": 200
+          "delayAfter": 200
         },
          {
           "destination": "bish",

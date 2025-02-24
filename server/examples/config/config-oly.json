@@ -6,7 +6,7 @@
     "desktop": "192.168.100.9",
     "asus": "192.168.100.52"
   },
-  "delay": 200,
+  "delayAfter": 200,
   "aliases": {
     "sws": [
       "msi"

@@ -8,3 +8,5 @@ certs
 coverage
 build
 cmake-build-debug
+json-schema.json
+macros-schema.json

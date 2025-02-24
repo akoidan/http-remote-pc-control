@@ -8,7 +8,7 @@
     "this": "127.0.0.1",
     "medion": "192.168.100.62"
   },
-  "delay": 200,
+  "delayAfter": 200,
   "combinations": [
     {
       "threads": [
@@ -18,7 +18,7 @@
             "variables": {
               "destination": "touchpad",
               "login": "deathangel3",
-              "delay": 10000
+              "delayAfter": 10000
             }
           }
         ],
@@ -28,7 +28,7 @@
             "variables": {
               "destination": "msi",
               "login": "deathangel4",
-              "delay": 12000
+              "delayAfter": 12000
             }
           }
         ],
@@ -38,7 +38,7 @@
             "variables": {
               "destination": "asus",
               "login": "deathangel5",
-              "delay": 14000
+              "delayAfter": 14000
             }
           }
         ],
@@ -48,7 +48,7 @@
             "variables": {
               "destination": "lenovo",
               "login": "deathangelr",
-              "delay": 16000
+              "delayAfter": 16000
             }
           }
         ],
@@ -58,7 +58,7 @@
             "variables": {
               "destination": "desktop",
               "login": "deathangels",
-              "delay": 18000
+              "delayAfter": 18000
             }
           }
         ]
@@ -69,7 +69,7 @@
             "variables": {
               "destination": "this",
               "login": "deathangelj",
-              "delay": 18000
+              "delayAfter": 18000
             }
           }
         ],
@@ -79,7 +79,7 @@
             "variables": {
               "destination": "medion",
               "login": "deathangelp",
-              "delay": 18000
+              "delayAfter": 18000
             }
           }
         ]

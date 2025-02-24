@@ -15,7 +15,9 @@ export interface ConfigProvider {
 
   getMacros(): NonNullable<MacroList>;
 
-  getDelay(): number;
+  getDelayAfter(): number;
+
+  getDelayBefore(): number;
 
   getVariables(): NonNullable<Variables>;
 

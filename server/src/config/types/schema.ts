@@ -51,7 +51,10 @@ const aliasesSchema = z.record(z.union([z.array(z.string()), z.string()]))
 const aARootSchema = z.object({
   ips: ipsSchema,
   aliases: aliasesSchema,
-  delay: z.number().describe('Global delay in miliseconds between commands in order to prevent spam. Could be set to 0'),
+  delayAfter: z.number()
+    .describe('Global delay in miliseconds after execution of every command in order to prevent spam. Could be set to 0'),
+  delayBefore: z.number()
+    .describe('Global delay in miliseconds before execution every current commands in order to prevent spam. Could be set to 0'),
   combinations: combinationList,
   macros: macrosDefinitionSchema,
 }).strict().superRefine((data, ctx) => {

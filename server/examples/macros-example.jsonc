@@ -22,7 +22,7 @@
       {
         "destination": "{{destination}}",
         "killByName": "L2.exe",
-        "delay": 2000
+        "delayAfter": 2000
       }
     ],
     "variables": {
@@ -71,22 +71,22 @@
       {
         "destination": "{{destination}}",
         "keySend": "enter",
-        "delay": 6000
+        "delayAfter": 6000
       },
       {
         "destination": "{{destination}}",
         "keySend": "enter",
-        "delay": 3000
+        "delayAfter": 3000
       },
       {
         "destination": "{{destination}}",
         "keySend": "enter",
-        "delay": 3000
+        "delayAfter": 3000
       },
       {
         "destination": "{{destination}}",
         "keySend": "enter",
-        "delay": 3000
+        "delayAfter": 3000
       }
     ],
     "variables": {
@@ -96,7 +96,7 @@
       "login": {
         "type": "string"
       },
-      "delay": {
+      "delayAfter": {
         "type": "number"
       }
     }
@@ -106,12 +106,12 @@
       {
         "destination": "{{destination}}",
         "killByName": "L2.exe",
-        "delay": 200
+        "delayAfter": 200
       },
       {
         "destination": "{{destination}}",
         "launch": "C:\\l2dion\\system\\L2.exe",
-        "delay": "{{delay}}",
+        "delayAfter": "{{delay}}",
         "assignId": "{{assignId}}"
       },
       {
@@ -119,7 +119,7 @@
         "variables": {
           "destination": "{{destination}}",
           "login": "{{login}}",
-          "delay": "{{delay}}"
+          "delayAfter": "{{delay}}"
         }
       }
     ],
@@ -130,7 +130,7 @@
       "login": {
         "type": "string"
       },
-      "delay": {
+      "delayAfter": {
         "type": "number"
       },
       "assignId": {
@@ -144,7 +144,7 @@
       {
         "destination": "{{destination}}",
         "launch": "C:\\l2dion\\system\\L2.exe",
-        "delay": "{{delay}}",
+        "delayAfter": "{{delay}}",
         "assignId": "{{assignId}}"
       },
       {
@@ -152,7 +152,7 @@
         "variables": {
           "destination": "{{destination}}",
           "login": "{{login}}",
-          "delay": "{{delay}}"
+          "delayAfter": "{{delay}}"
         }
       }
     ],
@@ -163,7 +163,7 @@
       "login": {
         "type": "string"
       },
-      "delay": {
+      "delayAfter": {
         "type": "number"
       },
       "assignId": {
@@ -177,7 +177,7 @@
       {
         "destination": "{{destination}}",
         "killByName": "L2.exe",
-        "delay": 2000
+        "delayAfter": 2000
       },
       {
         "destination": "{{destination}}",
@@ -186,14 +186,14 @@
           "/home/andrew/ntfs/Games/l2dion/system/L2.exe"
         ],
         "assignId": "{{assignId}}",
-        "delay": "{{delay}}"
+        "delayAfter": "{{delay}}"
       },
       {
         "macro": "loginProceed",
         "variables": {
           "destination": "{{destination}}",
           "login": "{{login}}",
-          "delay": "{{delay}}"
+          "delayAfter": "{{delay}}"
         }
       }
     ],
@@ -204,7 +204,7 @@
       "login": {
         "type": "string"
       },
-      "delay": {
+      "delayAfter": {
         "type": "number"
       },
       "assignId": {
@@ -221,7 +221,7 @@
         "arguments": [
           "/home/andrew/ntfs/Games/l2dion/system/L2.exe"
         ],
-        "delay": "{{delay}}",
+        "delayAfter": "{{delay}}",
         "assignId": "{{assignId}}"
       },
       {
@@ -229,7 +229,7 @@
         "variables": {
           "destination": "{{destination}}",
           "login": "{{login}}",
-          "delay": "{{delay}}"
+          "delayAfter": "{{delay}}"
         }
       }
     ],
@@ -240,7 +240,7 @@
       "login": {
         "type": "string"
       },
-      "delay": {
+      "delayAfter": {
         "type": "number"
       },
       "assignId": {

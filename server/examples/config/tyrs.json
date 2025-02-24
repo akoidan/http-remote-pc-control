@@ -8,7 +8,7 @@
     "medion": "192.168.100.62",
     "this": "127.0.0.1"
   },
-  "delay": 200,
+  "delayAfter": 200,
   "aliases": {
     "se": "desktop",
     "wc": "desktop",
@@ -38,7 +38,7 @@
             "variables": {
               "destination": "spoil",
               "login": "deathangel7",
-              "delay": 14000,
+              "delayAfter": 14000,
               "assignId": "spoil"
             }
           },
@@ -47,7 +47,7 @@
             "variables": {
               "destination": "pp",
               "login": "deathangelq",
-              "delay": 14000,
+              "delayAfter": 14000,
               "assignId": "pp"
             }
           }
@@ -58,7 +58,7 @@
             "variables": {
               "destination": "da",
               "login": "deathangel9",
-              "delay": 7000,
+              "delayAfter": 7000,
               "assignId": "da"
             }
           },
@@ -67,7 +67,7 @@
             "variables": {
               "destination": "sws",
               "login": "deathangel2",
-              "delay": 6000,
+              "delayAfter": 6000,
               "assignId": "sws"
             }
           },
@@ -76,7 +76,7 @@
             "variables": {
               "destination": "bd",
               "login": "deathangel",
-              "delay": 10000,
+              "delayAfter": 10000,
               "assignId": "bd"
             }
           }
@@ -87,7 +87,7 @@
             "variables": {
               "destination": "se",
               "login": "deathangelk",
-              "delay": 8000,
+              "delayAfter": 8000,
               "assignId": "se"
             }
           },
@@ -96,16 +96,16 @@
             "variables": {
               "destination": "wc",
               "login": "deathangel1",
-              "delay": 10000,
+              "delayAfter": 10000,
               "assignId": "wc"
             }
           },
-           {
+          {
             "macro": "launchL2",
             "variables": {
               "destination": "craft",
               "login": "deathangelo",
-              "delay": 10000,
+              "delayAfter": 10000,
               "assignId": "craft"
             }
           }
@@ -116,7 +116,7 @@
             "variables": {
               "destination": "bish",
               "login": "deathangel6",
-              "delay": 16000,
+              "delayAfter": 16000,
               "assignId": "bish"
             }
           },
@@ -125,7 +125,7 @@
             "variables": {
               "destination": "ee",
               "login": "deathangel8",
-              "delay": 10000,
+              "delayAfter": 10000,
               "assignId": "ee"
             }
           }
@@ -136,7 +136,7 @@
             "variables": {
               "destination": "touchpad",
               "login": "deathangell",
-              "delay": 20000,
+              "delayAfter": 20000,
               "assignId": "tyr"
             }
           }
@@ -147,7 +147,7 @@
             "variables": {
               "destination": "msi",
               "login": "deathangelm",
-              "delay": 24000,
+              "delayAfter": 24000,
               "assignId": "monk"
             }
           }
@@ -158,7 +158,7 @@
             "variables": {
               "destination": "lenovo",
               "login": "deathangeln",
-              "delay": 28000,
+              "delayAfter": 28000,
               "assignId": "raider"
             }
           }
@@ -221,21 +221,21 @@
           {
             "destination": "bd",
             "killByPid": "{{bd}}",
-            "delay": 2000
+            "delayAfter": 2000
           }
         ],
         [
           {
             "destination": "sws",
             "killByPid": "{{sws}}",
-            "delay": 2000
+            "delayAfter": 2000
           }
         ],
         [
           {
             "destination": "craft",
             "killByPid": "{{craft}}",
-            "delay": 2000
+            "delayAfter": 2000
           }
         ]
       ],
@@ -279,26 +279,32 @@
     },
     {
       "threads": [
-        [{
-          "macro": "keySend",
-          "variables": {
-            "focusPid": "{{craft}}",
-            "destination": "craft",
-            "keySend": "2"
+        [
+          {
+            "macro": "keySend",
+            "variables": {
+              "focusPid": "{{craft}}",
+              "destination": "craft",
+              "keySend": "2"
+            }
           }
-        }],
-        [{
-          "macro": "keySend",
-          "variables": {
-            "focusPid": "{{spoil}}",
-            "destination": "spoil",
-            "keySend": "2"
+        ],
+        [
+          {
+            "macro": "keySend",
+            "variables": {
+              "focusPid": "{{spoil}}",
+              "destination": "spoil",
+              "keySend": "2"
+            }
           }
-        }],
-        [{
-          "destination": "tyrs",
-          "keySend": "f4"
-        }],
+        ],
+        [
+          {
+            "destination": "tyrs",
+            "keySend": "f4"
+          }
+        ]
       ],
       "name": "Attack",
       "shortCut": "Alt+2"
@@ -374,7 +380,7 @@
         {
           "keySend": "f9",
           "destination": "wc"
-        },
+        }
       ],
       "name": "Buff #1",
       "shortCut": "Alt+0"
@@ -399,7 +405,7 @@
         },
         {
           "macro": "keySend",
-          "delay": 10000,
+          "delayAfter": 10000,
           "variables": {
             "focusPid": "{{ee}}",
             "destination": "ee",
@@ -413,7 +419,7 @@
             "destination": "pp",
             "keySend": "4"
           },
-          "delay": 2000
+          "delayAfter": 2000
         },
         {
           "macro": "keySend",
@@ -452,7 +458,7 @@
             "destination": "bish",
             "keySend": "f12"
           },
-          "delay": 13000
+          "delayAfter": 13000
         },
         {
           "macro": "keySend",
@@ -469,7 +475,7 @@
             "destination": "ee",
             "keySend": "j"
           },
-          "delay": 300
+          "delayAfter": 300
         },
         {
           "focusPid": "{{bish}}",
@@ -870,7 +876,7 @@
     },
     {
       "commands": [
-         {
+        {
           "macro": "keySend",
           "variables": {
             "focusPid": "{{bish}}",
@@ -888,6 +894,7 @@
         },
         {
           "macro": "keySend",
+          "delayBefore": 300,
           "variables": {
             "focusPid": "{{bd}}",
             "destination": "bd",
@@ -950,7 +957,39 @@
     },
     {
       "commands": [
-                {
+        {
+          "destination": "wc",
+          "focusPid": "{{wc}}",
+          "delayAfter": 200,
+        },
+        {
+          "mouseMoveX": 469,
+          "mouseMoveY": 1368,
+          "destination": "wc"
+        }
+      ],
+      "name": "party accept WC",
+      "shortCut": "Alt+;"
+    },
+    {
+      "commands": [
+        {
+          "destination": "pp",
+          "focusPid": "{{pp}}",
+          "delayAfter": 200,
+        },
+        {
+          "mouseMoveX": 1304,
+          "mouseMoveY": 977,
+          "destination": "pp"
+        }
+      ],
+      "name": "party accept PP",
+      "shortCut": "Alt+'"
+    },
+    {
+      "commands": [
+        {
           "destination": "tyrs",
           "keySend": "="
         },
@@ -962,14 +1001,15 @@
             "keySend": "="
           }
         },
-        { // DO NOT trigger first, otherwise it will triger another shorcut
+        {
+          // DO NOT trigger first, otherwise it will triger another shorcut
           "macro": "keySend",
           "variables": {
             "focusPid": "{{sws}}",
             "destination": "sws",
             "keySend": "="
           },
-          "delay": 500,
+          "delayAfter": 700
         },
         {
           "macro": "keySend",
@@ -978,7 +1018,7 @@
             "destination": "bd",
             "keySend": "="
           },
-          "delay": 500
+          "delayAfter": 700
         },
         {
           "macro": "keySend",

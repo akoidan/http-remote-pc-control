@@ -22,45 +22,59 @@ export class CommandProcessingService {
 
   }
 
-  async resolveMacroAndAlias(input: CommandOrMacro, resolveAlias: boolean, combDelay: number | undefined): Promise<void> {
+  async resolveMacroAndAlias(
+    input: CommandOrMacro,
+    resolveAlias: boolean,
+    combDelayAfter: number | undefined,
+    combDelayBefore: number | undefined
+  ): Promise<void> {
     if ((input as MacroCommand).macro) {
       const executable = this.configService.getMacros()[(input as MacroCommand).macro];
+      if (typeof input.delayBefore === 'number' ) { // ignore if it's a variable or undefined
+        // if it's a macro, delay in this macro won't be passed down
+        // but would be await after any commands in this macro has run yet as expected, this is why on top we are not passing it
+        await this.awaitDelay(input.delayBefore as number, undefined, this.configService.getDelayBefore());
+      }
       for (const command of executable.commands) {
         const preparedCommand = this.variableService.replacePlaceholders(
           command,
           (input as MacroCommand).variables,
           executable.variables
         );
-        await this.resolveMacroAndAlias(preparedCommand, true, (preparedCommand.delay as number | undefined) ?? combDelay);
+        const delayA = (preparedCommand.delayAfter as number | undefined) ?? combDelayAfter;
+        const delayB = (preparedCommand.delayBefore as number | undefined) ?? combDelayBefore;
+        await this.resolveMacroAndAlias(preparedCommand, true, delayA, delayB);
       }
-      // and then await this delay before every command in macro, only on first iteration
-      if (typeof input.delay === 'number' ) { // ignore if it's a variable or undefined
-        await this.awaitDelay(input.delay as number, undefined); // if it's a macro, delay in this macro won't be passed down
+      // commands in this macro has been already ran in the loop
+      // await delay before the next command after this macro runs
+      if (typeof input.delayAfter === 'number' ) { // ignore if it's a variable or undefined
+        await this.awaitDelay(input.delayAfter as number, undefined, this.configService.getDelayAfter()); // if it's a macro, delay in this macro won't be passed down
         // but would be await after all commands in this macro as expected, this is why on top we are not passing it
       }
     } else if (resolveAlias) {
       const commands = this.resolveAliases(input as Command);
       for (const command of commands) {
-        await this.resolveMacroAndAlias(command, false, combDelay);
+        await this.resolveMacroAndAlias(command, false, combDelayAfter, combDelayBefore);
       }
     } else {
-      await this.runCommand(input as Command, combDelay);
+      await this.runCommand(input as Command, combDelayAfter, combDelayBefore);
     }
   }
 
-  private async runCommand(input: Command, combDelay: undefined | number): Promise<void> {
+  private async runCommand(input: Command, combDelayAfter: undefined | number, combDelayBefore: undefined | number): Promise<void> {
     const currRec = this.variableService.replaceEnvVars(input);
     this.logger.debug(`Running ${JSON.stringify(input)}`);
+    await this.awaitDelay(combDelayBefore, input.delayBefore as number | undefined, this.configService.getDelayBefore());
     await this.comandHandler.handle((currRec as Command).destination, currRec);
-    await this.awaitDelay(combDelay, input.delay as number | undefined);
+    await this.awaitDelay(combDelayAfter, input.delayAfter as number | undefined, this.configService.getDelayAfter());
   }
 
-  private async awaitDelay(combDelay: undefined | number, commandDelay: undefined | number): Promise<void> {
+  private async awaitDelay(combDelay: undefined | number, commandDelay: undefined | number, configDelay: number): Promise<void> {
     if (commandDelay !== undefined) {
       combDelay = commandDelay;
     }
     if (combDelay === undefined) {
-      combDelay = Math.round(Math.random() * this.configService.getDelay());
+      combDelay = Math.round(Math.random() * configDelay);
     }
     await new Promise(resolve => {
       setTimeout(resolve, combDelay);

@@ -97,8 +97,12 @@ export class ConfigService implements ConfigProvider {
     return this.configData!.macros ?? {};
   }
 
-  public getDelay(): number {
-    return this.configData!.delay;
+  public getDelayAfter(): number {
+    return this.configData!.delayAfter;
+  }
+
+  public getDelayBefore(): number {
+    return this.configData!.delayBefore;
   }
 
   public getVariables(): NonNullable<Variables> {

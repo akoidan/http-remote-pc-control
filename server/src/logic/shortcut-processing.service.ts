@@ -37,11 +37,11 @@ export class ShortcutProcessingService {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         asyncLocalStorage.run(newStorageMap, () => {
           // eslint-disable-next-line @typescript-eslint/use-unknown-in-catch-callback-variable
-          this.processCommandWithMacro(receiver, comb.delay).then(resolv).catch(rej);
+          this.processCommandWithMacro(receiver, comb.delayAfter, comb.delayBefore).then(resolv).catch(rej);
         });
       })));
     } else if ((comb as MacroShortcutMapping).commands) {
-      await this.processCommandWithMacro((comb as MacroShortcutMapping).commands!, comb.delay);
+      await this.processCommandWithMacro((comb as MacroShortcutMapping).commands!, comb.delayAfter, comb.delayBefore);
     } else {
       throw Error(`Unknown shortcut ${JSON.stringify(comb)}`);
     }
@@ -51,12 +51,12 @@ export class ShortcutProcessingService {
     const commands: Command[] = comb.commands.flatMap(comm => this.commandProcessor.resolveAliases(comm));
     if (comb.circular && commands.length > 0) {
       const command = this.getNextFighterIndex(comb, commands);
-      await this.commandProcessor.resolveMacroAndAlias(command, false, comb.delay);
+      await this.commandProcessor.resolveMacroAndAlias(command, false, comb.delayAfter, comb.delayBefore);
     } else {
       if (comb.shuffle) {
         this.shuffle(commands);
       }
-      await this.processCommandWithMacro(commands, comb.delay);
+      await this.processCommandWithMacro(commands, comb.delayAfter, comb.delayBefore);
     }
   }
 
@@ -81,14 +81,18 @@ export class ShortcutProcessingService {
     const thread = this.getNextFighterIndex(comb, comb.threadsCircular);
     const commands: Command[] = thread.flatMap(comm => this.commandProcessor.resolveAliases(comm));
     for (const command of commands) {
-      await this.commandProcessor.resolveMacroAndAlias(command, false, comb.delay);
+      await this.commandProcessor.resolveMacroAndAlias(command, false, comb.delayAfter, comb.delayBefore);
     }
   }
 
 
-  private async processCommandWithMacro(commands: CommandOrMacro[], combDelay: number | undefined): Promise<void> {
+  private async processCommandWithMacro(
+    commands: CommandOrMacro[],
+    combDelayAfter: number | undefined,
+    combDelayBefore: number | undefined
+  ): Promise<void> {
     for (const command of commands) {
-      await this.commandProcessor.resolveMacroAndAlias(command, true, combDelay);
+      await this.commandProcessor.resolveMacroAndAlias(command, true, combDelayAfter, combDelayBefore);
     }
   }
 
