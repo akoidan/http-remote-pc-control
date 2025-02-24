@@ -1,6 +1,7 @@
 #include <napi.h>
 #include "./headers/keypress.h"
 #include "./headers/window.h"
+#include "./headers/mouse.h"
 
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
     // Initialize window management
@@ -8,6 +9,9 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
     
     // Initialize keyboard functions
     keyboard_init(env, exports);
+    
+    // Initialize mouse functions
+    init_mouse(env, exports);
     
     return exports;
 }

@@ -70,7 +70,7 @@ Napi::Number _moveMouse(const Napi::CallbackInfo &info) {
 
 
 Napi::Object init_mouse(Napi::Env env, Napi::Object exports) {
-    exports.Set(Napi::String::New(env, "moveMouse"), Napi::Function::New(env, _moveMouse));
+    exports.Set(Napi::String::New(env, "mouseMove"), Napi::Function::New(env, _moveMouse));
     exports.Set(Napi::String::New(env, "mouseClick"), Napi::Function::New(env, _mouseClick));
 
     return exports;
