@@ -406,7 +406,7 @@
         },
         {
           "macro": "keySend",
-          "delayAfter": 10000,
+          "delayAfter": 8000,
           "variables": {
             "focusPid": "{{ee}}",
             "destination": "ee",
@@ -420,7 +420,7 @@
             "destination": "pp",
             "keySend": "4"
           },
-          "delayAfter": 2000
+          "delayAfter": 4000
         },
         {
           "macro": "keySend",
