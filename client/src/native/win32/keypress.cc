@@ -113,7 +113,7 @@ void typeString(const char *str) {
 
     // Convert input UTF-8 string to UTF-16
     std::wstring wstr = utf8_to_utf16(str);
-    
+
     for(size_t i = 0; i < wstr.length(); i++) {
         wchar_t wc = wstr[i];
         
@@ -127,10 +127,9 @@ void typeString(const char *str) {
         HKL neededLayout = GetKeyboardLayoutForLanguage(detectedLang);
         
         if (neededLayout != currentLayout) {
-            if (SetThreadKeyboardLayout(neededLayout)) {
-                currentLayout = neededLayout;
-                Sleep(50); // Give Windows time to switch layouts
-            }
+            SetThreadKeyboardLayout(neededLayout);
+            currentLayout = neededLayout;
+            Sleep(200);
         }
 
         // Get virtual key and modifiers for the character
@@ -147,9 +146,9 @@ void typeString(const char *str) {
             toggleKeyCode(virtualKey, false, flags);
         }
     }
-
-    // Restore the original keyboard layout
-    SetThreadKeyboardLayout(savedLayout);
+    Sleep(200);
+    // Restore the original keyboard layoutasd
+     SetThreadKeyboardLayout(savedLayout);
 }
 
 unsigned int getFlag(napi_env env, napi_value value) {
