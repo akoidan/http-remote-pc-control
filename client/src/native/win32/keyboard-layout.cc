@@ -2,22 +2,30 @@
 #include <unordered_map>
 #include <string>
 #include <vector>
+#include <winnls.h>
+
+// Helper function to create keyboard layout string from LANGID
+std::string MakeKLID(LANGID langId) {
+    char klid[KL_NAMELENGTH];
+    sprintf_s(klid, KL_NAMELENGTH, "%08x", MAKELCID(langId, SORT_DEFAULT));
+    return std::string(klid);
+}
 
 // Map of common language codes to their keyboard layout IDs
 static const std::unordered_map<std::string, std::string> LAYOUT_MAP = {
-    {"en", "00000409"},    // US English
-    {"ru", "00000419"},    // Russian
-    {"uk", "00000422"},    // Ukrainian
-    {"de", "00000407"},    // German
-    {"fr", "0000040C"},    // French
-    {"es", "0000040A"},    // Spanish
-    {"it", "00000410"},    // Italian
-    {"pt", "00000416"},    // Portuguese
-    {"pl", "00000415"},    // Polish
-    {"cs", "00000405"},    // Czech
-    {"ja", "00000411"},    // Japanese
-    {"ko", "00000412"},    // Korean
-    {"zh", "00000804"},    // Chinese (Simplified)
+    {"en", MakeKLID(MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US))},      // US English
+    {"ru", MakeKLID(MAKELANGID(LANG_RUSSIAN, SUBLANG_RUSSIAN_RUSSIA))},  // Russian
+    {"uk", MakeKLID(MAKELANGID(LANG_UKRAINIAN, SUBLANG_DEFAULT))},       // Ukrainian
+    {"de", MakeKLID(MAKELANGID(LANG_GERMAN, SUBLANG_GERMAN))},          // German
+    {"fr", MakeKLID(MAKELANGID(LANG_FRENCH, SUBLANG_FRENCH))},          // French
+    {"es", MakeKLID(MAKELANGID(LANG_SPANISH, SUBLANG_SPANISH))},        // Spanish
+    {"it", MakeKLID(MAKELANGID(LANG_ITALIAN, SUBLANG_ITALIAN))},        // Italian
+    {"pt", MakeKLID(MAKELANGID(LANG_PORTUGUESE, SUBLANG_PORTUGUESE))},   // Portuguese
+    {"pl", MakeKLID(MAKELANGID(LANG_POLISH, SUBLANG_DEFAULT))},         // Polish
+    {"cs", MakeKLID(MAKELANGID(LANG_CZECH, SUBLANG_DEFAULT))},          // Czech
+    {"ja", MakeKLID(MAKELANGID(LANG_JAPANESE, SUBLANG_DEFAULT))},       // Japanese
+    {"ko", MakeKLID(MAKELANGID(LANG_KOREAN, SUBLANG_KOREAN))},          // Korean
+    {"zh", MakeKLID(MAKELANGID(LANG_CHINESE_SIMPLIFIED, SUBLANG_CHINESE_SIMPLIFIED))} // Chinese (Simplified)
 };
 
 std::vector<HKL> GetInstalledKeyboardLayouts() {
