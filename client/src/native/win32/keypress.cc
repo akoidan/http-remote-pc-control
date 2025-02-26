@@ -4,6 +4,9 @@
 #include <stdint.h>
 #include "./headers/key-names.h"
 #include "./headers/keypress.h"
+#include "./headers/keyboard-layout.h"
+#include <codecvt>
+#include <locale>
 
 void win32KeyEvent(int key, unsigned int flags) {
 	UINT scan = MapVirtualKey(key & 0xff, MAPVK_VK_TO_VSC);
@@ -95,54 +98,59 @@ void toggleKey(char c, const bool down, unsigned int flags) {
 	toggleKeyCode(keyCode, down, flags);
 }
 
-
-void typeString(const char *str) {
-	unsigned short c;
-	unsigned short c1;
-	unsigned short c2;
-	unsigned short c3;
-	unsigned long n;
-
-	while (*str != '\0')
-	{
-		c = *str++;
-
-		// warning, the following utf8 decoder
-		// doesn't perform validation
-		if (c <= 0x7F)
-		{
-			// 0xxxxxxx one byte
-			n = c;
-		}
-		else if ((c & 0xE0) == 0xC0)
-		{
-			// 110xxxxx two bytes
-			c1 = (*str++) & 0x3F;
-			n = ((c & 0x1F) << 6) | c1;
-		}
-		else if ((c & 0xF0) == 0xE0)
-		{
-			// 1110xxxx three bytes
-			c1 = (*str++) & 0x3F;
-			c2 = (*str++) & 0x3F;
-			n = ((c & 0x0F) << 12) | (c1 << 6) | c2;
-		}
-		else if ((c & 0xF8) == 0xF0)
-		{
-			// 11110xxx four bytes
-			c1 = (*str++) & 0x3F;
-			c2 = (*str++) & 0x3F;
-			c3 = (*str++) & 0x3F;
-			n = ((c & 0x07) << 18) | (c1 << 12) | (c2 << 6) | c3;
-		}
-		else
-			continue; /* ignore invalid UTF-8 */
-
-        toggleKey((char)n, true, 0);
-        toggleKey((char)n, false, 0);
-	}
+std::wstring utf8_to_utf16(const char* str) {
+    try {
+        std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+        return converter.from_bytes(str);
+    } catch(...) {
+        return std::wstring();
+    }
 }
 
+void typeString(const char *str) {
+    HKL savedLayout = GetCurrentKeyboardLayout();
+    HKL currentLayout = savedLayout;
+
+    // Convert input UTF-8 string to UTF-16
+    std::wstring wstr = utf8_to_utf16(str);
+    
+    for(size_t i = 0; i < wstr.length(); i++) {
+        wchar_t wc = wstr[i];
+        
+        // Skip surrogate pairs - we'll handle them in the next iteration
+        if (i < wstr.length() - 1 && (0xD800 <= wc && wc <= 0xDBFF)) {
+            continue;
+        }
+
+        // Detect language and switch layout if needed
+        const char* detectedLang = DetectLanguageFromChar(wc);
+        HKL neededLayout = GetKeyboardLayoutForLanguage(detectedLang);
+        
+        if (neededLayout != currentLayout) {
+            if (SetThreadKeyboardLayout(neededLayout)) {
+                currentLayout = neededLayout;
+                Sleep(50); // Give Windows time to switch layouts
+            }
+        }
+
+        // Get virtual key and modifiers for the character
+        UINT virtualKey, modifiers;
+        if (GetVirtualKeyForChar(wc, currentLayout, &virtualKey, &modifiers)) {
+            // Convert Windows modifiers to our flags
+            unsigned int flags = 0;
+            if (modifiers & 1) flags |= MOD_SHIFT;
+            if (modifiers & 2) flags |= MOD_CONTROL;
+            if (modifiers & 4) flags |= MOD_ALT;
+
+            // Use toggleKeyCode to handle the keypress with modifiers
+            toggleKeyCode(virtualKey, true, flags);
+            toggleKeyCode(virtualKey, false, flags);
+        }
+    }
+
+    // Restore the original keyboard layout
+    SetThreadKeyboardLayout(savedLayout);
+}
 
 unsigned int getFlag(napi_env env, napi_value value) {
     unsigned int flags = 0;
