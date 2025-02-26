@@ -1,5 +1,5 @@
 #include <windows.h>
-#include <ctype.h> /* For isupper() */
+#include <ctype.h>
 #include <napi.h>
 #include <stdint.h>
 #include "./headers/key-names.h"
@@ -8,94 +8,118 @@
 #include <codecvt>
 #include <locale>
 
+// Define all modifiers in one place
+const KeyModifier MODIFIERS[] = {
+    {"shift", nullptr, 1 << 0, VK_LSHIFT, 1},
+    {"control", "ctrl", 1 << 1, VK_LCONTROL, 2},
+    {"alt", nullptr, 1 << 2, VK_LMENU, 4},
+    {"win", "command", 1 << 3, VK_LWIN, 0},
+    {"meta", nullptr, 1 << 3, VK_LWIN, 0}, // Alias for win
+};
+const int MODIFIER_COUNT = sizeof(MODIFIERS) / sizeof(MODIFIERS[0]);
+
+unsigned int getModifierFlag(const char* name) {
+    for (int i = 0; i < MODIFIER_COUNT; i++) {
+        if (strcmp(name, MODIFIERS[i].name) == 0 ||
+            (MODIFIERS[i].altName && strcmp(name, MODIFIERS[i].altName) == 0)) {
+            return MODIFIERS[i].flag;
+        }
+    }
+    return 0;
+}
+
+unsigned int getModifiersFromWindowsBits(int windowsModifiers) {
+    unsigned int flags = 0;
+    for (int i = 0; i < MODIFIER_COUNT; i++) {
+        if (MODIFIERS[i].winBit && (windowsModifiers & MODIFIERS[i].winBit)) {
+            flags |= MODIFIERS[i].flag;
+        }
+    }
+    return flags;
+}
+
+// Helper function to convert Windows modifiers to our flags
+unsigned int convertWindowsModifiersToFlags(int windowsModifiers) {
+    return getModifiersFromWindowsBits(windowsModifiers);
+}
+
 void win32KeyEvent(int key, unsigned int flags) {
-	UINT scan = MapVirtualKey(key & 0xff, MAPVK_VK_TO_VSC);
+    UINT scan = MapVirtualKey(key & 0xff, MAPVK_VK_TO_VSC);
 
-	/* Set the scan code for extended keys */
-	switch (key)
-	{
-	case VK_RCONTROL:
-	case VK_SNAPSHOT: /* Print Screen */
-	case VK_RMENU:	  /* Right Alt / Alt Gr */
-	case VK_PAUSE:	  /* Pause / Break */
-	case VK_HOME:
-	case VK_UP:
-	case VK_PRIOR: /* Page up */
-	case VK_LEFT:
-	case VK_RIGHT:
-	case VK_END:
-	case VK_DOWN:
-	case VK_NEXT: /* 'Page Down' */
-	case VK_INSERT:
-	case VK_DELETE:
-	case VK_LWIN:
-	case VK_RWIN:
-	case VK_APPS: /* Application */
-	case VK_VOLUME_MUTE:
-	case VK_VOLUME_DOWN:
-	case VK_VOLUME_UP:
-	case VK_MEDIA_NEXT_TRACK:
-	case VK_MEDIA_PREV_TRACK:
-	case VK_MEDIA_STOP:
-	case VK_MEDIA_PLAY_PAUSE:
-	case VK_BROWSER_BACK:
-	case VK_BROWSER_FORWARD:
-	case VK_BROWSER_REFRESH:
-	case VK_BROWSER_STOP:
-	case VK_BROWSER_SEARCH:
-	case VK_BROWSER_FAVORITES:
-	case VK_BROWSER_HOME:
-	case VK_LAUNCH_MAIL:
-	{
-		flags |= KEYEVENTF_EXTENDEDKEY;
-		break;
-	}
-	}
+    /* Set the scan code for extended keys */
+    switch (key)
+    {
+    case VK_RCONTROL:
+    case VK_SNAPSHOT: /* Print Screen */
+    case VK_RMENU:	  /* Right Alt / Alt Gr */
+    case VK_PAUSE:	  /* Pause / Break */
+    case VK_HOME:
+    case VK_UP:
+    case VK_PRIOR: /* Page up */
+    case VK_LEFT:
+    case VK_RIGHT:
+    case VK_END:
+    case VK_DOWN:
+    case VK_NEXT: /* 'Page Down' */
+    case VK_INSERT:
+    case VK_DELETE:
+    case VK_LWIN:
+    case VK_RWIN:
+    case VK_APPS: /* Application */
+    case VK_VOLUME_MUTE:
+    case VK_VOLUME_DOWN:
+    case VK_VOLUME_UP:
+    case VK_MEDIA_NEXT_TRACK:
+    case VK_MEDIA_PREV_TRACK:
+    case VK_MEDIA_STOP:
+    case VK_MEDIA_PLAY_PAUSE:
+    case VK_BROWSER_BACK:
+    case VK_BROWSER_FORWARD:
+    case VK_BROWSER_REFRESH:
+    case VK_BROWSER_STOP:
+    case VK_BROWSER_SEARCH:
+    case VK_BROWSER_FAVORITES:
+    case VK_BROWSER_HOME:
+    case VK_LAUNCH_MAIL:
+    {
+        flags |= KEYEVENTF_EXTENDEDKEY;
+        break;
+    }
+    }
 
-	INPUT keyboardInput;
-	keyboardInput.type = INPUT_KEYBOARD;
-	keyboardInput.ki.wScan = (WORD)scan;
-	keyboardInput.ki.wVk = (WORD)key;
-	keyboardInput.ki.dwFlags = KEYEVENTF_SCANCODE | flags;
-	keyboardInput.ki.time = 0;
-	SendInput(1, &keyboardInput, sizeof(keyboardInput));
+    INPUT keyboardInput;
+    keyboardInput.type = INPUT_KEYBOARD;
+    keyboardInput.ki.wScan = (WORD)scan;
+    keyboardInput.ki.wVk = (WORD)key;
+    keyboardInput.ki.dwFlags = KEYEVENTF_SCANCODE | flags;
+    keyboardInput.ki.time = 0;
+    SendInput(1, &keyboardInput, sizeof(keyboardInput));
 }
 
 void toggleKeyCode(unsigned int code, const bool down, unsigned int flags) {
-	const DWORD dwFlags = down ? 0 : KEYEVENTF_KEYUP;
+    const DWORD dwFlags = down ? 0 : KEYEVENTF_KEYUP;
+    
     if (!down) {
         win32KeyEvent(code, dwFlags);
     }
-    /* Parse modifier keys. */
-    if (flags & MOD_WIN) {
-        win32KeyEvent(VK_LWIN, dwFlags);
+    
+    // Handle modifiers
+    for (int i = 0; i < MODIFIER_COUNT; i++) {
+        if (flags & MODIFIERS[i].flag) {
+            win32KeyEvent(MODIFIERS[i].vkey, dwFlags);
+        }
     }
-    if (flags & MOD_ALT) {
-        win32KeyEvent(VK_LMENU, dwFlags);
-    }
-    if (flags & MOD_CONTROL) {
-        win32KeyEvent(VK_LCONTROL, dwFlags);
-    }
-    if (flags & MOD_SHIFT) {
-        win32KeyEvent(VK_LSHIFT, dwFlags);
-    }
+    
     if (down) {
         win32KeyEvent(code, dwFlags);
     }
 }
 
 void toggleKey(char c, const bool down, unsigned int flags) {
-	unsigned int keyCode = VkKeyScan(c);
-
-	int modifiers = keyCode >> 8; // Pull out modifers.
-	if ((modifiers & 1) != 0)
-		flags |= MOD_SHIFT; // Update flags from keycode modifiers.
-	if ((modifiers & 2) != 0)
-		flags |= MOD_CONTROL;
-	if ((modifiers & 4) != 0)
-		flags |= MOD_ALT;
-	keyCode = keyCode & 0xff; // Mask out modifiers.
-	toggleKeyCode(keyCode, down, flags);
+    unsigned int keyCode = VkKeyScan(c);
+    flags |= getModifiersFromWindowsBits(keyCode >> 8); // Add modifiers from VkKeyScan
+    keyCode = keyCode & 0xff; // Mask out modifiers
+    toggleKeyCode(keyCode, down, flags);
 }
 
 std::wstring utf8_to_utf16(const char* str) {
@@ -129,7 +153,7 @@ void typeString(const char *str) {
         if (neededLayout != currentLayout) {
             SetThreadKeyboardLayout(neededLayout);
             currentLayout = neededLayout;
-             Sleep(50);
+            Sleep(50);
             // wait timeout so first letters typging is not affected by lang changed
         }
 
@@ -137,10 +161,7 @@ void typeString(const char *str) {
         UINT virtualKey, modifiers;
         if (GetVirtualKeyForChar(wc, currentLayout, &virtualKey, &modifiers)) {
             // Convert Windows modifiers to our flags
-            unsigned int flags = 0;
-            if (modifiers & 1) flags |= MOD_SHIFT;
-            if (modifiers & 2) flags |= MOD_CONTROL;
-            if (modifiers & 4) flags |= MOD_ALT;
+            unsigned int flags = getModifiersFromWindowsBits(modifiers);
 
             // Use toggleKeyCode to handle the keypress with modifiers
             toggleKeyCode(virtualKey, true, flags);
@@ -148,29 +169,15 @@ void typeString(const char *str) {
         }
     }
     // Restore the original layout, wait timeout so last letter typing is not affected by lang change
-     Sleep(50);
+    Sleep(50);
     SetThreadKeyboardLayout(savedLayout);
 }
 
 unsigned int getFlag(napi_env env, napi_value value) {
-    unsigned int flags = 0;
     char buffer[32];
     size_t copied;
     napi_get_value_string_utf8(env, value, buffer, sizeof(buffer), &copied);
-
-    if (strcmp(buffer, "alt") == 0) {
-        flags = MOD_ALT;
-    } else if (strcmp(buffer, "command") == 0 || strcmp(buffer, "win") == 0 || strcmp(buffer, "meta") == 0) {
-        flags = MOD_WIN;
-    } else if (strcmp(buffer, "control") == 0 || strcmp(buffer, "ctrl") == 0) {
-        flags = MOD_CONTROL;
-    } else if (strcmp(buffer, "shift") == 0) {
-        flags = MOD_SHIFT;
-    } else if (strcmp(buffer, "none") == 0) {
-        flags = 0;
-    }
-
-    return flags;
+    return getModifierFlag(buffer);
 }
 
 unsigned int getAllFlags(napi_env env, napi_value value) {
