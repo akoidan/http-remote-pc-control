@@ -9,19 +9,20 @@
 #include <locale>
 
 // Define all modifiers in one place
-const KeyModifier MODIFIERS[] = {
-    {"shift", nullptr, 1 << 0, VK_LSHIFT, 1},
-    {"control", "ctrl", 1 << 1, VK_LCONTROL, 2},
-    {"alt", nullptr, 1 << 2, VK_LMENU, 4},
-    {"win", "command", 1 << 3, VK_LWIN, 0},
-    {"meta", nullptr, 1 << 3, VK_LWIN, 0}, // Alias for win
+static const KeyModifier MODIFIERS[] = {
+    {"shift", 1 << 0, VK_LSHIFT, 1},
+    {"control", 1 << 1, VK_LCONTROL, 2},
+    {"ctrl", 1 << 1, VK_LCONTROL, 2},
+    {"alt", 1 << 2, VK_LMENU, 4},
+    {"win", 1 << 3, VK_LWIN, 0},
+    {"command", 1 << 3, VK_LWIN, 0},
+    {"meta", 1 << 3, VK_LWIN, 0},
 };
-const int MODIFIER_COUNT = sizeof(MODIFIERS) / sizeof(MODIFIERS[0]);
+static const int MODIFIER_COUNT = sizeof(MODIFIERS) / sizeof(MODIFIERS[0]);
 
 unsigned int getModifierFlag(const char* name) {
     for (int i = 0; i < MODIFIER_COUNT; i++) {
-        if (strcmp(name, MODIFIERS[i].name) == 0 ||
-            (MODIFIERS[i].altName && strcmp(name, MODIFIERS[i].altName) == 0)) {
+        if (strcmp(name, MODIFIERS[i].name) == 0) {
             return MODIFIERS[i].flag;
         }
     }

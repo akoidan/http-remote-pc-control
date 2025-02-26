@@ -6,7 +6,6 @@
 // Modifier flags and their corresponding virtual keys
 struct KeyModifier {
     const char* name;      // Name in JS API
-    const char* altName;   // Alternative name in JS API
     unsigned int flag;     // Internal flag value
     int vkey;             // Windows virtual key code
     int winBit;           // Windows modifier bit
