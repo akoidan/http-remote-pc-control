@@ -11,13 +11,16 @@ std::vector<HKL> GetInstalledKeyboardLayouts();
 // Check if a keyboard layout is installed
 bool IsKeyboardLayoutInstalled(HKL layout);
 
-// Get the current keyboard layout
+// Get the current keyboard layout (system-wide)
+HKL GetSystemKeyboardLayout();
+
+// Get the current keyboard layout (thread-specific)
 HKL GetCurrentKeyboardLayout();
 
 // Get the keyboard layout for a specific language
 HKL GetKeyboardLayoutForLanguage(const char* languageCode);
 
-// Set the keyboard layout for the current thread
+// Set the keyboard layout for the current thread and active window
 bool SetThreadKeyboardLayout(HKL layout);
 
 // Save current keyboard layout and set a new one

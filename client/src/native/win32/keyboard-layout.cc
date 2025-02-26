@@ -11,6 +11,19 @@ std::string MakeKLID(LANGID langId) {
     return std::string(klid);
 }
 
+// Helper function to get foreground window's layout
+HKL GetSystemKeyboardLayout() {
+    // Get the foreground window which represents active application
+    HWND foreground = GetForegroundWindow();
+    if (!foreground) {
+        return GetKeyboardLayout(0);
+    }
+    
+    // Get the thread of the foreground window
+    DWORD threadId = GetWindowThreadProcessId(foreground, NULL);
+    return GetKeyboardLayout(threadId);
+}
+
 // Map of common language codes to their keyboard layout IDs
 static const std::unordered_map<std::string, std::string> LAYOUT_MAP = {
     {"en", MakeKLID(MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US))},      // US English
@@ -84,13 +97,23 @@ bool SetThreadKeyboardLayout(HKL layout) {
         return false;
     }
 
-    // Force layout change with multiple flags
-    if (!ActivateKeyboardLayout(layout, KLF_SETFORPROCESS | KLF_REORDER)) {
-        return false;
+    // Get the foreground window which represents active application
+    HWND foreground = GetForegroundWindow();
+    if (foreground) {
+        // Get the thread of the foreground window
+        DWORD threadId = GetWindowThreadProcessId(foreground, NULL);
+        // Attach our thread input to the foreground window's thread
+        if (AttachThreadInput(GetCurrentThreadId(), threadId, TRUE)) {
+            // Set layout for the foreground window's thread
+            SystemParametersInfo(SPI_SETDEFAULTINPUTLANG, 0, &layout, SPIF_SENDCHANGE);
+            PostMessage(foreground, WM_INPUTLANGCHANGEREQUEST, 0, (LPARAM)layout);
+            // Detach thread input
+            AttachThreadInput(GetCurrentThreadId(), threadId, FALSE);
+        }
     }
 
-    // Notify all windows of the layout change
-    PostMessage(HWND_BROADCAST, WM_INPUTLANGCHANGEREQUEST, 0, (LPARAM)layout);
+    // Also set for our thread
+    ActivateKeyboardLayout(layout, KLF_SETFORPROCESS | KLF_REORDER);
     
     return true;
 }
