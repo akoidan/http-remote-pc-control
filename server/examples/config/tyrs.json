@@ -887,15 +887,7 @@
         },
         {
           "macro": "keySend",
-          "variables": {
-            "focusPid": "{{wc}}",
-            "destination": "wc",
-            "keySend": "f6"
-          }
-        },
-        {
-          "macro": "keySend",
-          "delayBefore": 300,
+          "delayAfter": 200,
           "variables": {
             "focusPid": "{{bd}}",
             "destination": "bd",
@@ -907,6 +899,14 @@
           "variables": {
             "focusPid": "{{sws}}",
             "destination": "sws",
+            "keySend": "f6"
+          }
+        },
+        {
+          "macro": "keySend",
+          "variables": {
+            "focusPid": "{{wc}}",
+            "destination": "wc",
             "keySend": "f6"
           }
         },
@@ -961,7 +961,7 @@
         {
           "destination": "wc",
           "focusPid": "{{wc}}",
-          "delayAfter": 500,
+          "delayAfter": 500
         },
         {
           "mouseMoveX": 469,
@@ -977,7 +977,7 @@
         {
           "destination": "pp",
           "focusPid": "{{pp}}",
-          "delayAfter": 500,
+          "delayAfter": 500
         },
         {
           "mouseMoveX": 1304,
