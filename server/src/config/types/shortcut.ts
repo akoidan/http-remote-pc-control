@@ -45,6 +45,7 @@ const baseShortCutMappingSchema = z.object({
   delayBefore: z.number().optional().describe('Delay in milliseconds before each command for this shorcut'),
   name: z.string().describe('Name that is printed during startup with a shorcut'),
   shortCut,
+  iterations: z.number().optional().describe('Repeat commands in this schema in loop intil this shortcut is pressed again or number of iteration is finished. pass -1 for infinity'),
 }).strict();
 
 const commandsSchema = z.array(commandSchema);

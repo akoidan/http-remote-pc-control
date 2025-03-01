@@ -41,6 +41,7 @@ export class AppModule implements OnModuleInit {
         this.hotKeyService.registerShortcut(comb.shortCut, () => {
           asyncLocalStorage.run(new Map(), () => {
             asyncLocalStorage.getStore()!.set('comb', Math.random().toString(36).substring(2, 6));
+            this.logger.log(`${clc.bold.green(comb.shortCut)} pressed`);
             this.logicService.processUnknownShortCut(comb).catch((err: unknown) => this.logger.error(err));
           });
         });

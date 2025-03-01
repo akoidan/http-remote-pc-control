@@ -17,6 +17,7 @@ import clc from 'cli-color';
 @Injectable()
 export class ShortcutProcessingService {
   private activeFighterIndex: Record<string, number> = {};
+  private iterationsInProgress: Record<string, boolean> = {};
 
   constructor(
     private readonly commandProcessor: CommandProcessingService,
@@ -25,9 +26,9 @@ export class ShortcutProcessingService {
   }
 
   async processUnknownShortCut(comb: ShortsData): Promise<void> {
-    this.logger.log(`${clc.bold.green(comb.shortCut)} pressed`);
-
-    if (Boolean((comb as RandomShortcutMapping).circular) || Boolean((comb as RandomShortcutMapping).shuffle)) {
+    if (typeof comb.iterations !== 'undefined') {
+      await this.processLoop(comb);
+    } else if (Boolean((comb as RandomShortcutMapping).circular) || Boolean((comb as RandomShortcutMapping).shuffle)) {
       await this.processShortcutsWoMacro((comb as RandomShortcutMapping));
     } else if ((comb as MacroShortcutMappingCircular).threadsCircular) {
       await this.processShortcutsThreadWoMacro((comb as MacroShortcutMappingCircular));
@@ -47,6 +48,24 @@ export class ShortcutProcessingService {
     }
   }
 
+  private async processLoop(comb: ShortsData) {
+    if (this.iterationsInProgress[comb.shortCut]) {
+      this.iterationsInProgress[comb.shortCut] = false;
+      this.logger.log(`Halting ${clc.bold.green(comb.name)}. Waiting for its command to finish...`)
+    } else {
+      this.iterationsInProgress[comb.shortCut] = true;
+      const copy: ShortsData = JSON.parse(JSON.stringify(comb));
+      delete copy['iterations'];
+      for (let i = 1; this.iterationsInProgress[comb.shortCut]; i++) {
+        if (comb.iterations! > 0 && comb.iterations! < i) {
+          break
+        }
+        this.logger.log(`Running ${clc.yellow(i)} iteration of ${clc.bold.green(comb.name)}`)
+        await this.processUnknownShortCut(copy);
+      }
+    }
+  }
+
   private async processShortcutsWoMacro(comb: RandomShortcutMapping): Promise<void> {
     const commands: Command[] = comb.commands.flatMap(comm => this.commandProcessor.resolveAliases(comm));
     if (comb.circular && commands.length > 0) {
@@ -61,7 +80,7 @@ export class ShortcutProcessingService {
   }
 
   getNextFighterIndex<T>(comb: unknown, commands: T[]): T {
-    const key = JSON.stringify(comb);
+    const key = comb.shortCut;
     // if not initialized, or index out of bounds
     if (commands.length === 0) {
       throw Error(`No commands found for ${key}`);
