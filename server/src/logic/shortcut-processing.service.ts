@@ -69,7 +69,7 @@ export class ShortcutProcessingService {
   private async processShortcutsWoMacro(comb: RandomShortcutMapping): Promise<void> {
     const commands: Command[] = comb.commands.flatMap(comm => this.commandProcessor.resolveAliases(comm));
     if (comb.circular && commands.length > 0) {
-      const command = this.getNextFighterIndex(comb, commands);
+      const command = this.getNextFighterIndex(comb.shortCut, commands);
       await this.commandProcessor.resolveMacroAndAlias(command, false, comb.delayAfter, comb.delayBefore);
     } else {
       if (comb.shuffle) {
@@ -79,8 +79,7 @@ export class ShortcutProcessingService {
     }
   }
 
-  getNextFighterIndex<T>(comb: unknown, commands: T[]): T {
-    const key = comb.shortCut;
+  getNextFighterIndex<T>(key: string, commands: T[]): T {
     // if not initialized, or index out of bounds
     if (commands.length === 0) {
       throw Error(`No commands found for ${key}`);
@@ -97,7 +96,7 @@ export class ShortcutProcessingService {
   }
 
   private async processShortcutsThreadWoMacro(comb: MacroShortcutMappingCircular): Promise<void> {
-    const thread = this.getNextFighterIndex(comb, comb.threadsCircular);
+    const thread = this.getNextFighterIndex(comb.shortCut, comb.threadsCircular);
     const commands: Command[] = thread.flatMap(comm => this.commandProcessor.resolveAliases(comm));
     for (const command of commands) {
       await this.commandProcessor.resolveMacroAndAlias(command, false, comb.delayAfter, comb.delayBefore);

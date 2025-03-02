@@ -133,6 +133,9 @@ std::wstring utf8_to_utf16(const char* str) {
 }
 
 void typeString(const char *str) {
+    // Ensure Caps Lock is disabled before typing
+    ensureCapsLockDisabled();
+    
     HKL savedLayout = GetSystemKeyboardLayout();
     HKL currentLayout = savedLayout;
 

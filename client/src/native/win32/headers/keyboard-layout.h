@@ -36,4 +36,10 @@ const char* DetectLanguageFromChar(wchar_t ch);
 // Get virtual key and required modifiers for a Unicode character
 bool GetVirtualKeyForChar(wchar_t ch, HKL layout, UINT* virtualKey, UINT* modifiers);
 
+// Check if Caps Lock is enabled
+bool isCapsLockEnabled();
+
+// Ensure Caps Lock is disabled by toggling it off if it's on
+void ensureCapsLockDisabled();
+
 #endif // KEYBOARD_LAYOUT_H

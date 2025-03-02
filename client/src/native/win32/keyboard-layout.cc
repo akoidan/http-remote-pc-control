@@ -4,6 +4,9 @@
 #include <vector>
 #include <winnls.h>
 
+
+#define DEBUG_LOG(fmt, ...) fprintf(stdout, "[window-linux] " fmt "\n", ##__VA_ARGS__)
+
 // Helper function to create keyboard layout string from LANGID
 std::string MakeKLID(LANGID langId) {
     char klid[KL_NAMELENGTH];
@@ -151,4 +154,26 @@ bool GetVirtualKeyForChar(wchar_t ch, HKL layout, UINT* virtualKey, UINT* modifi
     *virtualKey = LOBYTE(vk);
     *modifiers = HIBYTE(vk);
     return true;
+}
+
+bool isCapsLockEnabled() {
+    return (GetKeyState(VK_CAPITAL) & 0x0001) != 0;
+}
+
+void ensureCapsLockDisabled() {
+    DEBUG_LOG("Caps check");
+    if (isCapsLockEnabled()) {
+        // Simulate pressing and releasing Caps Lock
+        INPUT input[2] = {};
+        input[0].type = INPUT_KEYBOARD;
+        input[0].ki.wVk = VK_CAPITAL;
+        input[0].ki.dwFlags = 0;
+
+        input[1].type = INPUT_KEYBOARD;
+        input[1].ki.wVk = VK_CAPITAL;
+        input[1].ki.dwFlags = KEYEVENTF_KEYUP;
+
+        SendInput(2, input, sizeof(INPUT));
+        Sleep(50); // Small delay to ensure the state change takes effect
+    }
 }
