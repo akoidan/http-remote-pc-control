@@ -1,5 +1,4 @@
-#ifndef NATIVE_KEY_NAMES_H
-#define NATIVE_KEY_NAMES_H
+#pragma once
 
 typedef struct {
     const char* name;
@@ -7,5 +6,3 @@ typedef struct {
 } KeyNames;
 
 extern KeyNames key_names[];
-
-#endif

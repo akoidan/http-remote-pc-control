@@ -1,5 +1,4 @@
-#ifndef KEYBOARD_LAYOUT_H
-#define KEYBOARD_LAYOUT_H
+#pragma once
 
 #include <windows.h>
 #include <vector>
@@ -41,5 +40,3 @@ bool isCapsLockEnabled();
 
 // Ensure Caps Lock is disabled by toggling it off if it's on
 void ensureCapsLockDisabled();
-
-#endif // KEYBOARD_LAYOUT_H
