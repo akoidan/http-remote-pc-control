@@ -37,7 +37,7 @@
             "macro": "killLaunchL2",
             "variables": {
               "destination": "asus",
-              "login": "deathangel5",
+              "login": "deathangelr",
               "delayAfter": 14000
             }
           }
@@ -47,7 +47,7 @@
             "macro": "killLaunchL2",
             "variables": {
               "destination": "lenovo",
-              "login": "deathangelr",
+              "login": "deathangel5",
               "delayAfter": 16000
             }
           }
