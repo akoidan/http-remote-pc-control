@@ -1,4 +1,4 @@
-name: client-pr
+name: pr
 
 on:
   pull_request:
@@ -6,11 +6,9 @@ on:
       - opened
       - reopened
       - synchronize
-    paths:
-      - 'client/**'
 
 concurrency:
-  group: client-${{ github.ref }}
+  group: ${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -28,18 +26,13 @@ jobs:
         # Only restore them
         uses: actions/cache/restore@v4
         with:
-          path: |
-            client/node_modules
-          key: ${{ runner.os }}-node-modules-client-${{ hashFiles('client/yarn.lock') }}
+          path: node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('yarn.lock') }}
       - name: Install yarn deps
         if: steps.cache-node.outputs.cache-hit != 'true'
-        run: |
-          cd client
-          yarn install --frozen-lockfile
+        run:  yarn install --frozen-lockfile
       - name: Check Eslint
-        run: |
-          cd client
-          yarn lint
+        run: yarn lint
   build:
     runs-on: ubuntu-latest
     steps:
@@ -53,15 +46,10 @@ jobs:
         # Only restore them
         uses: actions/cache/restore@v4
         with:
-          path: |
-            client/node_modules
-          key: ${{ runner.os }}-node-modules-client-${{ hashFiles('client/yarn.lock') }}
+          path: node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('yarn.lock') }}
       - name: Install yarn deps
         if: steps.cache-node.outputs.cache-hit != 'true'
-        run: |
-          cd client
-          yarn install --frozen-lockfile
+        run: yarn install --frozen-lockfile
       - name: Build
-        run: |
-          cd client
-          yarn transpile
+        run: yarn transpile
