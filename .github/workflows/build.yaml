@@ -12,6 +12,7 @@ on:
 jobs:
   create_release:
     runs-on: ubuntu-22.04
+
     permissions: write-all
     outputs:
       upload_url: ${{ steps.create_release.outputs.upload_url }}
@@ -67,6 +68,35 @@ jobs:
           asset_path: ./app.exe
           asset_name: app.exe
           asset_content_type: application/vnd.microsoft.portable-executable
+  docs:
+    needs: [ create_release]
+    runs-on: ubuntu-22.04
+    permissions: write-all
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Cache node_modules cache
+        id: cache-node
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('yarn.lock') }}
+      - name: Install yarn deps
+        if: steps.cache-node.outputs.cache-hit != 'true'
+        run: yarn install --frozen-lockfile
+      - name: Generate swagger docs
+        run: yarn schema:swagger
+      - name: Upload swagger schema
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create_release.outputs.upload_url }}
+          asset_path: ./swagger.json
+          asset_name: swagger.json
+          asset_content_type: application/json
   linux:
     runs-on: ubuntu-22.04
     needs: [ create_release ]

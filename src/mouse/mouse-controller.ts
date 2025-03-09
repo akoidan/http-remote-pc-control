@@ -1,14 +1,16 @@
 import {
+  Body,
   Controller,
   Post,
 } from '@nestjs/common';
-import {
-  MouseMoveClickRequest,
-  mouseMoveClickRequestSchema,
-} from '@/mouse/mouse-dto';
+import {MouseMoveClickRequestDto} from '@/mouse/mouse-dto';
 import {MouseService} from '@/mouse/mouse-service';
-import {ZodBody} from '@/validation/zod-validator';
+import {
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 
+@ApiTags('Mouse')
 @Controller()
 export class MouseController {
   constructor(
@@ -17,11 +19,13 @@ export class MouseController {
   }
 
   @Post('mouse-move-click')
-  async mouseMoveClick(@ZodBody(mouseMoveClickRequestSchema) event: MouseMoveClickRequest): Promise<void> {
+  @ApiOperation({summary: 'Move mouse and click'})
+  async mouseMoveClick(@Body() event: MouseMoveClickRequestDto): Promise<void> {
     await this.mouseService.leftMouseMoveClick(event.x, event.y);
   }
 
   @Post('left-mouse-click')
+  @ApiOperation({summary: 'Left click'})
   async leftMouseClick(): Promise<void> {
     await this.mouseService.click();
   }

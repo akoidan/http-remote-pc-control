@@ -1,18 +1,20 @@
 import {
+  Body,
   Controller,
   Inject,
   Post,
 } from '@nestjs/common';
-import {
-  FocusExeRequest,
-  focusExeRequestSchema,
-} from '@/execute/execute-dto';
-import {ZodBody} from '@/validation/zod-validator';
+import {FocusExeRequestDto} from '@/execute/execute-dto';
 import {
   IWindowService,
   WindowService,
 } from '@/window/window-model';
+import {
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 
+@ApiTags('Window')
 @Controller()
 export class WindowController {
   constructor(
@@ -22,7 +24,8 @@ export class WindowController {
   }
 
   @Post('focus-exe')
-  async focusExe(@ZodBody(focusExeRequestSchema) body: FocusExeRequest): Promise<void> {
+  @ApiOperation({summary: 'Focus window by process ID'})
+  async focusExe(@Body() body: FocusExeRequestDto): Promise<void> {
     await this.windowsService.activateWindow(body.pid);
   }
 }

@@ -1,17 +1,23 @@
 import {
+  Body,
   Controller,
   Inject,
   Post,
 } from '@nestjs/common';
 import {
-  KeyPressRequest,
-  keyPressRequestSchema,
-  TypeTextRequest,
-  typeTextRequestSchema,
+  KeyPressRequestDto,
+  TypeTextRequestDto,
 } from '@/keyboard/keyboard-dto';
-import {ZodBody} from '@/validation/zod-validator';
-import {IKeyboardService, KeyboardService} from '@/keyboard/keyboard-model';
+import {
+  IKeyboardService,
+  KeyboardService,
+} from '@/keyboard/keyboard-model';
+import {
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 
+@ApiTags('Keyboard')
 @Controller()
 export class KeyboardController {
   constructor(
@@ -21,13 +27,14 @@ export class KeyboardController {
   }
 
   @Post('key-press')
-  async keyPress(@ZodBody(keyPressRequestSchema) body: KeyPressRequest): Promise<void> {
+  @ApiOperation({summary: 'Press one or more keys'})
+  async keyPress(@Body() body: KeyPressRequestDto): Promise<void> {
     await this.keyboardService.sendKey(body.keys as string[], body.holdKeys as string[]);
   }
 
-
   @Post('type-text')
-  async typeText(@ZodBody(typeTextRequestSchema) body: TypeTextRequest): Promise<void> {
+  @ApiOperation({summary: 'Type text'})
+  async typeText(@Body() body: TypeTextRequestDto): Promise<void> {
     await this.keyboardService.type(body.text);
   }
 }

@@ -1,15 +1,15 @@
 import {z} from 'zod';
+import {createZodDto} from '@anatine/zod-nestjs';
 
 const focusExeRequestSchema = z.object({
-  pid: z.number(),
+  pid: z.number().describe('Process ID to focus'),
 });
 
-type FocusExeRequest = z.infer<typeof focusExeRequestSchema>;
+// Create DTO class for Swagger
+class FocusExeRequestDto extends createZodDto(focusExeRequestSchema) {}
 
-export {
-  focusExeRequestSchema,
-};
+// Export values
+export {focusExeRequestSchema, FocusExeRequestDto};
 
-export type {
-  FocusExeRequest,
-};
+// Export types
+export type FocusExeRequest = z.infer<typeof focusExeRequestSchema>;
