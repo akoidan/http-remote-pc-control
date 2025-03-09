@@ -1,4 +1,5 @@
 import {z} from 'zod';
+import {createZodDto} from 'nestjs-zod';
 
 
 const launchExeRequestSchema = z.object({
@@ -25,19 +26,35 @@ type KillExeByPidRequest = z.infer<typeof killExeByPidRequestSchema>
 type LaunchExeRequest = z.infer<typeof launchExeRequestSchema>;
 type FocusExeRequest = z.infer<typeof focusExeRequestSchema>;
 
-interface LaunchPidResponse {
-  pid: number;
-}
+
+const launchPidResponse = z.object({
+  pid: z.number().describe('Process Id'),
+});
+
+
+class LaunchExeRequestClass extends createZodDto(launchExeRequestSchema) {}
+class KillExeByNameRequestClass extends createZodDto(killExeByNameRequestSchema) {}
+class KillExeByPidRequestClass extends createZodDto(killExeByPidRequestSchema) {}
+class FocusExeRequestClass extends createZodDto(focusExeRequestSchema) {}
+class LaunchPidReponseClass extends createZodDto(launchPidResponse) {}
+class LaunchPidResponseClass extends createZodDto(launchPidResponse) {}
 
 export {
   launchExeRequestSchema,
   killExeByNameRequestSchema,
   killExeByPidRequestSchema,
   focusExeRequestSchema,
+  launchPidResponse,
 };
 
+
 export type {
-  LaunchPidResponse,
+  LaunchExeRequestClass,
+  KillExeByNameRequestClass,
+  KillExeByPidRequestClass,
+  LaunchPidResponseClass,
+  FocusExeRequestClass,
+  LaunchPidReponseClass,
   FocusExeRequest,
   KillExeByNameRequest,
   KillExeByPidRequest,

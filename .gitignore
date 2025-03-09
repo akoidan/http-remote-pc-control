@@ -6,6 +6,7 @@ certs
 !certs/.gitkeep
 .vs
 Project1
+swagger.json
 app
 cmake-build-debug
 .idea
