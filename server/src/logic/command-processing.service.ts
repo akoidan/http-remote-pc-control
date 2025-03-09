@@ -10,6 +10,7 @@ import {
 } from '@/config/types/macros';
 import {VariableResolutionService} from 'src/logic/variable-resolution.service';
 import {CommandHandler} from '@/handlers/command-handler.service';
+import {CircularIndex} from '@/logic/circular-index';
 
 @Injectable()
 export class CommandProcessingService {
@@ -17,7 +18,8 @@ export class CommandProcessingService {
     private readonly configService: ConfigService,
     private readonly variableService: VariableResolutionService,
     private readonly logger: Logger,
-    private readonly comandHandler: CommandHandler
+    private readonly comandHandler: CommandHandler,
+    private readonly circularResolved: CircularIndex,
   ) {
 
   }
@@ -95,8 +97,12 @@ export class CommandProcessingService {
     if (typeof destination === 'string') {
       return this.resolveAliases({...rec, destination});
     }
-    if (Array.isArray(destination)) {
-      return destination.flatMap(dest => this.resolveAliases({...rec, destination: dest}));
+    if (typeof destination === 'object') {
+      const commands = destination.ipNames.flatMap(dest => this.resolveAliases({...rec, destination: dest}));
+      if (destination.circular) {
+        return [this.circularResolved.getNextFighterIndex(rec, commands)];
+      }
+      return commands;
     }
     throw Error(`Unknown destination ${rec.destination}`);
   }

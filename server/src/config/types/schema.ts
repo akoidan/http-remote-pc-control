@@ -42,11 +42,18 @@ const ipsSchema = z.record(z.string().ip())
     ' The IP address should be available to a remote PC.' +
     ' You can also use https://ngrok.com/ to get public address or create VPN ');
 
-const aliasesSchema = z.record(z.union([z.array(z.string()), z.string()]))
+const aliasesValueObjectSchema = z.object({
+  ipNames: z.array(z.string().describe('Value from "ips" section of this config')),
+  circular: z.boolean().optional().describe('If set to true, only 1 ip will be used at the time.' +
+    ' Otherwise will be executed on every element.').default(false),
+});
+
+const aliasesValueSchema = z.union([aliasesValueObjectSchema, z.string()]);
+
+const aliasesSchema = z.record(aliasesValueSchema)
   .optional()
   .describe('A map for extra layer above destination property. E.g. you can define PC name in ' +
     'IPS section and instead of specifying PC name directly you can use aliases from this section that points to the PC name.');
-
 
 const aARootSchema = z.object({
   ips: ipsSchema,
@@ -63,7 +70,7 @@ const aARootSchema = z.object({
   // Ensure mapping values are arrays of keys from ips
   const ipsKeys = new Set(Object.keys(data.ips));
   Object.entries(data.aliases ?? {}).forEach(([key, value]) => {
-    const values = value instanceof Array ? value : [value];
+    const values = typeof value === 'string' ? [value] : value.ipNames;
     if (ipsKeys.has(key)) {
       ctx.addIssue({
         code: ZodIssueCode.custom,
@@ -88,12 +95,14 @@ type ConfigData = z.infer<typeof aARootSchema>;
 
 type IpsData = z.infer<typeof ipsSchema>
 type AliasesData = z.infer<typeof aliasesSchema>
+type AliasesValueData = z.infer<typeof aliasesValueSchema>
 
 
 export type {
   ConfigData,
   IpsData,
   AliasesData,
+  AliasesValueData,
 };
 
 export {
@@ -109,6 +118,8 @@ export {
   commandSchema,
   ipsSchema,
   aliasesSchema,
+  aliasesValueSchema,
+  aliasesValueObjectSchema,
   variableValueSchema,
   keyPressCommandSchema,
   commandsAndMacrosArraySchema,

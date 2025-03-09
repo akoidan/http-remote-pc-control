@@ -13,14 +13,15 @@ import {CommandOrMacro} from '@/config/types/macros';
 import {asyncLocalStorage} from '@/app/custom-logger';
 import {Command} from '@/config/types/commands';
 import clc from 'cli-color';
+import {CircularIndex} from '@/logic/circular-index';
 
 @Injectable()
 export class ShortcutProcessingService {
-  private activeFighterIndex: Record<string, number> = {};
   private iterationsInProgress: Record<string, boolean> = {};
 
   constructor(
     private readonly commandProcessor: CommandProcessingService,
+    private readonly circularResolver: CircularIndex,
     private readonly logger: Logger,
   ) {
   }
@@ -51,16 +52,16 @@ export class ShortcutProcessingService {
   private async processLoop(comb: ShortsData) {
     if (this.iterationsInProgress[comb.shortCut]) {
       this.iterationsInProgress[comb.shortCut] = false;
-      this.logger.log(`Halting ${clc.bold.green(comb.name)}. Waiting for its command to finish...`)
+      this.logger.log(`Halting ${clc.bold.green(comb.name)}. Waiting for its command to finish...`);
     } else {
       this.iterationsInProgress[comb.shortCut] = true;
       const copy: ShortsData = JSON.parse(JSON.stringify(comb));
-      delete copy['iterations'];
+      delete copy.iterations;
       for (let i = 1; this.iterationsInProgress[comb.shortCut]; i++) {
         if (comb.iterations! > 0 && comb.iterations! < i) {
-          break
+          break;
         }
-        this.logger.log(`Running ${clc.yellow(i)} iteration of ${clc.bold.green(comb.name)}`)
+        this.logger.log(`Running ${clc.yellow(i)} iteration of ${clc.bold.green(comb.name)}`);
         await this.processUnknownShortCut(copy);
       }
     }
@@ -69,7 +70,7 @@ export class ShortcutProcessingService {
   private async processShortcutsWoMacro(comb: RandomShortcutMapping): Promise<void> {
     const commands: Command[] = comb.commands.flatMap(comm => this.commandProcessor.resolveAliases(comm));
     if (comb.circular && commands.length > 0) {
-      const command = this.getNextFighterIndex(comb.shortCut, commands);
+      const command = this.circularResolver.getNextFighterIndex(comb.shortCut, commands);
       await this.commandProcessor.resolveMacroAndAlias(command, false, comb.delayAfter, comb.delayBefore);
     } else {
       if (comb.shuffle) {
@@ -79,30 +80,13 @@ export class ShortcutProcessingService {
     }
   }
 
-  getNextFighterIndex<T>(key: string, commands: T[]): T {
-    // if not initialized, or index out of bounds
-    if (commands.length === 0) {
-      throw Error(`No commands found for ${key}`);
-    }
-    if (typeof this.activeFighterIndex[key] === 'undefined') {
-      this.activeFighterIndex[key] = 0;
-    } else {
-      this.activeFighterIndex[key]++;
-    }
-    if (this.activeFighterIndex[key] >= commands.length) {
-      this.activeFighterIndex[key] = 0;
-    }
-    return commands[this.activeFighterIndex[key]];
-  }
-
   private async processShortcutsThreadWoMacro(comb: MacroShortcutMappingCircular): Promise<void> {
-    const thread = this.getNextFighterIndex(comb.shortCut, comb.threadsCircular);
+    const thread = this.circularResolver.getNextFighterIndex(comb.shortCut, comb.threadsCircular);
     const commands: Command[] = thread.flatMap(comm => this.commandProcessor.resolveAliases(comm));
     for (const command of commands) {
       await this.commandProcessor.resolveMacroAndAlias(command, false, comb.delayAfter, comb.delayBefore);
     }
   }
-
 
   private async processCommandWithMacro(
     commands: CommandOrMacro[],
