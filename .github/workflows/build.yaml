@@ -12,6 +12,7 @@ on:
 jobs:
   create_release:
     runs-on: ubuntu-22.04
+
     permissions: write-all
     outputs:
       upload_url: ${{ steps.create_release.outputs.upload_url }}
