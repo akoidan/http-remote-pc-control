@@ -1,17 +1,38 @@
-import {NestFactory} from '@nestjs/core';
 import {
   DocumentBuilder,
   SwaggerModule,
 } from '@nestjs/swagger';
-import {AppModule} from '@/app/app.module';
 import {writeFile} from 'fs/promises';
+import {KeyboardModule} from '@/keyboard/keyboard-module';
+import {ExecuteModule} from '@/execute/execute-module';
+import {MouseModule} from '@/mouse/mouse-module';
+import {WindowModule} from '@/window/window-module';
+import {Native} from '@/native/native-model';
+import {AppController} from '@/app/app-controller';
+import {NestFactory} from '@nestjs/core';
+import {Module} from '@nestjs/common';
 
 async function bootstrap(): Promise<void> {
-  const app = await NestFactory.create(AppModule);
+   @Module({
+    imports: [
+      KeyboardModule,
+      ExecuteModule,
+      MouseModule,
+      WindowModule,
+    ],
+    controllers: [AppController],
+    providers: [{
+      provide: Native, // exclude native dependency, since it's not required
+      useValue: {},
+    }],
+  })
+  class TestAppModule {
+  }
 
-  // Swagger Configuration
+  const app = await NestFactory.create(TestAppModule);
+// Swagger Configuration
   const config = new DocumentBuilder()
-    .setTitle('Http Remote PC controll API')
+    .setTitle('Http Remote PC control API')
     .setDescription('API Documentation')
     .setVersion('1.0')
     .build();

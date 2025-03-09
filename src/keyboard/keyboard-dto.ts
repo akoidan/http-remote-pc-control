@@ -23,10 +23,16 @@ const typeTextRequestSchema = z.object({
 });
 
 // Create DTO classes for Swagger
-export class KeyPressRequestDto extends createZodDto(keyPressRequestSchema) {}
-export class TypeTextRequestDto extends createZodDto(typeTextRequestSchema) {}
+class KeyPressRequestDto extends createZodDto(keyPressRequestSchema) {}
+class TypeTextRequestDto extends createZodDto(typeTextRequestSchema) {}
 
 // Export types and schemas
-export type KeyPressRequest = z.infer<typeof keyPressRequestSchema>;
-export type TypeTextRequest = z.infer<typeof typeTextRequestSchema>;
-export {keySchema, keyPressRequestSchema, typeTextRequestSchema};
+type KeyPressRequest = z.infer<typeof keyPressRequestSchema>;
+type TypeTextRequest = z.infer<typeof typeTextRequestSchema>;
+
+export type {
+  KeyPressRequest,
+  TypeTextRequest,
+};
+
+export {keySchema, keyPressRequestSchema, typeTextRequestSchema, KeyPressRequestDto, TypeTextRequestDto};

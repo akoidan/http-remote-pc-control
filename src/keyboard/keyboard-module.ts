@@ -15,10 +15,8 @@ import {
   INativeModule,
   Native,
 } from '@/native/native-model';
-import {NativeModule} from '@/native/native-module';
 
 @Module({
-  imports: [NativeModule],
   controllers: [KeyboardController],
   providers: [
     Logger,

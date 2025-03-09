@@ -81,7 +81,6 @@
     "@nestjs/swagger": "^11.0.6",
     "bindings": "^1.5.0",
     "cli-color": "^2.0.4",
-    "nestjs-zod": "^4.3.1",
     "openapi3-ts": "^4.4.0",
     "reflect-metadata": "^0.2.2",
     "zod": "^3.24.2"

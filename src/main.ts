@@ -6,7 +6,7 @@ import {
   asyncLocalStorage,
   CustomLogger,
 } from '@/app/custom-logger';
-import {ZodValidationPipe} from '@/validation/zod.pipe';
+import {ZodValidationPipe} from '@anatine/zod-nestjs';
 import process from 'node:process';
 
 asyncLocalStorage.run(new Map<string, string>().set('comb', 'init'), () => {

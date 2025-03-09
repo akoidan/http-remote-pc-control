@@ -19,7 +19,6 @@ import {
 import {NativeModule} from '@/native/native-module';
 
 @Module({
-  imports: [NativeModule],
   controllers: [WindowController],
   providers: [
     Logger,

@@ -10,8 +10,8 @@ You can also use https://github.com/akoidan/hotkey-hub for doing this via system
 ## Get started
 
 ### Certificates
-
-Generate certificates with [gen-cert.sh](./gen-cert.sh) for [MTLS](https://www.cloudflare.com/learning/access-management/what-is-mutual-tls/) encryption.
+The client server app both use [mutual TLS authentication](https://www.cloudflare.com/learning/access-management/what-is-mutual-tls/).
+You can use my helper script to generate certificates with [gen-cert.sh](./gen-cert.sh).
 
 ```bash
 bash ./gen-cert.sh
@@ -26,38 +26,38 @@ Leave certs directory in the project or within the same directory you are runnin
 Copy client directory to the remote PC where you have the [server](https://github.com/akoidan/hotkey-hub)
 
 ### Download the app
+Here are instructions for windows, for linux you can just ignore windows specific intructions.
+
  - Download client you want to receive shorcuts [releases](https://github.com/akoidan/http-remote-pc-control/releases).
  - If windows antivirus deletes a file, you can allow it in **Virus & threat protection** -> **Protection History** -> Expaned recently blocked threat and allow it
- - Copy ./client/certs directory into a current directory. So pwd contains `certs` directory
+ - Ensure directory with the executalbe, or project direcotry contains `certs` directory with certificates
  - Run exe files as Administrator. 
  - If windows antivirus complains about security Open **Virus & threat protection** -> **Virus & threat protection settings** -> **Exclusions Add or remove exclusions** -> **Add an exclusion**. 
  - If it crashes , open powershell and run exe file from it, it's a CLI app.
 
-## NAT
-If your remote PC doesn't have a static IP or under NAT you can use connect all PCS into VPN or use some 3rd party service like [ngrok](https://ngrok.com/) [localtunel](https://github.com/localtunnel/localtunnel) or [cloudflared](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/) and etc. Example with ngrock:
+### Api documentation
+You can find api documentation under [releases](https://github.com/akoidan/http-remote-pc-control/releases). You can put this file into any swagger ui, e.g. [Swagger Editor](https://editor.swagger.io/). This file can be generated locally with
+```bash
+yarn schema:swagger
+```
+
+This will create ./swagger.json in the project directory.
+
+### NAT
+If your current PC doesn't have a static IP or under NAT, you can use VPN or some 3rd party service like [ngrok](https://ngrok.com/) [localtunel](https://github.com/localtunnel/localtunnel) or [cloudflared](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/) to expose it to the world. Example with ngrock:
 ```bash
 ngrok http 5000
 ```
 
-## Custom port
+### Custom port
 By default app is listening port 5000, in order to change the port specify it as a first argument on the app executable. Example
 ```bash
 ./app.exe 5001
 ```
 In order to change port on [server](https://github.com/akoidan/hotkey-hub) app, specify it as clientPort its config.jsonc
 
-## Security
-The client server app both use mutual TLS authentication. 
-Client apps should be available withing the address provided in config. So either all apps are within same network. Or clients have public static IP address.
 
-## OS support
-- Windows
-- Linux
-- Mac is coming...
-
-This product has 2 apps: Client and Server. Native binaries are shipped via [pkg](https://www.npmjs.com/package/pkg) that packs Nodejs inside of the executable. Both apps support Window/Linux and Mac support is coming soon
-
-## Autostart on Windows OS
+### Autostart on Windows OS
 This program has to be started as Admin so it has permision to send keystrokes or move mouse. Add a script to autostart in Windows with admin petrmissions: Replace path to your app.exe:
 ```shell
 @echo off

@@ -24,24 +24,37 @@ const launchPidResponseSchema = z.object({
 });
 
 // Create DTO classes for Swagger
-export class LaunchExeRequestDto extends createZodDto(launchExeRequestSchema) {}
-export class FocusExeRequestDto extends createZodDto(focusExeRequestSchema) {}
-export class KillExeByNameRequestDto extends createZodDto(killExeByNameRequestSchema) {}
-export class KillExeByPidRequestDto extends createZodDto(killExeByPidRequestSchema) {}
-export class LaunchPidResponseDto extends createZodDto(launchPidResponseSchema) {}
+class LaunchExeRequestDto extends createZodDto(launchExeRequestSchema) {}
+class FocusExeRequestDto extends createZodDto(focusExeRequestSchema) {}
+class KillExeByNameRequestDto extends createZodDto(killExeByNameRequestSchema) {}
+class KillExeByPidRequestDto extends createZodDto(killExeByPidRequestSchema) {}
+class LaunchPidResponseDto extends createZodDto(launchPidResponseSchema) {}
 
 // Export types for TypeScript
-export type LaunchExeRequest = z.infer<typeof launchExeRequestSchema>;
-export type FocusExeRequest = z.infer<typeof focusExeRequestSchema>;
-export type KillExeByNameRequest = z.infer<typeof killExeByNameRequestSchema>;
-export type KillExeByPidRequest = z.infer<typeof killExeByPidRequestSchema>;
-export type LaunchPidResponse = z.infer<typeof launchPidResponseSchema>;
+type LaunchExeRequest = z.infer<typeof launchExeRequestSchema>;
+type FocusExeRequest = z.infer<typeof focusExeRequestSchema>;
+type KillExeByNameRequest = z.infer<typeof killExeByNameRequestSchema>;
+type KillExeByPidRequest = z.infer<typeof killExeByPidRequestSchema>;
+type LaunchPidResponse = z.infer<typeof launchPidResponseSchema>;
 
-// Export schemas for validation
+export type {
+  LaunchExeRequest,
+  FocusExeRequest,
+  KillExeByNameRequest,
+  KillExeByPidRequest,
+  LaunchPidResponse,
+};
+
+
 export {
   launchExeRequestSchema,
   focusExeRequestSchema,
   killExeByNameRequestSchema,
   killExeByPidRequestSchema,
   launchPidResponseSchema,
+  LaunchExeRequestDto,
+  FocusExeRequestDto,
+  KillExeByNameRequestDto,
+  KillExeByPidRequestDto,
+  LaunchPidResponseDto,
 };
