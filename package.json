@@ -10,7 +10,7 @@
     "clean": "rm -rf ./dist/ && rm -rf ./build",
     "transpile": "nest build",
     "build:local": "npm-run-all -s clean native:configure:debug native:build:debug",
-    "schema:swagger": "rm -rf ./dist/ && node -r tsconfig-paths/register -r ts-node/register src/swagger.ts",
+    "schema:swagger": "npm-run-all -s transpile && node dist/swagger",
     "pkg:win32": "pkg . --targets win --output app.exe",
     "pkg:linux": "pkg . --targets linux --output app",
     "build:win32": "npm-run-all -s clean native:configure native:build transpile pkg:win32",
