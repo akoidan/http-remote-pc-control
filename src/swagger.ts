@@ -10,21 +10,32 @@ import {WindowModule} from '@/window/window-module';
 import {Native} from '@/native/native-model';
 import {AppController} from '@/app/app-controller';
 import {NestFactory} from '@nestjs/core';
-import {Module} from '@nestjs/common';
+import {
+  Global,
+  Module,
+} from '@nestjs/common';
 
 async function bootstrap(): Promise<void> {
-   @Module({
+  @Global()
+  @Module({
+    providers: [{
+      provide: Native, // exclude native dependency, since it's not required
+      useValue: {},
+    }],
+    exports: [Native]
+  })
+  class NativeMock {
+  }
+
+  @Module({
     imports: [
+      NativeMock,
       KeyboardModule,
       ExecuteModule,
       MouseModule,
       WindowModule,
     ],
     controllers: [AppController],
-    providers: [{
-      provide: Native, // exclude native dependency, since it's not required
-      useValue: {},
-    }],
   })
   class TestAppModule {
   }
