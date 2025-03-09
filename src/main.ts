@@ -29,7 +29,9 @@ asyncLocalStorage.run(new Map<string, string>().set('comb', 'init'), () => {
         rejectUnauthorized: true,
       },
     });
-    await app.listen(5000);
+    const port = parseInt(process.argv[2], 10) || 5000;
+    logger.log(`Listening port ${port}`);
+    await app.listen(port);
   })().catch((err: unknown) => {
     customLogger.error(err as string|Error);
     process.exit(98);

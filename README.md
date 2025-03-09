@@ -33,6 +33,18 @@ Copy client directory to the remote PC where you have the [server](https://githu
  - If windows antivirus complains about security Open **Virus & threat protection** -> **Virus & threat protection settings** -> **Exclusions Add or remove exclusions** -> **Add an exclusion**. 
  - If it crashes , open powershell and run exe file from it, it's a CLI app.
 
+## NAT
+If your remote PC doesn't have a static IP or under NAT you can use connect all PCS into VPN or use some 3rd party service like [ngrok](https://ngrok.com/) [localtunel](https://github.com/localtunnel/localtunnel) or [cloudflared](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/) and etc. Example with ngrock:
+```bash
+ngrok http 5000
+```
+
+## Custom port
+By default app is listening port 5000, in order to change the port specify it as a first argument on the app executable. Example
+```bash
+./app.exe 5001
+```
+In order to change port on [server](https://github.com/akoidan/hotkey-hub) app, specify it as clientPort its config.jsonc
 
 ## Security
 The client server app both use mutual TLS authentication. 

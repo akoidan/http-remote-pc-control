@@ -25,17 +25,6 @@
     "unicorn/filename-case": [1, {
       "case": "kebabCase"
     }],
-    "no-restricted-syntax": [
-      1,
-      {
-        "message": "Forbidden direct call of useRote, use useRouterSectionParams composition api instead",
-        "selector": "CallExpression[callee.name='useRoute']"
-      },
-      {
-        "selector": "CallExpression[callee.object.name='logger']:not([parent.type='CallExpression'])",
-        "message": "You must call logger.[log,warning,debug,trace,error](\"message\")() as a function 2 times"
-      }
-    ],
     "max-lines": ["error", { "max": 155 }], // untill we refactor hra-quiz
     "indent": 0,
     "filenames/match-regex": [1, "^[a-z0-9\\-]+(\\.[a-z]+)?$", true],
