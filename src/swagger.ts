@@ -3,7 +3,6 @@ import {
   DocumentBuilder,
   SwaggerModule,
 } from '@nestjs/swagger';
-import { patchNestjsSwagger } from '@anatine/zod-nestjs';
 import {AppModule} from '@/app/app.module';
 import {writeFile} from 'fs/promises';
 
@@ -16,7 +15,6 @@ async function bootstrap(): Promise<void> {
     .setDescription('API Documentation')
     .setVersion('1.0')
     .build();
-  patchNestjsSwagger();
   const document = SwaggerModule.createDocument(app, config);
   await writeFile('./swagger.json', JSON.stringify(document, null, 2));
 }

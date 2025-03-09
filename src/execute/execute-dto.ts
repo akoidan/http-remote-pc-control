@@ -1,6 +1,4 @@
 import {z} from 'zod';
-import {createZodDto} from 'nestjs-zod';
-
 
 const launchExeRequestSchema = z.object({
   path: z.string(),
@@ -21,40 +19,27 @@ const killExeByPidRequestSchema = z.object({
   pid: z.number(),
 });
 
+
+const launchPidResponseSchema = z.object({
+  pid: z.number().describe('Process Id'),
+});
+
 type KillExeByNameRequest = z.infer<typeof killExeByNameRequestSchema>
 type KillExeByPidRequest = z.infer<typeof killExeByPidRequestSchema>
 type LaunchExeRequest = z.infer<typeof launchExeRequestSchema>;
 type FocusExeRequest = z.infer<typeof focusExeRequestSchema>;
-
-
-const launchPidResponse = z.object({
-  pid: z.number().describe('Process Id'),
-});
-
-
-class LaunchExeRequestClass extends createZodDto(launchExeRequestSchema) {}
-class KillExeByNameRequestClass extends createZodDto(killExeByNameRequestSchema) {}
-class KillExeByPidRequestClass extends createZodDto(killExeByPidRequestSchema) {}
-class FocusExeRequestClass extends createZodDto(focusExeRequestSchema) {}
-class LaunchPidReponseClass extends createZodDto(launchPidResponse) {}
-class LaunchPidResponseClass extends createZodDto(launchPidResponse) {}
+type LaunchPidResponse = z.infer<typeof launchPidResponseSchema>;
 
 export {
   launchExeRequestSchema,
   killExeByNameRequestSchema,
   killExeByPidRequestSchema,
   focusExeRequestSchema,
-  launchPidResponse,
+  launchPidResponseSchema,
 };
 
-
 export type {
-  LaunchExeRequestClass,
-  KillExeByNameRequestClass,
-  KillExeByPidRequestClass,
-  LaunchPidResponseClass,
-  FocusExeRequestClass,
-  LaunchPidReponseClass,
+  LaunchPidResponse,
   FocusExeRequest,
   KillExeByNameRequest,
   KillExeByPidRequest,
