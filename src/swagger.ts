@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import {NestFactory} from '@nestjs/core';
 import {
   DocumentBuilder,
@@ -18,7 +17,6 @@ async function bootstrap(): Promise<void> {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   await writeFile('./swagger.json', JSON.stringify(document, null, 2));
-  await app.close();
 }
 
 void bootstrap();
