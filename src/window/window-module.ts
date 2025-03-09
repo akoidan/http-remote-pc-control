@@ -16,7 +16,6 @@ import {
   INativeModule,
   Native,
 } from '@/native/native-model';
-import {NativeModule} from '@/native/native-module';
 
 @Module({
   controllers: [WindowController],
