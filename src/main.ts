@@ -6,6 +6,7 @@ import {
   asyncLocalStorage,
   CustomLogger,
 } from '@/app/custom-logger';
+import {ZodValidationPipe} from '@/validation/zod.pipe';
 import process from 'node:process';
 
 asyncLocalStorage.run(new Map<string, string>().set('comb', 'init'), () => {
@@ -29,6 +30,7 @@ asyncLocalStorage.run(new Map<string, string>().set('comb', 'init'), () => {
         rejectUnauthorized: true,
       },
     });
+    app.useGlobalPipes(new ZodValidationPipe());
     const port = parseInt(process.argv[2], 10) || 5000;
     logger.log(`Listening port ${port}`);
     await app.listen(port);
