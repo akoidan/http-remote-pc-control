@@ -1,17 +1,16 @@
 import {
-  Body,
   Controller,
   Inject,
   Post,
 } from '@nestjs/common';
 import {
   KillExeByNameRequest,
-  killExeByNameRequestSchema,
   KillExeByPidRequest,
   killExeByPidRequestSchema,
-  LaunchExeRequestClass,
-  LaunchPidResponseClass,
-} from '@/execute/execute-dto';
+  LaunchExeRequest,
+  launchExeRequestSchema,
+  LaunchPidResponse,
+ killExeByNameRequestSchema} from '@/execute/execute-dto';
 import {ZodBody} from '@/validation/zod-validator';
 import {
   ExecuteService,
@@ -27,7 +26,7 @@ export class ExecuteController {
   }
 
   @Post('launch-exe')
-  async lunchExe(@Body() body: LaunchExeRequestClass): Promise<LaunchPidResponseClass> {
+  async lunchExe(@ZodBody(launchExeRequestSchema) body: LaunchExeRequest): Promise<LaunchPidResponse> {
     const pid = await this.executionService.launchExe(body.path, body.arguments, body.waitTillFinish);
     return {pid};
   }

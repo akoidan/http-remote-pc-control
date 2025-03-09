@@ -1,13 +1,12 @@
+import {createParamDecorator, ExecutionContext, Injectable, PipeTransform, BadRequestException} from '@nestjs/common';
 import {
-  createParamDecorator,
-  ExecutionContext,
-  Injectable,
-  PipeTransform,
-  BadRequestException,
-} from '@nestjs/common';
-import { ApiBody } from '@nestjs/swagger';
-import { ZodError, ZodTypeAny } from 'zod';
-import { createZodDto } from 'nestjs-zod/dto';
+  ZodError,
+  ZodTypeAny,
+} from 'zod';
+import {createZodDto} from '@anatine/zod-nestjs';
+import {extendApi} from '@anatine/zod-openapi';
+import {ApiBody} from '@nestjs/swagger';
+import { applyDecorators } from '@nestjs/common';
 
 @Injectable()
 class ZodValidationPipe<T> implements PipeTransform {
@@ -25,22 +24,31 @@ class ZodValidationPipe<T> implements PipeTransform {
   }
 }
 
-export function ZodBody<T extends ZodTypeAny>(schema: T) {
-  const dtoClass = createZodDto(schema);
+// Cache for storing generated DTOs
+const dtoCache = new Map<ZodTypeAny, ReturnType<typeof createZodDto>>();
+let dtoCounter = 0;
 
-  return (target: any, propertyKey: string, parameterIndex: number) => {
-    // Apply validation pipe
-    const validationDecorator = createParamDecorator(
-      (data: unknown, ctx: ExecutionContext) => {
-        const request = ctx.switchToHttp().getRequest();
-        return new ZodValidationPipe(schema).transform(request.body);
-      }
-    )();
+function getOrCreateDto(schema: ZodTypeAny) {
+  if (!dtoCache.has(schema)) {
+    const extendedSchema = extendApi(schema);
+    const dto = createZodDto(extendedSchema, {
+      name: `GeneratedDto${++dtoCounter}`
+    });
+    dtoCache.set(schema, dto);
+  }
+  return dtoCache.get(schema)!;
+}
 
-    // Apply Swagger documentation
-    ApiBody({ type: dtoClass })(target, propertyKey, {});
+export function ZodBody(schema: ZodTypeAny): ParameterDecorator {
+  return createParamDecorator(
+    (data: unknown, ctx: ExecutionContext) => {
+      const request = ctx.switchToHttp().getRequest();
+      return new ZodValidationPipe(schema).transform(request.body);
+    },
+  )();
+}
 
-    // Apply validation
-    validationDecorator(target, propertyKey, parameterIndex);
-  };
+export function ApiZodBody(schema: ZodTypeAny) {
+  const dtoClass = getOrCreateDto(schema);
+  return ApiBody({ type: dtoClass });
 }
