@@ -15,7 +15,7 @@ export class RequestIdMiddleware implements NestMiddleware {
     const comb = asyncLocalStorage.getStore()?.get('comb');
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     asyncLocalStorage.run(new Map().set('comb', comb), () => {
-      const reqId = Math.random().toString(36).substring(2, 6);
+      const reqId = req.headers['x-request-id'] ?? Math.random().toString(36).substring(2, 6);
       asyncLocalStorage.getStore()?.set('comb', reqId);
 
       const {method, originalUrl, body} = req;
