@@ -37,7 +37,7 @@ export class WindowService {
   // eslint-disable-next-line @typescript-eslint/require-await
   async activateWindow(pid: number): Promise<void> {
     const platform = os.platform();
-    if (platform !== 'win32' && platform === 'linux') {
+    if (platform !== 'win32' && platform !== 'linux') {
       throw new NotImplementedException(`Unsupported platform: ${platform}`);
     }
 
