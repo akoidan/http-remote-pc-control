@@ -9,7 +9,7 @@ import {IExecuteService} from '@/execute/execute-model';
 import {LauncherService} from '@/execute/launcher-service';
 
 @Injectable()
-export class ExecuteDarwinService implements IExecuteService {
+export class ExecuteLinuxDarwinService implements IExecuteService {
   constructor(
     private readonly logger: Logger,
     private readonly launcher: LauncherService
@@ -23,7 +23,7 @@ export class ExecuteDarwinService implements IExecuteService {
   async killExeByName(name: string): Promise<boolean> {
     this.logger.log(`Kill ${name}`);
     try {
-      const {stdout, stderr} = await promisify(exec)(`pkill -9 ${name}`);
+      const {stdout, stderr} = await promisify(exec)(`pkill -9 '${name}'`);
       this.logger.debug(`Process "${name}" killed successfully:`, stdout || stderr);
       return true;
     } catch (e) {
@@ -33,6 +33,17 @@ export class ExecuteDarwinService implements IExecuteService {
       }
       throw new InternalServerErrorException(e);
     }
+  }
+
+  async findPidByName(name: string): Promise<number[]> {
+    this.logger.debug(`Executing: pgrep -f ${name}`);
+    const {stdout, stderr} = await promisify(exec)(`pgrep -f '${name}'`);
+    this.logger.debug(`Process "${name}" returned`, stdout || stderr);
+    return stdout
+      .split(/\r?\n/u)
+      .map(line => line.trim())
+      .filter(line => /^\d+$/u.test(line))
+      .map(pid => parseInt(pid, 10));
   }
 
   async killExeByPid(pid: number): Promise<boolean> {
@@ -50,7 +61,6 @@ export class ExecuteDarwinService implements IExecuteService {
     }
   }
 }
-
 
 
 

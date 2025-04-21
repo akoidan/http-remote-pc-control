@@ -6,10 +6,16 @@ const focusExeRequestSchema = z.object({
 });
 
 // Create DTO class for Swagger
-class FocusExeRequestDto extends createZodDto(focusExeRequestSchema) {}
-
-// Export values
-export {focusExeRequestSchema, FocusExeRequestDto};
+class FocusExeRequestDto extends createZodDto(focusExeRequestSchema) {
+}
 
 // Export types
-export type FocusExeRequest = z.infer<typeof focusExeRequestSchema>;
+type FocusExeRequest = z.infer<typeof focusExeRequestSchema>;
+
+export {
+  focusExeRequestSchema,
+  FocusExeRequestDto,
+};
+export type {
+  FocusExeRequest,
+};
