@@ -7,6 +7,7 @@ const keySchema = z.enum(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
 
 const keyPressRequestSchema = z.object({
   keys: z.array(keySchema),
+  duration: z.number().min(50).default(50).optional().describe('Duration of key beeing presssed'),
   holdKeys: z.array(keySchema).optional(),
 }).superRefine((data: any, ctx) => {
   if (data.key && data.multiKey) {

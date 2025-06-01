@@ -23,22 +23,28 @@ export class KeyboardWin32LinuxService implements IKeyboardService {
     await this.addon.typeString(text);
   }
 
-  public async sendKey(keys: string[], holdKeys: string[]): Promise<void> {
+  public async sendKey(keys: string[], holdKeys: string[], duration?: number): Promise<void> {
     for (const key of holdKeys) {
       this.logger.log(`HoldKey: \u001b[35m${key}`);
-      await sleep(10);
       // libnut.keyToggle(key, 'down', [])
       this.addon.keyToggle(key, [], true);
+      await sleep(50);
     }
     for (const key of keys) {
-      await sleep(10);
       this.logger.log(`KeyPress: \u001b[35m${key}`);
-      this.addon.keyTap(key, []);
+      if (duration) {
+        this.addon.keyToggle(key, [], true);
+        await sleep(duration);
+        this.addon.keyToggle(key, [], false);
+      } else {
+        this.addon.keyTap(key, []);
+      }
+      await sleep(50);
     }
     for (const key of holdKeys) {
-      await sleep(10);
       this.logger.log(`ReleaseKey: \u001b[35m${key}`);
       this.addon.keyToggle(key, [], false);
+      await sleep(50);
     }
   }
 }
