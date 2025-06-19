@@ -12,7 +12,26 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-
+  swagger:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Restore node_modules cache
+        id: cache-node
+        # DO not create cache for PRs, since they are not accessible withing different PRs
+        # Only restore them
+        uses: actions/cache/restore@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('yarn.lock') }}
+      - name: Install yarn deps
+        if: steps.cache-node.outputs.cache-hit != 'true'
+        run:  yarn install --frozen-lockfile
+      - name: Check Eslint
+        run: yarn schema:swagger
   lint:
     runs-on: ubuntu-latest
     steps:
