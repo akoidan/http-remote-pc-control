@@ -45,12 +45,15 @@ export class WindowService {
     const requiredWindows = windowsRaw.filter((win: UIWindow) => win.processId === pid);
     this.logger.debug(`Found following windows ids ${windowsRaw.map((win: UIWindow) => win.processId).join(', ')}`);
     if (requiredWindows.length === 0) {
-      throw new BadRequestException(`Window not found ${pid}`);
+      throw new BadRequestException(`No windows for pid ${pid} were found`);
     }
-    this.logger.debug(`Found following windows for pid ${pid}: ${JSON.stringify(requiredWindows)}. Picking last`);
-    const requireWindow = requiredWindows[requiredWindows.length - 1];
-    this.logger.log(`Focusing window: \u001b[35m#${requireWindow.id} for pid ${pid}`);
-    this.addon.bringWindowToTop(requireWindow.id);
+    const requireWindow = requiredWindows[0].id;
+    if (requiredWindows.length > 1) {
+      this.logger.debug(`Found ${requiredWindows.length} windows for pid ${pid}. Picking first with id ${requireWindow}`);
+    }
+
+    this.logger.log(`Focusing window: \u001b[35m#${requireWindow} for pid ${pid}`);
+    this.addon.bringWindowToTop(requireWindow);
   }
 }
 
