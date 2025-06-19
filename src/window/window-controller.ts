@@ -1,31 +1,27 @@
 import {
   Body,
   Controller,
-  Inject,
   Post,
 } from '@nestjs/common';
-import {FocusExeRequestDto} from '@/execute/execute-dto';
-import {
-  IWindowService,
-  WindowService,
-} from '@/window/window-model';
+
 import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
+import {FocusExeRequestDto} from '@/window/window-dto';
+import {WindowService} from '@/window/window-service';
 
 @ApiTags('Window')
 @Controller()
 export class WindowController {
   constructor(
-    @Inject(WindowService)
-    private readonly windowsService: IWindowService,
+    private readonly windowService: WindowService,
   ) {
   }
 
   @Post('focus-exe')
   @ApiOperation({summary: 'Focus window by process ID'})
   async focusExe(@Body() body: FocusExeRequestDto): Promise<void> {
-    await this.windowsService.activateWindow(body.pid);
+    await this.windowService.activateWindow(body.pid);
   }
 }

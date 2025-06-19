@@ -7,53 +7,43 @@ const launchExeRequestSchema = z.object({
   waitTillFinish: z.boolean().describe('Wait for process to finish'),
 });
 
-const focusExeRequestSchema = z.object({
-  pid: z.number().describe('Process ID to focus'),
+const executableNameRequestSchema = z.object({
+  name: z.string().regex(/[a-zA-Z0-9._ -]/u).describe('Process name. Allows only specific symbols due to security reasons'),
 });
 
-const killExeByNameRequestSchema = z.object({
-  name: z.string().describe('Process name to kill'),
-});
-
-const killExeByPidRequestSchema = z.object({
-  pid: z.number().describe('Process ID to kill'),
-});
-
-const launchPidResponseSchema = z.object({
-  pid: z.number().describe('Process ID of launched executable'),
+const processIdRequestSchema = z.object({
+  pid: z.number().describe('Process ID'),
 });
 
 // Create DTO classes for Swagger
 class LaunchExeRequestDto extends createZodDto(launchExeRequestSchema) {}
-class FocusExeRequestDto extends createZodDto(focusExeRequestSchema) {}
-class KillExeByNameRequestDto extends createZodDto(killExeByNameRequestSchema) {}
-class KillExeByPidRequestDto extends createZodDto(killExeByPidRequestSchema) {}
-class LaunchPidResponseDto extends createZodDto(launchPidResponseSchema) {}
+class KillExeByNameRequestDto extends createZodDto(executableNameRequestSchema) {}
+class FindExeByNameRequestDto extends createZodDto(executableNameRequestSchema) {}
+class KillExeByPidRequestDto extends createZodDto(processIdRequestSchema) {}
+class LaunchPidResponseDto extends createZodDto(processIdRequestSchema) {}
 
 // Export types for TypeScript
 type LaunchExeRequest = z.infer<typeof launchExeRequestSchema>;
-type FocusExeRequest = z.infer<typeof focusExeRequestSchema>;
-type KillExeByNameRequest = z.infer<typeof killExeByNameRequestSchema>;
-type KillExeByPidRequest = z.infer<typeof killExeByPidRequestSchema>;
-type LaunchPidResponse = z.infer<typeof launchPidResponseSchema>;
+type KillExeByNameRequest = z.infer<typeof executableNameRequestSchema>;
+type FindExeByNameRequest = z.infer<typeof executableNameRequestSchema>;
+type KillExeByPidRequest = z.infer<typeof processIdRequestSchema>;
+type LaunchPidResponse = z.infer<typeof processIdRequestSchema>;
 
 export type {
   LaunchExeRequest,
-  FocusExeRequest,
   KillExeByNameRequest,
   KillExeByPidRequest,
   LaunchPidResponse,
+  FindExeByNameRequest,
 };
 
 
 export {
   launchExeRequestSchema,
-  focusExeRequestSchema,
-  killExeByNameRequestSchema,
-  killExeByPidRequestSchema,
-  launchPidResponseSchema,
+  processIdRequestSchema,
+  executableNameRequestSchema,
   LaunchExeRequestDto,
-  FocusExeRequestDto,
+  FindExeByNameRequestDto,
   KillExeByNameRequestDto,
   KillExeByPidRequestDto,
   LaunchPidResponseDto,

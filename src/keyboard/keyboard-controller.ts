@@ -29,7 +29,7 @@ export class KeyboardController {
   @Post('key-press')
   @ApiOperation({summary: 'Press one or more keys'})
   async keyPress(@Body() body: KeyPressRequestDto): Promise<void> {
-    await this.keyboardService.sendKey(body.keys as string[], body.holdKeys as string[]);
+    await this.keyboardService.sendKey(body.keys as string[], body.holdKeys as string[], body.duration);
   }
 
   @Post('type-text')

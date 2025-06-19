@@ -8,9 +8,8 @@ import {
   ExecuteService,
   IExecuteService,
 } from '@/execute/execute-model';
-import {ExecuteLinuxService} from '@/execute/os/execute-linux-service';
+import {ExecuteLinuxDarwinService} from '@/execute/os/execute-linux-darwin-service';
 import {ExecuteWin32Service} from '@/execute/os/execute-win32-service';
-import {ExecuteDarwinService} from '@/execute/os/execute-darwin-service';
 import os from 'os';
 import {LauncherService} from '@/execute/launcher-service';
 
@@ -26,10 +25,8 @@ import {LauncherService} from '@/execute/launcher-service';
         const platform = os.platform();
         if (platform === 'win32') {
           return new ExecuteWin32Service(logger, launcher);
-        } else if (platform === 'linux') {
-          return new ExecuteLinuxService(logger, launcher);
-        } else if (platform === 'darwin') {
-          return new ExecuteDarwinService(logger, launcher);
+        } else if (platform === 'linux' || platform === 'darwin') {
+          return new ExecuteLinuxDarwinService(logger, launcher);
         }
         throw new NotImplementedException(`Unsupported platform: ${platform}`);
       },

@@ -36,6 +36,21 @@ export class ExecuteWin32Service implements IExecuteService {
     }
   }
 
+  async findPidByName(name: string): Promise<number[]> {
+    this.logger.debug(`Executing: PowerShell to find PID of ${name}`);
+
+    const command = `powershell -Command "Get-Process | Where-Object { $_.ProcessName -like '*${name}*' } | Select-Object -ExpandProperty Id"`;
+
+    const {stdout, stderr} = await promisify(exec)(command);
+    this.logger.debug(`Process "${name}" returned`, stdout || stderr);
+
+    return stdout
+      .split(/\r?\n/u)
+      .map(line => line.trim())
+      .filter(line => /^\d+$/u.test(line))
+      .map(pid => parseInt(pid, 10));
+  }
+
   async killExeByPid(pid: number): Promise<boolean> {
     this.logger.log(`Kill ${pid}`);
 

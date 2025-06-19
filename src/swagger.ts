@@ -22,7 +22,7 @@ async function bootstrap(): Promise<void> {
       provide: Native, // exclude native dependency, since it's not required
       useValue: {},
     }],
-    exports: [Native]
+    exports: [Native],
   })
   class NativeMock {
   }
