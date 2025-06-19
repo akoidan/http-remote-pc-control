@@ -5,10 +5,10 @@ import {
   Logger,
   NotImplementedException,
 } from '@nestjs/common';
-import { UIWindow } from '@/window/window-model';
+import {UIWindow} from '@/window/window-model';
 import {
   INativeModule,
-  Native
+  Native,
 } from '@/native/native-model';
 import os from 'os';
 

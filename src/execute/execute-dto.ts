@@ -16,7 +16,7 @@ const processIdRequestSchema = z.object({
 });
 
 // Create DTO classes for Swagger
-class LaunchExeRequestDto extends createZodDto(launchExeRequestSchema) {} {}
+class LaunchExeRequestDto extends createZodDto(launchExeRequestSchema) {}
 class KillExeByNameRequestDto extends createZodDto(executableNameRequestSchema) {}
 class FindExeByNameRequestDto extends createZodDto(executableNameRequestSchema) {}
 class KillExeByPidRequestDto extends createZodDto(processIdRequestSchema) {}
