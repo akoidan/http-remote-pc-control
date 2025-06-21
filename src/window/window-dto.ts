@@ -10,7 +10,7 @@ const widSchema = z.object({
 });
 
 const windowsSchema = z.object({
-  ids: z.array(z.number()).describe('Array of windows ids for process id'),
+  wids: z.array(z.number()).describe('Array of windows ids for process id'),
 });
 
 // Create DTO class for Swagger
