@@ -15,12 +15,17 @@ const processIdRequestSchema = z.object({
   pid: z.number().describe('Process ID'),
 });
 
+const processIdsReponseSchema = z.object({
+  pids: z.array(z.number()).describe('List of processes Ids'),
+});
+
 // Create DTO classes for Swagger
 class LaunchExeRequestDto extends createZodDto(launchExeRequestSchema) {}
 class KillExeByNameRequestDto extends createZodDto(executableNameRequestSchema) {}
 class FindExeByNameRequestDto extends createZodDto(executableNameRequestSchema) {}
 class KillExeByPidRequestDto extends createZodDto(processIdRequestSchema) {}
 class LaunchPidResponseDto extends createZodDto(processIdRequestSchema) {}
+class FindPidsByNameResponseDto extends createZodDto(processIdsReponseSchema) {}
 
 // Export types for TypeScript
 type LaunchExeRequest = z.infer<typeof launchExeRequestSchema>;
@@ -39,11 +44,13 @@ export type {
 
 
 export {
+  processIdsReponseSchema,
   launchExeRequestSchema,
   processIdRequestSchema,
   executableNameRequestSchema,
   LaunchExeRequestDto,
   FindExeByNameRequestDto,
+  FindPidsByNameResponseDto,
   KillExeByNameRequestDto,
   KillExeByPidRequestDto,
   LaunchPidResponseDto,
