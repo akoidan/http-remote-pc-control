@@ -5,7 +5,7 @@ import {
   Post,
 } from '@nestjs/common';
 import {
-  FindExeByNameRequestDto,
+  FindExeByNameRequestDto, FindPidsByNameResponseDto,
   KillExeByNameRequestDto,
   KillExeByPidRequestDto,
   LaunchExeRequestDto,
@@ -45,10 +45,13 @@ export class ExecuteController {
     await this.executionService.killExeByName(body.name);
   }
 
-  @Post('find-pid-by-name')
-  @ApiOperation({summary: 'Returns a process ID list based on executable name'})
-  async findPidByName(@Body() body: FindExeByNameRequestDto): Promise<void> {
-    await this.executionService.killExeByName(body.name);
+  @Post('find-pids-by-name')
+  @ApiOperation({summary: 'Returns processes ID list based on executable name'})
+  async findPidByName(@Body() body: FindExeByNameRequestDto): Promise<FindPidsByNameResponseDto> {
+    const pids  = await this.executionService.findPidByName(body.name);
+    return {
+      pids,
+    };
   }
 
   @Post('kill-exe-by-pid')
