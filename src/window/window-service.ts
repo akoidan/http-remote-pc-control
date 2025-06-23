@@ -1,23 +1,16 @@
-import {
-  BadRequestException,
-  Inject,
-  Injectable,
-  Logger,
-  NotImplementedException,
-} from '@nestjs/common';
+import {BadRequestException, Inject, Injectable, Logger, NotImplementedException} from '@nestjs/common';
 import {UIWindow} from '@/window/window-model';
-import {
-  INativeModule,
-  Native,
-} from '@/native/native-model';
-import os from 'os';
+import {INativeModule, Native} from '@/native/native-model';
+import {OS_INJECT} from '@/window/window-consts';
 
 @Injectable()
 export class WindowService {
   constructor(
     private readonly logger: Logger,
     @Inject(Native)
-    private readonly addon: INativeModule
+    private readonly addon: INativeModule,
+    @Inject(OS_INJECT)
+    private readonly os: NodeJS.Platform,
   ) {
 
   }
@@ -36,9 +29,8 @@ export class WindowService {
 
   // eslint-disable-next-line @typescript-eslint/require-await
   public async getAllWindowsByPid(pid: number): Promise<number[]> {
-    const platform = os.platform();
-    if (platform !== 'win32' && platform !== 'linux') {
-      throw new NotImplementedException(`Unsupported platform: ${platform}`);
+    if (!['win32', 'linux'].includes(this.os)) {
+      throw new NotImplementedException(`Unsupported platform: ${this.os}`);
     }
     const windowsRaw = this.getAllWindows();
     this.logger.debug(`Found following windows ids ${windowsRaw.map((win: UIWindow) => win.processId).join(', ')}`);
@@ -58,8 +50,7 @@ export class WindowService {
   // eslint-disable-next-line @typescript-eslint/require-await
   public async activateWindowByPid(pid: number): Promise<void> {
     const requiredWindows = await this.getAllWindowsByPid(pid);
-    const platform = os.platform();
-    const requireWindow = platform === 'linux' ? requiredWindows[requiredWindows.length - 1] : requiredWindows[0];
+    const requireWindow =  requiredWindows[requiredWindows.length - 1];
     if (requiredWindows.length > 1) {
       this.logger.debug(`Found ${requiredWindows.length} windows for pid ${pid}. Picking  ${requireWindow}`);
     }
