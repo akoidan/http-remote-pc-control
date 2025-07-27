@@ -43,8 +43,12 @@ export class WindowService {
 
   // eslint-disable-next-line @typescript-eslint/require-await
   public async focusWindowId(wid: number): Promise<void> {
-    this.logger.log(`Focusing window: \u001b[35m#${wid}`);
-    this.addon.bringWindowToTop(wid);
+    try {
+      this.logger.log(`Focusing window: \u001b[35m#${wid}`);
+      this.addon.bringWindowToTop(wid);
+    } catch (e) {
+      throw new BadRequestException(`Unable to focus window ${wid} because ${e?.message}`);
+    }
   }
 
   // eslint-disable-next-line @typescript-eslint/require-await
@@ -54,9 +58,7 @@ export class WindowService {
     if (requiredWindows.length > 1) {
       this.logger.debug(`Found ${requiredWindows.length} windows for pid ${pid}. Picking  ${requireWindow}`);
     }
-
-    this.logger.log(`Focusing window: \u001b[35m#${requireWindow} for pid ${pid}`);
-    this.addon.bringWindowToTop(requireWindow);
+    await this.focusWindowId(requireWindow);
   }
 }
 

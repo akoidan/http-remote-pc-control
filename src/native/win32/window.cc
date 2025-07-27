@@ -182,6 +182,11 @@ Napi::Object initWindow (const Napi::CallbackInfo& info) {
     Napi::Env env{ info.Env () };
 
     auto handle{ getValueFromCallbackData<HWND> (info, 0) };
+
+    if (!IsWindow(handle)) {
+        throw Napi::Error::New(env, "Window with current id not found");
+    }
+
     auto process = getWindowProcess (handle);
 
     Napi::Object obj{ Napi::Object::New (env) };
@@ -328,6 +333,9 @@ Napi::Boolean showWindow (const Napi::CallbackInfo& info) {
 Napi::Boolean bringWindowToTop (const Napi::CallbackInfo& info) {
     Napi::Env env{ info.Env () };
     auto handle{ getValueFromCallbackData<HWND> (info, 0) };
+    if (!IsWindow(handle)) {
+        throw Napi::Error::New(env, "Window with current id not found");
+    }
     BOOL b{ SetForegroundWindow (handle) };
 
     HWND hCurWnd = ::GetForegroundWindow ();
