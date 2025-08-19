@@ -112,15 +112,56 @@ yarn build:local # builds native c++ modules
 yarn start # starts a nestjs server 
 ```
 
-### Clion
-If you want to debug native code, you need to build native module in a debug mode, `yarn build:local` already does it. Then you can attach to the nodejs process via gdb from Clion which should pull sourcemaps and allow to put breakpoints in native code. In order to start the process, you can still use `yarn start`, as soon as native module loads it will pull the breakpoints from IDE.
+### Debugging Native Code with CLion
 
-In order to have proper syntax highlight from nodejs headers, you have to manually add them to Clion configs:
+If you want to debug native Node.js modules in **CLion**, you need to build the module in **Debug mode**.
 
-Open Settings -> Cmake -> Add configuration
+#### 1. Build the Native Module
+Run:
+```bash
+yarn build:local
+```  
+This command already builds the native module in Debug mode.
 
-Add Cmake options:
+#### 2. Start and Attach the Debugger
+- Start your app with:
+  ```bash
+  yarn start
+  ```  
+- Once the native module loads, attach CLion’s debugger (`gdb`) to the running Node.js process.
+- CLion will automatically pull sourcemaps, allowing you to place breakpoints in native C++ code.
+
+#### 3. Enable Syntax Highlighting for Node.js Headers
+CLion does not automatically pick up Node.js and N-API headers. You must add them manually:
+
+**Steps:**
+1. Go to **Settings → Build, Execution, Deployment → CMake**.
+2. Add a new configuration.
+3. Add the following to **CMake options** (adjust paths for your system).
+
+##### Arch Linux example
+```cmake
+-DCMAKE_CXX_FLAGS="-I/home/andrew/.nvm/versions/node/v18.18.2/include/node \
+-I/home/andrew/it/my-projects/http-remote-pc-control/node_modules/node-addon-api"
 ```
- -DCMAKE_CXX_FLAGS="-I/home/andrew/.nvm/versions/node/v18.18.2/include/node -I/home/andrew/it/my-projects/http-remote-pc-control/node_modules/node-addon-api"
+
+##### Windows example
+```cmake
+-DCMAKE_CXX_FLAGS="-IC:\Users\death\.cmake-js\node-x64\v18.20.5\include\node \
+-IC:\Users\death\WebstormProjects\http-remote-pc-control\node_modules\node-addon-api"
 ```
-Replace **/home/andrew/** to your home directory. Do not use `~` alias, should be absolute path.
+
+#### 4. Required Directories
+You need to provide **two include directories**:
+
+- **Node.js headers**
+    - Example: `.../include/node`
+    - Contains `node.h`, `node_api.h`, etc.
+    - If missing, run:
+      ```bash
+      npx cmake-js print-cmakejs-src
+      ```  
+
+- **N-API headers**
+    - Example: `.../node_modules/node-addon-api`
+    - Contains `napi.h` and related files.  

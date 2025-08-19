@@ -35,6 +35,6 @@ export class KeyboardController {
   @Post('type-text')
   @ApiOperation({summary: 'Type text'})
   async typeText(@Body() body: TypeTextRequestDto): Promise<void> {
-    await this.keyboardService.type(body.text);
+    await this.keyboardService.type(body.text, body.keyDelay, body.keyDelayDeviation);
   }
 }

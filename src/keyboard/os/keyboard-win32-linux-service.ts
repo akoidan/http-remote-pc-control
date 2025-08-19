@@ -1,26 +1,34 @@
 /*
  eslint-disable no-await-in-loop
  */
-import {
-  Injectable,
-  Logger,
-} from '@nestjs/common';
+import {Injectable, Logger} from '@nestjs/common';
 import {IKeyboardService} from '@/keyboard/keyboard-model';
 import {INativeModule} from '@/native/native-model';
 import {sleep} from '@/shared';
+import {RandomService} from '@/random/random-service';
 
 @Injectable()
 export class KeyboardWin32LinuxService implements IKeyboardService {
   constructor(
     private readonly logger: Logger,
-    private readonly addon: INativeModule
+    private readonly addon: INativeModule,
+    private readonly rs: RandomService
   ) {
   }
 
 
-  public async type(text: string): Promise<void> {
+  public async type(text: string, delay?: number, deviationDelay?: number): Promise<void> {
     this.logger.log(`Type: \u001b[35m${text}`);
-    await this.addon.typeString(text);
+    if (delay) {
+      const realDelay = deviationDelay ? this.rs.calcDiviation(delay, deviationDelay) : delay;
+      for (const char of text.split('')) {
+        await sleep(realDelay); // sleep before, in case we are typing on the same pc the shorcut was triggered from
+        // to avoid meta keys in keystrokes
+        await this.addon.typeString(char);
+      }
+    } else {
+      await this.addon.typeString(text);
+    }
   }
 
   public async sendKey(keys: string[], holdKeys: string[], duration?: number): Promise<void> {

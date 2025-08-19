@@ -53,6 +53,13 @@ const keyPressRequestSchema = z.object({
 
 const typeTextRequestSchema = z.object({
   text: z.string(),
+  keyDelay: z.number().default(0).optional().describe('A delay between keystrokes in milliseconds. By default type as fast as possible'),
+  keyDelayDeviation: z.number()
+    .positive()
+    .max(1)
+    .default(0)
+    .optional()
+    .describe('Deviation for randomness of delay. Final delay = delay ± (delay * deviation). E.g if keyDelay = 100 and deviation = 0.2. Then value would be 80-120ms'),
 });
 
 // Create DTO classes for Swagger

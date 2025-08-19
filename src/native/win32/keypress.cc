@@ -173,8 +173,9 @@ void typeString(const char *str) {
         }
     }
     // Restore the original layout, wait timeout so last letter typing is not affected by lang change
-    Sleep(50);
-    SetThreadKeyboardLayout(savedLayout);
+    // leave the layout as it was, fuck it
+    // Sleep(50);
+    // SetThreadKeyboardLayout(savedLayout);
 }
 
 unsigned int getFlag(napi_env env, napi_value value) {
