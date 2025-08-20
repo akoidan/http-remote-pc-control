@@ -411,6 +411,20 @@ Napi::Object getMonitorInfo (const Napi::CallbackInfo& info) {
     return obj;
 }
 
+Napi::Object getActiveWindowInfo(const Napi::CallbackInfo& info) {
+    Napi::Env env{ info.Env() };
+
+    auto handle = GetForegroundWindow();
+    Process process = getWindowProcess(handle);
+
+    Napi::Object result = Napi::Object::New(env);
+    result.Set("wid", Napi::Number::New(env, reinterpret_cast<int64_t>(handle)));
+    result.Set("pid", Napi::Number::New(env, process.pid));
+    result.Set("path", Napi::String::New(env, process.path));
+
+    return result;
+}
+
 Napi::Object window_init (Napi::Env env, Napi::Object exports) {
     exports.Set (Napi::String::New (env, "getActiveWindow"), Napi::Function::New (env, getActiveWindow));
     exports.Set (Napi::String::New (env, "getMonitorFromWindow"), Napi::Function::New (env, getMonitorFromWindow));
@@ -436,6 +450,7 @@ Napi::Object window_init (Napi::Env env, Napi::Object exports) {
     exports.Set (Napi::String::New (env, "getMonitors"), Napi::Function::New (env, getMonitors));
     exports.Set (Napi::String::New (env, "createProcess"), Napi::Function::New (env, createProcess));
     exports.Set (Napi::String::New (env, "getProcessMainWindow"), Napi::Function::New (env, getProcessMainWindow));
+    exports.Set (Napi::String::New (env, "getActiveWindowInfo"), Napi::Function::New (env, getActiveWindowInfo));
 
     return exports;
 }
