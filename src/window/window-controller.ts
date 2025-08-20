@@ -9,8 +9,9 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import {
+  ActiveWindowResponseDto,
   FocusExeRequestDto,
-  FocusWindowRequestDto,
+  FocusWindowRequestDto, GetActiveWindowResponse,
   GetPidWindowsResponse,
   WindowsIdsResponseDto,
 } from '@/window/window-dto';
@@ -38,6 +39,13 @@ export class WindowController {
     return {
       wids,
     };
+  }
+
+  @Get('get-active-window')
+  @ApiResponse({type: ActiveWindowResponseDto})
+  @ApiOperation({summary: 'Get information about current active window'})
+  async getActiveWindowId(): Promise<GetActiveWindowResponse> {
+    return this.windowService.getActiveWindowInfo();
   }
 
   @Post('focus-window')

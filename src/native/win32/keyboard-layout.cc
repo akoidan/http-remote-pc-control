@@ -161,7 +161,6 @@ bool isCapsLockEnabled() {
 }
 
 void ensureCapsLockDisabled() {
-    DEBUG_LOG("Caps check");
     if (isCapsLockEnabled()) {
         // Simulate pressing and releasing Caps Lock
         INPUT input[2] = {};

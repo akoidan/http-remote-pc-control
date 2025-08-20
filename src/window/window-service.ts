@@ -2,6 +2,7 @@ import {BadRequestException, Inject, Injectable, Logger, NotImplementedException
 import {UIWindow} from '@/window/window-model';
 import {INativeModule, Native} from '@/native/native-model';
 import {OS_INJECT} from '@/window/window-consts';
+import {ActiveWindowResponseDto} from "@/window/window-dto";
 
 @Injectable()
 export class WindowService {
@@ -39,6 +40,19 @@ export class WindowService {
       throw new BadRequestException(`No windows for pid ${pid} were found`);
     }
     return requiredWindows;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/require-await
+  public async getActiveWindowInfo(): Promise<ActiveWindowResponseDto> {
+    if (!['win32'].includes(this.os)) {
+      throw new NotImplementedException(`Unsupported platform: ${this.os}`);
+    }
+    const windowsRaw = this.addon.getActiveWindowInfo();
+    this.logger.debug(`Found following windows ids ${JSON.stringify(windowsRaw)}`);
+    if (!windowsRaw.wid) {
+      throw new BadRequestException(`Error detecting active window`);
+    }
+    return windowsRaw;
   }
 
   // eslint-disable-next-line @typescript-eslint/require-await

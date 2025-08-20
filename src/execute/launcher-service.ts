@@ -15,7 +15,6 @@ export class LauncherService {
   async launchExe(pathToExe: string, args: string[], waitTillFinish: boolean): Promise<number> {
     return new Promise((resolve, reject) => {
       this.logger.log(`Launching: \u001b[35m${pathToExe} ${args.join(' ')}`);
-
       try {
         const process = spawn(pathToExe, args, {
           detached: true, // Run independently from parent process
@@ -52,6 +51,4 @@ export class LauncherService {
     });
   }
 }
-
-
 
