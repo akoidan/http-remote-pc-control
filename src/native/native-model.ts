@@ -3,12 +3,19 @@ interface InitWindowResult {
   processId: number;
 }
 
+interface ActiveWindowInfo {
+  wid: number;
+  pid: number;
+  path: string;
+}
+
 interface WindowNativeModule {
   bringWindowToTop(id: number): void;
 
   getWindows(): number[];
 
   initWindow(id: number): InitWindowResult;
+  getActiveWindowInfo(): ActiveWindowInfo;
 }
 
 interface KeyboardNativeModule {

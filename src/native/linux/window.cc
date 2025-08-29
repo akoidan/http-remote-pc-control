@@ -80,6 +80,22 @@ pid_t get_window_pid(xcb_window_t window) {
     return pid;
 }
 
+// Get active window
+xcb_window_t get_active_window() {
+    if (!ensure_xcb_initialized()) return 0;
+
+    xcb_get_property_cookie_t cookie = xcb_ewmh_get_active_window(&ewmh, 0);
+    xcb_window_t active_window = 0;
+
+    if (xcb_ewmh_get_active_window_reply(&ewmh, cookie, &active_window, nullptr)) {
+        DEBUG_LOG("Active window ID: %lu", (unsigned long)active_window);
+        return active_window;
+    }
+
+    DEBUG_LOG("Failed to get active window");
+    return 0;
+}
+
 // Get all windows
 std::vector<WindowInfo> get_all_windows() {
     std::vector<WindowInfo> windows;
@@ -171,10 +187,38 @@ Napi::Boolean bringWindowToTop(const Napi::CallbackInfo& info) {
     return Napi::Boolean::New(env, true);
 }
 
+Napi::Number getActiveWindow(const Napi::CallbackInfo& info) {
+    DEBUG_LOG("getActiveWindow called");
+    Napi::Env env = info.Env();
+    xcb_window_t active = get_active_window();
+    return Napi::Number::New(env, static_cast<int64_t>(active));
+}
+
+Napi::Object getActiveWindowInfo(const Napi::CallbackInfo& info) {
+    DEBUG_LOG("getActiveWindowInfo called");
+    Napi::Env env = info.Env();
+
+    xcb_window_t window = get_active_window();
+    pid_t pid = get_window_pid(window);
+    std::string path = get_process_path(pid);
+
+    DEBUG_LOG("Active window - ID: %lu, PID: %d, Path: %s", 
+              (unsigned long)window, pid, path.c_str());
+
+    Napi::Object result = Napi::Object::New(env);
+    result.Set("wid", Napi::Number::New(env, static_cast<int64_t>(window)));
+    result.Set("pid", Napi::Number::New(env, pid));
+    result.Set("path", Napi::String::New(env, path));
+
+    return result;
+}
+
 Napi::Object window_init(Napi::Env env, Napi::Object exports) {
     DEBUG_LOG("Initializing window.cc");
     exports.Set("getWindows", Napi::Function::New(env, getWindows));
     exports.Set("initWindow", Napi::Function::New(env, initWindow));
     exports.Set("bringWindowToTop", Napi::Function::New(env, bringWindowToTop));
+    exports.Set("getActiveWindow", Napi::Function::New(env, getActiveWindow));
+    exports.Set("getActiveWindowInfo", Napi::Function::New(env, getActiveWindowInfo));
     return exports;
 }
