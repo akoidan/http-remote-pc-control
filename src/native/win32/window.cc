@@ -14,6 +14,7 @@
 #include <string>
 #include <windows.h>
 #include "./headers/window.h"
+#include "./headers/logger.h"
 
 typedef int (__stdcall* lp_GetScaleFactorForMonitor) (HMONITOR, DEVICE_SCALE_FACTOR*);
 
@@ -415,7 +416,12 @@ Napi::Object getActiveWindowInfo(const Napi::CallbackInfo& info) {
     Napi::Env env{ info.Env() };
 
     auto handle = GetForegroundWindow();
-    Process process = getWindowProcess(handle);
+    Process process{0, std::string()};
+    if (!handle) {
+        LOG("Active window handle is null");
+    } else {
+        process = getWindowProcess(handle);
+    }
 
     Napi::Object result = Napi::Object::New(env);
     result.Set("wid", Napi::Number::New(env, reinterpret_cast<int64_t>(handle)));

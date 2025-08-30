@@ -160,6 +160,7 @@ bool isCapsLockEnabled() {
 
 void ensureCapsLockDisabled() {
     if (isCapsLockEnabled()) {
+        LOG("Caps Lock is ON, turning it OFF to ensure correct typing");
         // Simulate pressing and releasing Caps Lock
         INPUT input[2] = {};
         input[0].type = INPUT_KEYBOARD;
