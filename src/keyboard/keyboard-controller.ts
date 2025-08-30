@@ -18,7 +18,7 @@ import {
 } from '@nestjs/swagger';
 
 @ApiTags('Keyboard')
-@Controller()
+@Controller('keyboard')
 export class KeyboardController {
   constructor(
     @Inject(KeyboardService)

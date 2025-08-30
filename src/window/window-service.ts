@@ -12,9 +12,7 @@ export class WindowService {
     private readonly addon: INativeModule,
     @Inject(OS_INJECT)
     private readonly os: NodeJS.Platform,
-  ) {
-
-  }
+  ) {}
 
   public getAllWindows(): UIWindow[] {
     return this.addon.getWindows().map((id: number) => {
@@ -44,7 +42,7 @@ export class WindowService {
 
   // eslint-disable-next-line @typescript-eslint/require-await
   public async getActiveWindowInfo(): Promise<ActiveWindowResponseDto> {
-    if (!['win32'].includes(this.os)) {
+    if (!['win32', 'linux'].includes(this.os)) {
       throw new NotImplementedException(`Unsupported platform: ${this.os}`);
     }
     const windowsRaw = this.addon.getActiveWindowInfo();
@@ -73,6 +71,83 @@ export class WindowService {
       this.logger.debug(`Found ${requiredWindows.length} windows for pid ${pid}. Picking  ${requireWindow}`);
     }
     await this.focusWindowId(requireWindow);
+  }
+
+  // Extended window operations (direct pass-through to native addon)
+  public getActiveWindow(): number {
+    return this.addon.getActiveWindow();
+  }
+
+  public getWindowBounds(wid: number) {
+    return this.addon.getWindowBounds(wid);
+  }
+
+  public setWindowBounds(wid: number, bounds: { x: number; y: number; width: number; height: number }): boolean {
+    return this.addon.setWindowBounds(wid, bounds);
+  }
+
+  public getWindowTitle(wid: number): string {
+    return this.addon.getWindowTitle(wid);
+  }
+
+  public showWindow(wid: number, type: 'show' | 'hide' | 'minimize' | 'restore' | 'maximize'): boolean {
+    return this.addon.showWindow(wid, type);
+  }
+
+  public getWindowOpacity(wid: number): number {
+    return this.addon.getWindowOpacity(wid);
+  }
+
+  public setWindowOpacity(wid: number, opacity: number): boolean {
+    return this.addon.setWindowOpacity(wid, opacity);
+  }
+
+  public toggleWindowTransparency(wid: number, toggle: boolean): boolean {
+    return this.addon.toggleWindowTransparency(wid, toggle);
+  }
+
+  public getWindowOwner(wid: number): number {
+    return this.addon.getWindowOwner(wid);
+  }
+
+  public setWindowOwner(wid: number, owner: number): boolean {
+    return this.addon.setWindowOwner(wid, owner);
+  }
+
+  public isWindow(wid: number): boolean {
+    return this.addon.isWindow(wid);
+  }
+
+  public isWindowVisible(wid: number): boolean {
+    return this.addon.isWindowVisible(wid);
+  }
+
+  public redrawWindow(wid: number): boolean {
+    return this.addon.redrawWindow(wid);
+  }
+
+  public getMonitors(): number[] {
+    return this.addon.getMonitors();
+  }
+
+  public getMonitorInfo(mid: number) {
+    return this.addon.getMonitorInfo(mid);
+  }
+
+  public getMonitorFromWindow(wid: number): number {
+    return this.addon.getMonitorFromWindow(wid);
+  }
+
+  public getMonitorScaleFactor(mid: number): number {
+    return this.addon.getMonitorScaleFactor(mid);
+  }
+
+  public createProcess(path: string, cmd?: string): number {
+    return this.addon.createProcess(path, cmd);
+  }
+
+  public getProcessMainWindow(pid: number): number {
+    return this.addon.getProcessMainWindow(pid);
   }
 }
 

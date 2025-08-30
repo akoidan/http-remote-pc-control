@@ -23,7 +23,7 @@ import {
 } from '@nestjs/swagger';
 
 @ApiTags('Execute')
-@Controller()
+@Controller('process')
 export class ExecuteController {
   constructor(
     @Inject(ExecuteService)

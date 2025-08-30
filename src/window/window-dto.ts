@@ -19,35 +19,94 @@ const activeWindowSchema = z.object({
   pid: z.number().describe('Process Id'),
 });
 
+// New schemas for extended window operations
+const boundsSchema = z.object({
+  x: z.number(),
+  y: z.number(),
+  width: z.number(),
+  height: z.number(),
+});
+
+const setBoundsRequestSchema = z.object({
+  wid: z.number(),
+  bounds: boundsSchema,
+});
+
+const showWindowRequestSchema = z.object({
+  wid: z.number(),
+  type: z.enum(['show', 'hide', 'minimize', 'restore', 'maximize']),
+});
+
+const setOpacityRequestSchema = z.object({
+  wid: z.number(),
+  opacity: z.number().min(0).max(1),
+});
+
+const toggleTransparencyRequestSchema = z.object({
+  wid: z.number(),
+  toggle: z.boolean(),
+});
+
+const setOwnerRequestSchema = z.object({
+  wid: z.number(),
+  owner: z.number(),
+});
+
+const createProcessRequestSchema = z.object({
+  path: z.string(),
+  cmd: z.string().optional(),
+});
+
 // Create DTO class for Swagger
-class FocusExeRequestDto extends createZodDto(pidSchema) {
-}
+class FocusExeRequestDto extends createZodDto(pidSchema) {}
+class WindowsIdsResponseDto extends createZodDto(windowsSchema) {}
+class ActiveWindowResponseDto extends createZodDto(activeWindowSchema) {}
+class FocusWindowRequestDto extends createZodDto(widSchema) {}
 
-class WindowsIdsResponseDto extends createZodDto(windowsSchema) {
-}
-
-class ActiveWindowResponseDto extends createZodDto(activeWindowSchema) {
-}
-
-
-class FocusWindowRequestDto extends createZodDto(widSchema) {
-}
+// New DTOs
+class SetBoundsRequestDto extends createZodDto(setBoundsRequestSchema) {}
+class ShowWindowRequestDto extends createZodDto(showWindowRequestSchema) {}
+class SetOpacityRequestDto extends createZodDto(setOpacityRequestSchema) {}
+class ToggleTransparencyRequestDto extends createZodDto(toggleTransparencyRequestSchema) {}
+class SetOwnerRequestDto extends createZodDto(setOwnerRequestSchema) {}
+class CreateProcessRequestDto extends createZodDto(createProcessRequestSchema) {}
 
 // Export types
 type FocusExeRequest = z.infer<typeof pidSchema>;
 type GetPidWindowsRequest = z.infer<typeof widSchema>;
 type GetPidWindowsResponse = z.infer<typeof windowsSchema>;
 type GetActiveWindowResponse = z.infer<typeof activeWindowSchema>;
+type Bounds = z.infer<typeof boundsSchema>;
+
+type SetBoundsRequest = z.infer<typeof setBoundsRequestSchema>;
+type ShowWindowRequest = z.infer<typeof showWindowRequestSchema>;
+type SetOpacityRequest = z.infer<typeof setOpacityRequestSchema>;
+type ToggleTransparencyRequest = z.infer<typeof toggleTransparencyRequestSchema>;
+type SetOwnerRequest = z.infer<typeof setOwnerRequestSchema>;
+type CreateProcessRequest = z.infer<typeof createProcessRequestSchema>;
 
 export {
   pidSchema,
   widSchema,
   windowsSchema,
   activeWindowSchema,
+  boundsSchema,
+  setBoundsRequestSchema,
+  showWindowRequestSchema,
+  setOpacityRequestSchema,
+  toggleTransparencyRequestSchema,
+  setOwnerRequestSchema,
+  createProcessRequestSchema,
   FocusExeRequestDto,
   FocusWindowRequestDto,
   WindowsIdsResponseDto,
   ActiveWindowResponseDto,
+  SetBoundsRequestDto,
+  ShowWindowRequestDto,
+  SetOpacityRequestDto,
+  ToggleTransparencyRequestDto,
+  SetOwnerRequestDto,
+  CreateProcessRequestDto,
 };
 
 export type {
@@ -55,4 +114,11 @@ export type {
   GetActiveWindowResponse,
   GetPidWindowsRequest,
   FocusExeRequest,
+  Bounds,
+  SetBoundsRequest,
+  ShowWindowRequest,
+  SetOpacityRequest,
+  ToggleTransparencyRequest,
+  SetOwnerRequest,
+  CreateProcessRequest,
 };
