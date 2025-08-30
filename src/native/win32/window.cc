@@ -15,6 +15,7 @@
 #include <windows.h>
 #include "./headers/window.h"
 #include "./headers/logger.h"
+#include "./headers/utils.h"
 
 typedef int (__stdcall* lp_GetScaleFactorForMonitor) (HMONITOR, DEVICE_SCALE_FACTOR*);
 
@@ -23,10 +24,6 @@ struct Process {
     std::string path;
 };
 
-template <typename T>
-T getValueFromCallbackData (const Napi::CallbackInfo& info, unsigned handleIndex) {
-    return reinterpret_cast<T> (info[handleIndex].As<Napi::Number> ().Int64Value ());
-}
 
 std::wstring get_wstring (const std::string str) {
     return std::wstring (str.begin (), str.end ());
@@ -128,40 +125,6 @@ Napi::Array getWindows (const Napi::CallbackInfo& info) {
     return arr;
 }
 
-std::vector<int64_t> _monitors;
-
-BOOL CALLBACK EnumMonitorsProc (HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM dwData) {
-    _monitors.push_back (reinterpret_cast<int64_t> (hMonitor));
-    return TRUE;
-}
-
-Napi::Array getMonitors (const Napi::CallbackInfo& info) {
-    Napi::Env env{ info.Env () };
-
-    _monitors.clear ();
-    if (EnumDisplayMonitors (NULL, NULL, &EnumMonitorsProc, NULL)) {
-        auto arr = Napi::Array::New (env);
-        auto i = 0;
-
-        for (auto _mon : _monitors) {
-
-            arr.Set (i++, Napi::Number::New (env, _mon));
-        }
-
-        return arr;
-    }
-
-    return Napi::Array::New (env);
-}
-
-Napi::Number getMonitorFromWindow (const Napi::CallbackInfo& info) {
-    Napi::Env env{ info.Env () };
-
-    auto handle = getValueFromCallbackData<HWND> (info, 0);
-
-    return Napi::Number::New (env, reinterpret_cast<int64_t> (MonitorFromWindow (handle, 0)));
-}
-
 Napi::Object initWindow (const Napi::CallbackInfo& info) {
     Napi::Env env{ info.Env () };
 
@@ -231,19 +194,6 @@ Napi::Number getWindowOwner (const Napi::CallbackInfo& info) {
     auto handle{ getValueFromCallbackData<HWND> (info, 0) };
 
     return Napi::Number::New (env, GetWindowLongPtrA (handle, GWLP_HWNDPARENT));
-}
-
-Napi::Number getMonitorScaleFactor (const Napi::CallbackInfo& info) {
-    Napi::Env env{ info.Env () };
-
-    HMODULE hShcore{ LoadLibraryA ("SHcore.dll") };
-    lp_GetScaleFactorForMonitor f{ (
-    lp_GetScaleFactorForMonitor)GetProcAddress (hShcore, "GetScaleFactorForMonitor") };
-
-    DEVICE_SCALE_FACTOR sf{};
-    f (getValueFromCallbackData<HMONITOR> (info, 0), &sf);
-
-    return Napi::Number::New (env, static_cast<double> (sf) / 100.);
 }
 
 Napi::Boolean toggleWindowTransparency (const Napi::CallbackInfo& info) {
@@ -363,38 +313,6 @@ Napi::Boolean isWindowVisible (const Napi::CallbackInfo& info) {
     return Napi::Boolean::New (env, IsWindowVisible (handle));
 }
 
-Napi::Object getMonitorInfo (const Napi::CallbackInfo& info) {
-    Napi::Env env{ info.Env () };
-
-    auto handle{ getValueFromCallbackData<HMONITOR> (info, 0) };
-
-    MONITORINFO mInfo;
-    mInfo.cbSize = sizeof (MONITORINFO);
-    GetMonitorInfoA (handle, &mInfo);
-
-    Napi::Object bounds{ Napi::Object::New (env) };
-
-    bounds.Set ("x", mInfo.rcMonitor.left);
-    bounds.Set ("y", mInfo.rcMonitor.top);
-    bounds.Set ("width", mInfo.rcMonitor.right - mInfo.rcMonitor.left);
-    bounds.Set ("height", mInfo.rcMonitor.bottom - mInfo.rcMonitor.top);
-
-    Napi::Object workArea{ Napi::Object::New (env) };
-
-    workArea.Set ("x", mInfo.rcWork.left);
-    workArea.Set ("y", mInfo.rcWork.top);
-    workArea.Set ("width", mInfo.rcWork.right - mInfo.rcWork.left);
-    workArea.Set ("height", mInfo.rcWork.bottom - mInfo.rcWork.top);
-
-    Napi::Object obj{ Napi::Object::New (env) };
-
-    obj.Set ("bounds", bounds);
-    obj.Set ("workArea", workArea);
-    obj.Set ("isPrimary", (mInfo.dwFlags & MONITORINFOF_PRIMARY) != 0);
-
-    return obj;
-}
-
 Napi::Object getActiveWindowInfo(const Napi::CallbackInfo& info) {
     Napi::Env env{ info.Env() };
 
@@ -416,9 +334,6 @@ Napi::Object getActiveWindowInfo(const Napi::CallbackInfo& info) {
 
 Napi::Object window_init (Napi::Env env, Napi::Object exports) {
     exports.Set (Napi::String::New (env, "getActiveWindow"), Napi::Function::New (env, getActiveWindow));
-    exports.Set (Napi::String::New (env, "getMonitorFromWindow"), Napi::Function::New (env, getMonitorFromWindow));
-    exports.Set (Napi::String::New (env, "getMonitorScaleFactor"),
-                 Napi::Function::New (env, getMonitorScaleFactor));
     exports.Set (Napi::String::New (env, "setWindowBounds"), Napi::Function::New (env, setWindowBounds));
     exports.Set (Napi::String::New (env, "showWindow"), Napi::Function::New (env, showWindow));
     exports.Set (Napi::String::New (env, "bringWindowToTop"), Napi::Function::New (env, bringWindowToTop));
@@ -434,9 +349,7 @@ Napi::Object window_init (Napi::Env env, Napi::Object exports) {
     exports.Set (Napi::String::New (env, "getWindowTitle"), Napi::Function::New (env, getWindowTitle));
     exports.Set (Napi::String::New (env, "getWindowOwner"), Napi::Function::New (env, getWindowOwner));
     exports.Set (Napi::String::New (env, "getWindowOpacity"), Napi::Function::New (env, getWindowOpacity));
-    exports.Set (Napi::String::New (env, "getMonitorInfo"), Napi::Function::New (env, getMonitorInfo));
     exports.Set (Napi::String::New (env, "getWindows"), Napi::Function::New (env, getWindows));
-    exports.Set (Napi::String::New (env, "getMonitors"), Napi::Function::New (env, getMonitors));
     exports.Set (Napi::String::New (env, "getProcessMainWindow"), Napi::Function::New (env, getProcessMainWindow));
     exports.Set (Napi::String::New (env, "getActiveWindowInfo"), Napi::Function::New (env, getActiveWindowInfo));
 

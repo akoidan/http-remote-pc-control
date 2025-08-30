@@ -11,9 +11,11 @@ import {MouseModule} from '@/mouse/mouse-module';
 import {RequestIdMiddleware} from '@/app/request-id-middleware';
 import {WindowModule} from '@/window/window-module';
 import {NativeModule} from '@/native/native-module';
+import {MonitorModule} from '@/monitor/monitor-module';
+import {ProcessModule} from '@/process/process-module';
 
 @Module({
-  imports: [KeyboardModule, ExecuteModule, MouseModule, WindowModule, NativeModule],
+  imports: [KeyboardModule, ExecuteModule, MouseModule, WindowModule, MonitorModule, ProcessModule, NativeModule],
   controllers: [AppController],
   providers: [Logger, RequestIdMiddleware],
 })

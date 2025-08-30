@@ -15,14 +15,8 @@ interface WindowNativeModule {
   initWindow(id: number): InitWindowResult;
   getActiveWindowInfo(): ActiveWindowInfo;
 
-  // Additional methods exposed by win32/native window.cc
+  // Window methods
   getActiveWindow(): number;
-  getProcessMainWindow(pid: number): number;
-  createProcess(path: string, cmd?: string): number;
-  getMonitors(): number[];
-  getMonitorFromWindow(id: number): number;
-  getMonitorScaleFactor(monitor: number): number;
-  getMonitorInfo(monitor: number): { bounds: { x: number; y: number; width: number; height: number; }; workArea: { x: number; y: number; width: number; height: number; }; isPrimary: boolean };
   getWindowBounds(id: number): { x: number; y: number; width: number; height: number };
   getWindowTitle(id: number): string;
   getWindowOpacity(id: number): number;
@@ -35,6 +29,20 @@ interface WindowNativeModule {
   toggleWindowTransparency(id: number, toggle: boolean): boolean;
   setWindowOwner(id: number, owner: number): boolean;
   redrawWindow(id: number): boolean;
+}
+
+// New interface to represent monitor-related native APIs
+interface MonitorNativeModule {
+  getMonitors(): number[];
+  getMonitorFromWindow(id: number): number;
+  getMonitorScaleFactor(monitor: number): number;
+  getMonitorInfo(monitor: number): { bounds: { x: number; y: number; width: number; height: number; }; workArea: { x: number; y: number; width: number; height: number; }; isPrimary: boolean };
+}
+
+// New interface to represent process-related native APIs
+interface ProcessNativeModule {
+  createProcess(path: string, cmd?: string): number;
+  getProcessMainWindow(pid: number): number;
 }
 
 interface KeyboardNativeModule {
@@ -52,7 +60,7 @@ interface MouseNativeModule {
 }
 
 
-interface INativeModule extends WindowNativeModule, KeyboardNativeModule, MouseNativeModule {
+interface INativeModule extends WindowNativeModule, MonitorNativeModule, ProcessNativeModule, KeyboardNativeModule, MouseNativeModule {
 }
 
 export const Native = 'Native';
@@ -60,4 +68,12 @@ export const Native = 'Native';
 export type {
   InitWindowResult,
   INativeModule,
+};
+
+export type {
+  WindowNativeModule,
+  MonitorNativeModule,
+  ProcessNativeModule,
+  KeyboardNativeModule,
+  MouseNativeModule,
 };

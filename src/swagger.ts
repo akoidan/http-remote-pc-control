@@ -7,6 +7,8 @@ import {KeyboardModule} from '@/keyboard/keyboard-module';
 import {ExecuteModule} from '@/execute/execute-module';
 import {MouseModule} from '@/mouse/mouse-module';
 import {WindowModule} from '@/window/window-module';
+import {MonitorModule} from '@/monitor/monitor-module';
+import {ProcessModule} from '@/process/process-module';
 import {Native} from '@/native/native-model';
 import {AppController} from '@/app/app-controller';
 import {NestFactory} from '@nestjs/core';
@@ -34,6 +36,8 @@ async function bootstrap(): Promise<void> {
       ExecuteModule,
       MouseModule,
       WindowModule,
+      MonitorModule,
+      ProcessModule,
     ],
     controllers: [AppController],
   })

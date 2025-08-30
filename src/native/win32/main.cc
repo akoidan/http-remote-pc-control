@@ -2,6 +2,8 @@
 #include "./headers/keypress.h"
 #include "./headers/window.h"
 #include "./headers/mouse.h"
+#include "./headers/monitor.h"
+#include "./headers/process.h"
 
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
     // Initialize window management
@@ -13,6 +15,10 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
     // Initialize mouse functions
     init_mouse(env, exports);
 
+    // Initialize monitor functions
+    monitor_init(env, exports);
+
+    // Initialize process functions
     process_init(env, exports);
 
     return exports;

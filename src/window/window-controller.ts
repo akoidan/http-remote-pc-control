@@ -1,4 +1,4 @@
-import {Body, Controller, Get, Param, ParseIntPipe, Post, Query} from '@nestjs/common';
+import {Body, Controller, Get, Param, ParseIntPipe, Post} from '@nestjs/common';
 
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import {
@@ -13,7 +13,6 @@ import {
   SetOpacityRequestDto,
   ToggleTransparencyRequestDto,
   SetOwnerRequestDto,
-  CreateProcessRequestDto,
 } from '@/window/window-dto';
 import {WindowService} from '@/window/window-service';
 
@@ -130,39 +129,4 @@ export class WindowController {
     return this.windowService.redrawWindow(body.wid);
   }
 
-  @Get('monitors')
-  @ApiOperation({summary: 'List monitors'})
-  async getMonitors(): Promise<number[]> {
-    return this.windowService.getMonitors();
-  }
-
-  @Get('monitors/:mid/info')
-  @ApiOperation({summary: 'Get monitor info'})
-  async getMonitorInfo(@Param('mid', ParseIntPipe) mid: number) {
-    return this.windowService.getMonitorInfo(mid);
-  }
-
-  @Get(':wid/monitor')
-  @ApiOperation({summary: 'Get monitor for window'})
-  async getMonitorFromWindow(@Param('wid', ParseIntPipe) wid: number): Promise<number> {
-    return this.windowService.getMonitorFromWindow(wid);
-  }
-
-  @Get('monitors/:mid/scale')
-  @ApiOperation({summary: 'Get monitor scale factor'})
-  async getMonitorScaleFactor(@Param('mid', ParseIntPipe) mid: number): Promise<number> {
-    return this.windowService.getMonitorScaleFactor(mid);
-  }
-
-  @Post('process/create')
-  @ApiOperation({summary: 'Create process'})
-  async createProcess(@Body() body: CreateProcessRequestDto): Promise<number> {
-    return this.windowService.createProcess(body.path, body.cmd);
-  }
-
-  @Get('process/:pid/main-window')
-  @ApiOperation({summary: "Get process' main window"})
-  async getProcessMainWindow(@Param('pid', ParseIntPipe) pid: number): Promise<number> {
-    return this.windowService.getProcessMainWindow(pid);
-  }
 }

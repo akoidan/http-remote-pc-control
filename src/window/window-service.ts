@@ -126,29 +126,6 @@ export class WindowService {
     return this.addon.redrawWindow(wid);
   }
 
-  public getMonitors(): number[] {
-    return this.addon.getMonitors();
-  }
-
-  public getMonitorInfo(mid: number) {
-    return this.addon.getMonitorInfo(mid);
-  }
-
-  public getMonitorFromWindow(wid: number): number {
-    return this.addon.getMonitorFromWindow(wid);
-  }
-
-  public getMonitorScaleFactor(mid: number): number {
-    return this.addon.getMonitorScaleFactor(mid);
-  }
-
-  public createProcess(path: string, cmd?: string): number {
-    return this.addon.createProcess(path, cmd);
-  }
-
-  public getProcessMainWindow(pid: number): number {
-    return this.addon.getProcessMainWindow(pid);
-  }
 }
 
 
