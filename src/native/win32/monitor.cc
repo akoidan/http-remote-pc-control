@@ -55,9 +55,16 @@ static Napi::Object getMonitorInfo(const Napi::CallbackInfo& info) {
 
     auto handle{ getValueFromCallbackData<HMONITOR>(info, 0) };
 
+    if (handle == nullptr) {
+        throw Napi::Error::New(env, "Monitor handle is null or invalid");
+    }
+
     MONITORINFO mInfo;
     mInfo.cbSize = sizeof(MONITORINFO);
-    GetMonitorInfoA(handle, &mInfo);
+    BOOL ok = GetMonitorInfoA(handle, &mInfo);
+    if (!ok) {
+        throw Napi::Error::New(env, "Monitor not found");
+    }
 
     Napi::Object bounds{ Napi::Object::New(env) };
     bounds.Set("x", mInfo.rcMonitor.left);

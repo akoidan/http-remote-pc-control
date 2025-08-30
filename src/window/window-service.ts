@@ -1,6 +1,6 @@
 import {BadRequestException, Inject, Injectable, Logger, NotImplementedException} from '@nestjs/common';
 import {UIWindow} from '@/window/window-model';
-import {INativeModule, Native} from '@/native/native-model';
+import {INativeModule, MonitorBounds, Native, WindowAction} from '@/native/native-model';
 import {OS_INJECT} from '@/window/window-consts';
 import {ActiveWindowResponseDto} from '@/window/window-dto';
 
@@ -78,11 +78,11 @@ export class WindowService {
     return this.addon.getActiveWindow();
   }
 
-  public getWindowBounds(wid: number) {
+  public getWindowBounds(wid: number): MonitorBounds {
     return this.addon.getWindowBounds(wid);
   }
 
-  public setWindowBounds(wid: number, bounds: { x: number; y: number; width: number; height: number }): boolean {
+  public setWindowBounds(wid: number, bounds: MonitorBounds): boolean {
     return this.addon.setWindowBounds(wid, bounds);
   }
 
@@ -90,7 +90,7 @@ export class WindowService {
     return this.addon.getWindowTitle(wid);
   }
 
-  public showWindow(wid: number, type: 'show' | 'hide' | 'minimize' | 'restore' | 'maximize'): boolean {
+  public showWindow(wid: number, type: WindowAction): boolean {
     return this.addon.showWindow(wid, type);
   }
 
