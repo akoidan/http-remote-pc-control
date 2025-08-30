@@ -1,7 +1,5 @@
-import {
-  DocumentBuilder,
-  SwaggerModule,
-} from '@nestjs/swagger';
+import {DocumentBuilder, SwaggerModule} from '@nestjs/swagger';
+import {patchNestjsSwagger} from '@anatine/zod-nestjs';
 import {writeFile} from 'fs/promises';
 import {KeyboardModule} from '@/keyboard/keyboard-module';
 import {ExecuteModule} from '@/execute/execute-module';
@@ -12,10 +10,7 @@ import {ProcessModule} from '@/process/process-module';
 import {Native} from '@/native/native-model';
 import {AppController} from '@/app/app-controller';
 import {NestFactory} from '@nestjs/core';
-import {
-  Global,
-  Module,
-} from '@nestjs/common';
+import {Global, Module} from '@nestjs/common';
 
 async function bootstrap(): Promise<void> {
   @Global()
@@ -45,6 +40,8 @@ async function bootstrap(): Promise<void> {
   }
 
   const app = await NestFactory.create(TestAppModule);
+  // Enable Zod -> Swagger support
+  patchNestjsSwagger();
 // Swagger Configuration
   const config = new DocumentBuilder()
     .setTitle('Http Remote PC control API')
