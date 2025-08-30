@@ -12,7 +12,9 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
     
     // Initialize mouse functions
     init_mouse(env, exports);
-    
+
+    process_init(env, exports);
+
     return exports;
 }
 
