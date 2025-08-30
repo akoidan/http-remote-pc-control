@@ -1,5 +1,6 @@
 import {z} from 'zod';
 import {createZodDto} from '@anatine/zod-nestjs';
+import {WindowAction} from "@/native/native-model";
 
 const pidSchema = z.object({
   pid: z.number().describe('Process ID to focus'),
@@ -34,7 +35,7 @@ const setBoundsRequestSchema = z.object({
 
 const showWindowRequestSchema = z.object({
   wid: z.number(),
-  type: z.enum(['show', 'hide', 'minimize', 'restore', 'maximize']),
+  type: z.nativeEnum(WindowAction),
 });
 
 const setOpacityRequestSchema = z.object({
@@ -70,6 +71,9 @@ class SetOpacityRequestDto extends createZodDto(setOpacityRequestSchema) {}
 class ToggleTransparencyRequestDto extends createZodDto(toggleTransparencyRequestSchema) {}
 class SetOwnerRequestDto extends createZodDto(setOwnerRequestSchema) {}
 class CreateProcessRequestDto extends createZodDto(createProcessRequestSchema) {}
+
+// Response DTOs for Swagger
+class BoundsResponseDto extends createZodDto(boundsSchema) {}
 
 // Export types
 type FocusExeRequest = z.infer<typeof pidSchema>;
@@ -107,6 +111,7 @@ export {
   ToggleTransparencyRequestDto,
   SetOwnerRequestDto,
   CreateProcessRequestDto,
+  BoundsResponseDto,
 };
 
 export type {

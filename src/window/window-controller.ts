@@ -13,6 +13,7 @@ import {
   SetOpacityRequestDto,
   ToggleTransparencyRequestDto,
   SetOwnerRequestDto,
+  BoundsResponseDto,
 } from '@/window/window-dto';
 import {WindowService} from '@/window/window-service';
 

@@ -12,7 +12,8 @@ export class WindowService {
     private readonly addon: INativeModule,
     @Inject(OS_INJECT)
     private readonly os: NodeJS.Platform,
-  ) {}
+  ) {
+  }
 
   public getAllWindows(): UIWindow[] {
     return this.addon.getWindows().map((id: number) => {
@@ -73,59 +74,123 @@ export class WindowService {
     await this.focusWindowId(requireWindow);
   }
 
-  // Extended window operations (direct pass-through to native addon)
+  // Extended window operations following consistent logging and error handling
   public getActiveWindow(): number {
-    return this.addon.getActiveWindow();
+    try {
+      this.logger.log('Calling getActiveWindow');
+      return this.addon.getActiveWindow();
+    } catch (e) {
+      throw new BadRequestException(`Unable to get active window because ${e?.message}`);
+    }
   }
 
   public getWindowBounds(wid: number): MonitorBounds {
-    return this.addon.getWindowBounds(wid);
+    try {
+      this.logger.log(`Calling getWindowBounds for #${wid}`);
+      return this.addon.getWindowBounds(wid);
+    } catch (e) {
+      throw new BadRequestException(`Unable to get window #${wid} bounds because ${e?.message}`);
+    }
   }
 
   public setWindowBounds(wid: number, bounds: MonitorBounds): boolean {
-    return this.addon.setWindowBounds(wid, bounds);
+    try {
+      this.logger.log(`Calling setWindowBounds for #${wid} to ${JSON.stringify(bounds)}`);
+      return this.addon.setWindowBounds(wid, bounds);
+    } catch (e) {
+      throw new BadRequestException(`Unable to set window #${wid} bounds because ${e?.message}`);
+    }
   }
 
   public getWindowTitle(wid: number): string {
-    return this.addon.getWindowTitle(wid);
+    try {
+      this.logger.log(`Calling getWindowTitle for #${wid}`);
+      return this.addon.getWindowTitle(wid);
+    } catch (e) {
+      throw new BadRequestException(`Unable to get window #${wid} title because ${e?.message}`);
+    }
   }
 
   public showWindow(wid: number, type: WindowAction): boolean {
-    return this.addon.showWindow(wid, type);
+    try {
+      this.logger.log(`Calling showWindow for #${wid} with action ${type}`);
+      return this.addon.showWindow(wid, type);
+    } catch (e) {
+      throw new BadRequestException(`Unable to show window #${wid} (${type}) because ${e?.message}`);
+    }
   }
 
   public getWindowOpacity(wid: number): number {
-    return this.addon.getWindowOpacity(wid);
+    try {
+      this.logger.log(`Calling getWindowOpacity for #${wid}`);
+      return this.addon.getWindowOpacity(wid);
+    } catch (e) {
+      throw new BadRequestException(`Unable to get window #${wid} opacity because ${e?.message}`);
+    }
   }
 
   public setWindowOpacity(wid: number, opacity: number): boolean {
-    return this.addon.setWindowOpacity(wid, opacity);
+    try {
+      this.logger.log(`Calling setWindowOpacity for #${wid} to ${opacity}`);
+      return this.addon.setWindowOpacity(wid, opacity);
+    } catch (e) {
+      throw new BadRequestException(`Unable to set window #${wid} opacity because ${e?.message}`);
+    }
   }
 
   public toggleWindowTransparency(wid: number, toggle: boolean): boolean {
-    return this.addon.toggleWindowTransparency(wid, toggle);
+    try {
+      this.logger.log(`Calling toggleWindowTransparency for #${wid} to ${toggle}`);
+      return this.addon.toggleWindowTransparency(wid, toggle);
+    } catch (e) {
+      throw new BadRequestException(`Unable to toggle window #${wid} transparency because ${e?.message}`);
+    }
   }
 
   public getWindowOwner(wid: number): number {
-    return this.addon.getWindowOwner(wid);
+    try {
+      this.logger.log(`Calling getWindowOwner for #${wid}`);
+      return this.addon.getWindowOwner(wid);
+    } catch (e) {
+      throw new BadRequestException(`Unable to get window #${wid} owner because ${e?.message}`);
+    }
   }
 
   public setWindowOwner(wid: number, owner: number): boolean {
-    return this.addon.setWindowOwner(wid, owner);
+    try {
+      this.logger.log(`Calling setWindowOwner for #${wid} to ${owner}`);
+      return this.addon.setWindowOwner(wid, owner);
+    } catch (e) {
+      throw new BadRequestException(`Unable to set window #${wid} owner because ${e?.message}`);
+    }
   }
 
   public isWindow(wid: number): boolean {
-    return this.addon.isWindow(wid);
+    try {
+      this.logger.log(`Calling isWindow for #${wid}`);
+      return this.addon.isWindow(wid);
+    } catch (e) {
+      throw new BadRequestException(`Unable to check if handle #${wid} is window because ${e?.message}`);
+    }
   }
 
   public isWindowVisible(wid: number): boolean {
-    return this.addon.isWindowVisible(wid);
+    try {
+      this.logger.log(`Calling isWindowVisible for #${wid}`);
+      return this.addon.isWindowVisible(wid);
+    } catch (e) {
+      throw new BadRequestException(`Unable to check window #${wid} visibility because ${e?.message}`);
+    }
   }
 
   public redrawWindow(wid: number): boolean {
-    return this.addon.redrawWindow(wid);
+    try {
+      this.logger.log(`Calling redrawWindow for #${wid}`);
+      return this.addon.redrawWindow(wid);
+    } catch (e) {
+      throw new BadRequestException(`Unable to redraw window #${wid} because ${e?.message}`);
+    }
   }
-
 }
 
 
