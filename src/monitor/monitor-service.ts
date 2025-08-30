@@ -1,5 +1,6 @@
-import {BadRequestException, Inject, Injectable, Logger} from '@nestjs/common';
+import {BadRequestException, Inject, Injectable, Logger, NotImplementedException} from '@nestjs/common';
 import {INativeModule, MonitorBounds, Native} from '@/native/native-model';
+import {OS_INJECT} from '@/window/window-consts';
 
 @Injectable()
 export class MonitorService {
@@ -7,9 +8,13 @@ export class MonitorService {
     private readonly logger: Logger,
     @Inject(Native)
     private readonly addon: INativeModule,
+    @Inject(OS_INJECT) private readonly os: NodeJS.Platform,
   ) {}
 
   public getMonitors(): number[] {
+    if (!['win32'].includes(this.os)) {
+      throw new NotImplementedException(`Unsupported platform: ${this.os}`);
+    }
     try {
       this.logger.log('Calling getMonitors');
       return this.addon.getMonitors();
@@ -19,6 +24,9 @@ export class MonitorService {
   }
 
   public getMonitorInfo(mid: number): MonitorBounds {
+    if (!['win32'].includes(this.os)) {
+      throw new NotImplementedException(`Unsupported platform: ${this.os}`);
+    }
     try {
       this.logger.log(`Calling getMonitorInfo for monitor #${mid}`);
       return this.addon.getMonitorInfo(mid);
@@ -28,6 +36,9 @@ export class MonitorService {
   }
 
   public getMonitorFromWindow(wid: number): number {
+    if (!['win32'].includes(this.os)) {
+      throw new NotImplementedException(`Unsupported platform: ${this.os}`);
+    }
     try {
       this.logger.log(`Calling getMonitorFromWindow for window #${wid}`);
       return this.addon.getMonitorFromWindow(wid);
@@ -37,6 +48,9 @@ export class MonitorService {
   }
 
   public getMonitorScaleFactor(mid: number): number {
+    if (!['win32'].includes(this.os)) {
+      throw new NotImplementedException(`Unsupported platform: ${this.os}`);
+    }
     try {
       this.logger.log(`Calling getMonitorScaleFactor for monitor #${mid}`);
       return this.addon.getMonitorScaleFactor(mid);

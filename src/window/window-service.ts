@@ -86,6 +86,9 @@ export class WindowService {
   }
 
   public getWindowBounds(wid: number): MonitorBounds {
+    if (!['win32'].includes(this.os)) {
+      throw new NotImplementedException(`Unsupported platform: ${this.os}`);
+    }
     try {
       this.logger.log(`Calling getWindowBounds for #${wid}`);
       return this.addon.getWindowBounds(wid);
@@ -95,6 +98,9 @@ export class WindowService {
   }
 
   public setWindowBounds(wid: number, bounds: MonitorBounds): boolean {
+    if (!['win32'].includes(this.os)) {
+      throw new NotImplementedException(`Unsupported platform: ${this.os}`);
+    }
     try {
       this.logger.log(`Calling setWindowBounds for #${wid} to ${JSON.stringify(bounds)}`);
       return this.addon.setWindowBounds(wid, bounds);
@@ -104,6 +110,9 @@ export class WindowService {
   }
 
   public getWindowTitle(wid: number): string {
+    if (!['win32'].includes(this.os)) {
+      throw new NotImplementedException(`Unsupported platform: ${this.os}`);
+    }
     try {
       this.logger.log(`Calling getWindowTitle for #${wid}`);
       return this.addon.getWindowTitle(wid);
@@ -113,6 +122,9 @@ export class WindowService {
   }
 
   public showWindow(wid: number, type: WindowAction): boolean {
+    if (!['win32'].includes(this.os)) {
+      throw new NotImplementedException(`Unsupported platform: ${this.os}`);
+    }
     try {
       this.logger.log(`Calling showWindow for #${wid} with action ${type}`);
       return this.addon.showWindow(wid, type);
@@ -122,6 +134,9 @@ export class WindowService {
   }
 
   public getWindowOpacity(wid: number): number {
+    if (!['win32'].includes(this.os)) {
+      throw new NotImplementedException(`Unsupported platform: ${this.os}`);
+    }
     try {
       this.logger.log(`Calling getWindowOpacity for #${wid}`);
       return this.addon.getWindowOpacity(wid);
@@ -131,6 +146,9 @@ export class WindowService {
   }
 
   public setWindowOpacity(wid: number, opacity: number): boolean {
+    if (!['win32'].includes(this.os)) {
+      throw new NotImplementedException(`Unsupported platform: ${this.os}`);
+    }
     try {
       this.logger.log(`Calling setWindowOpacity for #${wid} to ${opacity}`);
       return this.addon.setWindowOpacity(wid, opacity);
@@ -140,6 +158,9 @@ export class WindowService {
   }
 
   public toggleWindowTransparency(wid: number, toggle: boolean): boolean {
+    if (!['win32'].includes(this.os)) {
+      throw new NotImplementedException(`Unsupported platform: ${this.os}`);
+    }
     try {
       this.logger.log(`Calling toggleWindowTransparency for #${wid} to ${toggle}`);
       return this.addon.toggleWindowTransparency(wid, toggle);
@@ -149,6 +170,9 @@ export class WindowService {
   }
 
   public getWindowOwner(wid: number): number {
+    if (!['win32'].includes(this.os)) {
+      throw new NotImplementedException(`Unsupported platform: ${this.os}`);
+    }
     try {
       this.logger.log(`Calling getWindowOwner for #${wid}`);
       return this.addon.getWindowOwner(wid);
@@ -158,6 +182,9 @@ export class WindowService {
   }
 
   public setWindowOwner(wid: number, owner: number): boolean {
+    if (!['win32'].includes(this.os)) {
+      throw new NotImplementedException(`Unsupported platform: ${this.os}`);
+    }
     try {
       this.logger.log(`Calling setWindowOwner for #${wid} to ${owner}`);
       return this.addon.setWindowOwner(wid, owner);
@@ -167,6 +194,9 @@ export class WindowService {
   }
 
   public isWindow(wid: number): boolean {
+    if (!['win32'].includes(this.os)) {
+      throw new NotImplementedException(`Unsupported platform: ${this.os}`);
+    }
     try {
       this.logger.log(`Calling isWindow for #${wid}`);
       return this.addon.isWindow(wid);
@@ -176,6 +206,9 @@ export class WindowService {
   }
 
   public isWindowVisible(wid: number): boolean {
+    if (!['win32'].includes(this.os)) {
+      throw new NotImplementedException(`Unsupported platform: ${this.os}`);
+    }
     try {
       this.logger.log(`Calling isWindowVisible for #${wid}`);
       return this.addon.isWindowVisible(wid);
@@ -185,6 +218,9 @@ export class WindowService {
   }
 
   public redrawWindow(wid: number): boolean {
+    if (!['win32'].includes(this.os)) {
+      throw new NotImplementedException(`Unsupported platform: ${this.os}`);
+    }
     try {
       this.logger.log(`Calling redrawWindow for #${wid}`);
       return this.addon.redrawWindow(wid);
