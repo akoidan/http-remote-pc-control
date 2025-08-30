@@ -10,13 +10,13 @@ export class ProcessController {
 
   @Post('create')
   @ApiOperation({summary: 'Create process'})
-  async createProcess(@Body() body: CreateProcessRequestDto): Promise<number> {
+  createProcess(@Body() body: CreateProcessRequestDto): number {
     return this.processService.createProcess(body.path, body.cmd);
   }
 
   @Get(':pid/main-window')
-  @ApiOperation({summary: "Get process' main window"})
-  async getProcessMainWindow(@Param('pid', ParseIntPipe) pid: number): Promise<number> {
+  @ApiOperation({summary: 'Get process\' main window'})
+  getProcessMainWindow(@Param('pid', ParseIntPipe) pid: number): number {
     return this.processService.getProcessMainWindow(pid);
   }
 }

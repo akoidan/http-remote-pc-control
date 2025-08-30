@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import {BadRequestException, Inject, Injectable, Logger, NotImplementedException} from '@nestjs/common';
 import {UIWindow} from '@/window/window-model';
 import {INativeModule, MonitorBounds, Native, WindowAction} from '@/native/native-model';

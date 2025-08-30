@@ -16,8 +16,6 @@ const monitorInfoSchema = z.object({
   isPrimary: z.boolean(),
 });
 
-const numberResponseSchema = z.number();
-
 class MonitorsListResponseDto extends createZodDto(monitorsListSchema) {}
 class MonitorInfoResponseDto extends createZodDto(monitorInfoSchema) {}
 
@@ -25,7 +23,6 @@ export {
   monitorsListSchema,
   monitorBoundsSchema,
   monitorInfoSchema,
-  numberResponseSchema,
   MonitorsListResponseDto,
   MonitorInfoResponseDto,
 };
