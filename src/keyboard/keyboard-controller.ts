@@ -13,7 +13,6 @@ import {
   KeyboardService,
 } from '@/keyboard/keyboard-model';
 import {
-  ApiBody,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
@@ -29,14 +28,12 @@ export class KeyboardController {
 
   @Post('key-press')
   @ApiOperation({summary: 'Press one or more keys'})
-  @ApiBody({ type: KeyPressRequestDto })
   async keyPress(@Body() body: KeyPressRequestDto): Promise<void> {
     await this.keyboardService.sendKey(body.keys as string[], body.holdKeys as string[], body.duration);
   }
 
   @Post('type-text')
   @ApiOperation({summary: 'Type text'})
-  @ApiBody({ type: TypeTextRequestDto })
   async typeText(@Body() body: TypeTextRequestDto): Promise<void> {
     await this.keyboardService.type(body.text, body.keyDelay, body.keyDelayDeviation);
   }
