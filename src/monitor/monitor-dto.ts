@@ -1,6 +1,6 @@
 import {z} from 'zod';
 import {createZodDto} from '@anatine/zod-nestjs';
-import {ApiProperty} from '@nestjs/swagger';
+
 
 const monitorBoundsSchema = z.object({
   x: z.number(),
@@ -15,22 +15,10 @@ const monitorInfoSchema = z.object({
   isPrimary: z.boolean(),
 });
 
-class MonitorBoundsResponseDto {
-  @ApiProperty() x!: number;
-  @ApiProperty() y!: number;
-  @ApiProperty() width!: number;
-  @ApiProperty() height!: number;
-}
-
-class MonitorInfoResponseDto {
-  @ApiProperty({ type: () => MonitorBoundsResponseDto }) bounds!: MonitorBoundsResponseDto;
-  @ApiProperty({ type: () => MonitorBoundsResponseDto }) workArea!: MonitorBoundsResponseDto;
-  @ApiProperty() isPrimary!: boolean;
-}
+class MonitorInfoResponseDto extends createZodDto(monitorInfoSchema) {}
 
 export {
   monitorBoundsSchema,
   monitorInfoSchema,
-  MonitorBoundsResponseDto,
   MonitorInfoResponseDto,
 };

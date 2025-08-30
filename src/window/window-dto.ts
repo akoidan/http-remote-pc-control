@@ -1,7 +1,6 @@
 import {z} from 'zod';
 import {createZodDto} from '@anatine/zod-nestjs';
 import {WindowAction} from '@/native/native-model';
-import {ApiProperty} from '@nestjs/swagger';
 
 const pidSchema = z.object({
   pid: z.number().describe('Process ID to focus'),
@@ -60,49 +59,21 @@ const createProcessRequestSchema = z.object({
 });
 
 // Create DTO class for Swagger
-class FocusExeRequestDto extends createZodDto(pidSchema) {
-}
-
-class WindowsIdsResponseDto {
-  @ApiProperty({type: [Number], description: 'Array of windows ids for process id'})
-  wids!: number[];
-}
-
-class ActiveWindowResponseDto extends createZodDto(activeWindowSchema) {
-}
-
-class FocusWindowRequestDto extends createZodDto(widSchema) {
-}
+class FocusExeRequestDto extends createZodDto(pidSchema) {}
+class WindowsIdsResponseDto extends createZodDto(windowsSchema) {}
+class ActiveWindowResponseDto extends createZodDto(activeWindowSchema) {}
+class FocusWindowRequestDto extends createZodDto(widSchema) {}
 
 // New DTOs
-class BoundsResponseDto {
-  @ApiProperty() x!: number;
-  @ApiProperty() y!: number;
-  @ApiProperty() width!: number;
-  @ApiProperty() height!: number;
-}
-
-class SetBoundsRequestDto {
-  @ApiProperty() wid!: number;
-  @ApiProperty({type: () => BoundsResponseDto}) bounds!: BoundsResponseDto;
-}
-
-class ShowWindowRequestDto extends createZodDto(showWindowRequestSchema) {
-}
-
-class SetOpacityRequestDto extends createZodDto(setOpacityRequestSchema) {
-}
-
-class ToggleTransparencyRequestDto extends createZodDto(toggleTransparencyRequestSchema) {
-}
-
-class SetOwnerRequestDto extends createZodDto(setOwnerRequestSchema) {
-}
-
-class CreateProcessRequestDto extends createZodDto(createProcessRequestSchema) {
-}
+class SetBoundsRequestDto extends createZodDto(setBoundsRequestSchema) {}
+class ShowWindowRequestDto extends createZodDto(showWindowRequestSchema) {}
+class SetOpacityRequestDto extends createZodDto(setOpacityRequestSchema) {}
+class ToggleTransparencyRequestDto extends createZodDto(toggleTransparencyRequestSchema) {}
+class SetOwnerRequestDto extends createZodDto(setOwnerRequestSchema) {}
+class CreateProcessRequestDto extends createZodDto(createProcessRequestSchema) {}
 
 // Response DTOs for Swagger
+class BoundsResponseDto extends createZodDto(boundsSchema) {}
 
 // Export types
 type FocusExeRequest = z.infer<typeof pidSchema>;

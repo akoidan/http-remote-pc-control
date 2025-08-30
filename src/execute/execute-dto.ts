@@ -1,6 +1,5 @@
 import {z} from 'zod';
 import {createZodDto} from '@anatine/zod-nestjs';
-import {ApiProperty} from '@nestjs/swagger';
 
 const launchExeRequestSchema = z.object({
   path: z.string().describe('Path to executable'),
@@ -21,16 +20,7 @@ const processIdsReponseSchema = z.object({
 });
 
 // Create DTO classes for Swagger
-class LaunchExeRequestDto {
-  @ApiProperty({ description: 'Path to executable' })
-  path!: string;
-
-  @ApiProperty({ description: 'Command line arguments', type: [String] })
-  arguments!: string[];
-
-  @ApiProperty({ description: 'Wait for process to finish' })
-  waitTillFinish!: boolean;
-}
+class LaunchExeRequestDto extends createZodDto(launchExeRequestSchema) {}
 class KillExeByNameRequestDto extends createZodDto(executableNameRequestSchema) {}
 class FindExeByNameRequestDto extends createZodDto(executableNameRequestSchema) {}
 class KillExeByPidRequestDto extends createZodDto(processIdRequestSchema) {}
