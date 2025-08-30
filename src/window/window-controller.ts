@@ -1,6 +1,6 @@
 import {Body, Controller, Get, Param, ParseIntPipe, Post} from '@nestjs/common';
 
-import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
+import {ApiBody, ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import {
   ActiveWindowResponseDto,
   FocusExeRequestDto,
@@ -26,6 +26,7 @@ export class WindowController {
 
   @Post('focus-exe')
   @ApiOperation({summary: 'Focus window by process ID'})
+  @ApiBody({ type: FocusExeRequestDto })
   async focusExe(@Body() body: FocusExeRequestDto): Promise<void> {
     await this.windowService.activateWindowByPid(body.pid);
   }
@@ -47,6 +48,7 @@ export class WindowController {
 
   @Post('focus-window')
   @ApiOperation({summary: 'Focuses a window by its id'})
+  @ApiBody({ type: FocusWindowRequestDto })
   async focusWindowId(@Body() body: FocusWindowRequestDto): Promise<void> {
     await this.windowService.focusWindowId(body.wid);
   }
@@ -66,6 +68,7 @@ export class WindowController {
 
   @Post('bounds')
   @ApiOperation({summary: 'Set window bounds'})
+  @ApiBody({ type: SetBoundsRequestDto })
   setWindowBounds(@Body() body: SetBoundsRequestDto): boolean {
     return this.windowService.setWindowBounds(body.wid, body.bounds);
   }
@@ -78,6 +81,7 @@ export class WindowController {
 
   @Post('show')
   @ApiOperation({summary: 'Show/Hide/Minimize/Restore/Maximize window'})
+  @ApiBody({ type: ShowWindowRequestDto })
   showWindow(@Body() body: ShowWindowRequestDto): boolean {
     return this.windowService.showWindow(body.wid, body.type);
   }
@@ -90,12 +94,14 @@ export class WindowController {
 
   @Post('opacity')
   @ApiOperation({summary: 'Set window opacity (0..1)'})
+  @ApiBody({ type: SetOpacityRequestDto })
   setWindowOpacity(@Body() body: SetOpacityRequestDto): boolean {
     return this.windowService.setWindowOpacity(body.wid, body.opacity);
   }
 
   @Post('transparency')
   @ApiOperation({summary: 'Toggle window WS_EX_LAYERED transparency flag'})
+  @ApiBody({ type: ToggleTransparencyRequestDto })
   toggleTransparency(@Body() body: ToggleTransparencyRequestDto): boolean {
     return this.windowService.toggleWindowTransparency(body.wid, body.toggle);
   }
@@ -108,6 +114,7 @@ export class WindowController {
 
   @Post('owner')
   @ApiOperation({summary: 'Set window owner handle'})
+  @ApiBody({ type: SetOwnerRequestDto })
   setWindowOwner(@Body() body: SetOwnerRequestDto): boolean {
     return this.windowService.setWindowOwner(body.wid, body.owner);
   }
@@ -126,6 +133,7 @@ export class WindowController {
 
   @Post('redraw')
   @ApiOperation({summary: 'Force window redraw'})
+  @ApiBody({ type: FocusWindowRequestDto })
   redrawWindow(@Body() body: FocusWindowRequestDto): boolean {
     return this.windowService.redrawWindow(body.wid);
   }

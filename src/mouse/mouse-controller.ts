@@ -6,6 +6,7 @@ import {
 import {MouseMoveClickRequestDto} from '@/mouse/mouse-dto';
 import {MouseService} from '@/mouse/mouse-service';
 import {
+  ApiBody,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
@@ -20,6 +21,7 @@ export class MouseController {
 
   @Post('mouse-move-click')
   @ApiOperation({summary: 'Move mouse and click'})
+  @ApiBody({ type: MouseMoveClickRequestDto })
   async mouseMoveClick(@Body() event: MouseMoveClickRequestDto): Promise<void> {
     await this.mouseService.leftMouseMoveClick(event.x, event.y);
   }

@@ -1,5 +1,5 @@
 import {Body, Controller, Get, Param, ParseIntPipe, Post} from '@nestjs/common';
-import {ApiOperation, ApiTags} from '@nestjs/swagger';
+import {ApiBody, ApiOperation, ApiTags} from '@nestjs/swagger';
 import {ProcessService} from '@/process/process-service';
 import {CreateProcessRequestDto} from '@/window/window-dto';
 
@@ -10,6 +10,7 @@ export class ProcessController {
 
   @Post('create')
   @ApiOperation({summary: 'Create process'})
+  @ApiBody({ type: CreateProcessRequestDto })
   createProcess(@Body() body: CreateProcessRequestDto): number {
     return this.processService.createProcess(body.path, body.cmd);
   }
