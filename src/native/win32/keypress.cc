@@ -7,6 +7,7 @@
 #include "./headers/keyboard-layout.h"
 #include <codecvt>
 #include <locale>
+#include "./headers/logger.h"
 
 // Define all modifiers in one place
 static const KeyModifier MODIFIERS[] = {
@@ -155,6 +156,10 @@ void typeString(const char *str) {
         HKL neededLayout = GetKeyboardLayoutForLanguage(detectedLang);
         
         if (neededLayout != currentLayout) {
+            std::ostringstream oss; oss << "Switching keyboard layout lang=" << detectedLang
+                << " from=0x" << std::hex << reinterpret_cast<uintptr_t>(currentLayout)
+                << " to=0x" << std::hex << reinterpret_cast<uintptr_t>(neededLayout);
+            LOG(oss.str());
             SetThreadKeyboardLayout(neededLayout);
             currentLayout = neededLayout;
             Sleep(50);
@@ -170,6 +175,10 @@ void typeString(const char *str) {
             // Use toggleKeyCode to handle the keypress with modifiers
             toggleKeyCode(virtualKey, true, flags);
             toggleKeyCode(virtualKey, false, flags);
+        } else {
+            std::ostringstream oss; oss << "Unable to map character U+" << std::uppercase << std::hex << static_cast<unsigned int>(wc)
+                << " to a virtual key for current layout";
+            LOG(oss.str());
         }
     }
     // Restore the original layout, wait timeout so last letter typing is not affected by lang change

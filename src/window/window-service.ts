@@ -1,6 +1,7 @@
+/* eslint-disable max-lines */
 import {BadRequestException, Inject, Injectable, Logger, NotImplementedException} from '@nestjs/common';
 import {UIWindow} from '@/window/window-model';
-import {INativeModule, Native} from '@/native/native-model';
+import {INativeModule, MonitorBounds, Native, WindowAction} from '@/native/native-model';
 import {OS_INJECT} from '@/window/window-consts';
 import {ActiveWindowResponseDto} from '@/window/window-dto';
 
@@ -13,7 +14,6 @@ export class WindowService {
     @Inject(OS_INJECT)
     private readonly os: NodeJS.Platform,
   ) {
-
   }
 
   public getAllWindows(): UIWindow[] {
@@ -44,7 +44,7 @@ export class WindowService {
 
   // eslint-disable-next-line @typescript-eslint/require-await
   public async getActiveWindowInfo(): Promise<ActiveWindowResponseDto> {
-    if (!['win32'].includes(this.os)) {
+    if (!['win32', 'linux'].includes(this.os)) {
       throw new NotImplementedException(`Unsupported platform: ${this.os}`);
     }
     const windowsRaw = this.addon.getActiveWindowInfo();
@@ -73,6 +73,160 @@ export class WindowService {
       this.logger.debug(`Found ${requiredWindows.length} windows for pid ${pid}. Picking  ${requireWindow}`);
     }
     await this.focusWindowId(requireWindow);
+  }
+
+  // Extended window operations following consistent logging and error handling
+  public getActiveWindow(): number {
+    try {
+      this.logger.log('Calling getActiveWindow');
+      return this.addon.getActiveWindow();
+    } catch (e) {
+      throw new BadRequestException(`Unable to get active window because ${e?.message}`);
+    }
+  }
+
+  public getWindowBounds(wid: number): MonitorBounds {
+    if (!['win32'].includes(this.os)) {
+      throw new NotImplementedException(`Unsupported platform: ${this.os}`);
+    }
+    try {
+      this.logger.log(`Calling getWindowBounds for #${wid}`);
+      return this.addon.getWindowBounds(wid);
+    } catch (e) {
+      throw new BadRequestException(`Unable to get window #${wid} bounds because ${e?.message}`);
+    }
+  }
+
+  public setWindowBounds(wid: number, bounds: MonitorBounds): boolean {
+    if (!['win32'].includes(this.os)) {
+      throw new NotImplementedException(`Unsupported platform: ${this.os}`);
+    }
+    try {
+      this.logger.log(`Calling setWindowBounds for #${wid} to ${JSON.stringify(bounds)}`);
+      return this.addon.setWindowBounds(wid, bounds);
+    } catch (e) {
+      throw new BadRequestException(`Unable to set window #${wid} bounds because ${e?.message}`);
+    }
+  }
+
+  public getWindowTitle(wid: number): string {
+    if (!['win32'].includes(this.os)) {
+      throw new NotImplementedException(`Unsupported platform: ${this.os}`);
+    }
+    try {
+      this.logger.log(`Calling getWindowTitle for #${wid}`);
+      return this.addon.getWindowTitle(wid);
+    } catch (e) {
+      throw new BadRequestException(`Unable to get window #${wid} title because ${e?.message}`);
+    }
+  }
+
+  public showWindow(wid: number, type: WindowAction): boolean {
+    if (!['win32'].includes(this.os)) {
+      throw new NotImplementedException(`Unsupported platform: ${this.os}`);
+    }
+    try {
+      this.logger.log(`Calling showWindow for #${wid} with action ${type}`);
+      return this.addon.showWindow(wid, type);
+    } catch (e) {
+      throw new BadRequestException(`Unable to show window #${wid} (${type}) because ${e?.message}`);
+    }
+  }
+
+  public getWindowOpacity(wid: number): number {
+    if (!['win32'].includes(this.os)) {
+      throw new NotImplementedException(`Unsupported platform: ${this.os}`);
+    }
+    try {
+      this.logger.log(`Calling getWindowOpacity for #${wid}`);
+      return this.addon.getWindowOpacity(wid);
+    } catch (e) {
+      throw new BadRequestException(`Unable to get window #${wid} opacity because ${e?.message}`);
+    }
+  }
+
+  public setWindowOpacity(wid: number, opacity: number): boolean {
+    if (!['win32'].includes(this.os)) {
+      throw new NotImplementedException(`Unsupported platform: ${this.os}`);
+    }
+    try {
+      this.logger.log(`Calling setWindowOpacity for #${wid} to ${opacity}`);
+      return this.addon.setWindowOpacity(wid, opacity);
+    } catch (e) {
+      throw new BadRequestException(`Unable to set window #${wid} opacity because ${e?.message}`);
+    }
+  }
+
+  public toggleWindowTransparency(wid: number, toggle: boolean): boolean {
+    if (!['win32'].includes(this.os)) {
+      throw new NotImplementedException(`Unsupported platform: ${this.os}`);
+    }
+    try {
+      this.logger.log(`Calling toggleWindowTransparency for #${wid} to ${toggle}`);
+      return this.addon.toggleWindowTransparency(wid, toggle);
+    } catch (e) {
+      throw new BadRequestException(`Unable to toggle window #${wid} transparency because ${e?.message}`);
+    }
+  }
+
+  public getWindowOwner(wid: number): number {
+    if (!['win32'].includes(this.os)) {
+      throw new NotImplementedException(`Unsupported platform: ${this.os}`);
+    }
+    try {
+      this.logger.log(`Calling getWindowOwner for #${wid}`);
+      return this.addon.getWindowOwner(wid);
+    } catch (e) {
+      throw new BadRequestException(`Unable to get window #${wid} owner because ${e?.message}`);
+    }
+  }
+
+  public setWindowOwner(wid: number, owner: number): boolean {
+    if (!['win32'].includes(this.os)) {
+      throw new NotImplementedException(`Unsupported platform: ${this.os}`);
+    }
+    try {
+      this.logger.log(`Calling setWindowOwner for #${wid} to ${owner}`);
+      return this.addon.setWindowOwner(wid, owner);
+    } catch (e) {
+      throw new BadRequestException(`Unable to set window #${wid} owner because ${e?.message}`);
+    }
+  }
+
+  public isWindow(wid: number): boolean {
+    if (!['win32'].includes(this.os)) {
+      throw new NotImplementedException(`Unsupported platform: ${this.os}`);
+    }
+    try {
+      this.logger.log(`Calling isWindow for #${wid}`);
+      return this.addon.isWindow(wid);
+    } catch (e) {
+      throw new BadRequestException(`Unable to check if handle #${wid} is window because ${e?.message}`);
+    }
+  }
+
+  public isWindowVisible(wid: number): boolean {
+    if (!['win32'].includes(this.os)) {
+      throw new NotImplementedException(`Unsupported platform: ${this.os}`);
+    }
+    try {
+      this.logger.log(`Calling isWindowVisible for #${wid}`);
+      return this.addon.isWindowVisible(wid);
+    } catch (e) {
+      throw new BadRequestException(`Unable to check window #${wid} visibility because ${e?.message}`);
+    }
+  }
+
+  public redrawWindow(wid: number): boolean {
+    if (!['win32'].includes(this.os)) {
+      throw new NotImplementedException(`Unsupported platform: ${this.os}`);
+    }
+    try {
+      this.logger.log(`Calling redrawWindow for #${wid}`);
+      return this.addon.redrawWindow(wid);
+    } catch (e) {
+      throw new BadRequestException(`Unable to redraw window #${wid} because ${e?.message}`);
+    }
   }
 }
 

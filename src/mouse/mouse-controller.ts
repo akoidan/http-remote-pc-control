@@ -11,7 +11,7 @@ import {
 } from '@nestjs/swagger';
 
 @ApiTags('Mouse')
-@Controller()
+@Controller('mouse')
 export class MouseController {
   constructor(
     private readonly mouseService: MouseService,

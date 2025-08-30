@@ -8,7 +8,7 @@ import {
 } from '@nestjs/swagger';
 
 @ApiTags('App')
-@Controller()
+@Controller('app')
 export class AppController {
   @ApiOperation({summary: 'Pings this client to test whether it\'s working'})
   @Get('ping')

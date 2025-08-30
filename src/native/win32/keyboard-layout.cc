@@ -3,9 +3,7 @@
 #include <string>
 #include <vector>
 #include <winnls.h>
-
-
-#define DEBUG_LOG(fmt, ...) fprintf(stdout, "[window-linux] " fmt "\n", ##__VA_ARGS__)
+#include "./headers/logger.h"
 
 // Helper function to create keyboard layout string from LANGID
 std::string MakeKLID(LANGID langId) {
@@ -162,6 +160,7 @@ bool isCapsLockEnabled() {
 
 void ensureCapsLockDisabled() {
     if (isCapsLockEnabled()) {
+        LOG("Caps Lock is ON, turning it OFF to ensure correct typing");
         // Simulate pressing and releasing Caps Lock
         INPUT input[2] = {};
         input[0].type = INPUT_KEYBOARD;

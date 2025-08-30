@@ -1,6 +1,7 @@
 #include "./headers/mouse.h"
 #include <napi.h>
 #include <windows.h>
+#include "./headers/logger.h"
 
 #define ABSOLUTE_COORD_CONST 65536
 
@@ -58,6 +59,10 @@ void toggleMouse(bool down, unsigned int button) {
 }
 
 void clickMouse(unsigned int button) {
+    POINT p; GetCursorPos(&p);
+    const char* btn = (button == LEFT_BUTTON ? "left" : (button == RIGHT_BUTTON ? "right" : "middle"));
+    std::ostringstream oss; oss << "mouse click button=" << btn << " at (" << p.x << "," << p.y << ")";
+    LOG(oss.str());
     toggleMouse(true, button);
     toggleMouse(false, button);
 }
