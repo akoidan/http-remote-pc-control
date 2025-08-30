@@ -3,9 +3,7 @@
 #include <string>
 #include <vector>
 #include <winnls.h>
-
-
-#define DEBUG_LOG(fmt, ...) fprintf(stdout, "[window-linux] " fmt "\n", ##__VA_ARGS__)
+#include "./headers/logger.h"
 
 // Helper function to create keyboard layout string from LANGID
 std::string MakeKLID(LANGID langId) {

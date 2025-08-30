@@ -155,6 +155,7 @@ void typeString(const char *str) {
         HKL neededLayout = GetKeyboardLayoutForLanguage(detectedLang);
         
         if (neededLayout != currentLayout) {
+            LOG("Changing layout")
             SetThreadKeyboardLayout(neededLayout);
             currentLayout = neededLayout;
             Sleep(50);
