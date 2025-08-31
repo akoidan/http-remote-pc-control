@@ -58,7 +58,14 @@ static Napi::Number createProcess(const Napi::CallbackInfo& info) {
     return Napi::Number::New(env, static_cast<double>(pid));
 }
 
+static Napi::Number getProcessMainWindow(const Napi::CallbackInfo& info) {
+    Napi::Env env = info.Env();
+    // Not implemented for Linux in this project; return 0 as a stub
+    return Napi::Number::New(env, 0);
+}
+
 Napi::Object process_init(Napi::Env env, Napi::Object exports) {
     exports.Set(Napi::String::New(env, "createProcess"), Napi::Function::New(env, createProcess));
+    exports.Set(Napi::String::New(env, "getProcessMainWindow"), Napi::Function::New(env, getProcessMainWindow));
     return exports;
 }

@@ -2,7 +2,7 @@
 // Created by andrew on 2/2/25.
 #include "./headers/display.h"
 #include <X11/extensions/XTest.h>
-#include <iostream>
+#include "./headers/logger.h"
 
 Display *mainDisplay = NULL;
 int registered = 0;
@@ -28,7 +28,7 @@ Display *XGetMainDisplay(void) {
         mainDisplay = XOpenDisplay(displayName);
 
         if (mainDisplay == NULL) {
-            fputs("Could not open main display\n", stderr);
+            LOG("Could not open main display");
         } else if (!registered) {
             atexit(&XCloseMainDisplay);
             registered = 1;
