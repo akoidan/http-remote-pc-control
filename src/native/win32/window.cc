@@ -150,7 +150,9 @@ Napi::Object getWindowBounds (const Napi::CallbackInfo& info) {
     auto handle{ getValueFromCallbackData<HWND> (info, 0) };
 
     RECT rect{};
-    GetWindowRect (handle, &rect);
+    if (!GetWindowRect (handle, &rect)) {
+        throw Napi::Error::New(env, "GetWindowRect failed");
+    }
 
     Napi::Object bounds{ Napi::Object::New (env) };
 
@@ -203,7 +205,11 @@ Napi::Boolean toggleWindowTransparency (const Napi::CallbackInfo& info) {
     bool toggle{ info[1].As<Napi::Boolean> () };
     LONG_PTR style{ GetWindowLongPtrA (handle, GWL_EXSTYLE) };
 
-    SetWindowLongPtrA (handle, GWL_EXSTYLE, ((toggle) ? (style | WS_EX_LAYERED) : (style & (~WS_EX_LAYERED))));
+    SetLastError(0);
+    LONG_PTR prev = SetWindowLongPtrA (handle, GWL_EXSTYLE, ((toggle) ? (style | WS_EX_LAYERED) : (style & (~WS_EX_LAYERED))));
+    if (prev == 0 && GetLastError() != 0) {
+        throw Napi::Error::New(env, "Failed to toggle WS_EX_LAYERED flag");
+    }
 
     return Napi::Boolean::New (env, true);
 }
@@ -214,7 +220,10 @@ Napi::Boolean setWindowOpacity (const Napi::CallbackInfo& info) {
     auto handle{ getValueFromCallbackData<HWND> (info, 0) };
     double opacity{ info[1].As<Napi::Number> ().DoubleValue () };
 
-    SetLayeredWindowAttributes (handle, NULL, opacity * 255., LWA_ALPHA);
+    BOOL ok = SetLayeredWindowAttributes (handle, NULL, opacity * 255., LWA_ALPHA);
+    if (!ok) {
+        throw Napi::Error::New(env, "SetLayeredWindowAttributes failed");
+    }
 
     return Napi::Boolean::New (env, true);
 }
@@ -228,7 +237,10 @@ Napi::Boolean setWindowBounds (const Napi::CallbackInfo& info) {
     BOOL b{ MoveWindow (handle, bounds.Get ("x").ToNumber (), bounds.Get ("y").ToNumber (),
                         bounds.Get ("width").ToNumber (), bounds.Get ("height").ToNumber (), true) };
 
-    return Napi::Boolean::New (env, b);
+    if (!b) {
+        throw Napi::Error::New(env, "MoveWindow failed");
+    }
+    return Napi::Boolean::New (env, true);
 }
 
 Napi::Boolean setWindowOwner (const Napi::CallbackInfo& info) {
@@ -237,7 +249,11 @@ Napi::Boolean setWindowOwner (const Napi::CallbackInfo& info) {
     auto handle{ getValueFromCallbackData<HWND> (info, 0) };
     auto newOwner{ static_cast<LONG_PTR> (info[1].As<Napi::Number> ().Int64Value ()) };
 
-    SetWindowLongPtrA (handle, GWLP_HWNDPARENT, newOwner);
+    SetLastError(0);
+    LONG_PTR prev = SetWindowLongPtrA (handle, GWLP_HWNDPARENT, newOwner);
+    if (prev == 0 && GetLastError() != 0) {
+        throw Napi::Error::New(env, "Failed to set window owner (GWLP_HWNDPARENT)");
+    }
 
     return Napi::Boolean::New (env, true);
 }
@@ -261,7 +277,11 @@ Napi::Boolean showWindow (const Napi::CallbackInfo& info) {
     else if (type == "maximize")
         flag = SW_MAXIMIZE;
 
-    return Napi::Boolean::New (env, ShowWindow (handle, flag));
+    BOOL ok = ShowWindow (handle, flag);
+        if (!ok) {
+            throw Napi::Error::New(env, "ShowWindow failed");
+        }
+        return Napi::Boolean::New (env, true);
 }
 
 Napi::Boolean bringWindowToTop (const Napi::CallbackInfo& info) {
@@ -271,6 +291,9 @@ Napi::Boolean bringWindowToTop (const Napi::CallbackInfo& info) {
         throw Napi::Error::New(env, "Window with current id not found");
     }
     BOOL b{ SetForegroundWindow (handle) };
+    if (!b) {
+        throw Napi::Error::New(env, "SetForegroundWindow failed");
+    }
 
     HWND hCurWnd = ::GetForegroundWindow ();
     DWORD dwMyID = ::GetCurrentThreadId ();
@@ -283,7 +306,7 @@ Napi::Boolean bringWindowToTop (const Napi::CallbackInfo& info) {
     ::SetFocus (handle);
     ::SetActiveWindow (handle);
 
-    return Napi::Boolean::New (env, b);
+    return Napi::Boolean::New (env, true);
 }
 
 Napi::Boolean redrawWindow (const Napi::CallbackInfo& info) {
@@ -294,7 +317,10 @@ Napi::Boolean redrawWindow (const Napi::CallbackInfo& info) {
                           SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER |
                           SWP_NOOWNERZORDER | SWP_NOACTIVATE | SWP_DRAWFRAME | SWP_NOCOPYBITS) };
 
-    return Napi::Boolean::New (env, b);
+    if (!b) {
+        throw Napi::Error::New(env, "SetWindowPos failed to redraw window");
+    }
+    return Napi::Boolean::New (env, true);
 }
 
 Napi::Boolean isWindow (const Napi::CallbackInfo& info) {

@@ -155,7 +155,7 @@ Napi::Boolean bringWindowToTop(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
 
     if (!ensure_xcb_initialized()) {
-        return Napi::Boolean::New(env, false);
+        throw Napi::Error::New(env, "XCB initialization failed");
     }
 
     xcb_window_t window_id = static_cast<xcb_window_t>(info[0].ToNumber().Int64Value());
@@ -224,7 +224,7 @@ static xcb_atom_t intern_atom(const char* name) {
 
 static Napi::Object getWindowBounds(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
-    if (!ensure_xcb_initialized()) return Napi::Object::New(env);
+    if (!ensure_xcb_initialized()) throw Napi::Error::New(env, "XCB initialization failed");
     xcb_window_t win = static_cast<xcb_window_t>(info[0].ToNumber().Int64Value());
 
     xcb_get_geometry_cookie_t gc = xcb_get_geometry(connection, win);
@@ -253,7 +253,7 @@ static Napi::Object getWindowBounds(const Napi::CallbackInfo& info) {
 
 static Napi::String getWindowTitle(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
-    if (!ensure_xcb_initialized()) return Napi::String::New(env, "");
+    if (!ensure_xcb_initialized()) throw Napi::Error::New(env, "XCB initialization failed");
     xcb_window_t win = static_cast<xcb_window_t>(info[0].ToNumber().Int64Value());
 
     // Try _NET_WM_NAME (UTF8_STRING)
@@ -282,7 +282,7 @@ static Napi::String getWindowTitle(const Napi::CallbackInfo& info) {
 
 static Napi::Number getWindowOpacity(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
-    if (!ensure_xcb_initialized()) return Napi::Number::New(env, 1.0);
+    if (!ensure_xcb_initialized()) throw Napi::Error::New(env, "XCB initialization failed");
     xcb_window_t win = static_cast<xcb_window_t>(info[0].ToNumber().Int64Value());
     xcb_atom_t OPACITY = intern_atom("_NET_WM_WINDOW_OPACITY");
     xcb_get_property_cookie_t c = xcb_get_property(connection, 0, win, OPACITY, XCB_ATOM_CARDINAL, 0, 1);
@@ -300,7 +300,7 @@ static Napi::Number getWindowOpacity(const Napi::CallbackInfo& info) {
 
 static Napi::Number getWindowOwner(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
-    if (!ensure_xcb_initialized()) return Napi::Number::New(env, 0);
+    if (!ensure_xcb_initialized()) throw Napi::Error::New(env, "XCB initialization failed");
     xcb_window_t win = static_cast<xcb_window_t>(info[0].ToNumber().Int64Value());
     // Use WM_TRANSIENT_FOR as an approximation of owner
     xcb_get_property_cookie_t c = xcb_get_property(connection, 0, win, XCB_ATOM_WM_TRANSIENT_FOR, XCB_ATOM_WINDOW, 0, 1);
@@ -341,7 +341,7 @@ static Napi::Boolean isWindowVisible(const Napi::CallbackInfo& info) {
 
 static Napi::Boolean setWindowBounds(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
-    if (!ensure_xcb_initialized()) return Napi::Boolean::New(env, false);
+    if (!ensure_xcb_initialized()) throw Napi::Error::New(env, "XCB initialization failed");
     xcb_window_t win = static_cast<xcb_window_t>(info[0].ToNumber().Int64Value());
     Napi::Object b = info[1].As<Napi::Object>();
     int32_t x = b.Get("x").ToNumber().Int32Value();

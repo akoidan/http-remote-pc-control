@@ -3,6 +3,10 @@ import {Body, Controller, Get, Param, ParseIntPipe, Post} from '@nestjs/common';
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import {
   ActiveWindowResponseDto,
+  ActiveWindowIdResponseDto,
+  WindowTitleResponseDto,
+  WindowOpacityResponseDto,
+  WindowOwnerResponseDto,
   FocusExeRequestDto,
   FocusWindowRequestDto,
   GetActiveWindowResponse,
@@ -54,8 +58,9 @@ export class WindowController {
   // New endpoints exposing native methods
   @Get('active-window-id')
   @ApiOperation({summary: 'Get active window id (raw handle)'})
-  getActiveWindow(): number {
-    return this.windowService.getActiveWindow();
+  @ApiResponse({type: ActiveWindowIdResponseDto})
+  getActiveWindow(): { wid: number } {
+    return { wid: this.windowService.getActiveWindow() };
   }
 
   @Get(':wid/bounds')
@@ -72,8 +77,9 @@ export class WindowController {
 
   @Get(':wid/title')
   @ApiOperation({summary: 'Get window title'})
-  getWindowTitle(@Param('wid', ParseIntPipe) wid: number): string {
-    return this.windowService.getWindowTitle(wid);
+  @ApiResponse({type: WindowTitleResponseDto})
+  getWindowTitle(@Param('wid', ParseIntPipe) wid: number): { title: string } {
+    return { title: this.windowService.getWindowTitle(wid) };
   }
 
   @Post('show')
@@ -84,8 +90,9 @@ export class WindowController {
 
   @Get(':wid/opacity')
   @ApiOperation({summary: 'Get window opacity (0..1)'})
-  getWindowOpacity(@Param('wid', ParseIntPipe) wid: number): number {
-    return this.windowService.getWindowOpacity(wid);
+  @ApiResponse({type: WindowOpacityResponseDto})
+  getWindowOpacity(@Param('wid', ParseIntPipe) wid: number): { opacity: number } {
+    return { opacity: this.windowService.getWindowOpacity(wid) };
   }
 
   @Post('opacity')
@@ -102,8 +109,9 @@ export class WindowController {
 
   @Get(':wid/owner')
   @ApiOperation({summary: 'Get window owner handle'})
-  getWindowOwner(@Param('wid', ParseIntPipe) wid: number): number {
-    return this.windowService.getWindowOwner(wid);
+  @ApiResponse({type: WindowOwnerResponseDto})
+  getWindowOwner(@Param('wid', ParseIntPipe) wid: number): { owner: number } {
+    return { owner: this.windowService.getWindowOwner(wid) };
   }
 
   @Post('owner')
