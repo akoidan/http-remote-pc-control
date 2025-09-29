@@ -36,7 +36,7 @@ export class KeyboardWin32LinuxService implements IKeyboardService {
       this.logger.log(`HoldKey: \u001b[35m${key}`);
       // libnut.keyToggle(key, 'down', [])
       this.addon.keyToggle(key, [], true);
-      await sleep(50);
+      await sleep(100);
     }
     for (const key of keys) {
       this.logger.log(`KeyPress: \u001b[35m${key}`);
@@ -47,12 +47,12 @@ export class KeyboardWin32LinuxService implements IKeyboardService {
       } else {
         this.addon.keyTap(key, []);
       }
-      await sleep(50);
+      await sleep(100);
     }
     for (const key of holdKeys) {
       this.logger.log(`ReleaseKey: \u001b[35m${key}`);
       this.addon.keyToggle(key, [], false);
-      await sleep(50);
+      await sleep(100);
     }
   }
 }
