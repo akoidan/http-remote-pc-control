@@ -94,10 +94,15 @@ const windowOwnerResponseSchema = z.object({
   owner: z.number().describe('Owner window handle (HWND as number) or 0 if none'),
 }).describe('Window owner handle');
 
+const windowVisibleResponseSchema = z.object({
+  visible: z.boolean().describe('Whether the window is visible on screen'),
+}).describe('Window visibility flag');
+
 class ActiveWindowIdResponseDto extends createZodDto(activeWindowIdResponseSchema) {}
 class WindowTitleResponseDto extends createZodDto(windowTitleResponseSchema) {}
 class WindowOpacityResponseDto extends createZodDto(windowOpacityResponseSchema) {}
 class WindowOwnerResponseDto extends createZodDto(windowOwnerResponseSchema) {}
+class WindowVisibleResponseDto extends createZodDto(windowVisibleResponseSchema) {}
 
 // Export types
 type FocusExeRequest = z.infer<typeof pidSchema>;
@@ -109,6 +114,7 @@ type ActiveWindowIdResponse = z.infer<typeof activeWindowIdResponseSchema>;
 type WindowTitleResponse = z.infer<typeof windowTitleResponseSchema>;
 type WindowOpacityResponse = z.infer<typeof windowOpacityResponseSchema>;
 type WindowOwnerResponse = z.infer<typeof windowOwnerResponseSchema>;
+type WindowVisibleResponse = z.infer<typeof windowVisibleResponseSchema>;
 
 type SetBoundsRequest = z.infer<typeof setBoundsRequestSchema>;
 type ShowWindowRequest = z.infer<typeof showWindowRequestSchema>;
@@ -144,6 +150,7 @@ export {
   WindowTitleResponseDto,
   WindowOpacityResponseDto,
   WindowOwnerResponseDto,
+  WindowVisibleResponseDto,
 };
 
 export type {

@@ -222,7 +222,7 @@ Napi::Object getWindowBounds(const Napi::CallbackInfo &info) {
   return Napi::Object::New(env);
 }
 
-Napi::Boolean setWindowBounds(const Napi::CallbackInfo &info) {
+Napi::Value setWindowBounds(const Napi::CallbackInfo &info) {
   Napi::Env env{info.Env()};
 
   auto handle = info[0].As<Napi::Number>().Int32Value();
@@ -246,10 +246,10 @@ Napi::Boolean setWindowBounds(const Napi::CallbackInfo &info) {
     AXUIElementSetAttributeValue(win, kAXSizeAttribute, sizeStorage);
   }
 
-  return Napi::Boolean::New(env, true);
+  return env.Undefined();
 }
 
-Napi::Boolean bringWindowToTop(const Napi::CallbackInfo &info) {
+Napi::Value bringWindowToTop(const Napi::CallbackInfo &info) {
   Napi::Env env{info.Env()};
 
   auto handle = info[0].As<Napi::Number>().Int32Value();
@@ -261,10 +261,10 @@ Napi::Boolean bringWindowToTop(const Napi::CallbackInfo &info) {
   AXUIElementSetAttributeValue(app, kAXFrontmostAttribute, kCFBooleanTrue);
   AXUIElementSetAttributeValue(win, kAXMainAttribute, kCFBooleanTrue);
 
-  return Napi::Boolean::New(env, true);
+  return env.Undefined();
 }
 
-Napi::Boolean setWindowMinimized(const Napi::CallbackInfo &info) {
+Napi::Value setWindowMinimized(const Napi::CallbackInfo &info) {
   Napi::Env env{info.Env()};
 
   auto handle = info[0].As<Napi::Number>().Int32Value();
@@ -276,10 +276,10 @@ Napi::Boolean setWindowMinimized(const Napi::CallbackInfo &info) {
     AXUIElementSetAttributeValue(win, kAXMinimizedAttribute, toggle ? kCFBooleanTrue : kCFBooleanFalse);
   }
 
-  return Napi::Boolean::New(env, true);
+  return env.Undefined();
 }
 
-Napi::Boolean setWindowMaximized(const Napi::CallbackInfo &info) {
+Napi::Value setWindowMaximized(const Napi::CallbackInfo &info) {
   Napi::Env env{info.Env()};
   auto handle = info[0].As<Napi::Number>().Int32Value();
   auto win = getAXWindowById(handle);
@@ -299,7 +299,7 @@ Napi::Boolean setWindowMaximized(const Napi::CallbackInfo &info) {
     AXUIElementSetAttributeValue(win, kAXSizeAttribute, sizeStorage);
   }
 
-  return Napi::Boolean::New(env, true);
+  return env.Undefined();
 }
 
 

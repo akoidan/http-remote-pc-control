@@ -198,7 +198,7 @@ Napi::Number getWindowOwner (const Napi::CallbackInfo& info) {
     return Napi::Number::New (env, GetWindowLongPtrA (handle, GWLP_HWNDPARENT));
 }
 
-Napi::Boolean toggleWindowTransparency (const Napi::CallbackInfo& info) {
+Napi::Value toggleWindowTransparency (const Napi::CallbackInfo& info) {
     Napi::Env env{ info.Env () };
 
     auto handle{ getValueFromCallbackData<HWND> (info, 0) };
@@ -211,10 +211,10 @@ Napi::Boolean toggleWindowTransparency (const Napi::CallbackInfo& info) {
         throw Napi::Error::New(env, "Failed to toggle WS_EX_LAYERED flag");
     }
 
-    return Napi::Boolean::New (env, true);
+    return env.Undefined();
 }
 
-Napi::Boolean setWindowOpacity (const Napi::CallbackInfo& info) {
+Napi::Value setWindowOpacity (const Napi::CallbackInfo& info) {
     Napi::Env env{ info.Env () };
 
     auto handle{ getValueFromCallbackData<HWND> (info, 0) };
@@ -225,10 +225,10 @@ Napi::Boolean setWindowOpacity (const Napi::CallbackInfo& info) {
         throw Napi::Error::New(env, "SetLayeredWindowAttributes failed");
     }
 
-    return Napi::Boolean::New (env, true);
+    return env.Undefined();
 }
 
-Napi::Boolean setWindowBounds (const Napi::CallbackInfo& info) {
+Napi::Value setWindowBounds (const Napi::CallbackInfo& info) {
     Napi::Env env{ info.Env () };
 
     Napi::Object bounds{ info[1].As<Napi::Object> () };
@@ -240,10 +240,10 @@ Napi::Boolean setWindowBounds (const Napi::CallbackInfo& info) {
     if (!b) {
         throw Napi::Error::New(env, "MoveWindow failed");
     }
-    return Napi::Boolean::New (env, true);
+    return env.Undefined();
 }
 
-Napi::Boolean setWindowOwner (const Napi::CallbackInfo& info) {
+Napi::Value setWindowOwner (const Napi::CallbackInfo& info) {
     Napi::Env env{ info.Env () };
 
     auto handle{ getValueFromCallbackData<HWND> (info, 0) };
@@ -255,10 +255,10 @@ Napi::Boolean setWindowOwner (const Napi::CallbackInfo& info) {
         throw Napi::Error::New(env, "Failed to set window owner (GWLP_HWNDPARENT)");
     }
 
-    return Napi::Boolean::New (env, true);
+    return env.Undefined();
 }
 
-Napi::Boolean showWindow (const Napi::CallbackInfo& info) {
+Napi::Value showWindow (const Napi::CallbackInfo& info) {
     Napi::Env env{ info.Env () };
 
     auto handle{ getValueFromCallbackData<HWND> (info, 0) };
@@ -281,10 +281,10 @@ Napi::Boolean showWindow (const Napi::CallbackInfo& info) {
         if (!ok) {
             throw Napi::Error::New(env, "ShowWindow failed");
         }
-        return Napi::Boolean::New (env, true);
+        return env.Undefined();
 }
 
-Napi::Boolean bringWindowToTop (const Napi::CallbackInfo& info) {
+Napi::Value bringWindowToTop (const Napi::CallbackInfo& info) {
     Napi::Env env{ info.Env () };
     auto handle{ getValueFromCallbackData<HWND> (info, 0) };
     if (!IsWindow(handle)) {
@@ -306,10 +306,10 @@ Napi::Boolean bringWindowToTop (const Napi::CallbackInfo& info) {
     ::SetFocus (handle);
     ::SetActiveWindow (handle);
 
-    return Napi::Boolean::New (env, true);
+    return env.Undefined();
 }
 
-Napi::Boolean redrawWindow (const Napi::CallbackInfo& info) {
+Napi::Value redrawWindow (const Napi::CallbackInfo& info) {
     Napi::Env env{ info.Env () };
 
     auto handle{ getValueFromCallbackData<HWND> (info, 0) };
@@ -320,7 +320,7 @@ Napi::Boolean redrawWindow (const Napi::CallbackInfo& info) {
     if (!b) {
         throw Napi::Error::New(env, "SetWindowPos failed to redraw window");
     }
-    return Napi::Boolean::New (env, true);
+    return env.Undefined();
 }
 
 Napi::Boolean isWindow (const Napi::CallbackInfo& info) {
