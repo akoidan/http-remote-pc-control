@@ -237,7 +237,7 @@ static Napi::Object getWindowBounds(const Napi::CallbackInfo& info) {
 
     xcb_get_geometry_cookie_t gc = xcb_get_geometry(connection, win);
     xcb_get_geometry_reply_t* gr = xcb_get_geometry_reply(connection, gc, nullptr);
-    if (!gr) return Napi::Object::New(env);
+    if (!gr) throw Napi::Error::New(env, "Window not found");;
 
     // Translate coordinates to root
     int16_t x = gr->x;
@@ -352,6 +352,11 @@ static Napi::Value setWindowBounds(const Napi::CallbackInfo& info) {
     if (!ensure_xcb_initialized()) throw Napi::Error::New(env, "XCB initialization failed");
     xcb_window_t win = static_cast<xcb_window_t>(info[0].ToNumber().Int64Value());
     Napi::Object b{ info[1].As<Napi::Object> () };
+
+    xcb_get_window_attributes_cookie_t cookie = xcb_get_window_attributes(connection, win);
+    xcb_get_window_attributes_reply_t *reply = xcb_get_window_attributes_reply(connection, cookie, NULL);
+
+    if (!reply) throw Napi::Error::New(env, "Window not found");;
 
     int32_t x = b.Get("x").ToNumber().Int32Value();;
     int32_t y = b.Get("y").ToNumber().Int32Value();;

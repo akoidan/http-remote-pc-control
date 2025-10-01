@@ -86,7 +86,7 @@ export class WindowService {
   }
 
   public getWindowBounds(wid: number): MonitorBounds {
-    if (!['win32'].includes(this.os)) {
+    if (!['win32', 'linux'].includes(this.os)) {
       throw new NotImplementedException(`Unsupported platform: ${this.os}`);
     }
     try {
