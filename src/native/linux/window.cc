@@ -405,8 +405,7 @@ static Napi::Value setWindowOpacity(const Napi::CallbackInfo& info) {
 
 static Napi::Value toggleWindowTransparency(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
-    // Transparency toggling is managed by opacity on Linux; nothing to do, report success
-    return env.Undefined();
+    throw Napi::Error::New(env, "Not implemented, use opacity setWindowOpacity instead");
 }
 
 static Napi::Value setWindowOwner(const Napi::CallbackInfo& info) {

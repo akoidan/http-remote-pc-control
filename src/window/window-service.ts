@@ -134,7 +134,7 @@ export class WindowService {
   }
 
   public getWindowOpacity(wid: number): number {
-    if (!['win32'].includes(this.os)) {
+    if (!['win32', 'linux'].includes(this.os)) {
       throw new NotImplementedException(`Unsupported platform: ${this.os}`);
     }
     try {
@@ -146,7 +146,7 @@ export class WindowService {
   }
 
   public setWindowOpacity(wid: number, opacity: number): void {
-    if (!['win32'].includes(this.os)) {
+    if (!['win32', 'linux'].includes(this.os)) {
       throw new NotImplementedException(`Unsupported platform: ${this.os}`);
     }
     try {
@@ -158,7 +158,7 @@ export class WindowService {
   }
 
   public toggleWindowTransparency(wid: number, toggle: boolean): void {
-    if (!['win32'].includes(this.os)) {
+    if (!['win32', 'linux'].includes(this.os)) {
       throw new NotImplementedException(`Unsupported platform: ${this.os}`);
     }
     try {
@@ -170,7 +170,7 @@ export class WindowService {
   }
 
   public getWindowOwner(wid: number): number {
-    if (!['win32'].includes(this.os)) {
+    if (!['win32', 'linux'].includes(this.os)) {
       throw new NotImplementedException(`Unsupported platform: ${this.os}`);
     }
     try {
