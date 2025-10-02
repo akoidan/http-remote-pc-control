@@ -94,7 +94,7 @@ xcb_window_t get_active_window() {
     xcb_get_property_cookie_t cookie = xcb_ewmh_get_active_window(&ewmh, 0);
     xcb_window_t active_window = 0;
 
-    if (xcb_ewmh_get_active_window_reply(&ewmh, cookie, &active_window, nullptr)) {
+    if (xcb_ewmh_get_active_window_reply(&ewmh, cookie, &active_window, nullptr) == 1) {
         LOG("Active window ID: " << (unsigned long)active_window);
         return active_window;
     }
@@ -206,6 +206,9 @@ Napi::Object getActiveWindowInfo(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
 
     xcb_window_t window = get_active_window();
+    if (window == 0) {
+        throw Napi::Error::New(env, "Failed to get active window");
+    }
     pid_t pid = get_window_pid(window);
     std::string path = get_process_path(pid);
 

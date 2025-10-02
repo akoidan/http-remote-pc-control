@@ -122,7 +122,7 @@ export class WindowService {
   }
 
   public showWindow(wid: number, type: WindowAction): void {
-    if (!['win32'].includes(this.os)) {
+    if (!['win32', 'linux'].includes(this.os)) {
       throw new NotImplementedException(`Unsupported platform: ${this.os}`);
     }
     try {
