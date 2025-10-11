@@ -259,9 +259,24 @@ Napi::Value _typeString(const Napi::CallbackInfo& info) {
     return env.Undefined();
 }
 
+Napi::Value _setKeyboardLayout(const Napi::CallbackInfo& info) {
+    Napi::Env env = info.Env();
+
+    if (info.Length() < 1 || !info[0].IsString()) {
+        Napi::TypeError::New(env, "String expected (layout ID)").ThrowAsJavaScriptException();
+        return env.Undefined();
+    }
+
+    std::string layoutId = info[0].As<Napi::String>().Utf8Value();
+    SetKeyboardLayout(layoutId.c_str(), info);
+    
+    return env.Undefined();
+}
+
 Napi::Object keyboard_init(Napi::Env env, Napi::Object exports) {
-    exports.Set(Napi::String::New(env, "keyTap"), Napi::Function::New(env, _keyTap));
-    exports.Set(Napi::String::New(env, "keyToggle"), Napi::Function::New(env, _keyToggle));
-    exports.Set(Napi::String::New(env, "typeString"), Napi::Function::New(env, _typeString));
+    exports.Set("keyTap", Napi::Function::New(env, _keyTap));
+    exports.Set("keyToggle", Napi::Function::New(env, _keyToggle));
+    exports.Set("typeString", Napi::Function::New(env, _typeString));
+    exports.Set("setKeyboardLayout", Napi::Function::New(env, _setKeyboardLayout));
     return exports;
 }

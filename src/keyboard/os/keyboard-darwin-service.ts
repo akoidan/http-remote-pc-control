@@ -12,6 +12,11 @@ export class KeyboardDarwinService implements IKeyboardService {
     }
 
     // eslint-disable-next-line
+    public async setKeyboardLayout(text: string): Promise<void> {
+       throw new InternalServerErrorException('Not implemnted1');
+    }
+
+    // eslint-disable-next-line
     public async type(text: string): Promise<void> {
        throw new InternalServerErrorException('Not implemnted');
     }

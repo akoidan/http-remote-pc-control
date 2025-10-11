@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import {
   KeyPressRequestDto,
+  SetKeyboardLayoutRequestDto,
   TypeTextRequestDto,
 } from '@/keyboard/keyboard-dto';
 import {
@@ -36,5 +37,11 @@ export class KeyboardController {
   @ApiOperation({summary: 'Type text'})
   async typeText(@Body() body: TypeTextRequestDto): Promise<void> {
     await this.keyboardService.type(body.text, body.keyDelay, body.keyDelayDeviation);
+  }
+
+  @Post('set-layout')
+  @ApiOperation({summary: 'Change keyboard layout'})
+  async setKeyboardLayout(@Body() body: SetKeyboardLayoutRequestDto): Promise<void> {
+    await this.keyboardService.setKeyboardLayout(body.layout);
   }
 }

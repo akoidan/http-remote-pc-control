@@ -31,6 +31,11 @@ export class KeyboardWin32LinuxService implements IKeyboardService {
     }
   }
 
+  public async setKeyboardLayout(layout: string): Promise<void> {
+      this.logger.log(`Setting keyboard layout to: ${layout}`);
+      await this.addon.setKeyboardLayout(layout);
+  }
+
   public async sendKey(keys: string[], holdKeys: string[], duration?: number): Promise<void> {
     for (const key of holdKeys) {
       this.logger.log(`HoldKey: \u001b[35m${key}`);
