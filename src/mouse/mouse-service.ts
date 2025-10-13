@@ -127,8 +127,12 @@ export class MouseService {
     const basePxPerIt = event.pixelsPerIteration ?? 50;
     const steps = Math.max(3, Math.round(distance / basePxPerIt));
     
-    // Get curve intensity (0.1 to 0.5)
-    const curveIntensity = Math.min(0.5, Math.max(0.1, event.curveIntensity ?? 0.3));
+    // Calculate curve intensity with deviation
+    const baseCurveIntensity = Math.min(1, Math.max(0.1, event.curveIntensity ?? 0.3));
+    const curveDeviation = (event.curveIntensityDeviation ?? 0.2) * baseCurveIntensity;
+    const curveIntensity = Math.min(1, Math.max(0.1, 
+      baseCurveIntensity + (Math.random() * 2 - 1) * curveDeviation
+    ));
     
     // Move through the curve
     for (let i = 1; i < steps; i++) {

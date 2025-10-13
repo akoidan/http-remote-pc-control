@@ -44,8 +44,14 @@ const mouseMoveHumanClickRequestSchema = z.object({
   curveIntensity: z.number()
     .min(0.1)
     .max(1)
-    .describe('Controls how much the movement path curves. 0.1 is nearly straight, 1.0 allows for significant curves.')
+    .describe('Base intensity of the curve. 0.1 is nearly straight, 1.0 allows for significant curves.')
     .default(0.3)
+    .optional(),
+  curveIntensityDeviation: z.number()
+    .min(0)
+    .max(0.5)
+    .describe('Amount of random variation in curve intensity. 0 = no variation, 0.5 = ±50% variation')
+    .default(0.2)
     .optional(),
   movementVariance: z.number()
     .min(0.1)
