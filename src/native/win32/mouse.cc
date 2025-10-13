@@ -31,11 +31,31 @@ void moveMouse(MMPoint point) {
 
 MMPoint getMousePos() {
     POINT point;
-    GetCursorPos(&point);
+    if (!GetCursorPos(&point)) {
+        // If GetCursorPos fails, return (0,0)
+        MMPoint zero = {0, 0};
+        return zero;
+    }
     
+    // Convert to virtual screen coordinates
+    int x = GetSystemMetrics(SM_XVIRTUALSCREEN);
+    int y = GetSystemMetrics(SM_YVIRTUALSCREEN);
+    
+    // Get the virtual screen dimensions
+    int width = GetSystemMetrics(SM_CXVIRTUALSCREEN);
+    int height = GetSystemMetrics(SM_CYVIRTUALSCREEN);
+    
+    // Calculate relative position within virtual screen
     MMPoint pos;
-    pos.x = point.x;
-    pos.y = point.y;
+    pos.x = point.x - x;
+    pos.y = point.y - y;
+    
+    // Ensure the position is within bounds
+    if (pos.x < 0) pos.x = 0;
+    if (pos.y < 0) pos.y = 0;
+    if (pos.x >= width) pos.x = width - 1;
+    if (pos.y >= height) pos.y = height - 1;
+    
     return pos;
 }
 

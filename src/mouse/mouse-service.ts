@@ -1,7 +1,7 @@
 import {Inject, Injectable, Logger,} from '@nestjs/common';
 import {INativeModule, Native,} from '@/native/native-model';
 import {sleep} from "@/shared";
-import {MouseMoveHumanClickRequest} from "@/mouse/mouse-dto";
+import {MouseMoveHumanClickRequest, MousePositionResponse} from "@/mouse/mouse-dto";
 
 
 @Injectable()
@@ -31,6 +31,10 @@ export class MouseService {
    * */
   easeInOut(t: number): number {
     return t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2;
+  }
+
+  getMousePos(): MousePositionResponse {
+    return this.addon.getMousePos();
   }
 
 

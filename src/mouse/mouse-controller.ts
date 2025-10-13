@@ -1,9 +1,9 @@
 import {
   Body,
-  Controller,
+  Controller, Get,
   Post,
 } from '@nestjs/common';
-import {MouseMoveClickRequestDto, MouseMoveHumanClickRequestDto} from '@/mouse/mouse-dto';
+import {MouseMoveClickRequestDto, MouseMoveHumanClickRequestDto, MousePositionResponseDto} from '@/mouse/mouse-dto';
 import {MouseService} from '@/mouse/mouse-service';
 import {
   ApiOperation,
@@ -22,6 +22,13 @@ export class MouseController {
   @ApiOperation({summary: 'Move mouse and click'})
   async mouseMoveClick(@Body() event: MouseMoveClickRequestDto): Promise<void> {
     await this.mouseService.leftMouseMoveClick(event.x, event.y);
+  }
+
+  @Get('mouse-position')
+  @ApiOperation({summary: 'Move mouse and click'})
+  // eslint-disable-next-line @typescript-eslint/require-await
+  async getMousePosition(): Promise<MousePositionResponseDto> {
+    return this.mouseService.getMousePos();
   }
 
   @Post('mouse-move-human')

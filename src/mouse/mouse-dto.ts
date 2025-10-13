@@ -6,6 +6,11 @@ const mouseMoveClickRequestSchema = z.object({
   y: z.number().describe('Y coordinate to move mouse to'),
 });
 
+const mousePositionResponseSchema = z.object({
+  x: z.number().describe('X coordinate of mouse position'),
+  y: z.number().describe('Y coordinate of mouse position'),
+});
+
 
 const mouseMoveHumanClickRequestSchema = z.object({
   x: z.number().describe('X coordinate to move mouse to'),
@@ -50,13 +55,15 @@ const mouseMoveHumanClickRequestSchema = z.object({
 // Create DTO class for Swagger
 class MouseMoveClickRequestDto extends createZodDto(mouseMoveClickRequestSchema) {}
 class MouseMoveHumanClickRequestDto extends createZodDto(mouseMoveHumanClickRequestSchema) {}
+class MousePositionResponseDto extends createZodDto(mousePositionResponseSchema) {}
 
 type MouseMoveHumanClickRequest = z.infer<typeof mouseMoveHumanClickRequestSchema>;
+type MousePositionResponse = z.infer<typeof mousePositionResponseSchema>;
 
 // Export values
-export {mouseMoveClickRequestSchema, MouseMoveClickRequestDto, mouseMoveHumanClickRequestSchema};
+export {mouseMoveClickRequestSchema, MouseMoveClickRequestDto, mouseMoveHumanClickRequestSchema, MousePositionResponseDto};
 
 
 export type {
-  MouseMoveHumanClickRequestDto, MouseMoveHumanClickRequest,
+  MouseMoveHumanClickRequestDto, MouseMoveHumanClickRequest, MousePositionResponse,
 }
