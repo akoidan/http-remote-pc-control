@@ -6,7 +6,7 @@
   "author": "akoidan <deathangel908@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "start": "rm -rf ./dist/ && node  -r tsconfig-paths/register -r ts-node/register src/main.ts",
+    "start": "rm -rf ./dist/ && node --inspect-brk=9229  -r tsconfig-paths/register -r ts-node/register src/main.ts",
     "clean": "rm -rf ./dist/ && rm -rf ./build",
     "transpile": "nest build",
     "build:local": "npm-run-all -s clean native:configure:debug native:build:debug",

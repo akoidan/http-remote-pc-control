@@ -43,26 +43,22 @@ export class MouseService {
     const dx = event.x - x1;
     const dy = event.y - y1;
     const distance = Math.hypot(dx, dy);
+    const pxPerIt = event.pixelsPerIterations ?? 50;
+    const pxPerItDev = event.pixelsPerIterationsDeviation ?? 0.2;
+    const calcStep = (Math.random() - 0.5) * pxPerItDev * pxPerIt + pxPerIt;
+    const steps = Math.round(distance / calcStep);
 
-    const calcStep = (Math.random() - 0.5) * (event.iterationDeviation ?? 0.2) * (event.iterations ?? 3) + (event.iterations ?? 3);
-    const steps = Math.round(distance / 100 * calcStep);
-
-    for (let i = 0; i < steps; i++) {
+    const jitter = event.jitter ?? 1.5;
+    for (let i = 1; i < steps; i++) {
       const t = i / steps;
       const eased = this.easeInOut(t);
-      let jitterX: number = 0;
-      let jitterY: number = 0;
-      if (typeof event.jitter === 'number') {
-        jitterX = this.rand(-event.jitter, event.jitter);
-        jitterY = this.rand(-event.jitter, event.jitter);
-      } else {
-        jitterX = this.rand(-2, 2);
-        jitterY = this.rand(-2, 2);
-      }
+      const jitterX = this.rand(- jitter, jitter);
+      const jitterY = this.rand(-jitter, jitter);
+
       const cx = Math.round(x1 + dx * eased + jitterX);
       const cy = Math.round(y1 + dy * eased + jitterY);
       this.addon.mouseMove(cx, cy);
-      await sleep(this.rand(1, (event.slowness ?? 7) + 1));
+      await sleep(this.rand(1, event.delayBetweenIterations ?? 8));
     }
     const rX: number = event.destinationRandomX ? this.rand(-event.destinationRandomX, event.destinationRandomX) : 0;
     const rY: number = event.destinationRandomY ? this.rand(-event.destinationRandomY, event.destinationRandomY) : 0;

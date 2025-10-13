@@ -19,12 +19,24 @@ MMPoint CalculateAbsoluteCoordinates(MMPoint point) {
 
 void moveMouse(MMPoint point) {
     INPUT input = {0};
-    MMPoint absolute = CalculateAbsoluteCoordinates(point);
     
+    // Get virtual screen dimensions
+    int x = GetSystemMetrics(SM_XVIRTUALSCREEN);
+    int y = GetSystemMetrics(SM_YVIRTUALSCREEN);
+    int width = GetSystemMetrics(SM_CXVIRTUALSCREEN);
+    int height = GetSystemMetrics(SM_CYVIRTUALSCREEN);
+    
+    // Ensure point is within bounds
+    if (point.x < 0) point.x = 0;
+    if (point.y < 0) point.y = 0;
+    if (point.x >= width) point.x = width - 1;
+    if (point.y >= height) point.y = height - 1;
+    
+    // Convert to absolute coordinates (0-65535)
     input.type = INPUT_MOUSE;
-    input.mi.dx = absolute.x;
-    input.mi.dy = absolute.y;
-    input.mi.dwFlags = MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE;
+    input.mi.dx = (point.x * 65535) / (width - 1);
+    input.mi.dy = (point.y * 65535) / (height - 1);
+    input.mi.dwFlags = MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE | MOUSEEVENTF_VIRTUALDESK;
     
     SendInput(1, &input, sizeof(INPUT));
 }
