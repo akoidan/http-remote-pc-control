@@ -74,28 +74,26 @@ export class MouseService {
   }
 
   /**
-   * Generate a point along a natural-looking mouse path with some randomness
+   * Generate a point along a smooth curved path
    */
-  private getNaturalPoint(
+  private getCurvePoint(
     t: number, 
     x1: number, y1: number, 
     x2: number, y2: number,
-    seed: number,
-    curveIntensity: number,
-    tremorIntensity: number
+    curveIntensity: number
   ): {x: number, y: number} {
-    // Calculate control point for the quadratic Bézier curve
     const dx = x2 - x1;
     const dy = y2 - y1;
     const dist = Math.hypot(dx, dy);
     const angle = Math.atan2(dy, dx);
     
-    // Calculate curve control point with configurable intensity
-    const baseOffsetScale = 0.1 + curveIntensity * 0.4; // 0.1 to 0.5
-    const offsetScale = baseOffsetScale * (0.8 + 0.4 * Math.random());
-    const offsetAngle = angle + (Math.random() - 0.5) * Math.PI * 0.8; // Wider angle for more natural curves
+    // Create a smooth curve with controlled intensity
+    const offsetScale = (0.1 + curveIntensity * 0.4) * (0.9 + 0.2 * Math.random());
+    // Alternate curve direction based on position for more natural movement
+    const curveDirection = (x1 + y1) % 2 > 1 ? 1 : -1;
+    const offsetAngle = angle + curveDirection * Math.PI / 4; // 45 degree curve
     
-    // Calculate control point with some randomness
+    // Calculate control point for the curve
     const cx = x1 + dx * 0.5 + Math.cos(offsetAngle) * dist * offsetScale;
     const cy = y1 + dy * 0.5 + Math.sin(offsetAngle) * dist * offsetScale;
     
@@ -103,17 +101,6 @@ export class MouseService {
     const tEased = this.easeInOut(t);
     const x = this.quadBezier(x1, cx, x2, tEased);
     const y = this.quadBezier(y1, cy, y2, tEased);
-    
-    // Add subtle tremor effect if enabled
-    if (tremorIntensity > 0) {
-      const tremorScale = tremorIntensity * (0.5 + 0.5 * Math.sin(t * 30 + seed));
-      const tremorX = (Math.random() - 0.5) * tremorScale * 4;
-      const tremorY = (Math.random() - 0.5) * tremorScale * 4;
-      return {
-        x: x + tremorX,
-        y: y + tremorY
-      };
-    }
     
     return { x, y };
   }
@@ -136,36 +123,26 @@ export class MouseService {
     const dy = y2 - y1;
     const distance = Math.hypot(dx, dy);
     
-    // Calculate steps with configurable speed and variance
+    // Calculate steps with configurable speed
     const basePxPerIt = event.pixelsPerIteration ?? 50;
-    const speedVariance = event.movementVariance ?? 0.4;
-    const pxPerIt = basePxPerIt * (1 - speedVariance * 0.5 + Math.random() * speedVariance);
-    const steps = Math.max(3, Math.round(distance / pxPerIt));
+    const steps = Math.max(3, Math.round(distance / basePxPerIt));
     
-    // Generate a random seed for this movement
-    const seed = Math.random() * 1000;
-    const curveIntensity = event.curveIntensity ?? 0.3;
-    const tremorIntensity = event.tremorIntensity ?? 0.5;
+    // Get curve intensity (0.1 to 0.5)
+    const curveIntensity = Math.min(0.5, Math.max(0.1, event.curveIntensity ?? 0.3));
     
     // Move through the curve
-    for (let i = 0; i <= steps; i++) {
+    for (let i = 1; i < steps; i++) {
       const t = i / steps;
       
-      // Get point on the natural curve
-      const {x, y} = this.getNaturalPoint(
-        t, x1, y1, x2, y2, 
-        seed + i * 0.1,
-        curveIntensity,
-        tremorIntensity
-      );
+      // Get point on the smooth curve
+      const {x, y} = this.getCurvePoint(t, x1, y1, x2, y2, curveIntensity);
       
       // Move to the calculated position
       this.addon.mouseMove(Math.round(x), Math.round(y));
       
-      // Vary the delay for natural movement
+      // Use consistent delay for smooth movement
       const baseDelay = event.delayBetweenIterations ?? 5;
-      const delay = baseDelay * (0.8 + 0.4 * Math.random());
-      await sleep(delay);
+      await sleep(baseDelay);
     }
     
     // Ensure we hit the target exactly

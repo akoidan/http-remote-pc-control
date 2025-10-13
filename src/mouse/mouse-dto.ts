@@ -30,7 +30,7 @@ const mouseMoveHumanClickRequestSchema = z.object({
   delayBetweenIterations: z.number()
     .int()
     .min(1)
-    .max(50)
+    .max(999)
     .describe('Base delay between movements in milliseconds. Actual delay will vary randomly between 80% and 120% of this value.')
     .default(5)
     .optional(),
