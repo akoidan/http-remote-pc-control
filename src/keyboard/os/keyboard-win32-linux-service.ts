@@ -1,6 +1,3 @@
-/*
- eslint-disable no-await-in-loop
- */
 import {Injectable, Logger} from '@nestjs/common';
 import {IKeyboardService} from '@/keyboard/keyboard-model';
 import {INativeModule} from '@/native/native-model';

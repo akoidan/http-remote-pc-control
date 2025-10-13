@@ -90,8 +90,18 @@ Napi::Number _moveMouse(const Napi::CallbackInfo &info) {
     return Napi::Number::New(env, LEFT_BUTTON);
 }
 
+Napi::Object _getMousePos(const Napi::CallbackInfo &info) {
+    Napi::Env env = info.Env();
+    MMPoint p = getMousePos();
+    Napi::Object obj = Napi::Object::New(env);
+    obj.Set("x", Napi::Number::New(env, p.x));
+    obj.Set("y", Napi::Number::New(env, p.y));
+    return obj;
+}
+
 Napi::Object init_mouse(Napi::Env env, Napi::Object exports) {
     exports.Set(Napi::String::New(env, "mouseMove"), Napi::Function::New(env, _moveMouse));
     exports.Set(Napi::String::New(env, "mouseClick"), Napi::Function::New(env, _mouseClick));
+    exports.Set(Napi::String::New(env, "getMousePos"), Napi::Function::New(env, _getMousePos));
     return exports;
 }

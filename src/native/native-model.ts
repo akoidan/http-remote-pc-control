@@ -99,6 +99,8 @@ interface MouseNativeModule {
   mouseClick(): void;
 
   mouseMove(x: number, y: number): void;
+
+  getMousePos(): { x: number; y: number };
 }
 
 
