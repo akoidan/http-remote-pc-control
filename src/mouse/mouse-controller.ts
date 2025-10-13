@@ -6,9 +6,10 @@ import {
 import {MouseMoveClickRequestDto, MouseMoveHumanClickRequestDto, MousePositionResponseDto} from '@/mouse/mouse-dto';
 import {MouseService} from '@/mouse/mouse-service';
 import {
-  ApiOperation,
+  ApiOperation, ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import {MonitorInfoResponseDto} from "@/monitor/monitor-dto";
 
 @ApiTags('Mouse')
 @Controller('mouse')
@@ -26,6 +27,7 @@ export class MouseController {
 
   @Get('mouse-position')
   @ApiOperation({summary: 'Move mouse and click'})
+  @ApiResponse({type: MousePositionResponseDto})
   // eslint-disable-next-line @typescript-eslint/require-await
   async getMousePosition(): Promise<MousePositionResponseDto> {
     return this.mouseService.getMousePos();

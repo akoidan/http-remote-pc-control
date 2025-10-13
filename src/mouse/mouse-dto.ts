@@ -15,44 +15,53 @@ const mousePositionResponseSchema = z.object({
 const mouseMoveHumanClickRequestSchema = z.object({
   x: z.number().describe('X coordinate to move mouse to'),
   y: z.number().describe('Y coordinate to move mouse to'),
-  jitter: z.number()
-    .min(0)
-    .describe('Random offset to the movement path, so it’s not perfectly straight or robotic. ' +
-      'Prefer passing smaller values like 1.5px, so is +-1.5px for x and y' +
-      'Since coordination between is not integers the real number can be passed. Values higher than 2 creates too much mess usually')
-    .default(1.5)
-    .optional(),
   destinationRandomX: z.number()
     .int()
-    .describe('Diapason in px around the target zone to be clicked. If 0 is passed x,y will be the final click position')
+    .min(0)
+    .describe('Maximum random offset in pixels from the target X coordinate. Adds natural imprecision to final position.')
     .default(0)
     .optional(),
   destinationRandomY: z.number()
     .int()
-    .describe('Diapason in px around the target zone to be clicked. If 0 is passed x,y will be the final click position')
+    .min(0)
+    .describe('Maximum random offset in pixels from the target Y coordinate. Adds natural imprecision to final position.')
     .default(0)
     .optional(),
   delayBetweenIterations: z.number()
     .int()
     .min(1)
-    .describe('Delay between each iteration in ms. The value is gonna be random from 1ms to this number.')
-    .default(8)
+    .max(50)
+    .describe('Base delay between movements in milliseconds. Actual delay will vary randomly between 80% and 120% of this value.')
+    .default(5)
     .optional(),
-  pixelsPerIterations: z.number()
+  pixelsPerIteration: z.number()
     .int()
-    .min(1)
-    .describe('Number of pixels to execute in a single straight line move. ')
+    .min(5)
+    .max(200)
+    .describe('Approximate number of pixels between movement updates. Lower values make movement smoother but slower.')
     .default(50)
     .optional(),
-  pixelsPerIterationsDeviation: z.number()
-    .describe('Number of pixels required to add an extra iteration.E.g. if mose should be moved to 1000px and this param is set to 100. The number of iterations would be 10. Affects movement speed.')
-    .min(0)
+  curveIntensity: z.number()
+    .min(0.1)
     .max(1)
-    .default(0.2)
+    .describe('Controls how much the movement path curves. 0.1 is nearly straight, 1.0 allows for significant curves.')
+    .default(0.3)
+    .optional(),
+  movementVariance: z.number()
+    .min(0.1)
+    .max(1)
+    .describe('Controls how much the speed varies during movement. Higher values create more natural speed variations.')
+    .default(0.4)
+    .optional(),
+  tremorIntensity: z.number()
+    .min(0)
+    .max(2)
+    .describe('Adds subtle random movements to simulate natural hand tremor. 0 = no tremor, 2 = very shaky.')
+    .default(0.5)
     .optional(),
 }).strict()
-  .describe('Request to move mouse with a human like movement. THe movement would be done in almost a straight line with accelerating at the start and slowing in the end. ' +
-  'The speed can be adjust with delayBetweenIteration. The number of straight line movement with delays with pixelsPerIterations.');
+  .describe('Request to move mouse with human-like movement. The movement follows a natural curved path with smooth acceleration and deceleration. ' +
+  'The path includes subtle variations to mimic human motor control, with configurable curve intensity and movement variance.');
 
 // Create DTO class for Swagger
 class MouseMoveClickRequestDto extends createZodDto(mouseMoveClickRequestSchema) {}
