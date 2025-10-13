@@ -20,6 +20,12 @@ export class MouseService {
     this.addon.mouseClick();
   }
 
+
+  async mouseMove(x: number, y: number): Promise<void> {
+    this.logger.log(`Mouse move: \u001b[35m[${x},${y}]`);
+    this.addon.mouseMove(x, y);
+  }
+
   rand(min: number, max: number): number {
     return Math.random() * (max - min) + min;
   }
@@ -106,6 +112,7 @@ export class MouseService {
   }
 
   async moveMouseHuman(event: MouseMoveHumanClickRequest): Promise<void> {
+    this.logger.log(`Mouse human: \u001b[35m[${event.x},${event.y}]`);
     const {x: x1, y: y1} = this.addon.getMousePos();
     let x2 = event.x;
     let y2 = event.y;
@@ -133,20 +140,16 @@ export class MouseService {
     const curveIntensity = Math.min(1, Math.max(0.1, 
       baseCurveIntensity + (Math.random() * 2 - 1) * curveDeviation
     ));
-    
+
+    this.logger.debug(`Mouse human: \u001b[35m[${x1},${y1}] -> [${x2},${y2}] in ${steps} steps with curve intensity ${curveIntensity}`);
     // Move through the curve
     for (let i = 1; i < steps; i++) {
       const t = i / steps;
-      
       // Get point on the smooth curve
       const {x, y} = this.getCurvePoint(t, x1, y1, x2, y2, curveIntensity);
-      
       // Move to the calculated position
       this.addon.mouseMove(Math.round(x), Math.round(y));
-      
-      // Use consistent delay for smooth movement
-      const baseDelay = event.delayBetweenIterations ?? 5;
-      await sleep(baseDelay);
+      await sleep(event.delayBetweenIterations ?? 5);
     }
     
     // Ensure we hit the target exactly

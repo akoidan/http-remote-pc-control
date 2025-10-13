@@ -20,9 +20,15 @@ export class MouseController {
   }
 
   @Post('mouse-move-click')
-  @ApiOperation({summary: 'Move mouse and click'})
+  @ApiOperation({summary: 'Click left mouse on the coordinate'})
   async mouseMoveClick(@Body() event: MouseMoveClickRequestDto): Promise<void> {
-    await this.mouseService.leftMouseMoveClick(event.x, event.y);
+    await this.mouseService.mouseMove(event.x, event.y);
+  }
+
+  @Post('mouse-move')
+  @ApiOperation({summary: 'Mouse move to the point'})
+  async mouseMove(@Body() event: MouseMoveClickRequestDto): Promise<void> {
+    await this.mouseService.mouseMove(event.x, event.y);
   }
 
   @Get('mouse-position')

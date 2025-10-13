@@ -53,18 +53,6 @@ const mouseMoveHumanClickRequestSchema = z.object({
     .describe('Amount of random variation in curve intensity. 0 = no variation, 0.5 = ±50% variation')
     .default(0.2)
     .optional(),
-  movementVariance: z.number()
-    .min(0.1)
-    .max(1)
-    .describe('Controls how much the speed varies during movement. Higher values create more natural speed variations.')
-    .default(0.4)
-    .optional(),
-  tremorIntensity: z.number()
-    .min(0)
-    .max(2)
-    .describe('Adds subtle random movements to simulate natural hand tremor. 0 = no tremor, 2 = very shaky.')
-    .default(0.5)
-    .optional(),
 }).strict()
   .describe('Request to move mouse with human-like movement. The movement follows a natural curved path with smooth acceleration and deceleration. ' +
   'The path includes subtle variations to mimic human motor control, with configurable curve intensity and movement variance.');
