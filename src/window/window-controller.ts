@@ -60,15 +60,13 @@ export class WindowController {
   }
 
   @Get(':wid/bounds')
-  @ApiOperation({summary: 'Get window bounds'})
+  @ApiOperation({summary: 'Get window coordinates and parameters (x,y, width, height)'})
   getWindowBounds(@Param('wid', ParseIntPipe) wid: number): MonitorBounds {
     return this.windowService.getWindowBounds(wid);
   }
 
   @Post('bounds')
-  @ApiOperation({summary: 'Set window bounds'})
-  @ApiResponse({status: 200, description: 'Window bounds set successfully'})
-  @ApiResponse({status: 400, description: 'Invalid window handle or dimensions'})
+  @ApiOperation({summary: 'Set window position and dimensions'})
   setWindowBounds(@Body() body: SetBoundsRequestDto): void {
     this.windowService.setWindowBounds(body.wid, body.bounds);
   }
@@ -81,8 +79,6 @@ export class WindowController {
 
   @Post('show')
   @ApiOperation({summary: 'Show/Hide/Minimize/Restore/Maximize window'})
-  @ApiResponse({status: 200, description: 'Window state changed successfully'})
-  @ApiResponse({status: 400, description: 'Invalid window handle or operation'})
   showWindow(@Body() body: ShowWindowRequestDto): void {
     this.windowService.showWindow(body.wid, body.type);
   }
@@ -95,16 +91,12 @@ export class WindowController {
 
   @Post('opacity')
   @ApiOperation({summary: 'Set window opacity (0..1)'})
-  @ApiResponse({status: 200, description: 'Window opacity set successfully'})
-  @ApiResponse({status: 400, description: 'Invalid window handle or opacity value'})
   setWindowOpacity(@Body() body: SetOpacityRequestDto): void {
     this.windowService.setWindowOpacity(body.wid, body.opacity);
   }
 
   @Post('transparency')
   @ApiOperation({summary: 'Toggle window WS_EX_LAYERED transparency flag'})
-  @ApiResponse({status: 200, description: 'Window transparency toggled successfully'})
-  @ApiResponse({status: 400, description: 'Invalid window handle'})
   toggleTransparency(@Body() body: ToggleTransparencyRequestDto): void {
     this.windowService.toggleWindowTransparency(body.wid, body.toggle);
   }
@@ -117,8 +109,6 @@ export class WindowController {
 
   @Post('owner')
   @ApiOperation({summary: 'Set window owner handle'})
-  @ApiResponse({status: 200, description: 'Window owner set successfully'})
-  @ApiResponse({status: 400, description: 'Invalid window or owner handle'})
   setWindowOwner(@Body() body: SetOwnerRequestDto): void {
     this.windowService.setWindowOwner(body.wid, body.owner);
   }
@@ -137,8 +127,6 @@ export class WindowController {
 
   @Post('redraw')
   @ApiOperation({summary: 'Force window redraw'})
-  @ApiResponse({status: 200, description: 'Window redrawn successfully'})
-  @ApiResponse({status: 400, description: 'Invalid window handle'})
   redrawWindow(@Body() body: FocusWindowRequestDto): void {
     this.windowService.redrawWindow(body.wid);
   }
