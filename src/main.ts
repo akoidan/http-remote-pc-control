@@ -14,9 +14,7 @@ asyncLocalStorage.run(new Map<string, string>().set('comb', 'init'), () => {
     // experimental
     const os = platform();
     if (os === 'win32') {
-      // touch every minute to prevent windows of putting it to sleep
       // otherwise it will stop accepting http
-      setInterval(() => {}, 60_000);
       setPriority(-2);
     }
     const mtls = await NestFactory.create(MtlsModule, {

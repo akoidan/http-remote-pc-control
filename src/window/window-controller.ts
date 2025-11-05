@@ -69,8 +69,8 @@ export class WindowController {
   @ApiOperation({summary: 'Set window bounds'})
   @ApiResponse({status: 200, description: 'Window bounds set successfully'})
   @ApiResponse({status: 400, description: 'Invalid window handle or dimensions'})
-  async setWindowBounds(@Body() body: SetBoundsRequestDto): Promise<void> {
-    await this.windowService.setWindowBounds(body.wid, body.bounds);
+  setWindowBounds(@Body() body: SetBoundsRequestDto): void {
+    this.windowService.setWindowBounds(body.wid, body.bounds);
   }
 
   @Get(':wid/title')
@@ -83,8 +83,8 @@ export class WindowController {
   @ApiOperation({summary: 'Show/Hide/Minimize/Restore/Maximize window'})
   @ApiResponse({status: 200, description: 'Window state changed successfully'})
   @ApiResponse({status: 400, description: 'Invalid window handle or operation'})
-  async showWindow(@Body() body: ShowWindowRequestDto): Promise<void> {
-    await this.windowService.showWindow(body.wid, body.type);
+  showWindow(@Body() body: ShowWindowRequestDto): void {
+    this.windowService.showWindow(body.wid, body.type);
   }
 
   @Get(':wid/opacity')
@@ -97,16 +97,16 @@ export class WindowController {
   @ApiOperation({summary: 'Set window opacity (0..1)'})
   @ApiResponse({status: 200, description: 'Window opacity set successfully'})
   @ApiResponse({status: 400, description: 'Invalid window handle or opacity value'})
-  async setWindowOpacity(@Body() body: SetOpacityRequestDto): Promise<void> {
-    await this.windowService.setWindowOpacity(body.wid, body.opacity);
+  setWindowOpacity(@Body() body: SetOpacityRequestDto): void {
+    this.windowService.setWindowOpacity(body.wid, body.opacity);
   }
 
   @Post('transparency')
   @ApiOperation({summary: 'Toggle window WS_EX_LAYERED transparency flag'})
   @ApiResponse({status: 200, description: 'Window transparency toggled successfully'})
   @ApiResponse({status: 400, description: 'Invalid window handle'})
-  async toggleTransparency(@Body() body: ToggleTransparencyRequestDto): Promise<void> {
-    await this.windowService.toggleWindowTransparency(body.wid, body.toggle);
+  toggleTransparency(@Body() body: ToggleTransparencyRequestDto): void {
+    this.windowService.toggleWindowTransparency(body.wid, body.toggle);
   }
 
   @Get(':wid/owner')
@@ -119,8 +119,8 @@ export class WindowController {
   @ApiOperation({summary: 'Set window owner handle'})
   @ApiResponse({status: 200, description: 'Window owner set successfully'})
   @ApiResponse({status: 400, description: 'Invalid window or owner handle'})
-  async setWindowOwner(@Body() body: SetOwnerRequestDto): Promise<void> {
-    await this.windowService.setWindowOwner(body.wid, body.owner);
+  setWindowOwner(@Body() body: SetOwnerRequestDto): void {
+    this.windowService.setWindowOwner(body.wid, body.owner);
   }
 
   @Get(':wid/is-window')
@@ -139,7 +139,7 @@ export class WindowController {
   @ApiOperation({summary: 'Force window redraw'})
   @ApiResponse({status: 200, description: 'Window redrawn successfully'})
   @ApiResponse({status: 400, description: 'Invalid window handle'})
-  async redrawWindow(@Body() body: FocusWindowRequestDto): Promise<void> {
-    await this.windowService.redrawWindow(body.wid);
+  redrawWindow(@Body() body: FocusWindowRequestDto): void {
+    this.windowService.redrawWindow(body.wid);
   }
 }

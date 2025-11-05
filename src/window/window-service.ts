@@ -97,14 +97,15 @@ export class WindowService {
     }
   }
 
-  public async setWindowBounds(wid: number, bounds: MonitorBounds): Promise<void> {
+  public setWindowBounds(wid: number, bounds: MonitorBounds): void {
     if (!['win32'].includes(this.os)) {
       throw new NotImplementedException(`Unsupported platform: ${this.os}`);
     }
     try {
       this.logger.log(`Calling setWindowBounds for #${wid} to ${JSON.stringify(bounds)}`);
-      await this.addon.setWindowBounds(wid, bounds);
+      this.addon.setWindowBounds(wid, bounds);
     } catch (e) {
+      // eslint-disable-next-line sonarjs/no-duplicate-string
       throw new BadRequestException(`Unable to set window #${wid} bounds: ${e?.message || 'Unknown error'}`);
     }
   }
@@ -121,13 +122,13 @@ export class WindowService {
     }
   }
 
-  public async showWindow(wid: number, type: WindowAction): Promise<void> {
+  public showWindow(wid: number, type: WindowAction): void {
     if (!['win32'].includes(this.os)) {
       throw new NotImplementedException(`Unsupported platform: ${this.os}`);
     }
     try {
       this.logger.log(`Calling showWindow for #${wid} with action ${type}`);
-      await this.addon.showWindow(wid, type);
+      this.addon.showWindow(wid, type);
     } catch (e) {
       throw new BadRequestException(`Unable to show window #${wid} (${type}): ${e?.message || 'Unknown error'}`);
     }
@@ -145,25 +146,25 @@ export class WindowService {
     }
   }
 
-  public async setWindowOpacity(wid: number, opacity: number): Promise<void> {
+  public setWindowOpacity(wid: number, opacity: number): void {
     if (!['win32'].includes(this.os)) {
       throw new NotImplementedException(`Unsupported platform: ${this.os}`);
     }
     try {
       this.logger.log(`Calling setWindowOpacity for #${wid} to ${opacity}`);
-      await this.addon.setWindowOpacity(wid, opacity);
+      this.addon.setWindowOpacity(wid, opacity);
     } catch (e) {
       throw new BadRequestException(`Unable to set window #${wid} opacity: ${e?.message || 'Unknown error'}`);
     }
   }
 
-  public async toggleWindowTransparency(wid: number, toggle: boolean): Promise<void> {
+  public toggleWindowTransparency(wid: number, toggle: boolean): void {
     if (!['win32'].includes(this.os)) {
       throw new NotImplementedException(`Unsupported platform: ${this.os}`);
     }
     try {
       this.logger.log(`Calling toggleWindowTransparency for #${wid} to ${toggle}`);
-      await this.addon.toggleWindowTransparency(wid, toggle);
+      this.addon.toggleWindowTransparency(wid, toggle);
     } catch (e) {
       throw new BadRequestException(`Unable to toggle window #${wid} transparency: ${e?.message || 'Unknown error'}`);
     }
@@ -181,13 +182,13 @@ export class WindowService {
     }
   }
 
-  public async setWindowOwner(wid: number, owner: number): Promise<void> {
+  public setWindowOwner(wid: number, owner: number): void {
     if (!['win32'].includes(this.os)) {
       throw new NotImplementedException(`Unsupported platform: ${this.os}`);
     }
     try {
       this.logger.log(`Calling setWindowOwner for #${wid} to ${owner}`);
-      await this.addon.setWindowOwner(wid, owner);
+      this.addon.setWindowOwner(wid, owner);
     } catch (e) {
       throw new BadRequestException(`Unable to set window #${wid} owner: ${e?.message || 'Unknown error'}`);
     }
@@ -217,13 +218,13 @@ export class WindowService {
     }
   }
 
-  public async redrawWindow(wid: number): Promise<void> {
+  public redrawWindow(wid: number): void {
     if (!['win32'].includes(this.os)) {
       throw new NotImplementedException(`Unsupported platform: ${this.os}`);
     }
     try {
       this.logger.log(`Calling redrawWindow for #${wid}`);
-      await this.addon.redrawWindow(wid);
+      this.addon.redrawWindow(wid);
     } catch (e) {
       throw new BadRequestException(`Unable to redraw window #${wid}: ${e?.message || 'Unknown error'}`);
     }

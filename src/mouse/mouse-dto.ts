@@ -71,4 +71,4 @@ export {mouseMoveClickRequestSchema, MouseMoveClickRequestDto, mouseMoveHumanCli
 
 export type {
   MouseMoveHumanClickRequestDto, MouseMoveHumanClickRequest, MousePositionResponse,
-}
+};

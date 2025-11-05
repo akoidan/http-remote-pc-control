@@ -9,7 +9,6 @@ import {
   ApiOperation, ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import {MonitorInfoResponseDto} from "@/monitor/monitor-dto";
 
 @ApiTags('Mouse')
 @Controller('mouse')

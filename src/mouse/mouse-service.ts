@@ -1,7 +1,9 @@
-import {Inject, Injectable, Logger,} from '@nestjs/common';
-import {INativeModule, Native,} from '@/native/native-model';
-import {sleep} from "@/shared";
-import {MouseMoveHumanClickRequest, MousePositionResponse} from "@/mouse/mouse-dto";
+/* eslint-disable max-lines */
+
+import {Inject, Injectable, Logger} from '@nestjs/common';
+import {INativeModule, Native} from '@/native/native-model';
+import {sleep} from '@/shared';
+import {MouseMoveHumanClickRequest, MousePositionResponse} from '@/mouse/mouse-dto';
 
 
 @Injectable()
@@ -21,6 +23,7 @@ export class MouseService {
   }
 
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   async mouseMove(x: number, y: number): Promise<void> {
     this.logger.log(`Mouse move: \u001b[35m[${x},${y}]`);
     this.addon.mouseMove(x, y);
@@ -30,11 +33,11 @@ export class MouseService {
     return Math.random() * (max - min) + min;
   }
 
-  /**
-   * Robert Penner’s easing equation
-   * Smoothly accelerates and decelerates motion over time (ease-in-out cubic curve).
-   * Input: t ∈ [0,1] → Output: eased progress ∈ [0,1], slower at start/end, faster in middle.
-   * */
+  // 
+  // Robert Penner’s easing equation
+  // Smoothly accelerates and decelerates motion over time (ease-in-out cubic curve).
+  // Input: t ∈ [0,1] → Output: eased progress ∈ [0,1], slower at start/end, faster in middle.
+  // 
   easeInOut(t: number): number {
     return t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2;
   }
@@ -108,7 +111,7 @@ export class MouseService {
     const x = this.quadBezier(x1, cx, x2, tEased);
     const y = this.quadBezier(y1, cy, y2, tEased);
     
-    return { x, y };
+    return {x, y};
   }
 
   async moveMouseHuman(event: MouseMoveHumanClickRequest): Promise<void> {
@@ -138,8 +141,7 @@ export class MouseService {
     const baseCurveIntensity = Math.min(1, Math.max(0.1, event.curveIntensity ?? 0.3));
     const curveDeviation = (event.curveIntensityDeviation ?? 0.2) * baseCurveIntensity;
     const curveIntensity = Math.min(1, Math.max(0.1, 
-      baseCurveIntensity + (Math.random() * 2 - 1) * curveDeviation
-    ));
+      baseCurveIntensity + (Math.random() * 2 - 1) * curveDeviation));
 
     this.logger.debug(`Mouse human: \u001b[35m[${x1},${y1}] -> [${x2},${y2}] in ${steps} steps with curve intensity ${curveIntensity}`);
     // Move through the curve
