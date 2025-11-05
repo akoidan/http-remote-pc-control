@@ -33,6 +33,7 @@
     "object-curly-spacing": 0,
     "sort-keys": 0,
     "id-length": 0,
+    "no-await-in-loop": 0,
     "lines-around-comment": 0, // this breaks padded-blocks rule
     "no-mixed-operators": 0, // doesn't work with no extra parens
     "init-declarations": 0, // poor choice

@@ -22,7 +22,8 @@ import {MonitorBounds} from '@/native/native-model';
 export class WindowController {
   constructor(
     private readonly windowService: WindowService,
-  ) {}
+  ) {
+  }
 
   @Post('focus-exe')
   @ApiOperation({summary: 'Focus window by process ID'})
@@ -59,15 +60,15 @@ export class WindowController {
   }
 
   @Get(':wid/bounds')
-  @ApiOperation({summary: 'Get window bounds'})
+  @ApiOperation({summary: 'Get window coordinates and parameters (x,y, width, height)'})
   getWindowBounds(@Param('wid', ParseIntPipe) wid: number): MonitorBounds {
     return this.windowService.getWindowBounds(wid);
   }
 
   @Post('bounds')
-  @ApiOperation({summary: 'Set window bounds'})
-  setWindowBounds(@Body() body: SetBoundsRequestDto): boolean {
-    return this.windowService.setWindowBounds(body.wid, body.bounds);
+  @ApiOperation({summary: 'Set window position and dimensions'})
+  setWindowBounds(@Body() body: SetBoundsRequestDto): void {
+    this.windowService.setWindowBounds(body.wid, body.bounds);
   }
 
   @Get(':wid/title')
@@ -78,8 +79,8 @@ export class WindowController {
 
   @Post('show')
   @ApiOperation({summary: 'Show/Hide/Minimize/Restore/Maximize window'})
-  showWindow(@Body() body: ShowWindowRequestDto): boolean {
-    return this.windowService.showWindow(body.wid, body.type);
+  showWindow(@Body() body: ShowWindowRequestDto): void {
+    this.windowService.showWindow(body.wid, body.type);
   }
 
   @Get(':wid/opacity')
@@ -90,14 +91,14 @@ export class WindowController {
 
   @Post('opacity')
   @ApiOperation({summary: 'Set window opacity (0..1)'})
-  setWindowOpacity(@Body() body: SetOpacityRequestDto): boolean {
-    return this.windowService.setWindowOpacity(body.wid, body.opacity);
+  setWindowOpacity(@Body() body: SetOpacityRequestDto): void {
+    this.windowService.setWindowOpacity(body.wid, body.opacity);
   }
 
   @Post('transparency')
   @ApiOperation({summary: 'Toggle window WS_EX_LAYERED transparency flag'})
-  toggleTransparency(@Body() body: ToggleTransparencyRequestDto): boolean {
-    return this.windowService.toggleWindowTransparency(body.wid, body.toggle);
+  toggleTransparency(@Body() body: ToggleTransparencyRequestDto): void {
+    this.windowService.toggleWindowTransparency(body.wid, body.toggle);
   }
 
   @Get(':wid/owner')
@@ -108,8 +109,8 @@ export class WindowController {
 
   @Post('owner')
   @ApiOperation({summary: 'Set window owner handle'})
-  setWindowOwner(@Body() body: SetOwnerRequestDto): boolean {
-    return this.windowService.setWindowOwner(body.wid, body.owner);
+  setWindowOwner(@Body() body: SetOwnerRequestDto): void {
+    this.windowService.setWindowOwner(body.wid, body.owner);
   }
 
   @Get(':wid/is-window')
@@ -126,7 +127,7 @@ export class WindowController {
 
   @Post('redraw')
   @ApiOperation({summary: 'Force window redraw'})
-  redrawWindow(@Body() body: FocusWindowRequestDto): boolean {
-    return this.windowService.redrawWindow(body.wid);
+  redrawWindow(@Body() body: FocusWindowRequestDto): void {
+    this.windowService.redrawWindow(body.wid);
   }
 }

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <napi.h>
 #include <windows.h>
 #include <vector>
 #include <string>
@@ -28,6 +29,9 @@ HKL SaveAndSetKeyboardLayout(HKL newLayout);
 
 // Restore previously saved keyboard layout
 void RestoreKeyboardLayout(HKL savedLayout);
+
+// Set keyboard layout by layout ID string (e.g., "00000409" for US English)
+void SetKeyboardLayout(const char* layoutId, const Napi::CallbackInfo& info);
 
 // Detect language from Unicode character
 const char* DetectLanguageFromChar(wchar_t ch);

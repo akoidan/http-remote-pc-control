@@ -86,22 +86,27 @@ interface ProcessNativeModule {
 }
 
 interface KeyboardNativeModule {
-
   typeString(string: string): Promise<void>;
 
   keyTap(key: string, modifier: string[]): void;
 
   keyToggle(key: string, modifier: string[], down: boolean): void;
+
+  setKeyboardLayout(layout: string): Promise<void>;
 }
 
 interface MouseNativeModule {
   mouseClick(): void;
 
   mouseMove(x: number, y: number): void;
+
+  getMousePos(): { x: number; y: number };
 }
 
 
 interface INativeModule extends WindowNativeModule, MonitorNativeModule, ProcessNativeModule, KeyboardNativeModule, MouseNativeModule {
+  // loaded by nodejs
+  path: string;
 }
 
 const Native = 'Native';

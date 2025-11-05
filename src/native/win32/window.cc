@@ -196,59 +196,92 @@ Napi::Number getWindowOwner (const Napi::CallbackInfo& info) {
     return Napi::Number::New (env, GetWindowLongPtrA (handle, GWLP_HWNDPARENT));
 }
 
-Napi::Boolean toggleWindowTransparency (const Napi::CallbackInfo& info) {
+void toggleWindowTransparency (const Napi::CallbackInfo& info) {
     Napi::Env env{ info.Env () };
 
     auto handle{ getValueFromCallbackData<HWND> (info, 0) };
+    if (!IsWindow(handle)) {
+        throw Napi::Error::New(env, "Invalid window handle");
+    }
+    
     bool toggle{ info[1].As<Napi::Boolean> () };
     LONG_PTR style{ GetWindowLongPtrA (handle, GWL_EXSTYLE) };
 
-    SetWindowLongPtrA (handle, GWL_EXSTYLE, ((toggle) ? (style | WS_EX_LAYERED) : (style & (~WS_EX_LAYERED))));
-
-    return Napi::Boolean::New (env, true);
+    if (!SetWindowLongPtrA(handle, GWL_EXSTYLE, ((toggle) ? (style | WS_EX_LAYERED) : (style & (~WS_EX_LAYERED))))) {
+        throw Napi::Error::New(env, "Failed to toggle window transparency");
+    }
 }
 
-Napi::Boolean setWindowOpacity (const Napi::CallbackInfo& info) {
+void setWindowOpacity (const Napi::CallbackInfo& info) {
     Napi::Env env{ info.Env () };
 
     auto handle{ getValueFromCallbackData<HWND> (info, 0) };
+    if (!IsWindow(handle)) {
+        throw Napi::Error::New(env, "Invalid window handle");
+    }
+    
     double opacity{ info[1].As<Napi::Number> ().DoubleValue () };
+    if (opacity < 0.0 || opacity > 1.0) {
+        throw Napi::Error::New(env, "Opacity must be between 0 and 1");
+    }
 
-    SetLayeredWindowAttributes (handle, NULL, opacity * 255., LWA_ALPHA);
-
-    return Napi::Boolean::New (env, true);
+    if (!SetLayeredWindowAttributes(handle, NULL, static_cast<BYTE>(opacity * 255.), LWA_ALPHA)) {
+        throw Napi::Error::New(env, "Failed to set window opacity");
+    }
 }
 
-Napi::Boolean setWindowBounds (const Napi::CallbackInfo& info) {
+void setWindowBounds (const Napi::CallbackInfo& info) {
     Napi::Env env{ info.Env () };
 
+    auto handle{ getValueFromCallbackData<HWND> (info, 0) };
+    if (!IsWindow(handle)) {
+        throw Napi::Error::New(env, "Invalid window handle");
+    }
+    
     Napi::Object bounds{ info[1].As<Napi::Object> () };
-    auto handle{ getValueFromCallbackData<HWND> (info, 0) };
+    int x = bounds.Get("x").ToNumber().Int32Value();
+    int y = bounds.Get("y").ToNumber().Int32Value();
+    int width = bounds.Get("width").ToNumber().Int32Value();
+    int height = bounds.Get("height").ToNumber().Int32Value();
 
-    BOOL b{ MoveWindow (handle, bounds.Get ("x").ToNumber (), bounds.Get ("y").ToNumber (),
-                        bounds.Get ("width").ToNumber (), bounds.Get ("height").ToNumber (), true) };
+    if (width <= 0 || height <= 0) {
+        throw Napi::Error::New(env, "Invalid window dimensions");
+    }
 
-    return Napi::Boolean::New (env, b);
+    if (!MoveWindow(handle, x, y, width, height, TRUE)) {
+        throw Napi::Error::New(env, "Failed to set window bounds");
+    }
 }
 
-Napi::Boolean setWindowOwner (const Napi::CallbackInfo& info) {
+void setWindowOwner (const Napi::CallbackInfo& info) {
     Napi::Env env{ info.Env () };
 
     auto handle{ getValueFromCallbackData<HWND> (info, 0) };
+    if (!IsWindow(handle)) {
+        throw Napi::Error::New(env, "Invalid window handle");
+    }
+    
     auto newOwner{ static_cast<LONG_PTR> (info[1].As<Napi::Number> ().Int64Value ()) };
+    if (newOwner != 0 && !IsWindow(reinterpret_cast<HWND>(newOwner))) {
+        throw Napi::Error::New(env, "Invalid owner window handle");
+    }
 
-    SetWindowLongPtrA (handle, GWLP_HWNDPARENT, newOwner);
-
-    return Napi::Boolean::New (env, true);
+    if (SetWindowLongPtrA(handle, GWLP_HWNDPARENT, newOwner) == 0 && GetLastError() != 0) {
+        throw Napi::Error::New(env, "Failed to set window owner");
+    }
 }
 
-Napi::Boolean showWindow (const Napi::CallbackInfo& info) {
+void showWindow (const Napi::CallbackInfo& info) {
     Napi::Env env{ info.Env () };
 
     auto handle{ getValueFromCallbackData<HWND> (info, 0) };
+    if (!IsWindow(handle)) {
+        throw Napi::Error::New(env, "Invalid window handle");
+    }
+    
     std::string type{ info[1].As<Napi::String> () };
 
-    DWORD flag{ 0 };
+    int flag = SW_SHOW;
 
     if (type == "show")
         flag = SW_SHOW;
@@ -260,8 +293,13 @@ Napi::Boolean showWindow (const Napi::CallbackInfo& info) {
         flag = SW_RESTORE;
     else if (type == "maximize")
         flag = SW_MAXIMIZE;
+    else {
+        throw Napi::Error::New(env, "Invalid window show type");
+    }
 
-    return Napi::Boolean::New (env, ShowWindow (handle, flag));
+    if (!ShowWindow(handle, flag)) {
+        throw Napi::Error::New(env, "Failed to change window state");
+    }
 }
 
 Napi::Boolean bringWindowToTop (const Napi::CallbackInfo& info) {
@@ -286,15 +324,19 @@ Napi::Boolean bringWindowToTop (const Napi::CallbackInfo& info) {
     return Napi::Boolean::New (env, b);
 }
 
-Napi::Boolean redrawWindow (const Napi::CallbackInfo& info) {
+void redrawWindow (const Napi::CallbackInfo& info) {
     Napi::Env env{ info.Env () };
 
     auto handle{ getValueFromCallbackData<HWND> (info, 0) };
-    BOOL b{ SetWindowPos (handle, 0, 0, 0, 0, 0,
-                          SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER |
-                          SWP_NOOWNERZORDER | SWP_NOACTIVATE | SWP_DRAWFRAME | SWP_NOCOPYBITS) };
-
-    return Napi::Boolean::New (env, b);
+    if (!IsWindow(handle)) {
+        throw Napi::Error::New(env, "Invalid window handle");
+    }
+    
+    if (!SetWindowPos(handle, 0, 0, 0, 0, 0,
+                     SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER |
+                     SWP_NOOWNERZORDER | SWP_NOACTIVATE | SWP_DRAWFRAME | SWP_NOCOPYBITS)) {
+        throw Napi::Error::New(env, "Failed to redraw window");
+    }
 }
 
 Napi::Boolean isWindow (const Napi::CallbackInfo& info) {

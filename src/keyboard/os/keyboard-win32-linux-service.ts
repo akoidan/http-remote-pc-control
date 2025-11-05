@@ -1,6 +1,3 @@
-/*
- eslint-disable no-await-in-loop
- */
 import {Injectable, Logger} from '@nestjs/common';
 import {IKeyboardService} from '@/keyboard/keyboard-model';
 import {INativeModule} from '@/native/native-model';
@@ -29,6 +26,11 @@ export class KeyboardWin32LinuxService implements IKeyboardService {
     } else {
       await this.addon.typeString(text);
     }
+  }
+
+  public async setKeyboardLayout(layout: string): Promise<void> {
+      this.logger.log(`Setting keyboard layout to: ${layout}`);
+      await this.addon.setKeyboardLayout(layout);
   }
 
   public async sendKey(keys: string[], holdKeys: string[], duration?: number): Promise<void> {

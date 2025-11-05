@@ -197,9 +197,41 @@ Napi::Value _typeString(const Napi::CallbackInfo &info) {
     return env.Undefined();
 }
 
+Napi::Value _setKeyboardLayout(const Napi::CallbackInfo& info) {
+    Napi::Env env = info.Env();
+
+    if (info.Length() < 1 || !info[0].IsString()) {
+        Napi::TypeError::New(env, "String expected (layout ID)").ThrowAsJavaScriptException();
+        return env.Undefined();
+    }
+
+    std::string layoutId = info[0].As<Napi::String>();
+    
+    // Build the command to set the keyboard layout using setxkbmap
+    std::string command = "setxkbmap " + layoutId + " 2>/dev/null";
+    
+    // Execute the command and check the result
+    int result = system(command.c_str());
+    bool success = (result == 0);
+    
+    // If setting the layout failed, try with the -layout option explicitly
+    if (!success) {
+        command = "setxkbmap -layout " + layoutId + " 2>/dev/null";
+        result = system(command.c_str());
+        success = (result == 0);
+    }
+    if (!success) {
+    Napi::TypeError::New(env, "Unable to set layout id").ThrowAsJavaScriptException();
+      return env.Undefined();
+    }
+    return env.Undefined();
+
+}
+
 Napi::Object keyboard_init(Napi::Env env, Napi::Object exports) {
-    exports.Set(Napi::String::New(env, "keyTap"), Napi::Function::New(env, _keyTap));
-    exports.Set(Napi::String::New(env, "keyToggle"), Napi::Function::New(env, _keyToggle));
-    exports.Set(Napi::String::New(env, "typeString"), Napi::Function::New(env, _typeString));
+    exports.Set("keyTap", Napi::Function::New(env, _keyTap));
+    exports.Set("keyToggle", Napi::Function::New(env, _keyToggle));
+    exports.Set("typeString", Napi::Function::New(env, _typeString));
+    exports.Set("setKeyboardLayout", Napi::Function::New(env, _setKeyboardLayout));
     return exports;
 }

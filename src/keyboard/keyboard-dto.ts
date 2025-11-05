@@ -37,6 +37,11 @@ const modifierKeys = [
 const keySchema = z.enum(([...allowedKeys, ...modifierKeys]) as any)
   .describe('A key to be sent.');
 
+const setKeyboardLayoutSchema = z.object({
+  layout: z.enum(['en', 'ru', 'uk', 'de', 'fr', 'es', 'it', 'pt', 'pl', 'cs', 'ja', 'ko', 'zh'])
+    .describe('Keyboard layout'),
+}).describe('Request to change keyboard layout');
+
 const keyPressRequestSchema = z.object({
   keys: z.array(keySchema),
   duration: z.number().min(50).default(50).optional().describe('Duration of key beeing presssed'),
@@ -64,15 +69,29 @@ const typeTextRequestSchema = z.object({
 
 // Create DTO classes for Swagger
 class KeyPressRequestDto extends createZodDto(keyPressRequestSchema) {}
+
 class TypeTextRequestDto extends createZodDto(typeTextRequestSchema) {}
+
+class SetKeyboardLayoutRequestDto extends createZodDto(setKeyboardLayoutSchema) {}
 
 // Export types and schemas
 type KeyPressRequest = z.infer<typeof keyPressRequestSchema>;
 type TypeTextRequest = z.infer<typeof typeTextRequestSchema>;
+type SetKeyboardLayoutRequest = z.infer<typeof setKeyboardLayoutSchema>;
+
 
 export type {
   KeyPressRequest,
   TypeTextRequest,
+  SetKeyboardLayoutRequest,
 };
 
-export {keySchema, keyPressRequestSchema, typeTextRequestSchema, KeyPressRequestDto, TypeTextRequestDto};
+export {
+  keySchema,
+  keyPressRequestSchema,
+  typeTextRequestSchema,
+  setKeyboardLayoutSchema,
+  SetKeyboardLayoutRequestDto,
+  KeyPressRequestDto,
+  TypeTextRequestDto,
+};

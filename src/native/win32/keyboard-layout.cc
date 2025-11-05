@@ -1,4 +1,6 @@
 #include "./headers/keyboard-layout.h"
+
+#include <napi.h>
 #include <unordered_map>
 #include <string>
 #include <vector>
@@ -127,6 +129,67 @@ HKL SaveAndSetKeyboardLayout(HKL newLayout) {
 
 void RestoreKeyboardLayout(HKL savedLayout) {
     SetThreadKeyboardLayout(savedLayout);
+}
+
+// Set keyboard layout by layout ID string (e.g., "00000409" for US English)
+void SetKeyboardLayout(const char* layoutId, const Napi::CallbackInfo& info) {
+    Napi::Env env = info.Env();
+    if (!layoutId || strlen(layoutId) == 0) {
+        throw Napi::Error::New(env, "Invalid parameter lang code");
+    }
+
+    // Convert the layout ID string to HKL
+    HKL hkl = reinterpret_cast<HKL>(static_cast<UINT_PTR>(strtoul(layoutId, nullptr, 16)));
+    
+    // Get the current foreground window and its thread
+    HWND foregroundWnd = GetForegroundWindow();
+    if (!foregroundWnd) {
+         throw Napi::Error::New(env, "NO FG window");
+    }
+    
+    DWORD threadId = GetWindowThreadProcessId(foregroundWnd, nullptr);
+    if (!threadId) {
+        throw Napi::Error::New(env, "NO FG thread id");
+    }
+    
+    // Attach to the thread that owns the foreground window
+    DWORD currentThreadId = GetCurrentThreadId();
+    DWORD currentThread = GetCurrentThreadId();
+    DWORD targetThread = threadId;
+    
+    // If we're not already attached to the target thread, attach to it
+    bool attached = false;
+    if (currentThread != targetThread) {
+        attached = AttachThreadInput(currentThread, targetThread, TRUE) != 0;
+    }
+    
+    // Try to set the keyboard layout
+    HKL previousLayout = GetKeyboardLayout(targetThread);
+    HKL result = ActivateKeyboardLayout(hkl, 0);
+    
+    // If activation failed, try to load and activate the layout
+    if (result == nullptr) {
+        // Try to load the layout
+        HKL loadedLayout = LoadKeyboardLayoutA(layoutId, KLF_ACTIVATE | KLF_SETFORPROCESS);
+        if (loadedLayout) {
+            result = loadedLayout;
+        }
+    }
+    
+    // If we attached to the thread, detach now
+    if (attached) {
+        AttachThreadInput(currentThread, targetThread, FALSE);
+    }
+    
+    // If we successfully changed the layout, send WM_INPUTLANGCHANGEREQUEST
+    if (result && result != previousLayout) {
+        // Notify applications that the input language has changed
+        PostMessage(HWND_BROADCAST, WM_INPUTLANGCHANGEREQUEST, 0, reinterpret_cast<LPARAM>(result));
+    }
+    
+    if (result == nullptr) {
+        throw Napi::Error::New(env, "NO FG window");
+    }
 }
 
 const char* DetectLanguageFromChar(wchar_t ch) {
