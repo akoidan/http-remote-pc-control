@@ -15,14 +15,17 @@ async function parseArgs(): Promise<{port: number, 'certDir': string}> {
   const defaultCertDir = path.join(isNodeJs ? process.cwd() : path.dirname(process.execPath), 'certs');
 
   return yargs(process.argv.slice(2))
+      .strict()
       // eslint-disable-next-line @typescript-eslint/naming-convention
       .option('port', {
         type: 'number',
         default: 5000,
+        description: 'HTTPS port that this app will listen for remote control',
       })
       .option('cert-dir', {
         type: 'string',
         default: defaultCertDir,
+        description: 'Directory that contains key.pem, cert.pem, ca-cert.pem for MTLS',
       })
       .parse();
 }
