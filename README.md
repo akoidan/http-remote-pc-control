@@ -28,8 +28,15 @@ Copy client directory to the remote PC where you have the [server](https://githu
 ### Download the app
 Here are instructions for windows, for linux you can just ignore windows specific intructions.
 
+### Linux
+ - You need X11 server + XC Binding  (libX11, libXext, xcb-util-wm, xorg-setxkbmap)
+ - Download app.elf from [releases](https://github.com/akoidan/http-remote-pc-control/releases).
+ - Ensure directory with the executalbe, or project direcotry contains `certs` directory with certificates
+ - run `chmod +x app.elf && ./app.elf 5000`
+
+### Windows
  - Download client you want to receive shorcuts [releases](https://github.com/akoidan/http-remote-pc-control/releases).
- - If windows antivirus deletes a file, you can allow it in **Virus & threat protection** -> **Protection History** -> Expaned recently blocked threat and allow it
+ - If Antivirus deletes a file, you can allow it in **Virus & threat protection** -> **Protection History** -> Expaned recently blocked threat and allow it
  - Ensure directory with the executalbe, or project direcotry contains `certs` directory with certificates
  - Run exe files as Administrator. 
  - If windows antivirus complains about security Open **Virus & threat protection** -> **Virus & threat protection settings** -> **Exclusions Add or remove exclusions** -> **Add an exclusion**. 

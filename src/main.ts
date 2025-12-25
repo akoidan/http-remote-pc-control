@@ -6,6 +6,7 @@ import {asyncLocalStorage, CustomLogger} from '@/app/custom-logger';
 import {ZodValidationPipe} from '@anatine/zod-nestjs';
 import process from 'node:process';
 import {setPriority, platform} from 'os';
+import * as path from 'path';
 
 asyncLocalStorage.run(new Map<string, string>().set('comb', 'init'), () => {
   const customLogger = new CustomLogger();
@@ -17,9 +18,12 @@ asyncLocalStorage.run(new Map<string, string>().set('comb', 'init'), () => {
       // otherwise it will stop accepting http
       setPriority(-2);
     }
-    const mtls = await NestFactory.create(MtlsModule, {
-      logger,
-    });
+    const isNodeJs = process.execPath.endsWith('node') || process.execPath.endsWith('node.exe');
+    const certDir = path.join(isNodeJs ? process.cwd() : path.dirname(process.execPath), 'certs');
+    const mtls = await NestFactory.create(
+        MtlsModule.forRoot(certDir),
+        {logger},
+    );
     const certs = mtls.get(CertService);
     await certs.checkFilesExist();
     const [key, cert, ca] = await Promise.all([certs.getPrivateKey(), certs.getCert(), certs.getCaCert()]);

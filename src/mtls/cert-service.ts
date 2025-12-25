@@ -1,4 +1,5 @@
 import {
+  Inject,
   Injectable,
   Logger,
 } from '@nestjs/common';
@@ -12,12 +13,8 @@ import * as path from 'path';
 export class CertService {
   constructor(
     private readonly logger: Logger,
+    @Inject('CERT_DIR') private readonly certDir: string,
   ) {
-  }
-
-  private get certDir(): string {
-   const isNodeJs = process.execPath.endsWith('node') || process.execPath.endsWith('node.exe');
-    return path.join(isNodeJs ? process.cwd() : path.dirname(process.execPath), 'certs');
   }
 
   private get privateKeyPath(): string {
