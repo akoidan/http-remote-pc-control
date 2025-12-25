@@ -6,6 +6,31 @@ import {asyncLocalStorage, CustomLogger} from '@/app/custom-logger';
 import {ZodValidationPipe} from '@anatine/zod-nestjs';
 import process from 'node:process';
 import {setPriority, platform} from 'os';
+import * as path from 'path';
+import yargs from 'yargs';
+
+// eslint-disable-next-line @typescript-eslint/naming-convention
+async function parseArgs(): Promise<{port: number, 'certDir': string}> {
+  const isNodeJs = process.execPath.endsWith('node') || process.execPath.endsWith('node.exe');
+  const defaultCertDir = path.join(isNodeJs ? process.cwd() : path.dirname(process.execPath), 'certs');
+
+  return yargs(process.argv.slice(2))
+      .strict()
+      .scriptName('http-remote-pc-control')
+      .usage('Allow to controll current PC via https. Keyboard/mouse/window events or launch applications')
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      .option('port', {
+        type: 'number',
+        default: 5000,
+        description: 'HTTPS port that this app will listen for remote control',
+      })
+      .option('cert-dir', {
+        type: 'string',
+        default: defaultCertDir,
+        description: 'Directory that contains key.pem, cert.pem, ca-cert.pem for MTLS',
+      })
+      .parse();
+}
 
 asyncLocalStorage.run(new Map<string, string>().set('comb', 'init'), () => {
   const customLogger = new CustomLogger();
@@ -17,9 +42,11 @@ asyncLocalStorage.run(new Map<string, string>().set('comb', 'init'), () => {
       // otherwise it will stop accepting http
       setPriority(-2);
     }
-    const mtls = await NestFactory.create(MtlsModule, {
-      logger,
-    });
+    const {port, certDir} = await parseArgs();
+    const mtls = await NestFactory.create(
+        MtlsModule.forRoot(certDir),
+        {logger},
+    );
     const certs = mtls.get(CertService);
     await certs.checkFilesExist();
     const [key, cert, ca] = await Promise.all([certs.getPrivateKey(), certs.getCert(), certs.getCaCert()]);
@@ -35,7 +62,6 @@ asyncLocalStorage.run(new Map<string, string>().set('comb', 'init'), () => {
       },
     });
     app.useGlobalPipes(new ZodValidationPipe());
-    const port = parseInt(process.argv[2], 10) || 5000;
     logger.log(`Listening port ${port}`);
     await app.listen(port);
   })().catch((err: unknown) => {

@@ -18,46 +18,38 @@ bash ./gen-cert.sh
 ```
 
 It will generate:
- - self-sign CA certificate with its private key and put CA cert into both ./certs/ca-cert.pem and ./client/ca-cert.pem
- - server and client private key in the ./certs/key.pem and ./client/key.pem
- - server and client certificate that are signed with CA private key and put it into ./certs/cert.pem and ./client/cert.pem
+ - CA PK in  ./gencert/ca/ca-cert.pem
+ - CA-cert, client certificate and client PK in ./gencert/client
+ - CA-cert, server certificate and server PK in ./gencert/server
 
-Leave certs directory in the project or within the same directory you are running app executable file.
-Copy client directory to the remote PC where you have the [server](https://github.com/akoidan/hotkey-hub)
+You have to:
+ - Copy ./gencert/server into ./certs directory where app executable is
+ - Copy ./gencert/client into ./certs on the remote PC where you have the [server](https://github.com/akoidan/hotkey-hub)
 
 ### Download the app
 Here are instructions for windows, for linux you can just ignore windows specific intructions.
 
+#### Linux
+ - You need X11 server + XC Binding  (libX11, libXext, xcb-util-wm, xorg-setxkbmap)
+ - Download app.elf from [releases](https://github.com/akoidan/http-remote-pc-control/releases).
+ - Ensure directory with the executalbe, or project direcotry contains `certs` directory with certificates
+ - run `chmod +x app.elf && ./app.elf 5000`
+ - If you need autostart check systemd unit for archlinux example https://aur.archlinux.org/cgit/aur.git/snapshot/http-remote-pc-control-git.tar.gz
+
+#### Archlinux
+ - `yay -S http-remote-pc-control`
+ - `sudo system start http-remote-pc-control`
+ - It will create `httpremote` user and you will find client certs in `/var/lib/http-remote-pc-control/certs/client`
+
+#### Windows
  - Download client you want to receive shorcuts [releases](https://github.com/akoidan/http-remote-pc-control/releases).
- - If windows antivirus deletes a file, you can allow it in **Virus & threat protection** -> **Protection History** -> Expaned recently blocked threat and allow it
+ - If Antivirus deletes a file, you can allow it in **Virus & threat protection** -> **Protection History** -> Expaned recently blocked threat and allow it
  - Ensure directory with the executalbe, or project direcotry contains `certs` directory with certificates
  - Run exe files as Administrator. 
  - If windows antivirus complains about security Open **Virus & threat protection** -> **Virus & threat protection settings** -> **Exclusions Add or remove exclusions** -> **Add an exclusion**. 
  - If it crashes , open powershell and run exe file from it, it's a CLI app.
 
-### Api documentation
-You can find api documentation under [releases](https://github.com/akoidan/http-remote-pc-control/releases). You can put this file into any swagger ui, e.g. [Swagger Editor](https://editor.swagger.io/). This file can be generated locally with
-```bash
-yarn schema:swagger
-```
-
-This will create ./swagger.json in the project directory.
-
-### NAT
-If your current PC doesn't have a static IP or under NAT, you can use VPN or some 3rd party service like [ngrok](https://ngrok.com/) [localtunel](https://github.com/localtunnel/localtunnel) or [cloudflared](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/) to expose it to the world. Example with ngrock:
-```bash
-ngrok http 5000
-```
-
-### Custom port
-By default app is listening port 5000, in order to change the port specify it as a first argument on the app executable. Example
-```bash
-./app.exe 5001
-```
-In order to change port on [server](https://github.com/akoidan/hotkey-hub) app, specify it as clientPort its config.jsonc
-
-
-### Autostart on Windows OS
+#### Autostart on Windows OS
 This program has to be started as Admin so it has permision to send keystrokes or move mouse. Add a script to autostart in Windows with admin petrmissions: Replace path to your app.exe:
 ```shell
 @echo off
@@ -78,6 +70,27 @@ echo Failed to add program to startup.
 
 pause
 ```
+
+### Api documentation
+You can find api documentation under [releases](https://github.com/akoidan/http-remote-pc-control/releases). You can put this file into any swagger ui, e.g. [Swagger Editor](https://editor.swagger.io/). This file can be generated locally with
+```bash
+yarn schema:swagger
+```
+
+This will create ./swagger.json in the project directory.
+
+### NAT
+If your current PC doesn't have a static IP or under NAT, you can use VPN or some 3rd party service like [ngrok](https://ngrok.com/) [localtunel](https://github.com/localtunnel/localtunnel) or [cloudflared](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/) to expose it to the world. Example with ngrock:
+```bash
+ngrok http 5000
+```
+
+### Help
+App allows minimal configuration, check the following command for options
+```bash
+./app.exe --help
+```
+
 
 ## Develop locally
 
