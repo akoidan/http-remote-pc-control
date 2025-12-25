@@ -1,4 +1,5 @@
 dist
+gencert
 build
 app.exe
 node_modules

@@ -34,6 +34,9 @@ Here are instructions for windows, for linux you can just ignore windows specifi
  - Ensure directory with the executalbe, or project direcotry contains `certs` directory with certificates
  - run `chmod +x app.elf && ./app.elf 5000`
 
+
+### Archlinux
+
 ### Windows
  - Download client you want to receive shorcuts [releases](https://github.com/akoidan/http-remote-pc-control/releases).
  - If Antivirus deletes a file, you can allow it in **Virus & threat protection** -> **Protection History** -> Expaned recently blocked threat and allow it

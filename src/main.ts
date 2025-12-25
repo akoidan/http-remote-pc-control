@@ -16,6 +16,8 @@ async function parseArgs(): Promise<{port: number, 'certDir': string}> {
 
   return yargs(process.argv.slice(2))
       .strict()
+      .scriptName('http-remote-pc-control')
+      .usage('Allow to controll current PC via https. Keyboard/mouse/window events or launch applications')
       // eslint-disable-next-line @typescript-eslint/naming-convention
       .option('port', {
         type: 'number',
