@@ -7,6 +7,25 @@ import {ZodValidationPipe} from '@anatine/zod-nestjs';
 import process from 'node:process';
 import {setPriority, platform} from 'os';
 import * as path from 'path';
+import yargs from 'yargs';
+
+// eslint-disable-next-line @typescript-eslint/naming-convention
+async function parseArgs(): Promise<{port: number, 'certDir': string}> {
+  const isNodeJs = process.execPath.endsWith('node') || process.execPath.endsWith('node.exe');
+  const defaultCertDir = path.join(isNodeJs ? process.cwd() : path.dirname(process.execPath), 'certs');
+
+  return yargs(process.argv.slice(2))
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      .option('port', {
+        type: 'number',
+        default: 5000,
+      })
+      .option('cert-dir', {
+        type: 'string',
+        default: defaultCertDir,
+      })
+      .parse();
+}
 
 asyncLocalStorage.run(new Map<string, string>().set('comb', 'init'), () => {
   const customLogger = new CustomLogger();
@@ -18,8 +37,7 @@ asyncLocalStorage.run(new Map<string, string>().set('comb', 'init'), () => {
       // otherwise it will stop accepting http
       setPriority(-2);
     }
-    const isNodeJs = process.execPath.endsWith('node') || process.execPath.endsWith('node.exe');
-    const certDir = path.join(isNodeJs ? process.cwd() : path.dirname(process.execPath), 'certs');
+    const {port, certDir} = await parseArgs();
     const mtls = await NestFactory.create(
         MtlsModule.forRoot(certDir),
         {logger},
@@ -39,7 +57,6 @@ asyncLocalStorage.run(new Map<string, string>().set('comb', 'init'), () => {
       },
     });
     app.useGlobalPipes(new ZodValidationPipe());
-    const port = parseInt(process.argv[2], 10) || 5000;
     logger.log(`Listening port ${port}`);
     await app.listen(port);
   })().catch((err: unknown) => {
