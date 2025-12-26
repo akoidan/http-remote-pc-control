@@ -1,8 +1,9 @@
-import {Injectable, Logger} from '@nestjs/common';
+import {BadRequestException, Injectable, Logger} from '@nestjs/common';
 import {IKeyboardService} from '@/keyboard/keyboard-model';
 import {INativeModule} from '@/native/native-model';
 import {sleep} from '@/shared';
 import {RandomService} from '@/random/random-service';
+import {KeyboardLayoutValue} from "@/keyboard/keyboard-dto";
 
 @Injectable()
 export class KeyboardWin32LinuxService implements IKeyboardService {
@@ -28,14 +29,13 @@ export class KeyboardWin32LinuxService implements IKeyboardService {
     }
   }
 
-  public async setKeyboardLayout(layout: string): Promise<void> {
+  public async setKeyboardLayout(layout: KeyboardLayoutValue): Promise<void> {
       this.logger.log(`Setting keyboard layout to: ${layout}`);
-      console.time('setKeyboardLayout');
       try {
-        this.addon.setKeyboardLayout(layout)
+        this.addon.setKeyboardLayout(layout);
       } catch (e) {
-        console.error(e, e.stack);
-        console.timeEnd('setKeyboardLayout');
+        this.logger.error(`Failed to set keyboard layout: ${e.message}`, e.stack);
+        throw new BadRequestException(e.message);
       }
   }
 
