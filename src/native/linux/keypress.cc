@@ -2,6 +2,7 @@
 #include <napi.h>
 #include <X11/extensions/XTest.h>
 #include <X11/Xlib.h>
+#include <X11/keysym.h>
 #include <string.h>
 #include <iostream>
 #include <map>
@@ -10,7 +11,7 @@
 #include "./headers/keypress.h"
 
 #define X_KEY_EVENT(display, key, is_press)                \
-    (XTestFakeKeyEvent(display, XKeysymToKeycode(display, key), is_press, CurrentTime), XSync(display, false))
+    (XTestFakeKeyEvent(display, XKeysymToKeycode(display, key), is_press, CurrentTime), XFlush(display))
 
 void toggleKeyCode(KeySym code, const bool down, unsigned int flags) {
     Display *display = XGetMainDisplay();
@@ -93,17 +94,17 @@ void typeString(const char *str) {
             if (kc != 0) {
                 if (needShift || isupper(*str)) {
                     XTestFakeKeyEvent(display, XKeysymToKeycode(display, XK_Shift_L), True, CurrentTime);
-                    XSync(display, False);
+                    XFlush(display);
                 }
                 
                 XTestFakeKeyEvent(display, kc, True, CurrentTime);
-                XSync(display, False);
+                XFlush(display);
                 XTestFakeKeyEvent(display, kc, False, CurrentTime);
-                XSync(display, False);
+                XFlush(display);
                 
                 if (needShift || isupper(*str)) {
                     XTestFakeKeyEvent(display, XKeysymToKeycode(display, XK_Shift_L), False, CurrentTime);
-                    XSync(display, False);
+                    XFlush(display);
                 }
             }
         }

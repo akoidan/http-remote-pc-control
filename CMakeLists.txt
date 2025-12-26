@@ -16,7 +16,9 @@ if(WIN32)
     set(SOURCE_FILES ${SOURCES} ${HEADERS})
 elseif (UNIX AND NOT APPLE)
     message(STATUS "Linux build")
-    list(APPEND LIBS "-lX11" "-lXtst" "-lXext")
+    # libXtst - allows sending keyStores at global level on X11 with XTestFakeKeyEvent
+    # libX11 - allows X11 window manipulation, mouse, displays etc
+    list(APPEND LIBS "-lX11" "-lXtst")
     file(GLOB_RECURSE HEADERS "${CMAKE_SOURCE_DIR}/src/native/linux/headers/**.h")
     file(GLOB_RECURSE SOURCES "${CMAKE_SOURCE_DIR}/src/native/linux/**.cc")
     set(SOURCE_FILES ${SOURCES} ${HEADERS})
