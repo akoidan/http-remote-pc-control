@@ -1,0 +1,1 @@
+export const CERT_DIR = 'CERT_DIR';

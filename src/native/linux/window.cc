@@ -1,10 +1,5 @@
 #include <napi.h>
-#include <stdio.h>
 #include <unistd.h>
-#include <vector>
-#include <string>
-#include <cstring>
-#include <xcb/xcb.h>
 #include <xcb/xcb_ewmh.h>
 #include "./headers/window.h"
 

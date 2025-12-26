@@ -41,7 +41,7 @@ export class KeyboardController {
 
   @Post('set-layout')
   @ApiOperation({summary: 'Change keyboard layout'})
-  async setKeyboardLayout(@Body() body: SetKeyboardLayoutRequestDto): Promise<void> {
-    await this.keyboardService.setKeyboardLayout(body.layout);
+  setKeyboardLayout(@Body() body: SetKeyboardLayoutRequestDto): void {
+    this.keyboardService.setKeyboardLayout(body.layout);
   }
 }

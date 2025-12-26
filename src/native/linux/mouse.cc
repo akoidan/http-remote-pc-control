@@ -1,6 +1,7 @@
 #include "./headers/display.h"
 #include "./headers/mouse.h"
 #include <napi.h>
+#include <X11/extensions/XTest.h>
 
 /**
  * Move the mouse to a specific point.
@@ -9,7 +10,7 @@
 void moveMouse(MMPoint point) {
     Display *display = XGetMainDisplay();
     XWarpPointer(display, None, DefaultRootWindow(display), 0, 0, 0, 0, point.x, point.y);
-    XSync(display, false);
+    XFlush(display);
 }
 
 MMPoint getMousePos() {
@@ -36,7 +37,7 @@ void toggleMouse(bool down, unsigned int button)
 {
     Display *display = XGetMainDisplay();
     XTestFakeButtonEvent(display, button, down ? True : False, CurrentTime);
-    XSync(display, false);
+    XFlush(display);
 }
 
 void clickMouse(unsigned int button)

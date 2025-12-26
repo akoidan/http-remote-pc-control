@@ -10,13 +10,14 @@ import * as path from 'path';
 import yargs from 'yargs';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-async function parseArgs(): Promise<{port: number, 'certDir': string}> {
+async function parseArgs(): Promise<{port: number, certDir: string}> {
   const isNodeJs = process.execPath.endsWith('node') || process.execPath.endsWith('node.exe');
   const defaultCertDir = path.join(isNodeJs ? process.cwd() : path.dirname(process.execPath), 'certs');
 
   return yargs(process.argv.slice(2))
       .strict()
       .scriptName('http-remote-pc-control')
+      .epilog('Reffer https://github.com/akoidan/http-remote-pc-control for more documentation')
       .usage('Allow to controll current PC via https. Keyboard/mouse/window events or launch applications')
       // eslint-disable-next-line @typescript-eslint/naming-convention
       .option('port', {
@@ -65,7 +66,7 @@ asyncLocalStorage.run(new Map<string, string>().set('comb', 'init'), () => {
     logger.log(`Listening port ${port}`);
     await app.listen(port);
   })().catch((err: unknown) => {
-    customLogger.error(err as string | Error);
+    customLogger.error(err as (string | Error), (err as Error)?.stack);
     process.exit(98);
   });
 });

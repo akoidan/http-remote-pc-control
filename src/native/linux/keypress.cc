@@ -1,16 +1,16 @@
-#include <ctype.h>
 #include <napi.h>
 #include <X11/extensions/XTest.h>
 #include <X11/Xlib.h>
-#include <string.h>
-#include <iostream>
-#include <map>
+#include <X11/keysym.h>
+#include <cstring>
+#include <cctype>
 #include "./headers/key-names.h"
 #include "./headers/display.h"
 #include "./headers/keypress.h"
+#include "./headers/keyboard-layout.h"
 
 #define X_KEY_EVENT(display, key, is_press)                \
-    (XTestFakeKeyEvent(display, XKeysymToKeycode(display, key), is_press, CurrentTime), XSync(display, false))
+    (XTestFakeKeyEvent(display, XKeysymToKeycode(display, key), is_press, CurrentTime), XFlush(display))
 
 void toggleKeyCode(KeySym code, const bool down, unsigned int flags) {
     Display *display = XGetMainDisplay();
@@ -59,7 +59,7 @@ KeySym keyCodeForChar(const char c) {
 
 void toggleKey(char c, const bool down, unsigned int flags) {
     KeySym keyCode = keyCodeForChar(c);
-    if (isupper(c) || XShiftRequiredMap.find(c) != XShiftRequiredMap.end()) {
+    if (std::isupper(c) || XShiftRequiredMap.find(c) != XShiftRequiredMap.end()) {
         flags |= ShiftMask;
     }
     toggleKeyCode(keyCode, down, flags);
@@ -91,19 +91,19 @@ void typeString(const char *str) {
         if (ks != NoSymbol) {
             KeyCode kc = XKeysymToKeycode(display, ks);
             if (kc != 0) {
-                if (needShift || isupper(*str)) {
+                if (needShift || std::isupper(*str)) {
                     XTestFakeKeyEvent(display, XKeysymToKeycode(display, XK_Shift_L), True, CurrentTime);
-                    XSync(display, False);
+                    XFlush(display);
                 }
                 
                 XTestFakeKeyEvent(display, kc, True, CurrentTime);
-                XSync(display, False);
+                XFlush(display);
                 XTestFakeKeyEvent(display, kc, False, CurrentTime);
-                XSync(display, False);
+                XFlush(display);
                 
-                if (needShift || isupper(*str)) {
+                if (needShift || std::isupper(*str)) {
                     XTestFakeKeyEvent(display, XKeysymToKeycode(display, XK_Shift_L), False, CurrentTime);
-                    XSync(display, False);
+                    XFlush(display);
                 }
             }
         }
@@ -197,36 +197,6 @@ Napi::Value _typeString(const Napi::CallbackInfo &info) {
     return env.Undefined();
 }
 
-Napi::Value _setKeyboardLayout(const Napi::CallbackInfo& info) {
-    Napi::Env env = info.Env();
-
-    if (info.Length() < 1 || !info[0].IsString()) {
-        Napi::TypeError::New(env, "String expected (layout ID)").ThrowAsJavaScriptException();
-        return env.Undefined();
-    }
-
-    std::string layoutId = info[0].As<Napi::String>();
-    
-    // Build the command to set the keyboard layout using setxkbmap
-    std::string command = "setxkbmap " + layoutId + " 2>/dev/null";
-    
-    // Execute the command and check the result
-    int result = system(command.c_str());
-    bool success = (result == 0);
-    
-    // If setting the layout failed, try with the -layout option explicitly
-    if (!success) {
-        command = "setxkbmap -layout " + layoutId + " 2>/dev/null";
-        result = system(command.c_str());
-        success = (result == 0);
-    }
-    if (!success) {
-    Napi::TypeError::New(env, "Unable to set layout id").ThrowAsJavaScriptException();
-      return env.Undefined();
-    }
-    return env.Undefined();
-
-}
 
 Napi::Object keyboard_init(Napi::Env env, Napi::Object exports) {
     exports.Set("keyTap", Napi::Function::New(env, _keyTap));

@@ -1,5 +1,5 @@
 #pragma once
-#include <X11/extensions/XTest.h>
+#include <X11/Xlib.h>
 
 void XCloseMainDisplay();
 
