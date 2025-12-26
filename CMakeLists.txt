@@ -17,7 +17,7 @@ if(WIN32)
 elseif (UNIX AND NOT APPLE)
     message(STATUS "Linux build")
     # libXtst - allows sending keyStores at global level on X11 with XTestFakeKeyEvent
-    # libX11 - allows X11 window manipulation, mouse, displays etc
+    # libX11 - allows X11 mouseMove, mousePosition, default window of a process
     list(APPEND LIBS "-lX11" "-lXtst")
     file(GLOB_RECURSE HEADERS "${CMAKE_SOURCE_DIR}/src/native/linux/headers/**.h")
     file(GLOB_RECURSE SOURCES "${CMAKE_SOURCE_DIR}/src/native/linux/**.cc")
@@ -25,6 +25,7 @@ elseif (UNIX AND NOT APPLE)
     find_package(X11 REQUIRED)
     find_library(X11_XTEST_LIBRARY Xtst REQUIRED)
     find_package(PkgConfig REQUIRED)
+    # xcb - screen info, windows properties, process windows, etc
     pkg_check_modules(XCB REQUIRED xcb xcb-ewmh)
     include_directories(${X11_INCLUDE_DIR} ${XCB_INCLUDE_DIRS})
 elseif (UNIX AND APPLE)
