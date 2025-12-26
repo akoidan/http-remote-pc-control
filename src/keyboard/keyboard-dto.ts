@@ -37,9 +37,10 @@ const modifierKeys = [
 const keySchema = z.enum(([...allowedKeys, ...modifierKeys]) as any)
   .describe('A key to be sent.');
 
+const keyboardLayoutValueSchema = z.enum(['en', 'us', 'ru', 'uk', 'de', 'fr', 'es', 'it', 'pt', 'pl', 'cs', 'ja', 'ko', 'zh']).describe('Keyboard layout');
+
 const setKeyboardLayoutSchema = z.object({
-  layout: z.enum(['en', 'ru', 'uk', 'de', 'fr', 'es', 'it', 'pt', 'pl', 'cs', 'ja', 'ko', 'zh'])
-    .describe('Keyboard layout'),
+  layout: keyboardLayoutValueSchema,
 }).describe('Request to change keyboard layout');
 
 const keyPressRequestSchema = z.object({
@@ -78,17 +79,20 @@ class SetKeyboardLayoutRequestDto extends createZodDto(setKeyboardLayoutSchema) 
 type KeyPressRequest = z.infer<typeof keyPressRequestSchema>;
 type TypeTextRequest = z.infer<typeof typeTextRequestSchema>;
 type SetKeyboardLayoutRequest = z.infer<typeof setKeyboardLayoutSchema>;
+type KeyboardLayoutValue = z.infer<typeof keyboardLayoutValueSchema>;
 
 
 export type {
   KeyPressRequest,
   TypeTextRequest,
+  KeyboardLayoutValue,
   SetKeyboardLayoutRequest,
 };
 
 export {
   keySchema,
   keyPressRequestSchema,
+  keyboardLayoutValueSchema,
   typeTextRequestSchema,
   setKeyboardLayoutSchema,
   SetKeyboardLayoutRequestDto,

@@ -92,7 +92,7 @@ interface KeyboardNativeModule {
 
   keyToggle(key: string, modifier: string[], down: boolean): void;
 
-  setKeyboardLayout(layout: string): Promise<void>;
+  setKeyboardLayout(layout: string): void;
 }
 
 interface MouseNativeModule {
