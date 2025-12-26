@@ -32,14 +32,14 @@ yarn start # starts a nestjs server
 
 ## Debugging Native Code
 
-### 1. Build the Native Module
+### Build the Native Module
 Run:
 ```bash
 yarn build:local
 ```  
 This command already builds the native module in Debug mode.
 
-### 2. Start and Attach the Debugger
+### Start and Attach the Debugger
 - Start your app with:
   ```bash
   yarn start
@@ -67,7 +67,7 @@ CLion does not automatically pick up Node.js and N-API headers. You must add the
 -DCMAKE_CXX_FLAGS="-IC:\Users\death\.cmake-js\node-x64\v18.20.5\include\node -IC:\Users\death\WebstormProjects\http-remote-pc-control\node_modules\node-addon-api"
 ```
 
-### 4. Required Directories
+### Required Directories
 You need to provide **two include directories**:
 
 - **Node.js headers**

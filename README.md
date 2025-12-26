@@ -40,6 +40,7 @@ Here are instructions for windows, for linux you can just ignore windows specifi
  - `yay -S http-remote-pc-control`
  - `systemctl --user start http-remote-pc-control` withing the same user as logged in X
  - You will find certificates in `~/.local/share/http-remote-pc-control/certs`
+ - You will swagger documentation in  `/usr/share/http-remote-pc-control/swagger.json`
 
 #### Windows
  - Download client you want to receive shorcuts [releases](https://github.com/akoidan/http-remote-pc-control/releases).
