@@ -30,7 +30,7 @@ elseif (UNIX AND NOT APPLE)
     find_package(PkgConfig REQUIRED)
     # xcb - screen info, windows properties, process windows, etc
     pkg_check_modules(XCB REQUIRED xcb xcb-ewmh)
-    # dbus - required at build time for KDE keyboard layout switching
+    # dbus - required for KDE keyboard layout switching
     pkg_check_modules(DBUS REQUIRED dbus-1)
     include_directories(${X11_INCLUDE_DIR} ${XCB_INCLUDE_DIRS} ${DBUS_INCLUDE_DIRS})
 elseif (UNIX AND APPLE)
