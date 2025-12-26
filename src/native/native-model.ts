@@ -86,7 +86,7 @@ interface ProcessNativeModule {
 }
 
 interface KeyboardNativeModule {
-  typeString(string: string): Promise<void>;
+  typeString(string: string): void;
 
   keyTap(key: string, modifier: string[]): void;
 

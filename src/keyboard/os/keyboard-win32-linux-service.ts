@@ -3,7 +3,7 @@ import {IKeyboardService} from '@/keyboard/keyboard-model';
 import {INativeModule} from '@/native/native-model';
 import {sleep} from '@/shared';
 import {RandomService} from '@/random/random-service';
-import {KeyboardLayoutValue} from "@/keyboard/keyboard-dto";
+import {KeyboardLayoutValue} from '@/keyboard/keyboard-dto';
 
 @Injectable()
 export class KeyboardWin32LinuxService implements IKeyboardService {
@@ -22,21 +22,21 @@ export class KeyboardWin32LinuxService implements IKeyboardService {
       for (const char of text.split('')) {
         await sleep(realDelay); // sleep before, in case we are typing on the same pc the shorcut was triggered from
         // to avoid meta keys in keystrokes
-        await this.addon.typeString(char);
+        this.addon.typeString(char);
       }
     } else {
-      await this.addon.typeString(text);
+      this.addon.typeString(text);
     }
   }
 
-  public async setKeyboardLayout(layout: KeyboardLayoutValue): Promise<void> {
-      this.logger.log(`Setting keyboard layout to: ${layout}`);
-      try {
-        this.addon.setKeyboardLayout(layout);
-      } catch (e) {
-        this.logger.error(`Failed to set keyboard layout: ${e.message}`, e.stack);
-        throw new BadRequestException(e.message);
-      }
+  public setKeyboardLayout(layout: KeyboardLayoutValue): void {
+    this.logger.log(`Setting keyboard layout to: ${layout}`);
+    try {
+      this.addon.setKeyboardLayout(layout);
+    } catch (e) {
+      this.logger.error(`Failed to set keyboard layout: ${e.message}`, e.stack);
+      throw new BadRequestException(e.message);
+    }
   }
 
   public async sendKey(keys: string[], holdKeys: string[], duration?: number): Promise<void> {
