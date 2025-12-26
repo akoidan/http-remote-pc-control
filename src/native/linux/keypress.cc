@@ -1,15 +1,9 @@
-#include <ctype.h>
 #include <napi.h>
 #include <X11/extensions/XTest.h>
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
-#include <X11/XKBlib.h>
 #include <cstring>
-#include <iostream>
-#include <map>
-#include <algorithm>
-#include <vector>
-#include <sstream>
+#include <cctype>
 #include "./headers/key-names.h"
 #include "./headers/display.h"
 #include "./headers/keypress.h"
@@ -65,7 +59,7 @@ KeySym keyCodeForChar(const char c) {
 
 void toggleKey(char c, const bool down, unsigned int flags) {
     KeySym keyCode = keyCodeForChar(c);
-    if (isupper(c) || XShiftRequiredMap.find(c) != XShiftRequiredMap.end()) {
+    if (std::isupper(c) || XShiftRequiredMap.find(c) != XShiftRequiredMap.end()) {
         flags |= ShiftMask;
     }
     toggleKeyCode(keyCode, down, flags);
@@ -97,7 +91,7 @@ void typeString(const char *str) {
         if (ks != NoSymbol) {
             KeyCode kc = XKeysymToKeycode(display, ks);
             if (kc != 0) {
-                if (needShift || isupper(*str)) {
+                if (needShift || std::isupper(*str)) {
                     XTestFakeKeyEvent(display, XKeysymToKeycode(display, XK_Shift_L), True, CurrentTime);
                     XFlush(display);
                 }
@@ -107,7 +101,7 @@ void typeString(const char *str) {
                 XTestFakeKeyEvent(display, kc, False, CurrentTime);
                 XFlush(display);
                 
-                if (needShift || isupper(*str)) {
+                if (needShift || std::isupper(*str)) {
                     XTestFakeKeyEvent(display, XKeysymToKeycode(display, XK_Shift_L), False, CurrentTime);
                     XFlush(display);
                 }
