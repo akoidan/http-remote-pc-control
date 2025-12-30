@@ -10,21 +10,16 @@ You can also use https://github.com/akoidan/hotkey-hub for doing this via system
 ## Get started
 
 ### Certificates
-The client server app both use [mutual TLS authentication](https://www.cloudflare.com/learning/access-management/what-is-mutual-tls/).
-You can use my helper script to generate certificates with [gen-cert.sh](./gen-cert.sh).
+The client server app both rely on [mutual TLS authentication](https://www.cloudflare.com/learning/access-management/what-is-mutual-tls/).
+You can use my helper script to generate certificates with [gen-cert.sh](./gen-cert.sh). Download it and run it with bash.
 
 ```bash
-bash ./gen-cert.sh
+bash ./gen-cert.sh all
 ```
-
-It will generate:
- - CA PK in  ./gencert/ca/ca-cert.pem
- - CA-cert, client certificate and client PK in ./gencert/client
- - CA-cert, server certificate and server PK in ./gencert/server
 
 You have to:
  - Copy ./gencert/server into ./certs directory where app executable is
- - Copy ./gencert/client into ./certs on the remote PC where you have the [server](https://github.com/akoidan/hotkey-hub)
+ - Copy ./gencert/client into ./certs on the remote PC from where you use the api. The client PC should not validate domain name.
 
 ### Download the app
 Here are instructions for windows, for linux you can just ignore windows specific intructions.
@@ -70,6 +65,46 @@ echo Failed to add program to startup.
 )
 
 pause
+```
+
+## Example
+
+```typescript
+import {
+  Agent,
+  request,
+} from 'https';
+
+let data = '';
+const req = request({
+  agent: new Agent({
+    cert, // string
+    key, // string
+    ca, // string
+    rejectUnauthorized: true, // force to fail upon wrong public keys
+    checkServerIdentity: () => undefined, // we don't care about domain name, since we rely on PK in mtls
+  }),
+  port: 5000,
+  host: 'server.remote.ip.address',
+  protocol: 'https:',
+  path: '/app/ping',
+  method: 'GET',
+  header: {
+    'x-request-id': 'r2d2'
+  },
+}, (res) => {
+  let data = '';
+  res.on('data', (chunk: string) => (data += chunk));
+  res.on('end', () => {
+    if (res.statusCode! < 400) {
+      console.error(res.statusCode);
+    } else {
+      console.log(data)
+    }
+  });
+  res.on('error', (error: Error) => console.error(error));
+});
+
 ```
 
 ### Api documentation
