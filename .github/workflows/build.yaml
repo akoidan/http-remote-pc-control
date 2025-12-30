@@ -130,7 +130,7 @@ jobs:
           sed -i "s/^commit=.*/commit=${COMMIT}/" ./arch/PKGBUILD
 
       - name: Publish to AUR
-        uses: KSXGitHub/github-actions-deploy-aur@v4
+        uses: KSXGitHub/github-actions-deploy-aur@v4.1.1
         with:
           pkgname: http-remote-pc-control
           pkgbuild: ./arch/PKGBUILD
