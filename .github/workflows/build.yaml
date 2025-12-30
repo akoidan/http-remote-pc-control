@@ -140,6 +140,7 @@ jobs:
             ./arch/http-remote-pc-control*.sh
             ./san.cnf
           commit_username: "GitHub Actions Bot"
+          updpkgsums: "true"
           commit_email: "actions@github.com"
           ssh_private_key: ${{ secrets.PK_ARCH }}
           push_timeout: 1m
