@@ -52,8 +52,9 @@ jobs:
         run:  yarn install --frozen-lockfile
       - name: Check Eslint
         run: yarn lint
-  build:
-    runs-on: ubuntu-latest
+  win32:
+    runs-on: windows-2022
+    permissions: write-all
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
@@ -69,6 +70,57 @@ jobs:
           key: ${{ runner.os }}-node-modules-${{ hashFiles('yarn.lock') }}
       - name: Install yarn deps
         if: steps.cache-node.outputs.cache-hit != 'true'
-        run: yarn install --frozen-lockfile
+        run:  yarn install --frozen-lockfile
+      - name: Restore pkg cache
+        id: cache-pkg
+        # DO not create cache on release, only on master
+        uses: actions/cache/restore@v4
+        with:
+          path: ~/.pkg-cache
+          key: ${{ runner.os }}-pkg-18
       - name: Build
-        run: yarn transpile
+        run: yarn build:win32
+
+  linux:
+    runs-on: ubuntu-22.04
+    permissions: write-all
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Cache APT Packages
+        uses: actions/cache@v4
+        with:
+          path: /var/cache/apt/archives
+          key: apt-cache-${{ runner.os }}-${{ hashFiles('.github/workflows/build.yaml') }}
+          restore-keys: |
+            apt-cache-${{ runner.os }}-
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libx11-dev libxtst-dev libxcb-ewmh-dev libxcb1-dev cmake g++ make libdbus-1-dev
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Restore node_modules cache
+        id: cache-node
+        # DO not create cache for PRs, since they are not accessible withing different PRs
+        # Only restore them
+        uses: actions/cache/restore@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('yarn.lock') }}
+      - name: Install yarn deps
+        if: steps.cache-node.outputs.cache-hit != 'true'
+        run:  yarn install --frozen-lockfile
+      - name: Restore pkg cache
+        id: cache-pkg
+        # DO not create cache on release, only on master
+        uses: actions/cache/restore@v4
+        with:
+          path: ~/.pkg-cache
+          key: ${{ runner.os }}-pkg-18
+      - name: Build
+        run: yarn build:linux
