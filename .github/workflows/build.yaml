@@ -13,9 +13,10 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
-      - name: Cache node_modules cache
+      - name: Restore node_modules cache
         id: cache-node
-        uses: actions/cache@v4
+        # DO not create cache on release, only on master
+        uses: actions/cache/restore@v4
         with:
           path: |
             node_modules
@@ -42,11 +43,13 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
-      - name: Cache node_modules cache
+      - name: Restore node_modules cache
         id: cache-node
-        uses: actions/cache@v4
+        # DO not create cache on release, only on master
+        uses: actions/cache/restore@v4
         with:
-          path: node_modules
+          path: |
+            node_modules
           key: ${{ runner.os }}-node-modules-${{ hashFiles('yarn.lock') }}
       - name: Install yarn deps
         if: steps.cache-node.outputs.cache-hit != 'true'
@@ -84,11 +87,13 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
-      - name: Cache node_modules cache
+      - name: Restore node_modules cache
         id: cache-node
-        uses: actions/cache@v4
+        # DO not create cache on release, only on master
+        uses: actions/cache/restore@v4
         with:
-          path: node_modules
+          path: |
+            node_modules
           key: ${{ runner.os }}-node-modules-${{ hashFiles('yarn.lock') }}
       - name: Install yarn deps
         if: steps.cache-node.outputs.cache-hit != 'true'
