@@ -10,8 +10,8 @@ You can also use https://github.com/akoidan/hotkey-hub for doing this via system
 ## Get started
 
 ### Certificates
-The client server app both use [mutual TLS authentication](https://www.cloudflare.com/learning/access-management/what-is-mutual-tls/).
-You can use my helper script to generate certificates with [gen-cert.sh](./gen-cert.sh).
+The client server app both rely on [mutual TLS authentication](https://www.cloudflare.com/learning/access-management/what-is-mutual-tls/).
+You can use my helper script to generate certificates with [gen-cert.sh](./gen-cert.sh). Download it and run it with bash.
 
 ```bash
 bash ./gen-cert.sh all
