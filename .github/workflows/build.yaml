@@ -1,44 +1,11 @@
 name: build
 
 on:
-  push:
-    branches: [ main ]
-  workflow_dispatch:
-    inputs:
-      release_name:
-        description: 'Release Name'
-        required: true
+  release:
+    types: [published]
 
 jobs:
-  create_release:
-    runs-on: ubuntu-22.04
-
-    permissions: write-all
-    outputs:
-      upload_url: ${{ steps.create_release.outputs.upload_url }}
-    steps:
-    - name: Set Short SHA
-      run: echo "SHORT_SHA=${GITHUB_SHA::7}" >> $GITHUB_ENV
-
-    - name: Set Release Name from Input
-      if: github.event_name == 'workflow_dispatch'
-      run: echo "RELEASE_NAME=${{ github.event.inputs.release_name }}" >> $GITHUB_ENV
-
-    - name: Set Release Name for Push Trigger
-      if: github.event_name == 'push'
-      run: echo "RELEASE_NAME=${{ env.SHORT_SHA }}" >> $GITHUB_ENV
-    - name: Create GitHub Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ env.RELEASE_NAME }}
-        release_name: ${{ env.RELEASE_NAME }}
-        draft: false
-        prerelease: false
   win32:
-    needs: [ create_release]
     runs-on: windows-2022
     permissions: write-all
     steps:
@@ -46,9 +13,10 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
-      - name: Cache node_modules cache
+      - name: Restore node_modules cache
         id: cache-node
-        uses: actions/cache@v4
+        # DO not create cache on release, only on master
+        uses: actions/cache/restore@v4
         with:
           path: |
             node_modules
@@ -64,12 +32,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ needs.create_release.outputs.upload_url }}
+          upload_url: ${{ github.event.release.upload_url }}
           asset_path: ./app.exe
           asset_name: app.exe
           asset_content_type: application/vnd.microsoft.portable-executable
   docs:
-    needs: [ create_release]
     runs-on: ubuntu-22.04
     permissions: write-all
     steps:
@@ -77,11 +44,13 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
-      - name: Cache node_modules cache
+      - name: Restore node_modules cache
         id: cache-node
-        uses: actions/cache@v4
+        # DO not create cache on release, only on master
+        uses: actions/cache/restore@v4
         with:
-          path: node_modules
+          path: |
+            node_modules
           key: ${{ runner.os }}-node-modules-${{ hashFiles('yarn.lock') }}
       - name: Install yarn deps
         if: steps.cache-node.outputs.cache-hit != 'true'
@@ -93,13 +62,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ needs.create_release.outputs.upload_url }}
+          upload_url: ${{ github.event.release.upload_url }}
           asset_path: ./swagger.json
           asset_name: swagger.json
           asset_content_type: application/json
+
   linux:
     runs-on: ubuntu-22.04
-    needs: [ create_release ]
     permissions: write-all
     steps:
       - name: Checkout repository
@@ -121,11 +90,13 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
-      - name: Cache node_modules cache
+      - name: Restore node_modules cache
         id: cache-node
-        uses: actions/cache@v4
+        # DO not create cache on release, only on master
+        uses: actions/cache/restore@v4
         with:
-          path: node_modules
+          path: |
+            node_modules
           key: ${{ runner.os }}-node-modules-${{ hashFiles('yarn.lock') }}
       - name: Install yarn deps
         if: steps.cache-node.outputs.cache-hit != 'true'
@@ -138,7 +109,38 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ needs.create_release.outputs.upload_url }}
+          upload_url: ${{ github.event.release.upload_url }}
           asset_path: ./app
           asset_name: app.elf
           asset_content_type: application/x-executable
+
+  aur:
+    needs: [linux, win32, docs]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Copy PKGBUILD and related files
+        run: |
+          COMMIT=$(git rev-parse --short=7 HEAD)
+          VERSION=$(jq -r '.version' package.json)
+          sed -i "s/^pkgver=.*/pkgver=${VERSION}/" ./arch/PKGBUILD
+          sed -i "s/^commit=.*/commit=${COMMIT}/" ./arch/PKGBUILD
+
+      - name: Publish to AUR
+        uses: KSXGitHub/github-actions-deploy-aur@v4.1.1
+        with:
+          pkgname: http-remote-pc-control
+          pkgbuild: ./arch/PKGBUILD
+          assets: |
+            ./arch/http-remote-pc-control.install
+            ./arch/http-remote-pc-control.service
+            ./arch/http-remote-pc-control*.sh
+            ./san.cnf
+          commit_username: "GitHub Actions Bot"
+          updpkgsums: "true"
+          commit_email: "actions@github.com"
+          ssh_private_key: ${{ secrets.PK_ARCH }}
+          push_timeout: 1m

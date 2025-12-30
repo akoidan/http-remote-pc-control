@@ -1,0 +1,65 @@
+name: cache
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  win32:
+    runs-on: windows-2022
+    permissions: write-all
+    steps:
+      - uses: actions/checkout@v3
+      - name: Restore node_modules cache
+        id: cache-node
+        # DO not create cache on release, only on master
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            node_modules
+          lookup-only: true
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('yarn.lock') }}
+      - uses: actions/setup-node@v3
+        if: steps.cache-node.outputs.cache-hit != 'true'
+        with:
+          node-version: 18
+      - name: Install yarn deps
+        if: steps.cache-node.outputs.cache-hit != 'true'
+        run: yarn install --frozen-lockfile
+
+      - name: Upload node_modules cache
+        if: steps.cache-node.outputs.cache-hit != 'true'
+        # DO not create cache on release, only on master
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('yarn.lock') }}
+  linux:
+    steps:
+      - uses: actions/checkout@v3
+      - name: Restore node_modules cache
+        id: cache-node
+        # DO not create cache on release, only on master
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            node_modules
+          lookup-only: true
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('yarn.lock') }}
+      - uses: actions/setup-node@v3
+        if: steps.cache-node.outputs.cache-hit != 'true'
+        with:
+          node-version: 18
+      - name: Install yarn deps
+        if: steps.cache-node.outputs.cache-hit != 'true'
+        run: yarn install --frozen-lockfile
+
+      - name: Upload node_modules cache
+        if: steps.cache-node.outputs.cache-hit != 'true'
+        # DO not create cache on release, only on master
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('yarn.lock') }}
