@@ -124,10 +124,10 @@ jobs:
 
       - name: Copy PKGBUILD and related files
         run: |
-          COMMIT=$(git rev-parse --short=7 HEAD)
+          TAG=${GITHUB_REF#refs/tags/}
           VERSION=$(jq -r '.version' package.json)
           sed -i "s/^pkgver=.*/pkgver=${VERSION}/" ./arch/PKGBUILD
-          sed -i "s/^commit=.*/commit=${COMMIT}/" ./arch/PKGBUILD
+          sed -i "s/^tag=.*/commit=${TAG}/" ./arch/PKGBUILD
 
       - name: Publish to AUR
         uses: KSXGitHub/github-actions-deploy-aur@v4.1.1
