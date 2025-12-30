@@ -2,7 +2,7 @@
 pkgname=http-remote-pc-control
 pkgver=NOT_SET
 PACKAGER="Andrew Koidan <deathangel908@gmail.com>"
-commit=NOT_SET
+tag=NOT_SET
 pkgrel=1
 pkgdesc="HTTP remote PC control tool"
 arch=('x86_64')
@@ -19,8 +19,8 @@ optdepends=(
 install=http-remote-pc-control.install
 
 source=(
-  "http-remote-pc-control::${url}/releases/download/${commit}/app.elf"
-  "swagger.json::${url}/releases/download/${commit}/swagger.json"
+  "http-remote-pc-control::${url}/releases/download/${tag}/app.elf"
+  "swagger.json::${url}/releases/download/${tag}/swagger.json"
   "http-remote-pc-control.service"
   "http-remote-pc-control.install"
   "http-remote-pc-control-gen-certs.sh"

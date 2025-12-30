@@ -1,4 +1,4 @@
-name: build
+name: release
 
 on:
   release:
@@ -18,12 +18,18 @@ jobs:
         # DO not create cache on release, only on master
         uses: actions/cache/restore@v4
         with:
-          path: |
-            node_modules
+          path: node_modules
           key: ${{ runner.os }}-node-modules-${{ hashFiles('yarn.lock') }}
       - name: Install yarn deps
         if: steps.cache-node.outputs.cache-hit != 'true'
         run: yarn install --frozen-lockfile
+      - name: Restore pkg cache
+        id: cache-pkg
+        # DO not create cache on release, only on master
+        uses: actions/cache/restore@v4
+        with:
+          path: ~/.pkg-cache
+          key: ${{ runner.os }}-pkg-18
       - name: Build
         run: yarn build:win32
 
@@ -49,8 +55,7 @@ jobs:
         # DO not create cache on release, only on master
         uses: actions/cache/restore@v4
         with:
-          path: |
-            node_modules
+          path: node_modules
           key: ${{ runner.os }}-node-modules-${{ hashFiles('yarn.lock') }}
       - name: Install yarn deps
         if: steps.cache-node.outputs.cache-hit != 'true'
@@ -95,12 +100,18 @@ jobs:
         # DO not create cache on release, only on master
         uses: actions/cache/restore@v4
         with:
-          path: |
-            node_modules
+          path: node_modules
           key: ${{ runner.os }}-node-modules-${{ hashFiles('yarn.lock') }}
       - name: Install yarn deps
         if: steps.cache-node.outputs.cache-hit != 'true'
         run: yarn install --frozen-lockfile
+      - name: Restore pkg cache
+        id: cache-pkg
+        # DO not create cache on release, only on master
+        uses: actions/cache/restore@v4
+        with:
+          path: ~/.pkg-cache
+          key: ${{ runner.os }}-pkg-18
       - name: Build
         run: yarn build:linux
 
@@ -124,10 +135,10 @@ jobs:
 
       - name: Copy PKGBUILD and related files
         run: |
-          COMMIT=$(git rev-parse --short=7 HEAD)
+          TAG=${{ github.event.release.tag_name }}
           VERSION=$(jq -r '.version' package.json)
           sed -i "s/^pkgver=.*/pkgver=${VERSION}/" ./arch/PKGBUILD
-          sed -i "s/^commit=.*/commit=${COMMIT}/" ./arch/PKGBUILD
+          sed -i "s/^tag=.*/tag=${TAG}/" ./arch/PKGBUILD
 
       - name: Publish to AUR
         uses: KSXGitHub/github-actions-deploy-aur@v4.1.1
