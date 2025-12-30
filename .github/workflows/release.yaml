@@ -1,4 +1,4 @@
-name: build
+name: release
 
 on:
   release:
@@ -135,7 +135,7 @@ jobs:
 
       - name: Copy PKGBUILD and related files
         run: |
-          TAG=${GITHUB_REF#refs/tags/}
+          TAG=${{ github.event.release.tag_name }}
           VERSION=$(jq -r '.version' package.json)
           sed -i "s/^pkgver=.*/pkgver=${VERSION}/" ./arch/PKGBUILD
           sed -i "s/^tag=.*/commit=${TAG}/" ./arch/PKGBUILD
