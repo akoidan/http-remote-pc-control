@@ -38,6 +38,11 @@ genCa() {
 
 genClient() {
     local client_name=$1
+    if [ -z "$client_name" ]; then
+        echo -e "\033[0;31mError: output directory name is required\033[0m"
+        show_help
+        exit 1
+    fi
     mkdir -p $OUT_DIR/$client_name
     HRPC_CLIENT_KEY=$OUT_DIR/$client_name/key.pem
     HRPC_CLIENT_CSR=$OUT_DIR/$client_name/csr.pem
@@ -62,22 +67,23 @@ show_help() {
     chp "client <name>" "Generates client certificate with given name"
     chp clean "Removes $OUT_DIR"
     chp all "Generates CA as well as client and server certificates"
-    chp 1
+    chp help "Prints this help"
 }
 
 # Main script logic
 if [ $# -eq 0 ]; then
+    echo -e "\033[0;31mError: Command required\033[0m"
     show_help
+    exit 1
 fi
 
 
 case "$1" in
+    help)
+        show_help
+        exit 0
+        ;;
     client)
-        if [ -z "$2" ]; then
-            echo "Error: Client name is required"
-            show_help
-            exit 1
-        fi
         genClient "$2"
         ;;
     ca)
@@ -92,7 +98,8 @@ case "$1" in
         genClient client
         ;;
     *)
-        echo "Error: Unknown command '$cmd'"
+        echo -e "\033[0;31mError: Unknown command '$1'\033[0m"
         show_help
+        exit 1
         ;;
 esac
