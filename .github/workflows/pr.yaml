@@ -13,7 +13,7 @@ concurrency:
 
 jobs:
   swagger:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
@@ -33,7 +33,7 @@ jobs:
       - name: Check Eslint
         run: yarn schema:swagger
   lint:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
