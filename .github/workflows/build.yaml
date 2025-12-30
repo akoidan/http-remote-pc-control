@@ -32,6 +32,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
+          upload_url: ${{ github.event.release.upload_url }}
           asset_path: ./app.exe
           asset_name: app.exe
           asset_content_type: application/vnd.microsoft.portable-executable
@@ -61,9 +62,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
+          upload_url: ${{ github.event.release.upload_url }}
           asset_path: ./swagger.json
           asset_name: swagger.json
           asset_content_type: application/json
+
   linux:
     runs-on: ubuntu-22.04
     permissions: write-all
@@ -106,6 +109,37 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
+          upload_url: ${{ github.event.release.upload_url }}
           asset_path: ./app
           asset_name: app.elf
           asset_content_type: application/x-executable
+
+  aur:
+    needs: [linux, win32, docs]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Copy PKGBUILD and related files
+        run: |
+          COMMIT=$(git rev-parse --short=7 HEAD)
+          VERSION=$(jq -r '.version' package.json)
+          sed -i "s/^pkgver=.*/pkgver=${VERSION}/" ./arch/PKGBUILD
+          sed -i "s/^commit=.*/commit=${COMMIT}/" ./arch/PKGBUILD
+
+      - name: Publish to AUR
+        uses: KSXGitHub/github-actions-deploy-aur@v4
+        with:
+          pkgname: http-remote-pc-control
+          pkgbuild: ./arch/PKGBUILD
+          assets: |
+            ./arch/http-remote-pc-control.install
+            ./arch/http-remote-pc-control.service
+            ./arch/http-remote-pc-control*.sh
+            ./san.cnf
+          commit_username: "GitHub Actions Bot"
+          commit_email: "actions@github.com"
+          ssh_private_key: ${{ secrets.PK_ARCH }}
+          push_timeout: 1m
