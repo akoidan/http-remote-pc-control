@@ -92,6 +92,5 @@ App allows minimal configuration, check the following command for options
 ./app.exe --help
 ```
 
-
 ## Develop locally
 Check [DEVELOPMENT.md](DEVELOPMENT.md)
