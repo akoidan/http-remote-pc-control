@@ -24,8 +24,8 @@ chp(){
 
 genCa() {
     if [ -f "$HRPC_CA_KEY" ]; then
-        echo "Error: CA key already exists at $HRPC_CA_KEY"
-        echo "To generate a new CA, first remove the existing CA files"
+        echo -e "\033[0;31mCA key already exists at $HRPC_CA_KEY\033[0m"
+        echo -e "Run \e[1;37;40mbash gen-certs.sh clean\033[0m first"
         exit 1
     fi
     mkdir -p $OUT_DIR/ca
