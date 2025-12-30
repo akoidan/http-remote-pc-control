@@ -31,6 +31,7 @@ genCa() {
     mkdir -p $OUT_DIR/ca
     set -x
     openssl genrsa -out $HRPC_CA_KEY 2048
+    export MSYS2_ARG_CONV_EXCL='*'
     openssl req -new -x509 -key $HRPC_CA_KEY -out $HRPC_CA_CERT -days 3650 -subj "/C=US/ST=CA/L=SF/O=Example Org/CN=Example Root CA"
     set +x
     echo "CA certificate and key generated successfully in $OUT_DIR/ca/"
@@ -52,7 +53,7 @@ genClient() {
     ## Generate Server Key and CSR
     set -x
     openssl genrsa -out $HRPC_CLIENT_KEY 2048
-    openssl req -new -key $HRPC_CLIENT_KEY -out $HRPC_CLIENT_CSR -subj "/C=US/ST=CA/L=SF/O=Example Org/CN=localhost"
+    MSYS2_ARG_CONV_EXCL='*' openssl req -new -key $HRPC_CLIENT_KEY -out $HRPC_CLIENT_CSR -subj "/C=US/ST=CA/L=SF/O=Example Org/CN=localhost"
     ## Sign Server Certificate with CA including SAN
     openssl x509 -req -in $HRPC_CLIENT_CSR -CA $HRPC_CA_CERT -CAkey $HRPC_CA_KEY -CAcreateserial -out $HRPC_CLIENT_CERT -days 365 -extfile $SAN_CNF -extensions v3_req
     cp $HRPC_CA_CERT $HRPC_CLIENT_CA_CERT
