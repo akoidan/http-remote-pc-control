@@ -30,6 +30,7 @@ jobs:
         run: |
           echo "${{ secrets.LAUNCHPAD_GPG_PRIVATE_KEY }}" > private.key
           echo "${{ secrets.LAUNCHPAD_GPG_PASSPHRASE }}" | gpg --batch --yes --passphrase-fd 0 --import private.key
+          echo "it works"
           rm -f private.key
           echo "trust-model tofu+pgp" >> ~/.gnupg/gpg.conf
           echo "tofu-default-policy unknown" >> ~/.gnupg/gpg.conf
