@@ -45,8 +45,8 @@ jobs:
           DEBEMAIL: "${{ github.actor }}@users.noreply.github.com"
           DEBFULLNAME: "GitHub Actions"
         run: |
+          VERSION=$(jq -r '.version' ./package.json)
           cd packages
-          VERSION=$(jq -r '.version' ../../package.json)
           
           # Install the binary
           mkdir -p debian/http-remote-pc-control/usr/bin
