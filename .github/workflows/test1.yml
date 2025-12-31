@@ -23,8 +23,8 @@ jobs:
           VERSION=$(jq -r '.version' ./package.json)
           cd packages/debian
           sed -i "s/^Version:.*/Version: ${VERSION}/" ./control
-          mkdir -p http-remote-pc-control/debian
-          cp control http-remote-pc-control/debian/
+          mkdir -p http-remote-pc-control/DEBIAN
+          cp control http-remote-pc-control/DEBIAN/
           install -D -m 755 /tmp/artifacts/app http-remote-pc-control/usr/bin/http-remote-pc-control
           install -D -m 755 http-remote-pc-control.service http-remote-pc-control/usr/lib/systemd/user/http-remote-pc-control.service
           dpkg-deb --build http-remote-pc-control http-remote-pc-control-amd64.deb
