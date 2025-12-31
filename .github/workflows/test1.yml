@@ -28,9 +28,13 @@ jobs:
 
       - name: Set up GPG
         run: |
+          mkdir -p ~/.gnupg
+          chmod 700 ~/.gnupg  
+          echo "Importing GPG key..."
           echo "${{ secrets.LAUNCHPAD_GPG_PRIVATE_KEY }}" > private.key
           echo "${{ secrets.LAUNCHPAD_GPG_PASSPHRASE }}" | gpg --batch --yes --passphrase-fd 0 --import private.key
-          echo "it works"
+          echo "Listing keys:"
+          gpg --list-secret-keys --keyid-format=long 2>&1 | cat
           rm -f private.key
           echo "trust-model tofu+pgp" >> ~/.gnupg/gpg.conf
           echo "tofu-default-policy unknown" >> ~/.gnupg/gpg.conf
