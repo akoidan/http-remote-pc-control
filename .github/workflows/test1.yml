@@ -45,7 +45,7 @@ jobs:
           DEBEMAIL: "${{ github.actor }}@users.noreply.github.com"
           DEBFULLNAME: "GitHub Actions"
         run: |
-          cd packages/ubuntu
+          cd packages
           VERSION=$(jq -r '.version' ../../package.json)
           
           # Install the binary
@@ -53,6 +53,8 @@ jobs:
           install -D -m 755 /tmp/artifacts/app debian/http-remote-pc-control/usr/bin/http-remote-pc-control
           
           # Update changelog
+          ls -la 
+          pwd
           dch --create --package http-remote-pc-control --newversion $VERSION-1 \
           --distribution $(lsb_release -cs) "Update to $VERSION"
           
