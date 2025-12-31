@@ -8,6 +8,7 @@ jobs:
   test_deb:
     runs-on: ubuntu-22.04
     steps:
+      - uses: actions/checkout@v3
       - name: Download linux binary
         run: |
           mkdir -p /tmp/artifacts
@@ -26,46 +27,34 @@ jobs:
             gnupg2 \
             dput
 
-      - name: Set up GPG
-        run: |
-          mkdir -p ~/.gnupg
-          chmod 700 ~/.gnupg  
-          echo "Importing GPG key..."
-          echo "${{ secrets.LAUNCHPAD_GPG_PRIVATE_KEY }}" > private.key
-          echo "${{ secrets.LAUNCHPAD_GPG_PASSPHRASE }}" | gpg --batch --yes --passphrase-fd 0 --import private.key
-          echo "Listing keys:"
-          gpg --list-secret-keys --keyid-format=long 2>&1 | cat
-          rm -f private.key
-          echo "trust-model tofu+pgp" >> ~/.gnupg/gpg.conf
-          echo "tofu-default-policy unknown" >> ~/.gnupg/gpg.conf
+#      - name: Set up GPG
+#        run: |
+#          mkdir -p ~/.gnupg
+#          chmod 700 ~/.gnupg
+#          echo "Importing GPG key..."
+#          echo "${{ secrets.LAUNCHPAD_GPG_PRIVATE_KEY }}" > private.key
+#          echo "${{ secrets.LAUNCHPAD_GPG_PASSPHRASE }}" | gpg --batch --yes --passphrase-fd 0 --import private.key
+#          echo "Listing keys:"
+#          gpg --list-secret-keys --keyid-format=long 2>&1 | cat
+#          rm -f private.key
+#          echo "trust-model tofu+pgp" >> ~/.gnupg/gpg.conf
+#          echo "tofu-default-policy unknown" >> ~/.gnupg/gpg.conf
 
       - name: Prepare package
         env:
           DEBEMAIL: "${{ github.actor }}@users.noreply.github.com"
           DEBFULLNAME: "GitHub Actions"
         run: |
-          # Get version from package.json
-          VERSION=$(jq -r '.version' package.json)
+          cd packages/ubuntu
+          VERSION=$(jq -r '.version' ../../package.json)
           
-          # Create build directory
-          BUILD_DIR=../build
-          mkdir -p $BUILD_DIR
-          
-          # Copy source to build directory
-          cp -r . $BUILD_DIR/http-remote-pc-control-$VERSION
-          cd $BUILD_DIR/http-remote-pc-control-$VERSION
-          
-          # Copy the pre-built binary
+          # Install the binary
           mkdir -p debian/http-remote-pc-control/usr/bin
-          install -m 755 /tmp/artifacts/app debian/http-remote-pc-control/usr/bin/http-remote-pc-control
-          
-          # Copy debian files
-          mkdir -p debian
-          cp -r packages/ubuntu/* debian/
+          install -D -m 755 /tmp/artifacts/app debian/http-remote-pc-control/usr/bin/http-remote-pc-control
           
           # Update changelog
           dch --create --package http-remote-pc-control --newversion $VERSION-1 \
-              --distribution $(lsb_release -cs) "Update to $VERSION"
+          --distribution $(lsb_release -cs) "Update to $VERSION"
           
           # Build the package
           dpkg-buildpackage -S -us -uc -d
