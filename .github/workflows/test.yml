@@ -1,0 +1,95 @@
+name: release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  win32:
+
+deb_package:
+  needs: [linux, win32, docs]
+  runs-on: ubuntu-22.04
+  steps:
+    - name: Download linux binary
+      run: |
+        mkdir -p /tmp/artifacts
+        curl -L https://github.com/akoidan/http-remote-pc-control/releases/download/v1.1.2/app.elf -o /tmp/artifacts/app
+        chmod +x /tmp/artifacts/app
+
+    - name: Set up build environment
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends \
+          debhelper \
+          devscripts \
+          dpkg-dev \
+          fakeroot \
+          jq \
+          gnupg2 \
+          dput
+
+    - name: Set up GPG
+      env:
+        GPG_PRIVATE_KEY: ${{ secrets.LAUNCHPAD_GPG_PRIVATE_KEY }}
+        GPG_PASSPHRASE: ${{ secrets.LAUNCHPAD_GPG_PASSPHRASE }}
+      run: |
+        echo "$GPG_PRIVATE_KEY" > private.key
+        echo "$GPG_PASSPHRASE" | gpg --batch --yes --passphrase-fd 0 --import private.key
+        rm -f private.key
+        echo "trust-model tofu+pgp" >> ~/.gnupg/gpg.conf
+        echo "tofu-default-policy unknown" >> ~/.gnupg/gpg.conf
+
+    - name: Prepare package
+      env:
+        DEBEMAIL: "${{ github.actor }}@users.noreply.github.com"
+        DEBFULLNAME: "GitHub Actions"
+      run: |
+        # Get version from package.json
+        VERSION=$(jq -r '.version' package.json)
+        
+        # Create build directory
+        BUILD_DIR=../build
+        mkdir -p $BUILD_DIR
+        
+        # Copy source to build directory
+        cp -r . $BUILD_DIR/http-remote-pc-control-$VERSION
+        cd $BUILD_DIR/http-remote-pc-control-$VERSION
+        
+        # Copy the pre-built binary
+        mkdir -p debian/http-remote-pc-control/usr/bin
+        install -m 755 /tmp/artifacts/app debian/http-remote-pc-control/usr/bin/http-remote-pc-control
+        
+        # Copy debian files
+        mkdir -p debian
+        cp -r packages/ubuntu/* debian/
+        
+        # Update changelog
+        dch --create --package http-remote-pc-control --newversion $VERSION-1 \
+            --distribution $(lsb_release -cs) "Update to $VERSION"
+        
+        # Build the package
+        dpkg-buildpackage -S -us -uc -d
+        
+        # Move the source package up
+        mv ../http-remote-pc-control_${VERSION}-1_*.changes ../
+        mv ../http-remote-pc-control_${VERSION}-1.dsc ../
+        mv ../http-remote-pc-control_${VERSION}-1.debian.tar.xz ../
+        mv ../http-remote-pc-control_${VERSION}.orig.tar.gz ../
+
+    - name: Upload to Launchpad PPA
+      env:
+        LAUNCHPAD_USERNAME: ${{ secrets.LAUNCHPAD_USERNAME }}
+      run: |
+        # Configure dput
+        cat > ~/.dput.cf << EOF
+        [launchpad]
+        fqdn = ppa.launchpadcontent.net
+        method = ftp
+        incoming = ~$LAUNCHPAD_USERNAME/ubuntu/http-remote-pc-control/
+        login = anonymous
+        allow_unsigned_uploads = 0
+        EOF
+        
+        # Upload to PPA
+        cd ..
+        dput -d launchpad http-remote-pc-control_*-1_*.changes
