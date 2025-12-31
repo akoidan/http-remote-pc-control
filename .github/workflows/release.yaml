@@ -155,7 +155,7 @@ jobs:
       - name: Download linux binary
         uses: actions/download-artifact@v4
         with:
-          name: app
+          name: app.elf
           path: /tmp/artifacts
 
       - name: Prepare package
@@ -168,7 +168,7 @@ jobs:
           sed -i "s/^Version:.*/Version: ${VERSION}/" ./control
           mkdir -p http-remote-pc-control/DEBIAN
           cp control http-remote-pc-control/DEBIAN/
-          install -D -m 755 /tmp/artifacts/app http-remote-pc-control/usr/bin/http-remote-pc-control
+          install -D -m 755 /tmp/artifacts/app.elf http-remote-pc-control/usr/bin/http-remote-pc-control
           install -D -m 755 http-remote-pc-control.service http-remote-pc-control/usr/lib/systemd/user/http-remote-pc-control.service
           dpkg-deb --build http-remote-pc-control http-remote-pc-control-amd64.deb
 
