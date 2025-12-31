@@ -2,19 +2,15 @@ Source: http-remote-pc-control
 Section: utils
 Priority: optional
 Maintainer: Andrew Koidan <deathangel908@gmail.com>
-Build-Depends: debhelper-compat (= 13), dh-systemd
 Standards-Version: 4.6.1
 Homepage: https://github.com/deathangel908/http-remote-pc-control
 Vcs-Browser: https://github.com/deathangel908/http-remote-pc-control
 Vcs-Git: https://github.com/deathangel908/http-remote-pc-control.git
 Rules-Requires-Root: no
-
+Version: UNSET
 Package: http-remote-pc-control
-Architecture: any
-Depends: ${shlibs:Depends},
-         ${misc:Depends},
-         libx11-6,
-         libxtst6,
+Architecture: amd64
+Depends: libxtst6,
          libxcb-ewmh2,
          libxcb1,
          libdbus-1-3

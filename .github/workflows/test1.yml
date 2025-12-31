@@ -15,72 +15,27 @@ jobs:
           curl -L https://github.com/akoidan/http-remote-pc-control/releases/download/v1.1.2/app.elf -o /tmp/artifacts/app
           chmod +x /tmp/artifacts/app
 
-      - name: Set up build environment
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends \
-            debhelper \
-            devscripts \
-            dpkg-dev \
-            fakeroot \
-            jq \
-            gnupg2 \
-            dput
-
-#      - name: Set up GPG
-#        run: |
-#          mkdir -p ~/.gnupg
-#          chmod 700 ~/.gnupg
-#          echo "Importing GPG key..."
-#          echo "${{ secrets.LAUNCHPAD_GPG_PRIVATE_KEY }}" > private.key
-#          echo "${{ secrets.LAUNCHPAD_GPG_PASSPHRASE }}" | gpg --batch --yes --passphrase-fd 0 --import private.key
-#          echo "Listing keys:"
-#          gpg --list-secret-keys --keyid-format=long 2>&1 | cat
-#          rm -f private.key
-#          echo "trust-model tofu+pgp" >> ~/.gnupg/gpg.conf
-#          echo "tofu-default-policy unknown" >> ~/.gnupg/gpg.conf
-
       - name: Prepare package
         env:
-          DEBEMAIL: "${{ github.actor }}@users.noreply.github.com"
-          DEBFULLNAME: "GitHub Actions"
+          DEBEMAIL: "deathangel908@gmail.com"
+          DEBFULLNAME: "Andrew Koidan"
         run: |
           VERSION=$(jq -r '.version' ./package.json)
-          cd packages
-          
-          # Install the binary
-          mkdir -p debian/http-remote-pc-control/usr/bin
-          install -D -m 755 /tmp/artifacts/app debian/http-remote-pc-control/usr/bin/http-remote-pc-control
-          
-          # Update changelog
-          ls -la 
-          pwd
-          dch --create --package http-remote-pc-control --newversion $VERSION-1 \
-          --distribution $(lsb_release -cs) "Update to $VERSION"
-          
-          # Build the package
-          dpkg-buildpackage -S -us -uc -d
-          
-          # Move the source package up
-          mv ../http-remote-pc-control_${VERSION}-1_*.changes ../
-          mv ../http-remote-pc-control_${VERSION}-1.dsc ../
-          mv ../http-remote-pc-control_${VERSION}-1.debian.tar.xz ../
-          mv ../http-remote-pc-control_${VERSION}.orig.tar.gz ../
+          cd packages/debian
+          sed -i "s/^Version:.*/Version: ${VERSION}/" ./packages/debian/control
+          mkdir -p http-remote-pc-control/DEBIAN
+          cp control http-remote-pc-control/DEBIAN/
+          install -D -m 755 /tmp/artifacts/app http-remote-pc-control/usr/bin/http-remote-pc-control
+          install -D -m 755 http-remote-pc-control.service http-remote-pc-control/usr/lib/systemd/user/http-remote-pc-control.service
+          dpkg-deb --build http-remote-pc-control http-remote-pc-control-amd64.deb
 
-      - name: Upload to Launchpad PPA
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
         env:
-          LAUNCHPAD_USERNAME: ${{ secrets.LAUNCHPAD_USERNAME }}
-        run: |
-          # Configure dput
-          cat > ~/.dput.cf << EOF
-          [launchpad]
-          fqdn = ppa.launchpadcontent.net
-          method = ftp
-          incoming = ~$LAUNCHPAD_USERNAME/ubuntu/http-remote-pc-control/
-          login = anonymous
-          allow_unsigned_uploads = 0
-          EOF
-          
-          # Upload to PPA
-          cd ..
-          dput -d launchpad http-remote-pc-control_*-1_*.changes
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: packages/debian/http-remote-pc-control
+          asset_name: app.deb
+          asset_content_type: application/vnd.debian.binary-package
+
