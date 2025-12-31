@@ -4,9 +4,7 @@ on:
   workflow_dispatch:
 
 jobs:
-
-  deb_package:
-    needs: [linux, win32, docs]
+  test_deb:
     runs-on: ubuntu-22.04
     steps:
       - name: Download linux binary
@@ -28,12 +26,9 @@ jobs:
             dput
 
       - name: Set up GPG
-        env:
-          GPG_PRIVATE_KEY: ${{ secrets.LAUNCHPAD_GPG_PRIVATE_KEY }}
-          GPG_PASSPHRASE: ${{ secrets.LAUNCHPAD_GPG_PASSPHRASE }}
         run: |
-          echo "$GPG_PRIVATE_KEY" > private.key
-          echo "$GPG_PASSPHRASE" | gpg --batch --yes --passphrase-fd 0 --import private.key
+          echo "${{ secrets.LAUNCHPAD_GPG_PRIVATE_KEY }}" > private.key
+          echo "${{ secrets.LAUNCHPAD_GPG_PASSPHRASE }}" | gpg --batch --yes --passphrase-fd 0 --import private.key
           rm -f private.key
           echo "trust-model tofu+pgp" >> ~/.gnupg/gpg.conf
           echo "tofu-default-policy unknown" >> ~/.gnupg/gpg.conf
