@@ -129,18 +129,18 @@ jobs:
         run: |
           TAG=${{ github.event.release.tag_name }}
           VERSION=$(jq -r '.version' package.json)
-          sed -i "s/^pkgver=.*/pkgver=${VERSION}/" ./arch/PKGBUILD
-          sed -i "s/^tag=.*/tag=${TAG}/" ./arch/PKGBUILD
+          sed -i "s/^pkgver=.*/pkgver=${VERSION}/" ./packages/arch/PKGBUILD
+          sed -i "s/^tag=.*/tag=${TAG}/" ./packages/arch/PKGBUILD
 
       - name: Publish to AUR
         uses: KSXGitHub/github-actions-deploy-aur@v4.1.1
         with:
           pkgname: http-remote-pc-control
-          pkgbuild: ./arch/PKGBUILD
+          pkgbuild: ./packages/arch/PKGBUILD
           assets: |
-            ./arch/http-remote-pc-control.install
-            ./arch/http-remote-pc-control.service
-            ./arch/http-remote-pc-control*.sh
+            ./packages/arch/http-remote-pc-control.install
+            ./packages/arch/http-remote-pc-control.service
+            ./packages/arch/http-remote-pc-control*.sh
             ./san.cnf
           commit_username: "GitHub Actions Bot"
           updpkgsums: "true"
