@@ -1,36 +1,21 @@
 #!/usr/bin/make -f
 
 %:
-	dh $@ --with systemd
-
-override_dh_auto_configure:
-	# No configuration needed for pre-built binary
-
-override_dh_auto_build:
-	# Build the application
-	yarn install --frozen-lockfile
-	yarn build:linux
+    dh $@ --with=systemd
 
 override_dh_auto_install:
-	# Install the binary
-	mkdir -p debian/http-remote-pc-control/usr/bin
-	install -m 755 ../../app debian/http-remote-pc-control/usr/bin/http-remote-pc-control
+    # Install the binary
+    mkdir -p debian/http-remote-pc-control/usr/bin
+    install -m 755 ../../app debian/http-remote-pc-control/usr/bin/http-remote-pc-control
 
-	override_dh_auto_install-arch:
-	# Install systemd service
-	mkdir -p debian/http-remote-pc-control/lib/systemd/system/
-	install -m 644 debian/http-remote-pc-control.service debian/http-remote-pc-control/lib/systemd/system/
+    # Install systemd service if needed
+    mkdir -p debian/http-remote-pc-control/lib/systemd/system/
+    install -m 644 debian/http-remote-pc-control.service debian/http-remote-pc-control/lib/systemd/system/
+
+override_dh_auto_build:
+    # No build step needed as we're using pre-built binary
+    @echo "Skipping build - using pre-built binary"
 
 override_dh_auto_clean:
-	yarn clean
-
-override_dh_auto_test:
-	echo "Skipping tests"
-
-# Enable systemd service
-override_dh_systemd_enable:
-	dh_systemd_enable --name=http-remote-pc-control
-
-# Restart service on upgrade
-override_dh_systemd_start:
-	dh_systemd_start --name=http-remote-pc-control --restart-after-upgrade
+    # Clean up if needed
+    rm -rf debian/http-remote-pc-control

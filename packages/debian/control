@@ -2,17 +2,7 @@ Source: http-remote-pc-control
 Section: utils
 Priority: optional
 Maintainer: Andrew Koidan <deathangel908@gmail.com>
-Build-Depends: debhelper-compat (= 13),
-               dh-make,
-               nodejs (>= 12),
-               yarnpkg,
-               build-essential,
-               libx11-dev,
-               libxtst-dev,
-               libxcb-ewmh-dev,
-               libxcb1-dev,
-               libdbus-1-dev,
-               jq
+Build-Depends: debhelper-compat (= 13), dh-systemd
 Standards-Version: 4.6.1
 Homepage: https://github.com/deathangel908/http-remote-pc-control
 Vcs-Browser: https://github.com/deathangel908/http-remote-pc-control
