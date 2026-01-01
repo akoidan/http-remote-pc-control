@@ -156,7 +156,9 @@ jobs:
       - name: Download linux binary
         uses: actions/download-artifact@v4
         with:
-          name: app.elf
+          names: |
+            app.elf
+            swagger.json
           path: /tmp/artifacts
 
       - name: Prepare package
@@ -169,8 +171,16 @@ jobs:
           sed -i "s/^Version:.*/Version: ${VERSION}/" ./control
           mkdir -p http-remote-pc-control/DEBIAN
           cp control http-remote-pc-control/DEBIAN/
-          install -D -m 755 /tmp/artifacts/app.elf http-remote-pc-control/usr/bin/http-remote-pc-control
-          install -D -m 755 http-remote-pc-control.service http-remote-pc-control/usr/lib/systemd/user/http-remote-pc-control.service
+          pkgdir=http-remote-pc-control
+          artifdir=/tmp/artifacts
+          srcdir=.
+          install -D -m 755 ${artifdir}/app.elf ${pkgdir}/usr/bin/http-remote-pc-control
+          install -D -m 644 ${artifdir}/swagger.json ${pkgdir}/usr/share/http-remote-pc-control/swagger.json
+          install -D -m 755 ${srcdir}/http-remote-pc-control.service ${pkgdir}/usr/lib/systemd/user/http-remote-pc-control.service
+  
+          install -D -m755 "${srcdir}/../arch/http-remote-pc-control-gen-certs.sh" "${pkgdir}/usr/share/http-remote-pc-control/gen-certs"
+          install -D -m644 ../../san.cnf" "${pkgdir}/usr/share/http-remote-pc-control/san.cnf"
+          install -D -m644 "${srcdir}/swagger.json" "${pkgdir}/usr/share/http-remote-pc-control/swagger.json"
           dpkg-deb --build http-remote-pc-control http-remote-pc-control-amd64.deb
 
       - name: Upload Release Asset
