@@ -189,5 +189,5 @@ jobs:
         with:
           upload_url: ${{ github.event.release.upload_url }}
           asset_path: packages/debian/http-remote-pc-control
-          asset_name: app.deb
+          asset_name: http-remote-pc-control.deb
           asset_content_type: application/vnd.debian.binary-package
