@@ -153,32 +153,27 @@ jobs:
     needs: [linux, docs]
     steps:
       - uses: actions/checkout@v3
-      - name: Download linux binary
-        uses: actions/download-artifact@v5
-        with:
-          run-id: ${{ github.event.workflow_run.id }}
-          pattern: "{http-remote-pc-control\.elf,swagger\.json}"
-          merge-multiple: true
-          path: /tmp/artifacts
-
       - name: Prepare package
         env:
           DEBEMAIL: "deathangel908@gmail.com"
           DEBFULLNAME: "Andrew Koidan"
         run: |
+          url="https://github.com/akoidan/http-remote-pc-control"
+          tag="${{ github.event.release.tag_name }}"
+          wget "${url}/releases/download/${tag}/http-remote-pc-control.elf"
+          wget "${url}/releases/download/${tag}/swagger.json"
           VERSION=$(jq -r '.version' ./package.json)
           rootdir=$(pwd)
           srcdir="${rootdir}/packages/debian"
           pkgdir="${srcdir}/http-remote-pc-control"
-          artifdir=/tmp/artifacts
-          cd "$srcdir"
           sed -i "s/^Version:.*/Version: ${VERSION}/" "${srcdir}/control"
           install -D -m 644 "${srcdir}/control" "${pkgdir}/DEBIAN/control"
-          install -D -m 755 "${artifdir}/http-remote-pc-control.elf" "${pkgdir}/usr/bin/http-remote-pc-control"
-          install -D -m 644 "${artifdir}/swagger.json" "${pkgdir}/usr/share/http-remote-pc-control/swagger.json"
+          install -D -m 755 "${rootdir}/http-remote-pc-control.elf" "${pkgdir}/usr/bin/http-remote-pc-control"
+          install -D -m 644 "${rootdir}/swagger.json" "${pkgdir}/usr/share/http-remote-pc-control/swagger.json"
           install -D -m 644 "${rootdir}/packages/http-remote-pc-control.service" "${pkgdir}/usr/lib/systemd/user/http-remote-pc-control.service"
           install -D -m 755 "${rootdir}/packages/gen-certs.sh" "${pkgdir}/usr/share/http-remote-pc-control/gen-certs"
           install -D -m 644 "${rootdir}/san.cnf" "${pkgdir}/usr/share/http-remote-pc-control/san.cnf"
+          cd "$srcdir"
           dpkg-deb --build http-remote-pc-control http-remote-pc-control-amd64.deb
 
       - name: Upload Release Asset
