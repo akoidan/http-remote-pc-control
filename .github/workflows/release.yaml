@@ -39,8 +39,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./app.exe
-          asset_name: app.exe
+          asset_path: ./http-remote-pc-control.exe
+          asset_name: http-remote-pc-control.exe
           asset_content_type: application/vnd.microsoft.portable-executable
   docs:
     runs-on: ubuntu-22.04
@@ -113,8 +113,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./app
-          asset_name: app.elf
+          asset_path: ./http-remote-pc-control.elf
+          asset_name: http-remote-pc-control.elf
           asset_content_type: application/x-executable
 
   aur:
@@ -139,8 +139,8 @@ jobs:
           pkgbuild: ./packages/arch/PKGBUILD
           assets: |
             ./packages/arch/http-remote-pc-control.install
-            ./packages/arch/http-remote-pc-control.service
-            ./packages/arch/http-remote-pc-control*.sh
+            ./packages/http-remote-pc-control.service
+            ./packages/gen-certs.sh
             ./san.cnf
           commit_username: "GitHub Actions Bot"
           updpkgsums: "true"
@@ -158,7 +158,7 @@ jobs:
         with:
           run_id: ${{ github.event.workflow_run.id }}
           names: |
-            app.elf
+            http-remote-pc-control.elf
             swagger.json
           path: /tmp/artifacts
 
@@ -168,20 +168,18 @@ jobs:
           DEBFULLNAME: "Andrew Koidan"
         run: |
           VERSION=$(jq -r '.version' ./package.json)
-          cd packages/debian
-          sed -i "s/^Version:.*/Version: ${VERSION}/" ./control
-          mkdir -p http-remote-pc-control/DEBIAN
-          cp control http-remote-pc-control/DEBIAN/
-          pkgdir=http-remote-pc-control
+          rootdir=$(pwd)
+          srcdir="${rootdir}/packages/debian"
+          pkgdir="${srcdir}/http-remote-pc-control"
           artifdir=/tmp/artifacts
-          srcdir=.
-          install -D -m 755 ${artifdir}/app.elf ${pkgdir}/usr/bin/http-remote-pc-control
-          install -D -m 644 ${artifdir}/swagger.json ${pkgdir}/usr/share/http-remote-pc-control/swagger.json
-          install -D -m 755 ${srcdir}/http-remote-pc-control.service ${pkgdir}/usr/lib/systemd/user/http-remote-pc-control.service
-  
-          install -D -m755 "${srcdir}/../arch/http-remote-pc-control-gen-certs.sh" "${pkgdir}/usr/share/http-remote-pc-control/gen-certs"
-          install -D -m644 ../../san.cnf" "${pkgdir}/usr/share/http-remote-pc-control/san.cnf"
-          install -D -m644 "${srcdir}/swagger.json" "${pkgdir}/usr/share/http-remote-pc-control/swagger.json"
+          cd "$srcdir"
+          sed -i "s/^Version:.*/Version: ${VERSION}/" "${srcdir}/control"
+          install -D -m 644 "${srcdir}/control" "${pkgdir}/DEBIAN/control"
+          install -D -m 755 "${artifdir}/http-remote-pc-control.elf" "${pkgdir}/usr/bin/http-remote-pc-control"
+          install -D -m 644 "${artifdir}/swagger.json" "${pkgdir}/usr/share/http-remote-pc-control/swagger.json"
+          install -D -m 644 "${rootdir}/packages/http-remote-pc-control.service" "${pkgdir}/usr/lib/systemd/user/http-remote-pc-control.service"
+          install -D -m 755 "${rootdir}/packages/gen-certs.sh" "${pkgdir}/usr/share/http-remote-pc-control/gen-certs"
+          install -D -m 644 "${rootdir}/san.cnf" "${pkgdir}/usr/share/http-remote-pc-control/san.cnf"
           dpkg-deb --build http-remote-pc-control http-remote-pc-control-amd64.deb
 
       - name: Upload Release Asset

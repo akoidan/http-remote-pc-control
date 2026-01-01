@@ -26,9 +26,9 @@ Here are instructions for windows, for linux you can just ignore windows specifi
 
 #### Linux
  - You need X11 server + XC Binding  (libX11, libXext, xcb-util-wm, xorg-setxkbmap)
- - Download app.elf from [releases](https://github.com/akoidan/http-remote-pc-control/releases).
+ - Download http-remote-pc-control.elf from [releases](https://github.com/akoidan/http-remote-pc-control/releases).
  - Ensure directory with the executalbe, or project direcotry contains `certs` directory with certificates
- - run `chmod +x app.elf && ./app.elf 5000`
+ - run `chmod +x http-remote-pc-control.elf && ./http-remote-pc-control.elf 5000`
  - If you need autostart check systemd unit for archlinux example https://aur.archlinux.org/cgit/aur.git/snapshot/http-remote-pc-control-git.tar.gz
 
 #### Archlinux
@@ -46,13 +46,13 @@ Here are instructions for windows, for linux you can just ignore windows specifi
  - If it crashes , open powershell and run exe file from it, it's a CLI app.
 
 #### Autostart on Windows OS
-This program has to be started as Admin so it has permision to send keystrokes or move mouse. Add a script to autostart in Windows with admin petrmissions: Replace path to your app.exe:
+This program has to be started as Admin so it has permision to send keystrokes or move mouse. Add a script to autostart in Windows with admin petrmissions: Replace path to your http-remote-pc-control.exe:
 ```shell
 @echo off
 setlocal
 
 :: Replace with the path to your program
-set "ProgramPath=C:\Users\msi\Downloads\app.exe"
+set "ProgramPath=C:\Users\msi\Downloads\http-remote-pc-control.exe"
 set "ProgramName=L2"
 
 :: Create the task in Task Scheduler for admin startup
@@ -124,7 +124,7 @@ ngrok http 5000
 ### Help
 App allows minimal configuration, check the following command for options
 ```bash
-./app.exe --help
+./http-remote-pc-control.exe --help
 ```
 
 ## Develop locally
