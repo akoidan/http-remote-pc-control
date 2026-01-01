@@ -157,9 +157,8 @@ jobs:
         uses: actions/download-artifact@v5
         with:
           run-id: ${{ github.event.workflow_run.id }}
-          pattern: |
-            http-remote-pc-control.elf
-            swagger.json
+          pattern: "{http-remote-pc-control\.elf,swagger\.json}"
+          merge-multiple: true
           path: /tmp/artifacts
 
       - name: Prepare package
