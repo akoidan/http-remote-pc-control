@@ -161,8 +161,8 @@ jobs:
         run: |
           url="https://github.com/akoidan/http-remote-pc-control"
           tag="${{ github.event.release.tag_name }}"
-          wget "${url}/releases/download/${tag}/http-remote-pc-control.elf"
-          wget "${url}/releases/download/${tag}/swagger.json"
+          wget -q "${url}/releases/download/${tag}/http-remote-pc-control.elf"
+          wget -q "${url}/releases/download/${tag}/swagger.json"
           VERSION=$(jq -r '.version' ./package.json)
           rootdir=$(pwd)
           srcdir="${rootdir}/packages/debian"
