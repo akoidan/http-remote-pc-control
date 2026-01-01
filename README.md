@@ -59,7 +59,7 @@ setlocal
 
 :: Replace with the path to your program
 set "ProgramPath=C:\Users\msi\Downloads\http-remote-pc-control.exe"
-set "ProgramName=L2"
+set "ProgramName=RemotePcControl"
 
 :: Create the task in Task Scheduler for admin startup
 schtasks /create /tn "%ProgramName%" /tr "\"%ProgramPath%\"" /sc onlogon /rl highest /f
@@ -100,7 +100,7 @@ import { readFile } from 'fs/promises';
     path: '/app/ping',
     method: 'GET',
     header: {
-      'x-request-id': 'r2d2'
+      'x-request-id': 'r2d2' // unique request id, can be ommited
     },
   }, (res) => {
     let data = '';
