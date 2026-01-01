@@ -156,6 +156,7 @@ jobs:
       - name: Download linux binary
         uses: actions/download-artifact@v4
         with:
+          run_id: ${{ github.event.workflow_run.id }}
           names: |
             app.elf
             swagger.json
