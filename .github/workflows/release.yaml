@@ -39,9 +39,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./app.exe
-          asset_name: app.exe
+          asset_path: ./http-remote-pc-control.exe
+          asset_name: http-remote-pc-control.exe
           asset_content_type: application/vnd.microsoft.portable-executable
+
   docs:
     runs-on: ubuntu-22.04
     permissions: write-all
@@ -113,12 +114,12 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./app
-          asset_name: app.elf
+          asset_path: ./http-remote-pc-control.elf
+          asset_name: http-remote-pc-control.elf
           asset_content_type: application/x-executable
 
   aur:
-    needs: [linux, win32, docs]
+    needs: [linux, docs]
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
@@ -129,21 +130,60 @@ jobs:
         run: |
           TAG=${{ github.event.release.tag_name }}
           VERSION=$(jq -r '.version' package.json)
-          sed -i "s/^pkgver=.*/pkgver=${VERSION}/" ./arch/PKGBUILD
-          sed -i "s/^tag=.*/tag=${TAG}/" ./arch/PKGBUILD
+          sed -i "s/^pkgver=.*/pkgver=${VERSION}/" ./packages/arch/PKGBUILD
+          sed -i "s/^tag=.*/tag=${TAG}/" ./packages/arch/PKGBUILD
 
       - name: Publish to AUR
         uses: KSXGitHub/github-actions-deploy-aur@v4.1.1
         with:
           pkgname: http-remote-pc-control
-          pkgbuild: ./arch/PKGBUILD
+          pkgbuild: ./packages/arch/PKGBUILD
           assets: |
-            ./arch/http-remote-pc-control.install
-            ./arch/http-remote-pc-control.service
-            ./arch/http-remote-pc-control*.sh
+            ./packages/arch/http-remote-pc-control.install
+            ./packages/http-remote-pc-control.service
+            ./packages/gen-certs.sh
             ./san.cnf
           commit_username: "GitHub Actions Bot"
           updpkgsums: "true"
           commit_email: "actions@github.com"
           ssh_private_key: ${{ secrets.PK_ARCH }}
           push_timeout: 1m
+
+  deb:
+    runs-on: ubuntu-22.04
+    needs: [linux, docs]
+    permissions: write-all
+    steps:
+      - uses: actions/checkout@v3
+      - name: Prepare package
+        env:
+          DEBEMAIL: "deathangel908@gmail.com"
+          DEBFULLNAME: "Andrew Koidan"
+        run: |
+          url="https://github.com/akoidan/http-remote-pc-control"
+          tag="${{ github.event.release.tag_name }}"
+          wget -q "${url}/releases/download/${tag}/http-remote-pc-control.elf"
+          wget -q "${url}/releases/download/${tag}/swagger.json"
+          VERSION=$(jq -r '.version' ./package.json)
+          rootdir=$(pwd)
+          srcdir="${rootdir}/packages/debian"
+          pkgdir="${srcdir}/http-remote-pc-control"
+          sed -i "s/^Version:.*/Version: ${VERSION}/" "${srcdir}/control"
+          install -D -m 644 "${srcdir}/control" "${pkgdir}/DEBIAN/control"
+          install -D -m 755 "${rootdir}/http-remote-pc-control.elf" "${pkgdir}/usr/bin/http-remote-pc-control"
+          install -D -m 644 "${rootdir}/swagger.json" "${pkgdir}/usr/share/http-remote-pc-control/swagger.json"
+          install -D -m 644 "${rootdir}/packages/http-remote-pc-control.service" "${pkgdir}/usr/lib/systemd/user/http-remote-pc-control.service"
+          install -D -m 755 "${rootdir}/packages/gen-certs.sh" "${pkgdir}/usr/share/http-remote-pc-control/gen-certs"
+          install -D -m 644 "${rootdir}/san.cnf" "${pkgdir}/usr/share/http-remote-pc-control/san.cnf"
+          cd "$srcdir"
+          dpkg-deb --build http-remote-pc-control http-remote-pc-control-amd64.deb
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: packages/debian/http-remote-pc-control-amd64.deb
+          asset_name: http-remote-pc-control.deb
+          asset_content_type: application/vnd.debian.binary-package

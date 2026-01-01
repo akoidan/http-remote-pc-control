@@ -11,49 +11,55 @@ You can also use https://github.com/akoidan/hotkey-hub for doing this via system
 
 ### Certificates
 The client server app both rely on [mutual TLS authentication](https://www.cloudflare.com/learning/access-management/what-is-mutual-tls/).
-You can use my helper script to generate certificates with [gen-cert.sh](./gen-cert.sh). Download it and run it with bash.
+If you use a package (Ubuntu/Debian/Archlinux) the service will generate certificates for you. No actions are required. For Windows or other Linux distros you can use my helper script to generate certificates with [gen-cert.sh](./gen-cert.sh). Download it and run it with bash.
 
 ```bash
 bash ./gen-cert.sh all
 ```
+Note that on Windows you need bash, you can either use [git bash](https://git-scm.com/install/windows) or [WSL](https://learn.microsoft.com/en-us/windows/wsl/install)
 
 You have to:
- - Copy ./gencert/server into ./certs directory where app executable is
- - Copy ./gencert/client into ./certs on the remote PC from where you use the api. The client PC should not validate domain name.
+- Copy ./gencert/server into ./certs directory where app executable is
+- Copy ./gencert/client into ./certs on the remote PC from where you use the api. The client PC should not validate domain name.
 
-### Download the app
-Here are instructions for windows, for linux you can just ignore windows specific intructions.
-
-#### Linux
- - You need X11 server + XC Binding  (libX11, libXext, xcb-util-wm, xorg-setxkbmap)
- - Download app.elf from [releases](https://github.com/akoidan/http-remote-pc-control/releases).
- - Ensure directory with the executalbe, or project direcotry contains `certs` directory with certificates
- - run `chmod +x app.elf && ./app.elf 5000`
- - If you need autostart check systemd unit for archlinux example https://aur.archlinux.org/cgit/aur.git/snapshot/http-remote-pc-control-git.tar.gz
+### Ubuntu
+ - Install dependencies `sudo apt-get install libxcb-ewmh2 libxtst6 libxcb-ewmh2 libxcb1 libdbus-1-3` if you dont have them yet 
+ - Download `http-remote-pc-control.deb` from [releases](https://github.com/akoidan/http-remote-pc-control/releases).
+ - Install the package `sudo dpkg -i http-remote-pc-control.deb`
+ - Start the service with the same user as logged in X `systemctl --user start http-remote-pc-control`
+ - You will find certificates in `~/.local/share/http-remote-pc-control/certs`
+ - You will openapi documentation in  `/usr/share/http-remote-pc-control/swagger.json`
 
 #### Archlinux
- - `yay -S http-remote-pc-control`
- - `systemctl --user start http-remote-pc-control` withing the same user as logged in X
+ - Install the package with `yay` or `paru` from AUR `yay -S http-remote-pc-control`
+ - Start the service with the same user as logged in X `systemctl --user start http-remote-pc-control`
  - You will find certificates in `~/.local/share/http-remote-pc-control/certs`
- - You will swagger documentation in  `/usr/share/http-remote-pc-control/swagger.json`
+ - You will openapi documentation in  `/usr/share/http-remote-pc-control/swagger.json`
+
+#### Other Linux distro
+- You need X11 server + XC Binding  (libX11, libXext, xcb-util-wm, xorg-setxkbmap)
+- Download `http-remote-pc-control.elf` from [releases](https://github.com/akoidan/http-remote-pc-control/releases).
+- Ensure directory with the executalbe, or project direcotry contains `certs` directory with certificates
+- run `chmod +x http-remote-pc-control.elf && ./http-remote-pc-control.elf 5000`
+- If you need systemd unit, check [http-remote-pc-control.service](./packages/http-remote-pc-control.service)
 
 #### Windows
- - Download client you want to receive shorcuts [releases](https://github.com/akoidan/http-remote-pc-control/releases).
+ - Download `http-remote-pc-control.exe` from [releases](https://github.com/akoidan/http-remote-pc-control/releases).
  - If Antivirus deletes a file, you can allow it in **Virus & threat protection** -> **Protection History** -> Expaned recently blocked threat and allow it
- - Ensure directory with the executalbe, or project direcotry contains `certs` directory with certificates
+ - Ensure directory with the executalbe, or project direcotry contains `certs` directory with certificates (check step above)
  - Run exe files as Administrator. 
  - If windows antivirus complains about security Open **Virus & threat protection** -> **Virus & threat protection settings** -> **Exclusions Add or remove exclusions** -> **Add an exclusion**. 
- - If it crashes , open powershell and run exe file from it, it's a CLI app.
+ - If it crashes, open powershell and run exe file from it, it's a CLI app.
 
 #### Autostart on Windows OS
-This program has to be started as Admin so it has permision to send keystrokes or move mouse. Add a script to autostart in Windows with admin petrmissions: Replace path to your app.exe:
+This program has to be started as Admin so it has permision to send keystrokes or move mouse. Add a script to autostart in Windows with admin petrmissions: Replace path to your http-remote-pc-control.exe:
 ```shell
 @echo off
 setlocal
 
 :: Replace with the path to your program
-set "ProgramPath=C:\Users\msi\Downloads\app.exe"
-set "ProgramName=L2"
+set "ProgramPath=C:\Users\msi\Downloads\http-remote-pc-control.exe"
+set "ProgramName=RemotePcControl"
 
 :: Create the task in Task Scheduler for admin startup
 schtasks /create /tn "%ProgramName%" /tr "\"%ProgramPath%\"" /sc onlogon /rl highest /f
@@ -67,56 +73,59 @@ echo Failed to add program to startup.
 pause
 ```
 
-## Example
+## Client example
+
+You can call the api programmaticaly via https my providing client private key, CA certificate and client certificate that was signed with CA certificate. Server uses certificate that was also signed by CA
 
 ```typescript
 import {
   Agent,
   request,
 } from 'https';
+import { readFile } from 'fs/promises';
 
-let data = '';
-const req = request({
-  agent: new Agent({
-    cert, // string
-    key, // string
-    ca, // string
-    rejectUnauthorized: true, // force to fail upon wrong public keys
-    checkServerIdentity: () => undefined, // we don't care about domain name, since we rely on PK in mtls
-  }),
-  port: 5000,
-  host: 'server.remote.ip.address',
-  protocol: 'https:',
-  path: '/app/ping',
-  method: 'GET',
-  header: {
-    'x-request-id': 'r2d2'
-  },
-}, (res) => {
+(async function main() {
   let data = '';
-  res.on('data', (chunk: string) => (data += chunk));
-  res.on('end', () => {
-    if (res.statusCode! < 400) {
-      console.error(res.statusCode);
-    } else {
-      console.log(data)
-    }
+  const req = request({
+    agent: new Agent({
+      cert: await readFile('./gencert/client/cert.pem', 'utf8'),
+      key: await readFile('./gencert/client/key.pem', 'utf8'),
+      ca: await readFile('./gencert/client/ca-cert.pem', 'utf8'),
+      rejectUnauthorized: true, // force to fail upon wrong public keys
+      checkServerIdentity: () => undefined, // we don't care about domain name, since we rely on PK in mtls
+    }),
+    port: 5000,
+    host: 'localhost', // replace with remote IP
+    protocol: 'https:',
+    path: '/app/ping',
+    method: 'GET',
+    header: {
+      'x-request-id': 'r2d2' // unique request id, can be ommited
+    },
+  }, (res) => {
+    let data = '';
+    res.on('data', (chunk: string) => (data += chunk));
+    res.on('end', () => {
+      if (res.statusCode! < 400) {
+        console.debug('.');
+      } else {
+        console.log(data)
+      }
+    });
+    res.on('error', (error: Error) => console.error(error));
   });
-  res.on('error', (error: Error) => console.error(error));
-});
+})()
+
 
 ```
 
 ### Api documentation
-You can find api documentation under [releases](https://github.com/akoidan/http-remote-pc-control/releases). You can put this file into any swagger ui, e.g. [Swagger Editor](https://editor.swagger.io/). This file can be generated locally with
-```bash
-yarn schema:swagger
-```
+You can find openapi documentation at `swagger.json` under [releases](https://github.com/akoidan/http-remote-pc-control/releases).
+You can put this file into any swagger ui, e.g. [Swagger Editor](https://editor.swagger.io/)
 
-This will create ./swagger.json in the project directory.
 
 ### NAT
-If your current PC doesn't have a static IP or under NAT, you can use VPN or some 3rd party service like [ngrok](https://ngrok.com/) [localtunel](https://github.com/localtunnel/localtunnel) or [cloudflared](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/) to expose it to the world. Example with ngrock:
+If your current PC doesn't have a static IP or under [NAT](https://en.wikipedia.org/wiki/Network_address_translation), you can use VPN or some 3rd party service like [ngrok](https://ngrok.com/) [localtunel](https://github.com/localtunnel/localtunnel) or [cloudflared](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/) to expose it to the world. Example with ngrock:
 ```bash
 ngrok http 5000
 ```
@@ -124,7 +133,7 @@ ngrok http 5000
 ### Help
 App allows minimal configuration, check the following command for options
 ```bash
-./app.exe --help
+./http-remote-pc-control.exe --help
 ```
 
 ## Develop locally

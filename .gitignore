@@ -11,8 +11,9 @@ swagger.json
 app
 cmake-build-debug
 .idea
-arch/pkg
-arch/src
-arch/src
-arch/http-remote-pc-control
-arch/http-remote-pc-control-*
+packages/arch/pkg
+packages/arch/src
+packages/arch/src
+packages/arch/http-remote-pc-control
+.secrets
+private.key
