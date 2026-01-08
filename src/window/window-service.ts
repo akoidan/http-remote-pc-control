@@ -98,9 +98,6 @@ export class WindowService {
   }
 
   public setWindowBounds(wid: number, bounds: MonitorBounds): void {
-    if (!['win32'].includes(this.os)) {
-      throw new NotImplementedException(`Unsupported platform: ${this.os}`);
-    }
     try {
       this.logger.log(`Calling setWindowBounds for #${wid} to ${JSON.stringify(bounds)}`);
       this.addon.setWindowBounds(wid, bounds);

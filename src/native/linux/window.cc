@@ -208,6 +208,36 @@ Napi::Object getActiveWindowInfo(const Napi::CallbackInfo& info) {
     return result;
 }
 
+Napi::Boolean setWindowBounds(const Napi::CallbackInfo& info) {
+    DEBUG_LOG("setWindowBounds called");
+    Napi::Env env = info.Env();
+
+    if (!ensure_xcb_initialized()) {
+        throw Napi::Error::New(env, "Failed to initialize XCB connection");
+    }
+
+    xcb_window_t window_id = static_cast<xcb_window_t>(info[0].ToNumber().Int64Value());
+
+    Napi::Object bounds = info[1].As<Napi::Object>();
+    int x = bounds.Get("x").ToNumber().Int32Value();
+    int y = bounds.Get("y").ToNumber().Int32Value();
+    int width = bounds.Get("width").ToNumber().Int32Value();
+    int height = bounds.Get("height").ToNumber().Int32Value();
+
+    if (width <= 0 || height <= 0) {
+        throw Napi::Error::New(env, "Invalid window dimensions");
+    }
+
+    uint32_t values[] = { (uint32_t)x, (uint32_t)y, (uint32_t)width, (uint32_t)height };
+    xcb_configure_window(connection, window_id,
+                         XCB_CONFIG_WINDOW_X | XCB_CONFIG_WINDOW_Y | XCB_CONFIG_WINDOW_WIDTH | XCB_CONFIG_WINDOW_HEIGHT,
+                         values);
+    xcb_flush(connection);
+
+    DEBUG_LOG("Window bounds set for ID: %lu", (unsigned long)window_id);
+    return Napi::Boolean::New(env, true);
+}
+
 Napi::Object window_init(Napi::Env env, Napi::Object exports) {
     DEBUG_LOG("Initializing window.cc");
     exports.Set("getWindows", Napi::Function::New(env, getWindows));
@@ -215,5 +245,6 @@ Napi::Object window_init(Napi::Env env, Napi::Object exports) {
     exports.Set("bringWindowToTop", Napi::Function::New(env, bringWindowToTop));
     exports.Set("getActiveWindow", Napi::Function::New(env, getActiveWindow));
     exports.Set("getActiveWindowInfo", Napi::Function::New(env, getActiveWindowInfo));
+    exports.Set("setWindowBounds", Napi::Function::New(env, setWindowBounds));
     return exports;
 }
