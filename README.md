@@ -5,7 +5,7 @@ Allows to remotely control this PC using http api. Events like:
  - Running executabe files or killing executable
  - Operating windows, like focus, resize
 
-You can also use https://github.com/akoidan/hotkey-hub for doing this via system wide keyboard shortcut from a remote PC.
+You can also use [hotkey-hub](https://github.com/akoidan/hotkey-hub) for managing PC via system wide keyboard shortcut on a remote PC.
 
 ## Get started
 
