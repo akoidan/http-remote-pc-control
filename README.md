@@ -29,12 +29,14 @@ You have to:
  - Start the service with the same user as logged in X `systemctl --user start http-remote-pc-control`
  - You will find certificates in `~/.local/share/http-remote-pc-control/certs`
  - You will openapi documentation in  `/usr/share/http-remote-pc-control/swagger.json`
+ - To view logs check `journalctl --user -o cat -u http-remote-pc-control -f`
 
 #### Archlinux
  - Install the package with `yay` or `paru` from AUR `yay -S http-remote-pc-control`
  - Start the service with the same user as logged in X `systemctl --user start http-remote-pc-control`
  - You will find certificates in `~/.local/share/http-remote-pc-control/certs`
  - You will openapi documentation in  `/usr/share/http-remote-pc-control/swagger.json`
+ - To view logs check `journalctl --user -o cat -u http-remote-pc-control -f`
 
 #### Other Linux distro
 - You need X11 server + XC Binding  (libX11, libXext, xcb-util-wm, xorg-setxkbmap)
@@ -74,7 +76,6 @@ pause
 ```
 
 ## Client example
-
 You can call the api programmaticaly via https my providing client private key, CA certificate and client certificate that was signed with CA certificate. Server uses certificate that was also signed by CA
 
 ```typescript
@@ -115,14 +116,11 @@ import { readFile } from 'fs/promises';
     res.on('error', (error: Error) => console.error(error));
   });
 })()
-
-
 ```
 
 ### Api documentation
 You can find openapi documentation at `swagger.json` under [releases](https://github.com/akoidan/http-remote-pc-control/releases).
 You can put this file into any swagger ui, e.g. [Swagger Editor](https://editor.swagger.io/)
-
 
 ### NAT
 If your current PC doesn't have a static IP or under [NAT](https://en.wikipedia.org/wiki/Network_address_translation), you can use VPN or some 3rd party service like [ngrok](https://ngrok.com/) [localtunel](https://github.com/localtunnel/localtunnel) or [cloudflared](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/) to expose it to the world. Example with ngrock:
@@ -133,7 +131,7 @@ ngrok http 5000
 ### Help
 App allows minimal configuration, check the following command for options
 ```bash
-./http-remote-pc-control.exe --help
+./http-remote-pc-control --help
 ```
 
 ## Develop locally
