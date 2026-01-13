@@ -1,6 +1,6 @@
 #pragma once
 #include "napi.h"
-Napi::Object init_mouse(Napi::Env env, Napi::Object exports);
+Napi::Object mouse_init(Napi::Env env, Napi::Object exports);
 
 struct MMPoint {
   int64_t x;

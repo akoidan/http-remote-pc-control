@@ -13,7 +13,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
   keyboard_init(env, exports);
 
   // Initialize mouse functions
-  init_mouse(env, exports);
+  mouse_init(env, exports);
 
   // Initialize monitor functions
   monitor_init(env, exports);

@@ -131,7 +131,7 @@ Napi::Object _getMousePos(const Napi::CallbackInfo& info) {
   return obj;
 }
 
-Napi::Object init_mouse(Napi::Env env, Napi::Object exports) {
+Napi::Object mouse_init(Napi::Env env, Napi::Object exports) {
   exports.Set(Napi::String::New(env, "mouseMove"), Napi::Function::New(env, _moveMouse));
   exports.Set(Napi::String::New(env, "mouseClick"), Napi::Function::New(env, _mouseClick));
   exports.Set(Napi::String::New(env, "getMousePos"), Napi::Function::New(env, _getMousePos));

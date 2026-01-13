@@ -132,7 +132,7 @@ std::wstring utf8_to_utf16(const char* str) {
     }
 }
 
-void typeString(const char* str) {
+void typeString(const char* str, Napi::Env env) {
     // Ensure Caps Lock is disabled before typing
     ensureCapsLockDisabled();
 
@@ -160,7 +160,7 @@ void typeString(const char* str) {
                 << " from=0x" << std::hex << reinterpret_cast<uintptr_t>(currentLayout)
                 << " to=0x" << std::hex << reinterpret_cast<uintptr_t>(neededLayout);
             LOG(oss.str());
-            SetThreadKeyboardLayout(neededLayout);
+            SetThreadKeyboardLayout(neededLayout, env);
             currentLayout = neededLayout;
             Sleep(50);
             // wait timeout so first letters typging is not affected by lang changed
@@ -168,20 +168,13 @@ void typeString(const char* str) {
 
         // Get virtual key and modifiers for the character
         UINT virtualKey, modifiers;
-        if (GetVirtualKeyForChar(wc, currentLayout, &virtualKey, &modifiers)) {
+        GetVirtualKeyForChar(wc, currentLayout, &virtualKey, &modifiers, env);
             // Convert Windows modifiers to our flags
-            unsigned int flags = getModifiersFromWindowsBits(modifiers);
+        unsigned int flags = getModifiersFromWindowsBits(modifiers);
 
-            // Use toggleKeyCode to handle the keypress with modifiers
-            toggleKeyCode(virtualKey, true, flags);
-            toggleKeyCode(virtualKey, false, flags);
-        }
-        else {
-            std::ostringstream oss;
-            oss << "Unable to map character U+" << std::uppercase << std::hex << static_cast<unsigned int>(wc)
-                << " to a virtual key for current layout";
-            LOG(oss.str());
-        }
+        // Use toggleKeyCode to handle the keypress with modifiers
+        toggleKeyCode(virtualKey, true, flags);
+        toggleKeyCode(virtualKey, false, flags);
     }
     // Restore the original layout, wait timeout so last letter typing is not affected by lang change
     // leave the layout as it was, fuck it
@@ -212,11 +205,10 @@ unsigned int getAllFlags(napi_env env, napi_value value) {
     return flags;
 }
 
-unsigned int assignKeyCode(const char* keyName) {
+unsigned int assignKeyCode(const char* keyName, Napi::Env env) {
     if (strlen(keyName) == 1) {
         return VkKeyScan(keyName[0]);
     }
-    unsigned int res = 0;
     KeyNames* kn = key_names;
     while (kn->name) {
         if (_stricmp(keyName, kn->name) == 0) {
@@ -224,14 +216,14 @@ unsigned int assignKeyCode(const char* keyName) {
         }
         kn++;
     }
-    return 0;
+    throw Napi::Error::New(env, "Keycode not found");
 }
 
 void _keyTap(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
     unsigned int flags = getAllFlags(env, info[1]);
     std::string keyName = info[0].As<Napi::String>();
-    unsigned int key = assignKeyCode(keyName.c_str());
+    unsigned int key = assignKeyCode(keyName.c_str(), env);
     toggleKeyCode(key, true, flags);
     toggleKeyCode(key, false, flags);
 }
@@ -244,14 +236,14 @@ void _keyToggle(const Napi::CallbackInfo& info) {
     unsigned int flags = getAllFlags(env, info[1]);
 
     std::string keyName = info[0].As<Napi::String>();
-    unsigned int key = assignKeyCode(keyName.c_str());
+    unsigned int key = assignKeyCode(keyName.c_str(), env);
 
     toggleKeyCode(key, down, flags);
 }
 
 void _typeString(const Napi::CallbackInfo& info) {
     std::string str = info[0].As<Napi::String>();
-    typeString(str.c_str());
+    typeString(str.c_str(), info.Env());
 }
 
 void _setKeyboardLayout(const Napi::CallbackInfo& info) {

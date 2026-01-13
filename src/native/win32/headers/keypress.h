@@ -11,6 +11,3 @@ struct KeyModifier {
 };
 
 Napi::Object keyboard_init(Napi::Env env, Napi::Object exports);
-
-// Set keyboard layout by layout ID (e.g., "00000409" for US English)
-Napi::Value SetKeyboardLayout(const Napi::CallbackInfo& info);

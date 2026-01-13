@@ -16,4 +16,4 @@ void moveMouse(MMPoint point);
 MMPoint getMousePos();
 void toggleMouse(bool down, unsigned int button);
 void clickMouse(unsigned int button);
-Napi::Object init_mouse(Napi::Env env, Napi::Object exports);
+Napi::Object mouse_init(Napi::Env env, Napi::Object exports);

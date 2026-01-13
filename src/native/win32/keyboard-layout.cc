@@ -92,12 +92,14 @@ HKL GetKeyboardLayoutForLanguage(const char* languageCode) {
   return GetCurrentKeyboardLayout();
 }
 
-bool SetThreadKeyboardLayout(HKL layout) {
-  if (!layout) return false;
+void SetThreadKeyboardLayout(HKL layout, Napi::Env env) {
+  if (!layout) {
+    throw Napi::Error::New(env, "Cannot set null layout");
+  };
 
   // First, check if the layout is installed
   if (!IsKeyboardLayoutInstalled(layout)) {
-    return false;
+    throw Napi::Error::New(env, "Current keyboard layout is not installed or not found");
   }
 
   // Get the foreground window which represents active application
@@ -117,18 +119,16 @@ bool SetThreadKeyboardLayout(HKL layout) {
 
   // Also set for our thread
   ActivateKeyboardLayout(layout, KLF_SETFORPROCESS | KLF_REORDER);
-
-  return true;
 }
 
-HKL SaveAndSetKeyboardLayout(HKL newLayout) {
+HKL SaveAndSetKeyboardLayout(HKL newLayout, Napi::Env env) {
   HKL currentLayout = GetCurrentKeyboardLayout();
-  SetThreadKeyboardLayout(newLayout);
+  SetThreadKeyboardLayout(newLayout, env);
   return currentLayout;
 }
 
-void RestoreKeyboardLayout(HKL savedLayout) {
-  SetThreadKeyboardLayout(savedLayout);
+void RestoreKeyboardLayout(HKL savedLayout, Napi::Env env) {
+  SetThreadKeyboardLayout(savedLayout, env);
 }
 
 // Set keyboard layout by layout ID string (e.g., "00000409" for US English)
@@ -209,13 +209,14 @@ const char* DetectLanguageFromChar(wchar_t ch) {
   return "en"; // Default to English
 }
 
-bool GetVirtualKeyForChar(wchar_t ch, HKL layout, UINT* virtualKey, UINT* modifiers) {
+void GetVirtualKeyForChar(wchar_t ch, HKL layout, UINT* virtualKey, UINT* modifiers, Napi::Env env) {
   SHORT vk = VkKeyScanExW(ch, layout);
-  if (vk == -1) return false;
+  if (vk == -1) {
+    throw Napi::Error::New(env, "Unable to map character to virtual key");
+  };
 
   *virtualKey = LOBYTE(vk);
   *modifiers = HIBYTE(vk);
-  return true;
 }
 
 bool isCapsLockEnabled() {
