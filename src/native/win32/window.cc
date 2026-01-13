@@ -50,7 +50,11 @@ Process getWindowProcess(HWND handle, Napi::Env env) {
   DWORD dwSize{MAX_PATH};
   wchar_t exeName[MAX_PATH]{};
 
-  QueryFullProcessImageNameW(pHandle, 0, exeName, &dwSize);
+  if (!QueryFullProcessImageNameW(pHandle, 0, exeName, &dwSize)) {
+    DWORD err = GetLastError();
+    CloseHandle(pHandle);
+    throw Napi::Error::New(env, "QueryFullProcessImageNameW failed err=" + std::to_string(err));
+  }
 
   CloseHandle(pHandle);
 
