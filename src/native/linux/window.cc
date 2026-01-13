@@ -115,7 +115,6 @@ std::vector<WindowInfo> get_all_windows() {
 }
 
 Napi::Array getWindows(const Napi::CallbackInfo& info) {
-    DEBUG_LOG("getWindows called");
     Napi::Env env = info.Env();
     auto windows = get_all_windows();
 
@@ -123,13 +122,11 @@ Napi::Array getWindows(const Napi::CallbackInfo& info) {
     for (size_t i = 0; i < windows.size(); i++) {
         arr.Set(i, Napi::Number::New(env, static_cast<int64_t>(windows[i].id)));
     }
-
-    DEBUG_LOG("Returning %zu windows", windows.size());
     return arr;
 }
 
 Napi::Object initWindow(const Napi::CallbackInfo& info) {
-    DEBUG_LOG("initWindow called");
+
     Napi::Env env = info.Env();
 
     xcb_window_t window_id = static_cast<xcb_window_t>(info[0].ToNumber().Int64Value());
@@ -137,7 +134,6 @@ Napi::Object initWindow(const Napi::CallbackInfo& info) {
 
     pid_t pid = get_window_pid(window_id);
     std::string path = get_process_path(pid);
-    DEBUG_LOG("Result - PID: %d, Path: %s", pid, path.c_str());
 
     Napi::Object obj = Napi::Object::New(env);
     obj.Set("processId", Napi::Number::New(env, pid));
@@ -147,7 +143,6 @@ Napi::Object initWindow(const Napi::CallbackInfo& info) {
 }
 
 Napi::Boolean bringWindowToTop(const Napi::CallbackInfo& info) {
-    DEBUG_LOG("bringWindowToTop called");
     Napi::Env env = info.Env();
 
     if (!ensure_xcb_initialized()) {
@@ -178,27 +173,21 @@ Napi::Boolean bringWindowToTop(const Napi::CallbackInfo& info) {
     xcb_set_input_focus(connection, XCB_INPUT_FOCUS_POINTER_ROOT, window_id, XCB_CURRENT_TIME);
     xcb_flush(connection);
 
-    DEBUG_LOG("Window activation request sent");
     return Napi::Boolean::New(env, true);
 }
 
 Napi::Number getActiveWindow(const Napi::CallbackInfo& info) {
-    DEBUG_LOG("getActiveWindow called");
     Napi::Env env = info.Env();
     xcb_window_t active = get_active_window();
     return Napi::Number::New(env, static_cast<int64_t>(active));
 }
 
 Napi::Object getActiveWindowInfo(const Napi::CallbackInfo& info) {
-    DEBUG_LOG("getActiveWindowInfo called");
     Napi::Env env = info.Env();
 
     xcb_window_t window = get_active_window();
     pid_t pid = get_window_pid(window);
     std::string path = get_process_path(pid);
-
-    DEBUG_LOG("Active window - ID: %lu, PID: %d, Path: %s", 
-              (unsigned long)window, pid, path.c_str());
 
     Napi::Object result = Napi::Object::New(env);
     result.Set("wid", Napi::Number::New(env, static_cast<int64_t>(window)));
@@ -209,7 +198,6 @@ Napi::Object getActiveWindowInfo(const Napi::CallbackInfo& info) {
 }
 
 Napi::Boolean setWindowBounds(const Napi::CallbackInfo& info) {
-    DEBUG_LOG("setWindowBounds called");
     Napi::Env env = info.Env();
 
     if (!ensure_xcb_initialized()) {
@@ -234,12 +222,10 @@ Napi::Boolean setWindowBounds(const Napi::CallbackInfo& info) {
                          values);
     xcb_flush(connection);
 
-    DEBUG_LOG("Window bounds set for ID: %lu", (unsigned long)window_id);
     return Napi::Boolean::New(env, true);
 }
 
 Napi::Object window_init(Napi::Env env, Napi::Object exports) {
-    DEBUG_LOG("Initializing window.cc");
     exports.Set("getWindows", Napi::Function::New(env, getWindows));
     exports.Set("initWindow", Napi::Function::New(env, initWindow));
     exports.Set("bringWindowToTop", Napi::Function::New(env, bringWindowToTop));
