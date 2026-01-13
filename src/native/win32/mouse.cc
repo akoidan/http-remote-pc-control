@@ -63,12 +63,21 @@ MMPoint getMousePos(Napi::Env env) {
 
   // Ensure the position is within bounds
   if (pos.x < 0) {
-    LOG("Found window - ID: %lu, PID: %d", point.x, point.y);
+    LOG("Cursor pos x=%ld is smaller than 0, setting 0", (long)point.x);
     pos.x = 0;
   }
-  if (pos.y < 0) pos.y = 0;
-  if (pos.x >= width) pos.x = width - 1;
-  if (pos.y >= height) pos.y = height - 1;
+  if (pos.y < 0) {
+    LOG("Cursor pos y=%ld is smaller than 0, setting 0", (long)point.y);
+    pos.y = 0;
+  }
+  if (pos.x >= width) {
+    LOG("Cursor pos x=%ld is greater than width %ld, setting %ld", (long)point.y, long(width), long(height - 1));
+    pos.x = width - 1;
+  }
+  if (pos.y >= height) {
+    LOG("Cursor pos y=%ld is greater than height %ld, setting %ld", (long)point.y, long(height), long(height - 1));
+    pos.y = height - 1;
+  }
 
   return pos;
 }

@@ -19,11 +19,6 @@
 
 typedef int (__stdcall*lp_GetScaleFactorForMonitor)(HMONITOR, DEVICE_SCALE_FACTOR*);
 
-struct Process {
-  int pid;
-  std::string path;
-};
-
 
 std::wstring get_wstring(const std::string str) {
   return std::wstring(str.begin(), str.end());
@@ -39,11 +34,18 @@ std::string toUtf8(const std::wstring& str) {
   return ret;
 }
 
-Process getWindowProcess(HWND handle) {
+Process getWindowProcess(HWND handle, Napi::Env env) {
   DWORD pid{0};
-  GetWindowThreadProcessId(handle, &pid);
+  DWORD tid = GetWindowThreadProcessId(handle, &pid);
+  if (tid == 0) {
+    throw Napi::Error::New(env, "Windows API failed to get window for current process id");
+  }
 
-  HANDLE pHandle{OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, false, pid)};
+  HANDLE pHandle = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, pid);
+  if (!pHandle) {
+    DWORD err = GetLastError();
+    throw Napi::Error::New(env, "OpenProcess failed err=" + std::to_string(err));
+  }
 
   DWORD dwSize{MAX_PATH};
   wchar_t exeName[MAX_PATH]{};
