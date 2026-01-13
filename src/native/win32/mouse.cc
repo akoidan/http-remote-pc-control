@@ -105,9 +105,7 @@ void clickMouse(unsigned int button) {
   POINT p;
   GetCursorPos(&p);
   const char* btn = (button == LEFT_BUTTON ? "left" : (button == RIGHT_BUTTON ? "right" : "middle"));
-  std::ostringstream oss;
-  oss << "mouse click button=" << btn << " at (" << p.x << "," << p.y << ")";
-  LOG(oss.str());
+  LOG("mouse click button=%s at (%ld,%ld)", btn, (long)p.x, (long)p.y);
   toggleMouse(true, button);
   toggleMouse(false, button);
 }
@@ -135,7 +133,7 @@ void _moveMouse(const Napi::CallbackInfo& info) {
 
 Napi::Object _getMousePos(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
-  MMPoint p = getMousePos();
+  MMPoint p = getMousePos(env);
   Napi::Object obj = Napi::Object::New(env);
   obj.Set("x", Napi::Number::New(env, p.x));
   obj.Set("y", Napi::Number::New(env, p.y));

@@ -155,11 +155,10 @@ void typeString(const char* str, Napi::Env env) {
         HKL neededLayout = GetKeyboardLayoutForLanguage(detectedLang);
 
         if (neededLayout != currentLayout) {
-            std::ostringstream oss;
-            oss << "Switching keyboard layout lang=" << detectedLang
-                << " from=0x" << std::hex << reinterpret_cast<uintptr_t>(currentLayout)
-                << " to=0x" << std::hex << reinterpret_cast<uintptr_t>(neededLayout);
-            LOG(oss.str());
+            LOG("Switching keyboard layout lang=%s from=0x%p to=0x%p", 
+               detectedLang, 
+               reinterpret_cast<void*>(currentLayout), 
+               reinterpret_cast<void*>(neededLayout));
             SetThreadKeyboardLayout(neededLayout, env);
             currentLayout = neededLayout;
             Sleep(50);
