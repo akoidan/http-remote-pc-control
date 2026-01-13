@@ -54,13 +54,13 @@ interface WindowNativeModule {
 
   isWindowVisible(id: number): boolean;
 
-  setWindowBounds(id: number, bounds: MonitorBounds): boolean;
+  setWindowBounds(id: number, bounds: MonitorBounds): void;
 
-  showWindow(id: number, type: WindowAction): boolean;
+  showWindow(id: number, type: WindowAction): void;
 
-  setWindowOpacity(id: number, opacity: number): boolean;
+  setWindowOpacity(id: number, opacity: number): void;
 
-  toggleWindowTransparency(id: number, toggle: boolean): boolean;
+  toggleWindowTransparency(id: number, toggle: boolean): void;
 
   setWindowOwner(id: number, owner: number): boolean;
 

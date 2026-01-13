@@ -176,8 +176,7 @@ Napi::Value _setKeyboardLayout(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
 
     if (info.Length() < 1 || !info[0].IsString()) {
-        Napi::TypeError::New(env, "String expected (layout ID)").ThrowAsJavaScriptException();
-        return env.Undefined();
+        throw Napi::Error::New(env, "String expected (layout ID)");
     }
 
     std::string layoutId = info[0].As<Napi::String>();
@@ -203,8 +202,7 @@ Napi::Value _setKeyboardLayout(const Napi::CallbackInfo& info) {
                 if (i < availableLayouts.size() - 1) availableList += ", ";
             }
             
-            Napi::TypeError::New(env, "Layout '" + layoutId + "' not found. Available layouts: " + availableList).ThrowAsJavaScriptException();
-            return env.Undefined();
+            throw Napi::Error::New(env, "Layout '" + layoutId + "' not found. Available layouts: " + availableList);
         }
         
         // Layout is available, try to switch to it by index
@@ -212,8 +210,7 @@ Napi::Value _setKeyboardLayout(const Napi::CallbackInfo& info) {
             return env.Undefined();
         }
         
-        Napi::TypeError::New(env, "Failed to switch to layout '" + layoutId + "' via KDE DBus").ThrowAsJavaScriptException();
-        return env.Undefined();
+        throw Napi::Error::New(env, "Failed to switch to layout '" + layoutId + "' via KDE DBus");
     }
     
     // Fallback to direct XKB group switching (works on non-KDE systems or when DBus is unavailable)
@@ -222,6 +219,5 @@ Napi::Value _setKeyboardLayout(const Napi::CallbackInfo& info) {
     }
     
     // If both methods fail, throw error
-    Napi::TypeError::New(env, "Failed to switch keyboard layout. KDE service not available and XKB fallback failed.").ThrowAsJavaScriptException();
-    return env.Undefined();
+    throw Napi::Error::New(env, "Failed to switch keyboard layout. KDE service not available and XKB fallback failed.");
 }

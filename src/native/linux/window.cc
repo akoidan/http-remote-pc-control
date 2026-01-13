@@ -2,8 +2,7 @@
 #include <unistd.h>
 #include <xcb/xcb_ewmh.h>
 #include "./headers/window.h"
-
-#define DEBUG_LOG(fmt, ...) fprintf(stderr, "[window-linux] " fmt "\n", ##__VA_ARGS__)
+#include "./headers/logger.h"
 
 struct WindowInfo {
     xcb_window_t id;
@@ -32,33 +31,30 @@ static xcb_ewmh_connection_t ewmh;
 static xcb_window_t root_window;
 
 // Initialize XCB if not already initialized
-bool ensure_xcb_initialized() {
+void ensure_xcb_initialized(Napi::Env env = nullptr) {
     if (!connection) {
         int screen_num;
         connection = xcb_connect(nullptr, &screen_num);
         if (xcb_connection_has_error(connection)) {
-            DEBUG_LOG("Failed to connect to X server");
-            return false;
+            throw Napi::Error::New(env, "Failed to connect to X server");
         }
 
         xcb_screen_t* screen = xcb_setup_roots_iterator(xcb_get_setup(connection)).data;
         root_window = screen->root;
 
         if (xcb_ewmh_init_atoms_replies(&ewmh, xcb_ewmh_init_atoms(connection, &ewmh), nullptr) == 0) {
-            DEBUG_LOG("Failed to initialize EWMH atoms");
             xcb_disconnect(connection);
             connection = nullptr;
-            return false;
+            throw Napi::Error::New(env, "Failed to initialize EWMH atoms");
         }
 
-        DEBUG_LOG("XCB initialized successfully");
+        LOG("XCB initialized successfully");
     }
-    return true;
 }
 
 // Get PID for a window
-pid_t get_window_pid(xcb_window_t window) {
-    if (!ensure_xcb_initialized()) return 0;
+pid_t get_window_pid(xcb_window_t window, Napi::Env env) {
+    ensure_xcb_initialized(env);
 
     xcb_get_property_cookie_t cookie = xcb_get_property(connection, 0, window,
         ewmh._NET_WM_PID, XCB_ATOM_CARDINAL, 0, 1);
@@ -76,36 +72,34 @@ pid_t get_window_pid(xcb_window_t window) {
 }
 
 // Get active window
-xcb_window_t get_active_window() {
-    if (!ensure_xcb_initialized()) return 0;
+xcb_window_t get_active_window(Napi::Env env) {
+    ensure_xcb_initialized(env);
 
     xcb_get_property_cookie_t cookie = xcb_ewmh_get_active_window(&ewmh, 0);
     xcb_window_t active_window = 0;
 
     if (xcb_ewmh_get_active_window_reply(&ewmh, cookie, &active_window, nullptr)) {
-        DEBUG_LOG("Active window ID: %lu", (unsigned long)active_window);
         return active_window;
     }
 
-    DEBUG_LOG("Failed to get active window");
-    return 0;
+    throw Napi::Error::New(env, "Failed to get active window");
 }
 
 // Get all windows
-std::vector<WindowInfo> get_all_windows() {
+std::vector<WindowInfo> get_all_windows(Napi::Env env) {
     std::vector<WindowInfo> windows;
-    if (!ensure_xcb_initialized()) return windows;
+    ensure_xcb_initialized(env);
 
     xcb_get_property_cookie_t cookie = xcb_ewmh_get_client_list(&ewmh, 0);
     xcb_ewmh_get_windows_reply_t clients;
 
     if (xcb_ewmh_get_client_list_reply(&ewmh, cookie, &clients, nullptr)) {
         for (unsigned int i = 0; i < clients.windows_len; i++) {
-            pid_t pid = get_window_pid(clients.windows[i]);
+            pid_t pid = get_window_pid(clients.windows[i], env);
             if (pid > 0) {
                 WindowInfo info = {clients.windows[i], pid};
                 windows.push_back(info);
-                DEBUG_LOG("Found window - ID: %lu, PID: %d", (unsigned long)clients.windows[i], pid);
+                LOG("Found window - ID: %lu, PID: %d", (unsigned long)clients.windows[i], pid);
             }
         }
         xcb_ewmh_get_windows_reply_wipe(&clients);
@@ -116,7 +110,7 @@ std::vector<WindowInfo> get_all_windows() {
 
 Napi::Array getWindows(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
-    auto windows = get_all_windows();
+    auto windows = get_all_windows(env);
 
     auto arr = Napi::Array::New(env);
     for (size_t i = 0; i < windows.size(); i++) {
@@ -130,9 +124,9 @@ Napi::Object initWindow(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
 
     xcb_window_t window_id = static_cast<xcb_window_t>(info[0].ToNumber().Int64Value());
-    DEBUG_LOG("Window ID: %lu", (unsigned long)window_id);
+    LOG("Window ID: %lu", (unsigned long)window_id);
 
-    pid_t pid = get_window_pid(window_id);
+    pid_t pid = get_window_pid(window_id, env);
     std::string path = get_process_path(pid);
 
     Napi::Object obj = Napi::Object::New(env);
@@ -178,31 +172,29 @@ Napi::Boolean bringWindowToTop(const Napi::CallbackInfo& info) {
 
 Napi::Number getActiveWindow(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
-    xcb_window_t active = get_active_window();
-    return Napi::Number::New(env, static_cast<int64_t>(active));
+    xcb_window_t active_window = get_active_window(env);
+    return Napi::Number::New(env, static_cast<int64_t>(active_window));
 }
 
 Napi::Object getActiveWindowInfo(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
 
-    xcb_window_t window = get_active_window();
-    pid_t pid = get_window_pid(window);
+    xcb_window_t window_id = get_active_window(env);
+    pid_t pid = get_window_pid(window_id, env);
     std::string path = get_process_path(pid);
 
     Napi::Object result = Napi::Object::New(env);
-    result.Set("wid", Napi::Number::New(env, static_cast<int64_t>(window)));
+    result.Set("wid", Napi::Number::New(env, static_cast<int64_t>(window_id)));
     result.Set("pid", Napi::Number::New(env, pid));
     result.Set("path", Napi::String::New(env, path));
 
     return result;
 }
 
-Napi::Boolean setWindowBounds(const Napi::CallbackInfo& info) {
+void setWindowBounds(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
-
-    if (!ensure_xcb_initialized()) {
-        throw Napi::Error::New(env, "Failed to initialize XCB connection");
-    }
+    
+    ensure_xcb_initialized(env);
 
     xcb_window_t window_id = static_cast<xcb_window_t>(info[0].ToNumber().Int64Value());
 
@@ -221,8 +213,6 @@ Napi::Boolean setWindowBounds(const Napi::CallbackInfo& info) {
                          XCB_CONFIG_WINDOW_X | XCB_CONFIG_WINDOW_Y | XCB_CONFIG_WINDOW_WIDTH | XCB_CONFIG_WINDOW_HEIGHT,
                          values);
     xcb_flush(connection);
-
-    return Napi::Boolean::New(env, true);
 }
 
 Napi::Object window_init(Napi::Env env, Napi::Object exports) {

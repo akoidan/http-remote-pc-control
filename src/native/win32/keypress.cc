@@ -263,8 +263,7 @@ Napi::Value _setKeyboardLayout(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
 
     if (info.Length() < 1 || !info[0].IsString()) {
-        Napi::TypeError::New(env, "String expected (layout ID)").ThrowAsJavaScriptException();
-        return env.Undefined();
+        throw Napi::Error::New(env, "String expected (layout ID)");
     }
 
     std::string layoutId = info[0].As<Napi::String>().Utf8Value();
