@@ -37,9 +37,10 @@ namespace AnsiColor {
               << AnsiColor::Reset; \
 } while(0)
 
-#define LOG(msg) do { \
+#define LOG(fmt, ...) do { \
     LOG_TIME(); \
-    std::cout << AnsiColor::Label << "cwin: " \
-              << AnsiColor::Message << msg \
-              << AnsiColor::Reset << std::endl; \
+    char buffer[1024]; \
+    snprintf(buffer, sizeof(buffer), "%s[native] %s" fmt "%s\n", \
+             AnsiColor::Label, AnsiColor::Message, ##__VA_ARGS__, AnsiColor::Reset); \
+    std::cout << buffer; \
 } while(0)

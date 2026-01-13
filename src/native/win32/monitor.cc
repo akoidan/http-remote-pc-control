@@ -18,16 +18,15 @@ static Napi::Array getMonitors(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
   g_monitors.clear();
-  if (EnumDisplayMonitors(NULL, NULL, &EnumMonitorsProc, NULL)) {
-    auto arr = Napi::Array::New(env);
-    uint32_t i = 0;
-    for (auto handle : g_monitors) {
-      arr.Set(i++, Napi::Number::New(env, handle));
-    }
-    return arr;
+  if (!EnumDisplayMonitors(NULL, NULL, &EnumMonitorsProc, NULL)) {
+    throw Napi::Error::New(env, "Unable to enumarate monitors, winAPI returned error");
   }
-
-  return Napi::Array::New(env);
+  auto arr = Napi::Array::New(env);
+  uint32_t i = 0;
+  for (auto handle : g_monitors) {
+    arr.Set(i++, Napi::Number::New(env, handle));
+  }
+  return arr;
 }
 
 static Napi::Number getMonitorFromWindow(const Napi::CallbackInfo& info) {

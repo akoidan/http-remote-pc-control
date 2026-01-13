@@ -41,12 +41,11 @@ void moveMouse(MMPoint point) {
   SendInput(1, &input, sizeof(INPUT));
 }
 
-MMPoint getMousePos() {
+MMPoint getMousePos(Napi::Env env) {
   POINT point;
   if (!GetCursorPos(&point)) {
     // If GetCursorPos fails, return (0,0)
-    MMPoint zero = {0, 0};
-    return zero;
+    throw Napi::Error::New(env, "Invalid number of arguments.");
   }
 
   // Convert to virtual screen coordinates
@@ -63,7 +62,10 @@ MMPoint getMousePos() {
   pos.y = point.y - y;
 
   // Ensure the position is within bounds
-  if (pos.x < 0) pos.x = 0;
+  if (pos.x < 0) {
+    LOG("Found window - ID: %lu, PID: %d", point.x, point.y);
+    pos.x = 0;
+  }
   if (pos.y < 0) pos.y = 0;
   if (pos.x >= width) pos.x = width - 1;
   if (pos.y >= height) pos.y = height - 1;
