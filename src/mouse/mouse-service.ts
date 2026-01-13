@@ -143,7 +143,7 @@ export class MouseService {
     const curveIntensity = Math.min(1, Math.max(0.1, 
       baseCurveIntensity + (Math.random() * 2 - 1) * curveDeviation));
 
-    this.logger.debug(`Mouse human: \u001b[35m[${x1},${y1}] -> [${x2},${y2}] in ${steps} steps with curve intensity ${curveIntensity}`);
+    this.logger.debug(`Mouse human: \u001b[35m[${x1},${y1}] -> [${x2},${y2}] in ${steps} steps with curve intensity ${curveIntensity.toFixed(2)}`);
     // Move through the curve
     for (let i = 1; i < steps; i++) {
       const t = i / steps;
