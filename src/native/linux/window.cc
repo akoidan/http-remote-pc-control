@@ -37,28 +37,8 @@ void ensure_xcb_initialized(Napi::Env env) {
     }
     int screen_num;
     connection = xcb_connect(nullptr, &screen_num);
-/*
-    * @brief Test whether the connection has shut down due to a fatal error.
-     * @param c The connection.
-     * @return > 0 if the connection is in an error state; 0 otherwise.
-     *
-     * Some errors that occur in the context of an xcb_connection_t
-     * are unrecoverable. When such an error occurs, the
-     * connection is shut down and further operations on the
-     * xcb_connection_t have no effect, but memory will not be freed until
-     * xcb_disconnect() is called on the xcb_connection_t.
-     *
-     * @return XCB_CONN_ERROR, because of socket errors, pipe errors or other stream errors.
-     * @return XCB_CONN_CLOSED_EXT_NOTSUPPORTED, when extension not supported.
-     * @return XCB_CONN_CLOSED_MEM_INSUFFICIENT, when memory not available.
-     * @return XCB_CONN_CLOSED_REQ_LEN_EXCEED, exceeding request length that server accepts.
-     * @return XCB_CONN_CLOSED_PARSE_ERR, error during parsing display string.
-     * @return XCB_CONN_CLOSED_INVALID_SCREEN, because the server does not have a screen matching the display.
- *
- */
 
-    int error = xcb_connection_has_error(connection);
-    if (error) {
+    if (int error = xcb_connection_has_error(connection)) {
         std::string errorMsg;
         switch (error) {
             case XCB_CONN_ERROR:
