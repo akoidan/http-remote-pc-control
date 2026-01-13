@@ -57,27 +57,21 @@ void clickMouse(unsigned int button)
     toggleMouse(false, button);
 }
 
-Napi::Value _mouseClick(const Napi::CallbackInfo &info) {
-    Napi::Env env = info.Env();
+void _mouseClick(const Napi::CallbackInfo &info) {
     clickMouse(LEFT_BUTTON);
-    return env.Undefined();
 }
 
-Napi::Number _moveMouse(const Napi::CallbackInfo &info) {
+void _moveMouse(const Napi::CallbackInfo &info) {
     Napi::Env env = info.Env();
 
     if (info.Length() != 2) {
         throw Napi::Error::New(env, "Invalid number of arguments.");
     }
 
-    size_t x = info[0].As<Napi::Number>().Int32Value();
-    size_t y = info[1].As<Napi::Number>().Int32Value();
-
     MMPoint point;
-    point.x = x;
-    point.y = y;
+    point.x = info[0].As<Napi::Number>().Int32Value();
+    point.y = info[1].As<Napi::Number>().Int32Value();
     moveMouse(point);
-    return Napi::Number::New(env, LEFT_BUTTON);
 }
 
 

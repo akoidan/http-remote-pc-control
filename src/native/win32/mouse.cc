@@ -99,13 +99,12 @@ void clickMouse(unsigned int button) {
     toggleMouse(false, button);
 }
 
-Napi::Value _mouseClick(const Napi::CallbackInfo &info) {
+void _mouseClick(const Napi::CallbackInfo &info) {
     Napi::Env env = info.Env();
     clickMouse(LEFT_BUTTON);
-    return env.Undefined();
 }
 
-Napi::Number _moveMouse(const Napi::CallbackInfo &info) {
+void _moveMouse(const Napi::CallbackInfo &info) {
     Napi::Env env = info.Env();
 
     if (info.Length() != 2) {
@@ -119,7 +118,6 @@ Napi::Number _moveMouse(const Napi::CallbackInfo &info) {
     point.x = x;
     point.y = y;
     moveMouse(point);
-    return Napi::Number::New(env, LEFT_BUTTON);
 }
 
 Napi::Object _getMousePos(const Napi::CallbackInfo &info) {

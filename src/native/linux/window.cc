@@ -31,7 +31,7 @@ static xcb_ewmh_connection_t ewmh;
 static xcb_window_t root_window;
 
 // Initialize XCB if not already initialized
-void ensure_xcb_initialized(Napi::Env env = nullptr) {
+void ensure_xcb_initialized(Napi::Env env) {
     if (!connection) {
         int screen_num;
         connection = xcb_connect(nullptr, &screen_num);
@@ -136,12 +136,10 @@ Napi::Object initWindow(const Napi::CallbackInfo& info) {
     return obj;
 }
 
-Napi::Boolean bringWindowToTop(const Napi::CallbackInfo& info) {
+void bringWindowToTop(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
 
-    if (!ensure_xcb_initialized()) {
-        return Napi::Boolean::New(env, false);
-    }
+    ensure_xcb_initialized(env);
 
     xcb_window_t window_id = static_cast<xcb_window_t>(info[0].ToNumber().Int64Value());
 
@@ -166,8 +164,6 @@ Napi::Boolean bringWindowToTop(const Napi::CallbackInfo& info) {
     xcb_configure_window(connection, window_id, XCB_CONFIG_WINDOW_STACK_MODE, values);
     xcb_set_input_focus(connection, XCB_INPUT_FOCUS_POINTER_ROOT, window_id, XCB_CURRENT_TIME);
     xcb_flush(connection);
-
-    return Napi::Boolean::New(env, true);
 }
 
 Napi::Number getActiveWindow(const Napi::CallbackInfo& info) {

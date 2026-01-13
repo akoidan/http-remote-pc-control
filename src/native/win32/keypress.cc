@@ -195,7 +195,6 @@ unsigned int getFlag(napi_env env, napi_value value) {
 }
 
 unsigned int getAllFlags(napi_env env, napi_value value) {
-    bool is_array;
     unsigned int flags = 0;
 
     uint32_t length;
@@ -226,17 +225,16 @@ unsigned int assignKeyCode(const char* keyName) {
     return 0;
 }
 
-Napi::Value _keyTap(const Napi::CallbackInfo& info) {
+void _keyTap(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
     unsigned int flags = getAllFlags(env, info[1]);
     std::string keyName = info[0].As<Napi::String>();
     unsigned int key = assignKeyCode(keyName.c_str());
     toggleKeyCode(key, true, flags);
     toggleKeyCode(key, false, flags);
-    return env.Undefined();
 }
 
-Napi::Value _keyToggle(const Napi::CallbackInfo& info) {
+void _keyToggle(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
 
     bool down = info[2].As<Napi::Boolean>().Value();
@@ -247,19 +245,14 @@ Napi::Value _keyToggle(const Napi::CallbackInfo& info) {
     unsigned int key = assignKeyCode(keyName.c_str());
 
     toggleKeyCode(key, down, flags);
-    return env.Undefined();
 }
 
-Napi::Value _typeString(const Napi::CallbackInfo& info) {
-    Napi::Env env = info.Env();
-
+void _typeString(const Napi::CallbackInfo& info) {
     std::string str = info[0].As<Napi::String>();
     typeString(str.c_str());
-
-    return env.Undefined();
 }
 
-Napi::Value _setKeyboardLayout(const Napi::CallbackInfo& info) {
+void _setKeyboardLayout(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
 
     if (info.Length() < 1 || !info[0].IsString()) {
@@ -268,8 +261,6 @@ Napi::Value _setKeyboardLayout(const Napi::CallbackInfo& info) {
 
     std::string layoutId = info[0].As<Napi::String>().Utf8Value();
     SetKeyboardLayout(layoutId.c_str(), info);
-    
-    return env.Undefined();
 }
 
 Napi::Object keyboard_init(Napi::Env env, Napi::Object exports) {

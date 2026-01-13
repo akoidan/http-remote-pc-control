@@ -62,9 +62,9 @@ interface WindowNativeModule {
 
   toggleWindowTransparency(id: number, toggle: boolean): void;
 
-  setWindowOwner(id: number, owner: number): boolean;
+  setWindowOwner(id: number, owner: number): void;
 
-  redrawWindow(id: number): boolean;
+  redrawWindow(id: number): void;
 }
 
 // New interface to represent monitor-related native APIs
