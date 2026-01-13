@@ -8,5 +8,5 @@
 
 template <typename T>
 inline T getValueFromCallbackData(const Napi::CallbackInfo& info, unsigned handleIndex) {
-    return reinterpret_cast<T>(info[handleIndex].As<Napi::Number>().Int64Value());
+  return reinterpret_cast<T>(info[handleIndex].As<Napi::Number>().Int64Value());
 }

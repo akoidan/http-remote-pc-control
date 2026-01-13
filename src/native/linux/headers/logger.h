@@ -7,11 +7,11 @@
 
 // ANSI color codes matching cli-color
 namespace AnsiColor {
-    const char* const Reset = "\x1b[0m";
-    // Exact matches for cli-color xterm codes
-    const char* const Time = "\x1b[38;5;100m";     // clc.xterm(100) - timestamp (dark gold)
-    const char* const Label = "\x1b[38;5;2m";      // clc.xterm(2) - label
-    const char* const Message = "\x1b[38;5;7m";    // clc.xterm(7) - message
+  const char* const Reset = "\x1b[0m";
+  // Exact matches for cli-color xterm codes
+  const char* const Time = "\x1b[38;5;100m"; // clc.xterm(100) - timestamp (dark gold)
+  const char* const Label = "\x1b[38;5;2m"; // clc.xterm(2) - label
+  const char* const Message = "\x1b[38;5;7m"; // clc.xterm(7) - message
 }
 
 #define LOG_TIME() do { \

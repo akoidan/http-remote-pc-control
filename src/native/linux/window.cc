@@ -21,7 +21,7 @@ std::string get_process_path(pid_t pid, Napi::Env env) {
     char proc_path[1024];
     snprintf(proc_path, sizeof(proc_path), "/proc/%d/exe", pid);
 
-    ssize_t len = readlink(proc_path, path, sizeof(path)-1);
+    ssize_t len = readlink(proc_path, path, sizeof(path) - 1);
     if (len == -1) {
         throw Napi::Error::New(env, "Failed to get process path");
     }
@@ -41,26 +41,26 @@ void ensure_xcb_initialized(Napi::Env env) {
     if (int error = xcb_connection_has_error(connection)) {
         std::string errorMsg;
         switch (error) {
-            case XCB_CONN_ERROR:
-                errorMsg = "Connection error: socket, pipe, or stream error";
-                break;
-            case XCB_CONN_CLOSED_EXT_NOTSUPPORTED:
-                errorMsg = "Connection closed: required extension not supported";
-                break;
-            case XCB_CONN_CLOSED_MEM_INSUFFICIENT:
-                errorMsg = "Connection closed: insufficient memory";
-                break;
-            case XCB_CONN_CLOSED_REQ_LEN_EXCEED:
-                errorMsg = "Connection closed: request length exceeded server limit";
-                break;
-            case XCB_CONN_CLOSED_PARSE_ERR:
-                errorMsg = "Connection closed: error parsing display string";
-                break;
-            case XCB_CONN_CLOSED_INVALID_SCREEN:
-                errorMsg = "Connection closed: no matching screen found on X server";
-                break;
-            default:
-                errorMsg = "Unknown connection error";
+        case XCB_CONN_ERROR:
+            errorMsg = "Connection error: socket, pipe, or stream error";
+            break;
+        case XCB_CONN_CLOSED_EXT_NOTSUPPORTED:
+            errorMsg = "Connection closed: required extension not supported";
+            break;
+        case XCB_CONN_CLOSED_MEM_INSUFFICIENT:
+            errorMsg = "Connection closed: insufficient memory";
+            break;
+        case XCB_CONN_CLOSED_REQ_LEN_EXCEED:
+            errorMsg = "Connection closed: request length exceeded server limit";
+            break;
+        case XCB_CONN_CLOSED_PARSE_ERR:
+            errorMsg = "Connection closed: error parsing display string";
+            break;
+        case XCB_CONN_CLOSED_INVALID_SCREEN:
+            errorMsg = "Connection closed: no matching screen found on X server";
+            break;
+        default:
+            errorMsg = "Unknown connection error";
         }
         xcb_disconnect(connection);
         connection = nullptr;
@@ -84,7 +84,7 @@ pid_t get_window_pid(xcb_window_t window, Napi::Env env) {
     ensure_xcb_initialized(env);
 
     xcb_get_property_cookie_t cookie = xcb_get_property(connection, 0, window,
-        ewmh._NET_WM_PID, XCB_ATOM_CARDINAL, 0, 1);
+                                                        ewmh._NET_WM_PID, XCB_ATOM_CARDINAL, 0, 1);
 
     xcb_get_property_reply_t* reply = xcb_get_property_reply(connection, cookie, nullptr);
     if (!reply) {
@@ -95,7 +95,8 @@ pid_t get_window_pid(xcb_window_t window, Napi::Env env) {
     if (reply->type == XCB_ATOM_CARDINAL && reply->format == 32 && reply->length == 1) {
         pid = *(pid_t*)xcb_get_property_value(reply);
         free(reply);
-    } else {
+    }
+    else {
         free(reply);
         throw Napi::Error::New(env, "Failed to get PID from XCB reply");
     }
@@ -151,7 +152,6 @@ Napi::Array getWindows(const Napi::CallbackInfo& info) {
 }
 
 Napi::Object initWindow(const Napi::CallbackInfo& info) {
-
     Napi::Env env = info.Env();
 
     xcb_window_t window_id = static_cast<xcb_window_t>(info[0].ToNumber().Int64Value());
@@ -220,7 +220,7 @@ Napi::Object getActiveWindowInfo(const Napi::CallbackInfo& info) {
 
 void setWindowBounds(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
-    
+
     ensure_xcb_initialized(env);
 
     xcb_window_t window_id = static_cast<xcb_window_t>(info[0].ToNumber().Int64Value());
@@ -235,7 +235,7 @@ void setWindowBounds(const Napi::CallbackInfo& info) {
         throw Napi::Error::New(env, "Invalid window dimensions");
     }
 
-    uint32_t values[] = { (uint32_t)x, (uint32_t)y, (uint32_t)width, (uint32_t)height };
+    uint32_t values[] = {(uint32_t)x, (uint32_t)y, (uint32_t)width, (uint32_t)height};
     xcb_configure_window(
         connection, window_id,
         XCB_CONFIG_WINDOW_X | XCB_CONFIG_WINDOW_Y | XCB_CONFIG_WINDOW_WIDTH | XCB_CONFIG_WINDOW_HEIGHT,

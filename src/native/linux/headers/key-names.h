@@ -6,8 +6,8 @@
 #include <X11/X.h>
 
 typedef struct {
-    const char* name;
-    KeySym key;
+  const char* name;
+  KeySym key;
 } KeyNames;
 
 extern KeyNames key_names[];

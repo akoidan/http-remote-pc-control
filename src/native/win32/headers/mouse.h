@@ -4,8 +4,8 @@
 #include <windows.h>
 
 struct MMPoint {
-    size_t x;
-    size_t y;
+  size_t x;
+  size_t y;
 };
 
 #define LEFT_BUTTON 1
@@ -17,4 +17,3 @@ MMPoint getMousePos();
 void toggleMouse(bool down, unsigned int button);
 void clickMouse(unsigned int button);
 Napi::Object init_mouse(Napi::Env env, Napi::Object exports);
-

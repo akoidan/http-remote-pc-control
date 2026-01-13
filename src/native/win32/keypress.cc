@@ -49,12 +49,11 @@ void win32KeyEvent(int key, unsigned int flags) {
     UINT scan = MapVirtualKey(key & 0xff, MAPVK_VK_TO_VSC);
 
     /* Set the scan code for extended keys */
-    switch (key)
-    {
+    switch (key) {
     case VK_RCONTROL:
     case VK_SNAPSHOT: /* Print Screen */
-    case VK_RMENU:	  /* Right Alt / Alt Gr */
-    case VK_PAUSE:	  /* Pause / Break */
+    case VK_RMENU: /* Right Alt / Alt Gr */
+    case VK_PAUSE: /* Pause / Break */
     case VK_HOME:
     case VK_UP:
     case VK_PRIOR: /* Page up */
@@ -82,8 +81,7 @@ void win32KeyEvent(int key, unsigned int flags) {
     case VK_BROWSER_SEARCH:
     case VK_BROWSER_FAVORITES:
     case VK_BROWSER_HOME:
-    case VK_LAUNCH_MAIL:
-    {
+    case VK_LAUNCH_MAIL: {
         flags |= KEYEVENTF_EXTENDEDKEY;
         break;
     }
@@ -100,18 +98,18 @@ void win32KeyEvent(int key, unsigned int flags) {
 
 void toggleKeyCode(unsigned int code, const bool down, unsigned int flags) {
     const DWORD dwFlags = down ? 0 : KEYEVENTF_KEYUP;
-    
+
     if (!down) {
         win32KeyEvent(code, dwFlags);
     }
-    
+
     // Handle modifiers
     for (int i = 0; i < MODIFIER_COUNT; i++) {
         if (flags & MODIFIERS[i].flag) {
             win32KeyEvent(MODIFIERS[i].vkey, dwFlags);
         }
     }
-    
+
     if (down) {
         win32KeyEvent(code, dwFlags);
     }
@@ -128,24 +126,25 @@ std::wstring utf8_to_utf16(const char* str) {
     try {
         std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
         return converter.from_bytes(str);
-    } catch(...) {
+    }
+    catch (...) {
         return std::wstring();
     }
 }
 
-void typeString(const char *str) {
+void typeString(const char* str) {
     // Ensure Caps Lock is disabled before typing
     ensureCapsLockDisabled();
-    
+
     HKL savedLayout = GetSystemKeyboardLayout();
     HKL currentLayout = savedLayout;
 
     // Convert input UTF-8 string to UTF-16
     std::wstring wstr = utf8_to_utf16(str);
 
-    for(size_t i = 0; i < wstr.length(); i++) {
+    for (size_t i = 0; i < wstr.length(); i++) {
         wchar_t wc = wstr[i];
-        
+
         // Skip surrogate pairs - we'll handle them in the next iteration
         if (i < wstr.length() - 1 && (0xD800 <= wc && wc <= 0xDBFF)) {
             continue;
@@ -154,9 +153,10 @@ void typeString(const char *str) {
         // Detect language and switch layout if needed
         const char* detectedLang = DetectLanguageFromChar(wc);
         HKL neededLayout = GetKeyboardLayoutForLanguage(detectedLang);
-        
+
         if (neededLayout != currentLayout) {
-            std::ostringstream oss; oss << "Switching keyboard layout lang=" << detectedLang
+            std::ostringstream oss;
+            oss << "Switching keyboard layout lang=" << detectedLang
                 << " from=0x" << std::hex << reinterpret_cast<uintptr_t>(currentLayout)
                 << " to=0x" << std::hex << reinterpret_cast<uintptr_t>(neededLayout);
             LOG(oss.str());
@@ -175,8 +175,10 @@ void typeString(const char *str) {
             // Use toggleKeyCode to handle the keypress with modifiers
             toggleKeyCode(virtualKey, true, flags);
             toggleKeyCode(virtualKey, false, flags);
-        } else {
-            std::ostringstream oss; oss << "Unable to map character U+" << std::uppercase << std::hex << static_cast<unsigned int>(wc)
+        }
+        else {
+            std::ostringstream oss;
+            oss << "Unable to map character U+" << std::uppercase << std::hex << static_cast<unsigned int>(wc)
                 << " to a virtual key for current layout";
             LOG(oss.str());
         }
@@ -215,7 +217,7 @@ unsigned int assignKeyCode(const char* keyName) {
         return VkKeyScan(keyName[0]);
     }
     unsigned int res = 0;
-    KeyNames *kn = key_names;
+    KeyNames* kn = key_names;
     while (kn->name) {
         if (_stricmp(keyName, kn->name) == 0) {
             return kn->key;
