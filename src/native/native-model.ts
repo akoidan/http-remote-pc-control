@@ -9,6 +9,13 @@ interface ActiveWindowInfo {
   path: string;
 }
 
+interface WindowBounds {
+  x: number;
+  y: number;
+  width: number;
+  height: number
+}
+
 interface MonitorBounds {
   x: number;
   y: number;
@@ -42,7 +49,7 @@ interface WindowNativeModule {
   // Window methods
   getActiveWindow(): number;
 
-  getWindowBounds(id: number): { x: number; y: number; width: number; height: number };
+  getWindowBounds(id: number): WindowBounds;
 
   getWindowTitle(id: number): string;
 
@@ -115,6 +122,7 @@ export type {
   InitWindowResult,
   INativeModule,
   MonitorBounds,
+  WindowBounds,
   MonitorInfo,
   WindowNativeModule,
   MonitorNativeModule,

@@ -13,7 +13,7 @@ import {
   ToggleTransparencyRequestDto,
 } from '@/window/window-dto';
 import {WindowService} from '@/window/window-service';
-import {MonitorBounds} from '@/native/native-model';
+import {MonitorBounds, WindowBounds} from '@/native/native-model';
 
 @ApiTags('Window')
 @Controller('window')
@@ -57,7 +57,7 @@ export class WindowController {
 
   @Get(':wid/bounds')
   @ApiOperation({summary: 'Get window coordinates and parameters (x,y, width, height)'})
-  getWindowBounds(@Param('wid', ParseIntPipe) wid: number): MonitorBounds {
+  getWindowBounds(@Param('wid', ParseIntPipe) wid: number): WindowBounds {
     return this.windowService.getWindowBounds(wid);
   }
 

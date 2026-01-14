@@ -47,11 +47,8 @@ export class ExecuteController {
 
   @Post('find-pids-by-name')
   @ApiOperation({summary: 'Returns processes ID list based on executable name'})
-  async findPidByName(@Body() body: FindExeByNameRequestDto): Promise<FindPidsByNameResponseDto> {
-    const pids  = await this.executionService.findPidByName(body.name);
-    return {
-      pids,
-    };
+  async findPidByName(@Body() body: FindExeByNameRequestDto): Promise<number[]> {
+    return this.executionService.findPidByName(body.name);
   }
 
   @Post('kill-exe-by-pid')
