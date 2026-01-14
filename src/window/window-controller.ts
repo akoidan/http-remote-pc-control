@@ -6,13 +6,11 @@ import {
   FocusExeRequestDto,
   FocusWindowRequestDto,
   GetActiveWindowResponse,
-  GetPidWindowsResponse,
   SetBoundsRequestDto,
   SetOpacityRequestDto,
   SetOwnerRequestDto,
   ShowWindowRequestDto,
   ToggleTransparencyRequestDto,
-  WindowsIdsResponseDto,
 } from '@/window/window-dto';
 import {WindowService} from '@/window/window-service';
 import {MonitorBounds} from '@/native/native-model';
@@ -25,35 +23,33 @@ export class WindowController {
   ) {
   }
 
-  @Post('focus-exe')
+  @Post('focus-by-pid')
   @ApiOperation({summary: 'Focus window by process ID'})
   async focusExe(@Body() body: FocusExeRequestDto): Promise<void> {
     await this.windowService.activateWindowByPid(body.pid);
   }
 
-  @Get('get-process-windows/:id')
-  @ApiResponse({type: WindowsIdsResponseDto})
+  @Get('by-process/:id')
   @ApiOperation({summary: 'Get all windows with their IDs for a concrete process id'})
-  async getWindowsIdByPid(@Param('id', ParseIntPipe) id: number): Promise<GetPidWindowsResponse> {
-    const wids = await this.windowService.getAllWindowsByPid(id);
-    return {wids};
+  async getWindowsIdByPid(@Param('id', ParseIntPipe) id: number): Promise<number[]> {
+    return this.windowService.getAllWindowsByPid(id);
   }
 
-  @Get('get-active-window')
+  @Get('active-info')
   @ApiResponse({type: ActiveWindowResponseDto})
   @ApiOperation({summary: 'Get information about current active window'})
   async getActiveWindowId(): Promise<GetActiveWindowResponse> {
     return this.windowService.getActiveWindowInfo();
   }
 
-  @Post('focus-window')
+  @Post('focus')
   @ApiOperation({summary: 'Focuses a window by its id'})
   async focusWindowId(@Body() body: FocusWindowRequestDto): Promise<void> {
     await this.windowService.focusWindowId(body.wid);
   }
 
   // New endpoints exposing native methods
-  @Get('active-window-id')
+  @Get('active-id')
   @ApiOperation({summary: 'Get active window id (raw handle)'})
   getActiveWindow(): number {
     return this.windowService.getActiveWindow();
@@ -113,13 +109,13 @@ export class WindowController {
     this.windowService.setWindowOwner(body.wid, body.owner);
   }
 
-  @Get(':wid/is-window')
+  @Get(':wid/is-valid')
   @ApiOperation({summary: 'Check if handle is a window'})
   isWindow(@Param('wid', ParseIntPipe) wid: number): boolean {
     return this.windowService.isWindow(wid);
   }
 
-  @Get(':wid/is-visible')
+  @Get('is-visible/:wid')
   @ApiOperation({summary: 'Check if window is visible'})
   isWindowVisible(@Param('wid', ParseIntPipe) wid: number): boolean {
     return this.windowService.isWindowVisible(wid);

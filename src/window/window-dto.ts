@@ -62,7 +62,6 @@ const createProcessRequestSchema = z.object({
 
 // Create DTO class for Swagger
 class FocusExeRequestDto extends createZodDto(pidSchema) {}
-class WindowsIdsResponseDto extends createZodDto(windowsSchema) {}
 class ActiveWindowResponseDto extends createZodDto(activeWindowSchema) {}
 class FocusWindowRequestDto extends createZodDto(widObjectSchema) {}
 
@@ -80,7 +79,6 @@ class BoundsResponseDto extends createZodDto(boundsSchema) {}
 // Export types
 type FocusExeRequest = z.infer<typeof pidSchema>;
 type GetPidWindowsRequest = z.infer<typeof widObjectSchema>;
-type GetPidWindowsResponse = z.infer<typeof windowsSchema>;
 type GetActiveWindowResponse = z.infer<typeof activeWindowSchema>;
 type Bounds = z.infer<typeof boundsSchema>;
 
@@ -105,7 +103,6 @@ export {
   createProcessRequestSchema,
   FocusExeRequestDto,
   FocusWindowRequestDto,
-  WindowsIdsResponseDto,
   ActiveWindowResponseDto,
   SetBoundsRequestDto,
   ShowWindowRequestDto,
@@ -117,7 +114,6 @@ export {
 };
 
 export type {
-  GetPidWindowsResponse,
   GetActiveWindowResponse,
   GetPidWindowsRequest,
   FocusExeRequest,

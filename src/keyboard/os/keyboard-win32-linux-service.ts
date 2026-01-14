@@ -18,7 +18,7 @@ export class KeyboardWin32LinuxService implements IKeyboardService {
   public async type(text: string, delay?: number, deviationDelay?: number): Promise<void> {
     this.logger.log(`Type: \u001b[35m${text}`);
     if (delay) {
-      const realDelay = deviationDelay ? this.rs.calcDiviation(delay, deviationDelay) : delay;
+      const realDelay = deviationDelay ? this.rs.calcDeviation(delay, deviationDelay) : delay;
       for (const char of text.split('')) {
         await sleep(realDelay); // sleep before, in case we are typing on the same pc the shorcut was triggered from
         // to avoid meta keys in keystrokes
