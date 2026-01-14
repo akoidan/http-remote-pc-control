@@ -1,5 +1,5 @@
 import {BadRequestException, Inject, Injectable, Logger, NotImplementedException} from '@nestjs/common';
-import {INativeModule, MonitorBounds, Native} from '@/native/native-model';
+import {INativeModule, MonitorInfo, Native} from '@/native/native-model';
 import {OS_INJECT} from '@/window/window-consts';
 
 @Injectable()
@@ -23,7 +23,7 @@ export class MonitorService {
     }
   }
 
-  public getMonitorInfo(mid: number): MonitorBounds {
+  public getMonitorInfo(mid: number): MonitorInfo {
     if (!['win32'].includes(this.os)) {
       throw new NotImplementedException(`Unsupported platform: ${this.os}`);
     }

@@ -1,7 +1,7 @@
 import {Controller, Get, Param, ParseIntPipe} from '@nestjs/common';
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import {MonitorService} from '@/monitor/monitor-service';
-import {MonitorBounds} from '@/native/native-model';
+import {MonitorBounds, MonitorInfo} from '@/native/native-model';
 import {MonitorInfoResponseDto} from '@/monitor/monitor-dto';
 
 @ApiTags('Monitor')
@@ -18,7 +18,7 @@ export class MonitorController {
   @Get(':mid/info')
   @ApiOperation({summary: 'Get monitor info'})
   @ApiResponse({type: MonitorInfoResponseDto})
-  getMonitorInfo(@Param('mid', ParseIntPipe) mid: number): MonitorBounds {
+  getMonitorInfo(@Param('mid', ParseIntPipe) mid: number): MonitorInfo {
     return this.monitorService.getMonitorInfo(mid);
   }
 

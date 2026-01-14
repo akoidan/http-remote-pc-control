@@ -2,18 +2,18 @@ import {z} from 'zod';
 /* eslint-disable array-element-newline */
 export const keyboardLayoutValueSchema = z.enum([
     // Latin-based layouts
-    'us', 'en', 'gb', 'ca', 'au', 'nz', 'ie', 'za',
+    'us', 'en', 'gb', 'au', 'nz', 'ie', 'za',
     'de', 'at', 'ch', 'li',
     'fr', 'be', 'lu', 'mc',
-    'es', 'mx', 'ar', 'cl', 'co', 've', 'pe', 'ec', 'uy', 'py', 'bo',
+    'es', 'mx', 'cl', 've', 'pe', 'ec', 'uy', 'py', 'bo',
     'it', 'sm', 'va',
-    'pt', 'br',
+    'pt',
     'nl', 'sr',
-    'no', 'dk', 'se', 'fi', 'is',
-    'pl', 'cz', 'sk', 'hu', 'si', 'hr', 'ba', 'rs', 'me', 'mk', 'bg',
+    'no', 'dk', 'fi', 'is',
+    'pl', 'cz', 'sk', 'hu', 'hr', 'ba', 'rs', 'me', 'mk', 'bg',
     'ro', 'md',
     'ee', 'lv', 'lt',
-    'mt', 'cy',
+    'mt',
     'tr', 'az',
 
     // Cyrillic-based layouts
@@ -23,8 +23,8 @@ export const keyboardLayoutValueSchema = z.enum([
     'gr',
 
     // Arabic-based layouts
-    'ar', 'ae', 'bh', 'dz', 'eg', 'iq', 'jo', 'kw', 'lb', 'ly', 'ma', 'om', 'qa', 'sa', 'sy', 'tn', 'ye',
-    'fa', 'ir', 'af',
+    'ar', 'ae', 'bh', 'dz', 'eg', 'iq', 'jo', 'kw', 'ly', 'ma', 'om', 'qa', 'sa', 'sy', 'tn', 'ye',
+    'fa', 'ir',
     'ur', 'pk',
 
     // Hebrew
@@ -37,7 +37,7 @@ export const keyboardLayoutValueSchema = z.enum([
     'th',
     'vn', 'vi',
     'kh', 'km',
-    'lo', 'la',
+    'lo',
     'my', 'ms',
     'id',
     'ph', 'tl',
@@ -45,14 +45,14 @@ export const keyboardLayoutValueSchema = z.enum([
     'bn', 'bd',
     'hi', 'in', 'ta', 'te', 'ml', 'kn', 'gu', 'or', 'pa', 'as', 'ne',
     'si', 'lk',
-    'mm', 'my',
+    'mm',
 
     // African layouts
     'am', 'et',
     'sw', 'ke', 'tz',
     'zu', 'xh', 'af',
     'ha', 'ng',
-    'fr', 'sn', 'ml', 'bf', 'ne', 'ci', 'gn', 'td', 'cf', 'cm', 'ga', 'cg', 'cd', 'mg', 'dj',
+    'sn', 'bf', 'ci', 'gn', 'td', 'cf', 'cm', 'cg', 'cd', 'mg', 'dj',
 
     // Other layouts
     'eo', // Esperanto

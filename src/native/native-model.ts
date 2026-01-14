@@ -75,7 +75,7 @@ interface MonitorNativeModule {
 
   getMonitorScaleFactor(monitor: number): number;
 
-  getMonitorInfo(monitor: number): MonitorBounds;
+  getMonitorInfo(monitor: number): MonitorInfo;
 }
 
 // New interface to represent process-related native APIs
