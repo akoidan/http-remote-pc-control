@@ -31,6 +31,7 @@ export class WindowController {
 
   @Get('by-process/:id')
   @ApiOperation({summary: 'Get all windows with their IDs for a concrete process id'})
+  @ApiResponse({type: Number, isArray: true})
   async getWindowsIdByPid(@Param('id', ParseIntPipe) id: number): Promise<number[]> {
     return this.windowService.getAllWindowsByPid(id);
   }
