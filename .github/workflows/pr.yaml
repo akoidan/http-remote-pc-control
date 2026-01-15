@@ -79,7 +79,7 @@ jobs:
           path: ~/.pkg-cache
           key: ${{ runner.os }}-pkg-18
       - name: Build
-        run: yarn build:win32
+        run: yarn build
 
   linux:
     runs-on: ubuntu-22.04
@@ -115,4 +115,4 @@ jobs:
           path: ~/.pkg-cache
           key: ${{ runner.os }}-pkg-18
       - name: Build
-        run: yarn build:linux
+        run: yarn build

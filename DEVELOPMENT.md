@@ -35,7 +35,7 @@ yarn start # starts a nestjs server
 ### Build the Native Module
 Run:
 ```bash
-yarn build:local
+yarn cmake:debug
 ```  
 This command already builds the native module in Debug mode.
 
