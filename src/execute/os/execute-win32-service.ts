@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  Logger,
-} from '@nestjs/common';
+import {Injectable, InternalServerErrorException, Logger} from '@nestjs/common';
 import {exec} from 'child_process';
 import {promisify} from 'util';
 import {IExecuteService} from '@/execute/execute-model';

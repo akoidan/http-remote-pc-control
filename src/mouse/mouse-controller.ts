@@ -1,14 +1,7 @@
-import {
-  Body,
-  Controller, Get,
-  Post,
-} from '@nestjs/common';
+import {Body, Controller, Get, Post} from '@nestjs/common';
 import {MouseMoveClickRequestDto, MouseMoveHumanClickRequestDto, MousePositionResponseDto} from '@/mouse/mouse-dto';
 import {MouseService} from '@/mouse/mouse-service';
-import {
-  ApiOperation, ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 
 @ApiTags('Mouse')
 @Controller('mouse')

@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  Logger,
-  NestMiddleware,
-} from '@nestjs/common';
+import {Injectable, Logger, NestMiddleware} from '@nestjs/common';
 import {asyncLocalStorage} from '@/app/custom-logger';
 
 @Injectable()

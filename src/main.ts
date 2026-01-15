@@ -5,7 +5,7 @@ import {CertService} from '@/mtls/cert-service';
 import {asyncLocalStorage, CustomLogger} from '@/app/custom-logger';
 import {ZodValidationPipe} from '@anatine/zod-nestjs';
 import process from 'node:process';
-import {setPriority, platform} from 'os';
+import {platform, setPriority} from 'os';
 import * as path from 'path';
 import yargs from 'yargs';
 

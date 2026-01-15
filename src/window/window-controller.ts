@@ -13,7 +13,7 @@ import {
   ToggleTransparencyRequestDto,
 } from '@/window/window-dto';
 import {WindowService} from '@/window/window-service';
-import {MonitorBounds, WindowBounds} from '@/native/native-model';
+import {WindowBounds} from '@/native/native-model';
 
 @ApiTags('Window')
 @Controller('window')

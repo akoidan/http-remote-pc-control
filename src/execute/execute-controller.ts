@@ -1,26 +1,14 @@
+import {Body, Controller, Inject, Post} from '@nestjs/common';
 import {
-  Body,
-  Controller,
-  Inject,
-  Post,
-} from '@nestjs/common';
-import {
-  FindExeByNameRequestDto, FindPidsByNameResponseDto,
+  FindExeByNameRequestDto,
   KillExeByNameRequestDto,
   KillExeByPidRequestDto,
   LaunchExeRequestDto,
   LaunchPidResponse,
   LaunchPidResponseDto,
 } from '@/execute/execute-dto';
-import {
-  ExecuteService,
-  IExecuteService,
-} from '@/execute/execute-model';
-import {
-  ApiOperation,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import {ExecuteService, IExecuteService} from '@/execute/execute-model';
+import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 
 @ApiTags('Execute')
 @Controller('process')

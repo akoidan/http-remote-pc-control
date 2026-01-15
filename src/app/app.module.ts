@@ -1,9 +1,4 @@
-import {
-  Logger,
-  MiddlewareConsumer,
-  Module,
-  NestModule,
-} from '@nestjs/common';
+import {Logger, MiddlewareConsumer, Module, NestModule} from '@nestjs/common';
 import {AppController} from '@/app/app-controller';
 import {KeyboardModule} from '@/keyboard/keyboard-module';
 import {ExecuteModule} from '@/execute/execute-module';

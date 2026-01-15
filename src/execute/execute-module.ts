@@ -1,13 +1,6 @@
-import {
-  Logger,
-  Module,
-  NotImplementedException,
-} from '@nestjs/common';
+import {Logger, Module, NotImplementedException} from '@nestjs/common';
 import {ExecuteController} from '@/execute/execute-controller';
-import {
-  ExecuteService,
-  IExecuteService,
-} from '@/execute/execute-model';
+import {ExecuteService, IExecuteService} from '@/execute/execute-model';
 import {ExecuteLinuxDarwinService} from '@/execute/os/execute-linux-darwin-service';
 import {ExecuteWin32Service} from '@/execute/os/execute-win32-service';
 import os from 'os';
