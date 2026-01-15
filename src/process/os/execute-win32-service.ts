@@ -1,8 +1,8 @@
 import {Injectable, InternalServerErrorException, Logger} from '@nestjs/common';
 import {exec} from 'child_process';
 import {promisify} from 'util';
-import {IExecuteService} from '@/execute/execute-model';
-import {LauncherService} from '@/execute/launcher-service';
+import {IExecuteService} from '@/process/process-model';
+import {LauncherService} from '@/process/launcher-service';
 
 @Injectable()
 export class ExecuteWin32Service implements IExecuteService {

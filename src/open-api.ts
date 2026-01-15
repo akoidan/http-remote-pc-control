@@ -2,7 +2,6 @@ import {DocumentBuilder, type OpenAPIObject, SwaggerModule} from '@nestjs/swagge
 import {patchNestjsSwagger} from '@anatine/zod-nestjs';
 import {readFile, writeFile} from 'fs/promises';
 import {KeyboardModule} from '@/keyboard/keyboard-module';
-import {ExecuteModule} from '@/execute/execute-module';
 import {MouseModule} from '@/mouse/mouse-module';
 import {WindowModule} from '@/window/window-module';
 import {MonitorModule} from '@/monitor/monitor-module';
@@ -58,7 +57,6 @@ async function bootstrap(): Promise<void> {
     imports: [
       NativeMock,
       KeyboardModule,
-      ExecuteModule,
       MouseModule,
       WindowModule,
       MonitorModule,
