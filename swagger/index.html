@@ -1,70 +1,76 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
   <meta charset="UTF-8">
-  <title>Http Remote PC Control API</title>
-  <link rel="stylesheet" type="text/css" href="./swagger-ui.css"/>
-  <link rel="icon" type="image/png" href="./favicon-32x32.png" sizes="32x32"/>
-  <link rel="icon" type="image/png" href="./favicon-16x16.png" sizes="16x16"/>
+  <title>API Docs</title>
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@stoplight/elements/web-components.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@stoplight/elements/styles.min.css" />
   <style>
-    html {
-      box-sizing: border-box;
-      overflow-y: scroll;
+    .sl-bg-canvas {
+      padding-left: 32px;
+      padding-right: 32px;
     }
-
-    *, *:before, *:after {
-      box-sizing: inherit;
+    [data-testid="two-column-right"] {
+      margin-left: 0;
+      max-width: 1200px !important;
+      width: 100% !important;
+      margin-right: 32px;
     }
-
-    body {
-      margin: 0;
-      background: #fafafa;
+    .sl-stack.sl-stack--vertical.sl-stack--8.HttpOperation.sl-flex.sl-flex-col.sl-items-stretch.sl-w-full > .sl-flex:nth-child(2) {
+      flex-direction: column;
+      .sl-w-0 {
+        width: 100%;
+      }
     }
   </style>
 </head>
 <body>
-<div id="swagger-ui"></div>
-<script src="./swagger-ui-bundle.js"></script>
-<script src="./swagger-ui-standalone-preset.js"></script>
+<elements-api
+  apiDescriptionUrl="./swagger.json"
+  router="hash"
+  layout="sidebar"
+></elements-api>
+
 <script>
-  window.onload = function () {
-    window.ui = SwaggerUIBundle({
-      url: "/swagger.json",
-      dom_id: "#swagger-ui",
+  function generateObserver(lang, lines) {
+    return function patchCurlSnippets() {
+      document.querySelectorAll(`.sl-code-highlight.prism-code.language-${lang}`).forEach(snippet => {
+        // check if already patched
+        if (snippet.dataset.patched) return;
 
-      requestSnippetsEnabled: true,
-      requestSnippets: {
-        generators: {
-          curl_bash: {
-            title: "curl",
-            syntax: "bash"
-          }
-        }
-      },
-      requestInterceptor: (req) => {
-        req.credentials = 'include';
-        // Add your certificate options
-        req.curlOptions = req.curlOptions || [];
-        req.curlOptions.push(
-          "--cert cert.pem",
-          "--key key.pem",
-          "--cacert ca-cert.pem",
-          "--insecure"
-        );
-        return req;
-      },
-      plugins: [
-        SwaggerUIBundle.plugins.DownloadUrl,
-        SwaggerUIBundle.plugins.RequestSnippets   // ← THIS IS REQUIRED
-      ],
+        const firstLine = snippet.querySelector('.sl-flex');
+        if (!firstLine) return;
 
-      presets: [
-        SwaggerUIBundle.presets.apis,
-        SwaggerUIStandalonePreset
-      ],
-      layout: "StandaloneLayout"
-    });
-  };
+        const firstText = firstLine.innerText.trim();
+        if (!firstText.startsWith('curl ')) return;
+
+        // inject extra lines after first line
+        lines.forEach(line => {
+          const div = document.createElement('div');
+          div.className = 'sl-flex';
+          div.innerHTML = `<div class="sl-flex-1 sl-break-all">${line}</div>`;
+          firstLine.after(div);
+        });
+
+        snippet.dataset.patched = '1';
+      });
+    }
+  }
+
+  // watch for dynamic updates
+  const observer = new MutationObserver(generateObserver(
+    'bash',
+    [
+      '  --cert cert.pem \\',
+      '  --key key.pem \\',
+      '  --cacert ca-cert.pem \\',
+      '  --insecure \\'
+    ]
+  ));
+  observer.observe(document.body, { childList: true, subtree: true });
+
+  // initial patch
+  patchCurlSnippets();
 </script>
 </body>
 </html>
