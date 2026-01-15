@@ -9,7 +9,7 @@
     "clean": "rm -rf ./dist/ && rm -rf ./build",
     "transpile": "nest build",
     "build:local": "npm-run-all -s clean native:configure:debug native:build:debug",
-    "schema:swagger": "rm -rf ./dist/ && node -r tsconfig-paths/register -r ts-node/register src/open-api.ts",
+    "openapi": "rm -rf ./dist/ && node -r tsconfig-paths/register -r ts-node/register src/open-api.ts",
     "pkg:win32": "pkg . --targets win --output http-remote-pc-control.exe",
     "pkg:linux": "pkg . --targets linux --output http-remote-pc-control.elf",
     "build:win32": "npm-run-all -s clean native:configure native:build transpile pkg:win32",

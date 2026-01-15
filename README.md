@@ -28,14 +28,14 @@ You have to:
  - Install the package `sudo dpkg -i http-remote-pc-control.deb`
  - Start the service with the same user as logged in X `systemctl --user start http-remote-pc-control`
  - You will find certificates in `~/.local/share/http-remote-pc-control/certs`
- - You will openapi documentation in  `/usr/share/http-remote-pc-control/swagger.json`
+ - You will openapi documentation in  `/usr/share/http-remote-pc-control/openapi.json`
  - To view logs check `journalctl --user -o cat -u http-remote-pc-control -f`
 
 #### Archlinux
  - Install the package with `yay` or `paru` from AUR `yay -S http-remote-pc-control`
  - Start the service with the same user as logged in X `systemctl --user start http-remote-pc-control`
  - You will find certificates in `~/.local/share/http-remote-pc-control/certs`
- - You will openapi documentation in  `/usr/share/http-remote-pc-control/swagger.json`
+ - You will openapi documentation in  `/usr/share/http-remote-pc-control/openapi.json`
  - To view logs check `journalctl --user -o cat -u http-remote-pc-control -f`
 
 #### Other Linux distro
@@ -119,7 +119,7 @@ import { readFile } from 'fs/promises';
 ```
 
 ### Api documentation
-You can find openapi documentation at `swagger.json` under [releases](https://github.com/akoidan/http-remote-pc-control/releases).
+You can find openapi documentation at `openapi.json` under [releases](https://github.com/akoidan/http-remote-pc-control/releases).
 You can put this file into any swagger ui, e.g. [Swagger Editor](https://editor.swagger.io/)
 
 ### NAT

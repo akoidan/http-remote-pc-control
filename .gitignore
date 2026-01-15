@@ -7,14 +7,13 @@ certs
 !certs/.gitkeep
 .vs
 Project1
-swagger.json
 app
 cmake-build-debug
 .idea
 packages/arch/pkg
 packages/arch/src
-swagger/*
-!swagger/index.html
+openapi/openapi.json
+!openapi/index.html
 packages/arch/http-remote-pc-control
 .secrets
 private.key

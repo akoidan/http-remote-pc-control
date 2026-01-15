@@ -20,7 +20,7 @@ install=http-remote-pc-control.install
 
 source=(
   "http-remote-pc-control::${url}/releases/download/${tag}/http-remote-pc-control.elf"
-  "swagger.json::${url}/releases/download/${tag}/swagger.json"
+  "openapi.json::${url}/releases/download/${tag}/openapi.json"
   "http-remote-pc-control.service"
   "http-remote-pc-control.install"
   "gen-certs.sh"
@@ -39,5 +39,5 @@ package() {
   install -D -m644 "${srcdir}/http-remote-pc-control.service" "${pkgdir}/usr/lib/systemd/user/http-remote-pc-control.service"
   install -D -m755 "${srcdir}/gen-certs.sh" "${pkgdir}/usr/share/http-remote-pc-control/gen-certs"
   install -D -m644 "${srcdir}/san.cnf" "${pkgdir}/usr/share/http-remote-pc-control/san.cnf"
-  install -D -m644 "${srcdir}/swagger.json" "${pkgdir}/usr/share/http-remote-pc-control/swagger.json"
+  install -D -m644 "${srcdir}/openapi.json" "${pkgdir}/usr/share/http-remote-pc-control/openapi.json"
 }
