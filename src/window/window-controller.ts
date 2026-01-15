@@ -4,7 +4,7 @@ import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import {
   ActiveWindowIdResponse,
   ActiveWindowIdResponseDto,
-  ActiveWindowResponseDto,
+  ActiveWindowResponseDto, BoundsResponseDto,
   FocusExeRequestDto,
   FocusWindowRequestDto,
   GetActiveWindowResponse,
@@ -70,6 +70,7 @@ export class WindowController {
   }
 
   @Get(':wid/bounds')
+  @ApiResponse({type: BoundsResponseDto})
   @ApiOperation({summary: 'Get window coordinates and parameters (x,y, width, height)'})
   getWindowBounds(@Param('wid', ParseIntPipe) wid: number): WindowBounds {
     return this.windowService.getWindowBounds(wid);

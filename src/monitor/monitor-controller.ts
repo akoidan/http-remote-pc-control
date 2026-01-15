@@ -17,6 +17,7 @@ export class MonitorController {
 
   @Get()
   @ApiOperation({summary: 'List monitors'})
+  @ApiResponse({type: Number, isArray: true})
   getMonitors(): number[] {
     return this.monitorService.getMonitors();
   }

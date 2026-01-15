@@ -55,6 +55,7 @@ export class ProcessController {
   }
 
   @Post('find-pids-by-name')
+  @ApiResponse({type: Number, isArray: true})
   @ApiOperation({summary: 'Returns processes ID list based on executable name'})
   async findPidByName(@Body() body: FindExeByNameRequestDto): Promise<number[]> {
     return this.executionService.findPidByName(body.name);
