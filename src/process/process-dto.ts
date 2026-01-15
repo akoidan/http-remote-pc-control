@@ -2,11 +2,11 @@ import {z} from 'zod';
 import {createZodDto} from '@anatine/zod-nestjs';
 
 const processIdResponseSchema = z.object({
-  value: z.number().describe('Process ID'),
+  pid: z.number().describe('Process ID'),
 }).describe('Process ID');
 
 const windowHandleResponseSchema = z.object({
-  value: z.number().describe('Window handle (HWND as number)'),
+  wid: z.number().describe('Window handle (HWND as number)'),
 }).describe('Window handle');
 
 class ProcessIdResponseDto extends createZodDto(processIdResponseSchema) {}

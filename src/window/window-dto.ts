@@ -61,27 +61,27 @@ const createProcessRequestSchema = z.object({
 }).describe('Create a new process and return its PID');
 
 const activeWindowIdResponseSchema = z.object({
-  value: z.number().describe('Active window handle (HWND as number)'),
+  wid: z.number().describe('Active window handle (HWND as number)'),
 }).describe('Active window ID');
 
 const windowTitleResponseSchema = z.object({
-  value: z.string().describe('Window title'),
+  title: z.string().describe('Window title'),
 }).describe('Window title');
 
 const windowOpacityResponseSchema = z.object({
-  value: z.number().min(0).max(1).describe('Window opacity in range 0..1'),
+  opacity: z.number().min(0).max(1).describe('Window opacity in range 0..1'),
 }).describe('Window opacity');
 
 const windowOwnerResponseSchema = z.object({
-  value: z.number().describe('Window owner handle (HWND as number)'),
+  wid: z.number().describe('Window owner handle (HWND as number)'),
 }).describe('Window owner handle');
 
 const isWindowResponseSchema = z.object({
-  value: z.boolean().describe('True if the handle is a valid window'),
+  isValid: z.boolean().describe('True if the handle is a valid window'),
 }).describe('Is window valid');
 
 const isWindowVisibleResponseSchema = z.object({
-  value: z.boolean().describe('True if the window is visible'),
+  isVisible: z.boolean().describe('True if the window is visible'),
 }).describe('Is window visible');
 
 // Create DTO class for Swagger

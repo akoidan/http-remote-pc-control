@@ -13,13 +13,13 @@ export class ProcessController {
   @ApiOperation({summary: 'Create process'})
   @ApiResponse({type: ProcessIdResponseDto})
   createProcess(@Body() body: CreateProcessRequestDto): ProcessIdResponse {
-    return { value: this.processService.createProcess(body.path, body.cmd) };
+    return { pid: this.processService.createProcess(body.path, body.cmd) };
   }
 
   @Get(':pid/main-window')
   @ApiOperation({summary: 'Get process\' main window'})
   @ApiResponse({type: WindowHandleResponseDto})
   getProcessMainWindow(@Param('pid', ParseIntPipe) pid: number): WindowHandleResponse {
-    return { value: this.processService.getProcessMainWindow(pid) };
+    return { wid: this.processService.getProcessMainWindow(pid) };
   }
 }

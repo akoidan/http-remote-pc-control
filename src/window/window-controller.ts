@@ -66,7 +66,7 @@ export class WindowController {
   @ApiOperation({summary: 'Get active window id (raw handle)'})
   @ApiResponse({type: ActiveWindowIdResponseDto})
   getActiveWindow(): ActiveWindowIdResponse {
-    return { value: this.windowService.getActiveWindow() };
+    return { wid: this.windowService.getActiveWindow() };
   }
 
   @Get(':wid/bounds')
@@ -85,7 +85,7 @@ export class WindowController {
   @ApiOperation({summary: 'Get window title'})
   @ApiResponse({type: WindowTitleResponseDto})
   getWindowTitle(@Param('wid', ParseIntPipe) wid: number): WindowTitleResponse {
-    return { value: this.windowService.getWindowTitle(wid) };
+    return { title: this.windowService.getWindowTitle(wid) };
   }
 
   @Post('show')
@@ -98,7 +98,7 @@ export class WindowController {
   @ApiOperation({summary: 'Get window opacity (0..1)'})
   @ApiResponse({type: WindowOpacityResponseDto})
   getWindowOpacity(@Param('wid', ParseIntPipe) wid: number): WindowOpacityResponse {
-    return { value: this.windowService.getWindowOpacity(wid) };
+    return { opacity: this.windowService.getWindowOpacity(wid) };
   }
 
   @Post('opacity')
@@ -117,7 +117,7 @@ export class WindowController {
   @ApiOperation({summary: 'Get window owner handle'})
   @ApiResponse({type: WindowOwnerResponseDto})
   getWindowOwner(@Param('wid', ParseIntPipe) wid: number): WindowOwnerResponse {
-    return { value: this.windowService.getWindowOwner(wid) };
+    return { wid: this.windowService.getWindowOwner(wid) };
   }
 
   @Post('owner')
@@ -130,14 +130,14 @@ export class WindowController {
   @ApiOperation({summary: 'Check if handle is a window'})
   @ApiResponse({type: IsWindowResponseDto})
   isWindow(@Param('wid', ParseIntPipe) wid: number): IsWindowResponse {
-    return { value: this.windowService.isWindow(wid) };
+    return { isValid: this.windowService.isWindow(wid) };
   }
 
   @Get('is-visible/:wid')
   @ApiOperation({summary: 'Check if window is visible'})
   @ApiResponse({type: IsWindowVisibleResponseDto})
   isWindowVisible(@Param('wid', ParseIntPipe) wid: number): IsWindowVisibleResponse {
-    return { value: this.windowService.isWindowVisible(wid) };
+    return { isVisible: this.windowService.isWindowVisible(wid) };
   }
 
   @Post('redraw')

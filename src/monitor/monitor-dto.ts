@@ -16,11 +16,11 @@ const monitorInfoSchema = z.object({
 }).describe('Monitor information');
 
 const monitorIdResponseSchema = z.object({
-  value: z.number().describe('Monitor ID'),
+  mid: z.number().describe('Monitor ID'),
 }).describe('Monitor ID');
 
 const monitorScaleFactorResponseSchema = z.object({
-  value: z.number().describe('Monitor scale factor'),
+  scaleFactor: z.number().describe('Monitor scale factor'),
 }).describe('Monitor scale factor');
 
 class MonitorInfoResponseDto extends createZodDto(monitorInfoSchema) {}
