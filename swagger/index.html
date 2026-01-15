@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Http Remote PC Control API</title>
+    <link rel="stylesheet" type="text/css" href="./swagger-ui.css"/>
+    <link rel="icon" type="image/png" href="./favicon-32x32.png" sizes="32x32"/>
+    <link rel="icon" type="image/png" href="./favicon-16x16.png" sizes="16x16"/>
+    <style>
+        html {
+            box-sizing: border-box;
+            overflow-y: scroll;
+        }
+
+        *, *:before, *:after {
+            box-sizing: inherit;
+        }
+
+        body {
+            margin: 0;
+            background: #fafafa;
+        }
+    </style>
+</head>
+<body>
+<div id="swagger-ui"></div>
+<script src="./swagger-ui-bundle.js"></script>
+<script src="./swagger-ui-standalone-preset.js"></script>
+<script>
+  window.onload = async function () {
+    const response = await fetch('/swagger.json');
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const spec = await response.json();
+
+    window.ui = SwaggerUIBundle({
+      spec,
+      dom_id: '#swagger-ui',
+      deepLinking: true,
+      // Add this to disable the user report feature
+      withCredentials: false,
+      // Add this to prevent the request
+      plugins: [
+        SwaggerUIBundle.plugins.DownloadUrl
+      ],
+      // Add this to modify the request interceptor
+      requestInterceptor: (req) => {
+        // Only modify HTTPS requests
+        if (req.url.startsWith('https')) {
+          req.credentials = 'include';
+          // Add your certificate options
+          req.curlOptions = req.curlOptions || [];
+          req.curlOptions.push(
+            "--cert client.crt",
+            "--key client.key",
+            "--cacert ca.crt",
+            "--insecure"
+          );
+        }
+        return req;
+      },
+      presets: [
+        SwaggerUIBundle.presets.apis,
+        SwaggerUIStandalonePreset
+      ],
+      layout: "StandaloneLayout"
+    });
+  };
+</script>
+</body>
+</html>

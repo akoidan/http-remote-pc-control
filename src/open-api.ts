@@ -44,9 +44,19 @@ async function bootstrap(): Promise<void> {
   patchNestjsSwagger();
 // Swagger Configuration
   const config = new DocumentBuilder()
-    .setTitle('Http Remote PC control API')
-    .setDescription('API Documentation')
+    .setTitle('Http Remote PC Control API')
+    .setDescription('API Documentation for remote controlling a PC via HTTP')
     .setVersion('1.0')
+    .addServer('https://{host}:{port}', 'Custom Server', {
+      host: {
+        default: 'localhost',
+        description: 'The host address of the server',
+      },
+      port: {
+        default: '5000',
+        description: 'The port the server is running on',
+      },
+    })
     .build();
   const document = SwaggerModule.createDocument(app, config);
   await writeFile('./swagger.json', JSON.stringify(document, null, 2));

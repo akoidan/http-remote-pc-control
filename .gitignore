@@ -13,7 +13,8 @@ cmake-build-debug
 .idea
 packages/arch/pkg
 packages/arch/src
-packages/arch/src
+swagger/*
+!swagger/index.html
 packages/arch/http-remote-pc-control
 .secrets
 private.key
