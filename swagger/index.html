@@ -30,14 +30,37 @@
   window.onload = function () {
     window.ui = SwaggerUIBundle({
       url: "/swagger.json",
-      dom_id: '#swagger-ui',
-      deepLinking: true,
+      dom_id: "#swagger-ui",
+
+      requestSnippetsEnabled: true,
+      requestSnippets: {
+        generators: {
+          curl_bash: {
+            title: "curl",
+            syntax: "bash"
+          }
+        }
+      },
+      requestInterceptor: (req) => {
+        req.credentials = 'include';
+        // Add your certificate options
+        req.curlOptions = req.curlOptions || [];
+        req.curlOptions.push(
+          "--cert cert.pem",
+          "--key key.pem",
+          "--cacert ca-cert.pem",
+          "--insecure"
+        );
+        return req;
+      },
+      plugins: [
+        SwaggerUIBundle.plugins.DownloadUrl,
+        SwaggerUIBundle.plugins.RequestSnippets   // ← THIS IS REQUIRED
+      ],
+
       presets: [
         SwaggerUIBundle.presets.apis,
         SwaggerUIStandalonePreset
-      ],
-      plugins: [
-        SwaggerUIBundle.plugins.DownloadUrl
       ],
       layout: "StandaloneLayout"
     });
