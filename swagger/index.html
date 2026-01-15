@@ -35,37 +35,35 @@
 ></elements-api>
 
 <script>
-  function generateObserver(lang, lines) {
+  function generateObserver(data) {
+    let timeout;
     return function patchCurlSnippets() {
-      document.querySelectorAll(`.sl-code-highlight.prism-code`).forEach(snippet => {
-
-
-        const currentLang = Object.keys(lang).map(l => document.querySelectorAll(`.sl-code-highlight.prism-code.language-${l}`)).filter(a => a.length > 0);
-        if (currentLang.length > 0){
-          console.log('supported lang')
-        } else {
-          console.log('unsupported lang')
+      const snippet = document.querySelector(`.sl-code-highlight.prism-code:not(.language-json)`);
+      if (!snippet) {
+        return
+      }
+      if (timeout) {
+        clearTimeout(timeout);
+      }
+      timeout = setTimeout(() => {
+        const matchedLang = Object.keys(data).find(lang => snippet.classList.contains(`language-${lang}`));
+        if (matchedLang && snippet.dataset.lang) {
+          if (snippet.dataset.lang === matchedLang) {
+            console.log(`Matched with supporting lang ${matchedLang}, but already latest patch`);
+          } else {
+            snippet.dataset.lang = matchedLang;
+            console.log(`Matched anther supporting lang ${matchedLang},remove old, apply new`);
+          }
+        } else if (matchedLang && !snippet.dataset.lang) {
+          snippet.dataset.lang  = matchedLang;
+          console.log(`Matched with ${matchedLang}, first patch required`);
+        } else if (!matchedLang && !snippet.dataset.lang) {
+          console.log("Current lang not support, it's not patched, nothing required ");
+        } else if (!matchedLang && snippet.dataset.lang) {
+          snippet.removeAttribute(`data-lang`);
+          console.log("Change patch required due to not supporting lang");
         }
-        return;
-        console.log('called')
-        const firstLine = snippet.querySelector('.sl-flex');
-        if (!firstLine) return;
-        const firstText = firstLine.innerText.trim();
-        if (!firstText.includes('curl ')) return;
-
-        // Already patched? prevent duplicates
-        if (snippet.dataset.patched) return;
-
-        // Inject extra lines
-        lines.forEach(line => {
-          const div = document.createElement('div');
-          div.className = 'sl-flex extra-curl-line';
-          div.innerHTML = `<div class="sl-flex-1 sl-break-all">${line}</div>`;
-          firstLine.after(div);
-        });
-
-        snippet.dataset.patched = '1';
-      });
+      }, 100)
     }
   }
 
