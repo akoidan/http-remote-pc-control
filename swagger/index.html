@@ -4,20 +4,23 @@
   <meta charset="UTF-8">
   <title>API Docs</title>
   <script type="module" src="https://cdn.jsdelivr.net/npm/@stoplight/elements/web-components.min.js"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@stoplight/elements/styles.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@stoplight/elements/styles.min.css"/>
   <style>
     .sl-bg-canvas {
       padding-left: 32px;
       padding-right: 32px;
     }
+
     [data-testid="two-column-right"] {
       margin-left: 0;
       max-width: 1200px !important;
       width: 100% !important;
       margin-right: 32px;
     }
+
     .sl-stack.sl-stack--vertical.sl-stack--8.HttpOperation.sl-flex.sl-flex-col.sl-items-stretch.sl-w-full > .sl-flex:nth-child(2) {
       flex-direction: column;
+
       .sl-w-0 {
         width: 100%;
       }
@@ -34,20 +37,29 @@
 <script>
   function generateObserver(lang, lines) {
     return function patchCurlSnippets() {
-      document.querySelectorAll(`.sl-code-highlight.prism-code.language-${lang}`).forEach(snippet => {
-        // check if already patched
-        if (snippet.dataset.patched) return;
+      document.querySelectorAll(`.sl-code-highlight.prism-code`).forEach(snippet => {
 
+
+        const currentLang = Object.keys(lang).map(l => document.querySelectorAll(`.sl-code-highlight.prism-code.language-${l}`)).filter(a => a.length > 0);
+        if (currentLang.length > 0){
+          console.log('supported lang')
+        } else {
+          console.log('unsupported lang')
+        }
+        return;
+        console.log('called')
         const firstLine = snippet.querySelector('.sl-flex');
         if (!firstLine) return;
-
         const firstText = firstLine.innerText.trim();
-        if (!firstText.startsWith('curl ')) return;
+        if (!firstText.includes('curl ')) return;
 
-        // inject extra lines after first line
+        // Already patched? prevent duplicates
+        if (snippet.dataset.patched) return;
+
+        // Inject extra lines
         lines.forEach(line => {
           const div = document.createElement('div');
-          div.className = 'sl-flex';
+          div.className = 'sl-flex extra-curl-line';
           div.innerHTML = `<div class="sl-flex-1 sl-break-all">${line}</div>`;
           firstLine.after(div);
         });
@@ -57,20 +69,23 @@
     }
   }
 
-  // watch for dynamic updates
+  // Watch for dynamic updates AND subtree changes
   const observer = new MutationObserver(generateObserver(
-    'bash',
-    [
-      '  --cert cert.pem \\',
-      '  --key key.pem \\',
-      '  --cacert ca-cert.pem \\',
-      '  --insecure \\'
-    ]
+    {
+      'bash': [
+        '  --cert cert.pem \\',
+        '  --key key.pem \\',
+        '  --cacert ca-cert.pem \\',
+        '  --insecure \\'
+      ],
+      python: [
+        ''
+      ]
+    },
   ));
-  observer.observe(document.body, { childList: true, subtree: true });
+  observer.observe(document.body, {childList: true, subtree: true, characterData: true});
 
-  // initial patch
-  patchCurlSnippets();
 </script>
+
 </body>
 </html>
