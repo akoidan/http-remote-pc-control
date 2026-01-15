@@ -2,15 +2,27 @@ import {Body, Controller, Get, Param, ParseIntPipe, Post} from '@nestjs/common';
 
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import {
+  ActiveWindowIdResponse,
+  ActiveWindowIdResponseDto,
   ActiveWindowResponseDto,
   FocusExeRequestDto,
   FocusWindowRequestDto,
   GetActiveWindowResponse,
+  IsWindowResponse,
+  IsWindowResponseDto,
+  IsWindowVisibleResponse,
+  IsWindowVisibleResponseDto,
   SetBoundsRequestDto,
   SetOpacityRequestDto,
   SetOwnerRequestDto,
   ShowWindowRequestDto,
   ToggleTransparencyRequestDto,
+  WindowOpacityResponse,
+  WindowOpacityResponseDto,
+  WindowOwnerResponse,
+  WindowOwnerResponseDto,
+  WindowTitleResponse,
+  WindowTitleResponseDto,
 } from '@/window/window-dto';
 import {WindowService} from '@/window/window-service';
 import {WindowBounds} from '@/native/native-model';
@@ -52,8 +64,9 @@ export class WindowController {
   // New endpoints exposing native methods
   @Get('active-id')
   @ApiOperation({summary: 'Get active window id (raw handle)'})
-  getActiveWindow(): number {
-    return this.windowService.getActiveWindow();
+  @ApiResponse({type: ActiveWindowIdResponseDto})
+  getActiveWindow(): ActiveWindowIdResponse {
+    return { value: this.windowService.getActiveWindow() };
   }
 
   @Get(':wid/bounds')
@@ -70,8 +83,9 @@ export class WindowController {
 
   @Get(':wid/title')
   @ApiOperation({summary: 'Get window title'})
-  getWindowTitle(@Param('wid', ParseIntPipe) wid: number): string {
-    return this.windowService.getWindowTitle(wid);
+  @ApiResponse({type: WindowTitleResponseDto})
+  getWindowTitle(@Param('wid', ParseIntPipe) wid: number): WindowTitleResponse {
+    return { value: this.windowService.getWindowTitle(wid) };
   }
 
   @Post('show')
@@ -82,8 +96,9 @@ export class WindowController {
 
   @Get(':wid/opacity')
   @ApiOperation({summary: 'Get window opacity (0..1)'})
-  getWindowOpacity(@Param('wid', ParseIntPipe) wid: number): number {
-    return this.windowService.getWindowOpacity(wid);
+  @ApiResponse({type: WindowOpacityResponseDto})
+  getWindowOpacity(@Param('wid', ParseIntPipe) wid: number): WindowOpacityResponse {
+    return { value: this.windowService.getWindowOpacity(wid) };
   }
 
   @Post('opacity')
@@ -100,8 +115,9 @@ export class WindowController {
 
   @Get(':wid/owner')
   @ApiOperation({summary: 'Get window owner handle'})
-  getWindowOwner(@Param('wid', ParseIntPipe) wid: number): number {
-    return this.windowService.getWindowOwner(wid);
+  @ApiResponse({type: WindowOwnerResponseDto})
+  getWindowOwner(@Param('wid', ParseIntPipe) wid: number): WindowOwnerResponse {
+    return { value: this.windowService.getWindowOwner(wid) };
   }
 
   @Post('owner')
@@ -112,14 +128,16 @@ export class WindowController {
 
   @Get(':wid/is-valid')
   @ApiOperation({summary: 'Check if handle is a window'})
-  isWindow(@Param('wid', ParseIntPipe) wid: number): boolean {
-    return this.windowService.isWindow(wid);
+  @ApiResponse({type: IsWindowResponseDto})
+  isWindow(@Param('wid', ParseIntPipe) wid: number): IsWindowResponse {
+    return { value: this.windowService.isWindow(wid) };
   }
 
   @Get('is-visible/:wid')
   @ApiOperation({summary: 'Check if window is visible'})
-  isWindowVisible(@Param('wid', ParseIntPipe) wid: number): boolean {
-    return this.windowService.isWindowVisible(wid);
+  @ApiResponse({type: IsWindowVisibleResponseDto})
+  isWindowVisible(@Param('wid', ParseIntPipe) wid: number): IsWindowVisibleResponse {
+    return { value: this.windowService.isWindowVisible(wid) };
   }
 
   @Post('redraw')
