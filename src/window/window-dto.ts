@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+
 import {z} from 'zod';
 import {createZodDto} from '@anatine/zod-nestjs';
 import {WindowAction} from '@/native/native-model';

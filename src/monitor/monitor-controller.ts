@@ -2,7 +2,13 @@ import {Controller, Get, Param, ParseIntPipe} from '@nestjs/common';
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import {MonitorService} from '@/monitor/monitor-service';
 import {MonitorInfo} from '@/native/native-model';
-import {MonitorInfoResponseDto, MonitorIdResponse, MonitorIdResponseDto, MonitorScaleFactorResponse, MonitorScaleFactorResponseDto} from '@/monitor/monitor-dto';
+import {
+  MonitorIdResponse,
+  MonitorIdResponseDto,
+  MonitorInfoResponseDto,
+  MonitorScaleFactorResponse,
+  MonitorScaleFactorResponseDto,
+} from '@/monitor/monitor-dto';
 
 @ApiTags('Monitor')
 @Controller('monitor')
@@ -26,13 +32,13 @@ export class MonitorController {
   @ApiOperation({summary: 'Get monitor for window'})
   @ApiResponse({type: MonitorIdResponseDto})
   getMonitorFromWindow(@Param('wid', ParseIntPipe) wid: number): MonitorIdResponse {
-    return { mid: this.monitorService.getMonitorFromWindow(wid) };
+    return {mid: this.monitorService.getMonitorFromWindow(wid)};
   }
 
   @Get(':mid/scale')
   @ApiOperation({summary: 'Get monitor scale factor'})
   @ApiResponse({type: MonitorScaleFactorResponseDto})
   getMonitorScaleFactor(@Param('mid', ParseIntPipe) mid: number): MonitorScaleFactorResponse {
-    return { scaleFactor: this.monitorService.getMonitorScaleFactor(mid) };
+    return {scaleFactor: this.monitorService.getMonitorScaleFactor(mid)};
   }
 }

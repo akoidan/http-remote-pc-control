@@ -1,4 +1,4 @@
-import {DocumentBuilder, SwaggerModule, type OpenAPIObject} from '@nestjs/swagger';
+import {DocumentBuilder, type OpenAPIObject, SwaggerModule} from '@nestjs/swagger';
 import {patchNestjsSwagger} from '@anatine/zod-nestjs';
 import {readFile, writeFile} from 'fs/promises';
 import {KeyboardModule} from '@/keyboard/keyboard-module';
