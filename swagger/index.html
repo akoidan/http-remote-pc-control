@@ -37,7 +37,25 @@
 <script>
   function generateObserver(data) {
     let timeout;
+    let currentElements = []
+    function insert(snippet, lines) {
+      const firstLine = snippet.querySelector('.sl-flex');
+      currentElements = lines.reverse().map(line => {
+        const div = document.createElement('div');
+        div.className = 'sl-flex extra-curl-line';
+        div.innerHTML = `<div class="sl-flex-1 sl-break-all">${line}</div>`;
+        firstLine.after(div);
+        return div;
+      });
+    }
+
+    function deleteEl() {
+      currentElements.forEach(line => line.parentNode.removeChild(line));
+      currentElements = []
+    }
+
     return function patchCurlSnippets() {
+
       const snippet = document.querySelector(`.sl-code-highlight.prism-code:not(.language-json)`);
       if (!snippet) {
         return
@@ -45,22 +63,32 @@
       if (timeout) {
         clearTimeout(timeout);
       }
+
       timeout = setTimeout(() => {
-        const matchedLang = Object.keys(data).find(lang => snippet.classList.contains(`language-${lang}`));
+        let textContent = document.querySelector('[aria-label="Request Sample Language"]');
+        if (!textContent) {
+          return
+        }
+        textContent = textContent.textContent.toLowerCase();
+        const matchedLang = Object.keys(data).find(lang => textContent.includes(lang));
         if (matchedLang && snippet.dataset.lang) {
           if (snippet.dataset.lang === matchedLang) {
             console.log(`Matched with supporting lang ${matchedLang}, but already latest patch`);
           } else {
             snippet.dataset.lang = matchedLang;
+            deleteEl();
+            insert(snippet, data[matchedLang].elements);
             console.log(`Matched anther supporting lang ${matchedLang},remove old, apply new`);
           }
         } else if (matchedLang && !snippet.dataset.lang) {
           snippet.dataset.lang  = matchedLang;
+          insert(snippet, data[matchedLang].elements);
           console.log(`Matched with ${matchedLang}, first patch required`);
         } else if (!matchedLang && !snippet.dataset.lang) {
           console.log("Current lang not support, it's not patched, nothing required ");
         } else if (!matchedLang && snippet.dataset.lang) {
           snippet.removeAttribute(`data-lang`);
+          deleteEl();
           console.log("Change patch required due to not supporting lang");
         }
       }, 100)
@@ -70,15 +98,25 @@
   // Watch for dynamic updates AND subtree changes
   const observer = new MutationObserver(generateObserver(
     {
-      'bash': [
-        '  --cert cert.pem \\',
-        '  --key key.pem \\',
-        '  --cacert ca-cert.pem \\',
-        '  --insecure \\'
-      ],
-      python: [
-        ''
-      ]
+      'curl': {
+        elements: [
+          '  --cert cert.pem \\',
+          '  --key key.pem \\',
+          '  --cacert ca-cert.pem \\',
+          '  --insecure \\'
+        ]
+      },
+      'node / native': {
+        elements: [
+          "let agent= new Agent({",
+          "  cert: await readFile('./gencert/client/cert.pem', 'utf8'),",
+          "  key: await readFile('./gencert/client/key.pem', 'utf8'),",
+          "  ca: await readFile('./gencert/client/ca-cert.pem', 'utf8'),",
+          "  rejectUnauthorized: true, // force to fail upon wrong public keys",
+          "  checkServerIdentity: () => undefined, // we don't care about domain name, since we rely on PK in mtls",
+          "});"
+        ]
+      }
     },
   ));
   observer.observe(document.body, {childList: true, subtree: true, characterData: true});
