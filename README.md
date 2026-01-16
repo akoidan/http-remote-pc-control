@@ -7,6 +7,10 @@ Allows to remotely control this PC using http api. Events like:
 
 You can also use [hotkey-hub](https://github.com/akoidan/hotkey-hub) for managing PC via system wide keyboard shortcut on a remote PC.
 
+## Api documentation
+- Check [github pages](https://akoidan.github.io/http-remote-pc-control/) for latest version api specification.
+- For specific version address at `openapi.json` under [releases](https://github.com/akoidan/http-remote-pc-control/releases). You can load this file into openapi tool, e.g. [Swagger Editor](https://editor.swagger.io/)
+
 ## Get started
 
 ### Certificates
@@ -117,10 +121,6 @@ import { readFile } from 'fs/promises';
   });
 })()
 ```
-
-### Api documentation
-You can find openapi documentation at `openapi.json` under [releases](https://github.com/akoidan/http-remote-pc-control/releases).
-You can put this file into any swagger ui, e.g. [Swagger Editor](https://editor.swagger.io/)
 
 ### NAT
 If your current PC doesn't have a static IP or under [NAT](https://en.wikipedia.org/wiki/Network_address_translation), you can use VPN or some 3rd party service like [ngrok](https://ngrok.com/) [localtunel](https://github.com/localtunnel/localtunnel) or [cloudflared](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/) to expose it to the world. Example with ngrock:
