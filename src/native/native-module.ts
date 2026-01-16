@@ -26,6 +26,9 @@ export class NativeModule implements OnModuleInit {
   }
 
   onModuleInit(): any {
+    if (!this.native.isProcessElevated()) {
+      throw Error('Current process have to be run as administrator, if this doesnt work run it from powershell admin');
+    }
     this.logger.log(`Loaded native library from ${clc.bold.green(this.native.path)}`);
   }
 }
