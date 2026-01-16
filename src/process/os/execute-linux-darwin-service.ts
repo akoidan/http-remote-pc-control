@@ -1,15 +1,11 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  Logger,
-} from '@nestjs/common';
+import {Injectable, InternalServerErrorException, Logger} from '@nestjs/common';
 import {exec} from 'child_process';
 import {promisify} from 'util';
-import {IExecuteService} from '@/execute/execute-model';
-import {LauncherService} from '@/execute/launcher-service';
+import {IExecuteService} from '@/process/process-model';
+import {LauncherService} from '@/process/launcher-service';
 
 @Injectable()
-export class ExecuteWin32Service implements IExecuteService {
+export class ExecuteLinuxDarwinService implements IExecuteService {
   constructor(
     private readonly logger: Logger,
     private readonly launcher: LauncherService
@@ -22,13 +18,12 @@ export class ExecuteWin32Service implements IExecuteService {
 
   async killExeByName(name: string): Promise<boolean> {
     this.logger.log(`Kill ${name}`);
-
     try {
-      const {stdout, stderr} = await promisify(exec)(`taskkill /IM ${name} /F`);
+      const {stdout, stderr} = await promisify(exec)(`pkill -9 '${name}'`);
       this.logger.debug(`Process "${name}" killed successfully:`, stdout || stderr);
       return true;
     } catch (e) {
-      if (e?.message.includes(`process "${name}" not found`)) {
+      if (e?.code === 1) {
         this.logger.debug(`Process "${name}" is not up. Skipping it`);
         return false;
       }
@@ -37,13 +32,9 @@ export class ExecuteWin32Service implements IExecuteService {
   }
 
   async findPidByName(name: string): Promise<number[]> {
-    this.logger.debug(`Executing: PowerShell to find PID of ${name}`);
-
-    const command = `powershell -Command "Get-Process | Where-Object { $_.ProcessName -like '*${name}*' } | Select-Object -ExpandProperty Id"`;
-
-    const {stdout, stderr} = await promisify(exec)(command);
+    this.logger.debug(`Executing: pgrep -f ${name}`);
+    const {stdout, stderr} = await promisify(exec)(`pgrep -f '${name}'`);
     this.logger.debug(`Process "${name}" returned`, stdout || stderr);
-
     return stdout
       .split(/\r?\n/u)
       .map(line => line.trim())
@@ -53,13 +44,12 @@ export class ExecuteWin32Service implements IExecuteService {
 
   async killExeByPid(pid: number): Promise<boolean> {
     this.logger.log(`Kill ${pid}`);
-
     try {
-      const {stdout, stderr} = await promisify(exec)(`taskkill /PID ${pid} /F`);
+      const {stdout, stderr} = await promisify(exec)(`kill -9 ${pid}`);
       this.logger.debug(`Process "${pid}" killed successfully:`, stdout || stderr);
       return true;
     } catch (e) {
-      if (e?.message.includes(`process "${pid}" not found`)) {
+      if (e?.code === 1) {
         this.logger.debug(`Process "${pid}" is not up. Skipping it`);
         return false;
       }

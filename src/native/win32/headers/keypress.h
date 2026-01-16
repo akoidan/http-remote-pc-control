@@ -4,13 +4,10 @@
 
 // Modifier flags and their corresponding virtual keys
 struct KeyModifier {
-    const char* name;      // Name in JS API
-    unsigned int flag;     // Internal flag value
-    int vkey;             // Windows virtual key code
-    int winBit;           // Windows modifier bit
+  const char* name; // Name in JS API
+  unsigned int flag; // Internal flag value
+  int vkey; // Windows virtual key code
+  int winBit; // Windows modifier bit
 };
 
 Napi::Object keyboard_init(Napi::Env env, Napi::Object exports);
-
-// Set keyboard layout by layout ID (e.g., "00000409" for US English)
-Napi::Value SetKeyboardLayout(const Napi::CallbackInfo& info);

@@ -9,6 +9,13 @@ interface ActiveWindowInfo {
   path: string;
 }
 
+interface WindowBounds {
+  x: number;
+  y: number;
+  width: number;
+  height: number
+}
+
 interface MonitorBounds {
   x: number;
   y: number;
@@ -42,7 +49,7 @@ interface WindowNativeModule {
   // Window methods
   getActiveWindow(): number;
 
-  getWindowBounds(id: number): { x: number; y: number; width: number; height: number };
+  getWindowBounds(id: number): WindowBounds;
 
   getWindowTitle(id: number): string;
 
@@ -54,17 +61,17 @@ interface WindowNativeModule {
 
   isWindowVisible(id: number): boolean;
 
-  setWindowBounds(id: number, bounds: MonitorBounds): boolean;
+  setWindowBounds(id: number, bounds: MonitorBounds): void;
 
-  showWindow(id: number, type: WindowAction): boolean;
+  showWindow(id: number, type: WindowAction): void;
 
-  setWindowOpacity(id: number, opacity: number): boolean;
+  setWindowOpacity(id: number, opacity: number): void;
 
-  toggleWindowTransparency(id: number, toggle: boolean): boolean;
+  toggleWindowTransparency(id: number, toggle: boolean): void;
 
-  setWindowOwner(id: number, owner: number): boolean;
+  setWindowOwner(id: number, owner: number): void;
 
-  redrawWindow(id: number): boolean;
+  redrawWindow(id: number): void;
 }
 
 // New interface to represent monitor-related native APIs
@@ -75,7 +82,7 @@ interface MonitorNativeModule {
 
   getMonitorScaleFactor(monitor: number): number;
 
-  getMonitorInfo(monitor: number): MonitorBounds;
+  getMonitorInfo(monitor: number): MonitorInfo;
 }
 
 // New interface to represent process-related native APIs
@@ -115,6 +122,7 @@ export type {
   InitWindowResult,
   INativeModule,
   MonitorBounds,
+  WindowBounds,
   MonitorInfo,
   WindowNativeModule,
   MonitorNativeModule,

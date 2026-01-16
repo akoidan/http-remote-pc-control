@@ -7,9 +7,9 @@
 
 // Structure to hold KDE layout information
 struct KdeLayout {
-    std::string code;
-    std::string variant;
-    std::string displayName;
+  std::string code;
+  std::string variant;
+  std::string displayName;
 };
 
 // Get available keyboard layouts from KDE via DBus

@@ -12,7 +12,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  swagger:
+  openapi:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
@@ -30,8 +30,8 @@ jobs:
       - name: Install yarn deps
         if: steps.cache-node.outputs.cache-hit != 'true'
         run:  yarn install --frozen-lockfile
-      - name: Check Eslint
-        run: yarn schema:swagger
+      - name: Generate openapi doc
+        run: yarn openapi
   lint:
     runs-on: ubuntu-22.04
     steps:
@@ -79,7 +79,7 @@ jobs:
           path: ~/.pkg-cache
           key: ${{ runner.os }}-pkg-18
       - name: Build
-        run: yarn build:win32
+        run: yarn build
 
   linux:
     runs-on: ubuntu-22.04
@@ -115,4 +115,4 @@ jobs:
           path: ~/.pkg-cache
           key: ${{ runner.os }}-pkg-18
       - name: Build
-        run: yarn build:linux
+        run: yarn build

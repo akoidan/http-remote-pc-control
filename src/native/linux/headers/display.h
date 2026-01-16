@@ -3,4 +3,4 @@
 
 void XCloseMainDisplay();
 
-Display *XGetMainDisplay();
+Display* XGetMainDisplay();

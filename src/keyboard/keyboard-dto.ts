@@ -23,7 +23,7 @@ const allowedKeys = [
   'lights_mon_up', 'lights_mon_down',
   'lights_kbd_toggle', 'lights_kbd_up', 'lights_kbd_down',
   'menu', 'pause',
-];
+] as const;
 const modifierKeys = [
   'control', 'right_control',
   'alt', 'right_alt',
@@ -32,9 +32,9 @@ const modifierKeys = [
   'win', 'right_win',
   'cmd', 'right_cmd',
   'fn',
-];
+] as const;
 
-const keySchema = z.enum(([...allowedKeys, ...modifierKeys]) as any)
+const keySchema = z.enum(([...allowedKeys, ...modifierKeys]))
   .describe('A key to be sent.');
 
 const setKeyboardLayoutSchema = z.object({

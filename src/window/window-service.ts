@@ -1,7 +1,7 @@
 /* eslint-disable max-lines */
 import {BadRequestException, Inject, Injectable, Logger, NotImplementedException} from '@nestjs/common';
 import {UIWindow} from '@/window/window-model';
-import {INativeModule, MonitorBounds, Native, WindowAction} from '@/native/native-model';
+import {INativeModule, MonitorBounds, Native, WindowAction, WindowBounds} from '@/native/native-model';
 import {OS_INJECT} from '@/window/window-consts';
 import {ActiveWindowResponseDto} from '@/window/window-dto';
 
@@ -85,7 +85,7 @@ export class WindowService {
     }
   }
 
-  public getWindowBounds(wid: number): MonitorBounds {
+  public getWindowBounds(wid: number): WindowBounds {
     if (!['win32'].includes(this.os)) {
       throw new NotImplementedException(`Unsupported platform: ${this.os}`);
     }

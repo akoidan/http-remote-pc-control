@@ -31,7 +31,7 @@ jobs:
           path: ~/.pkg-cache
           key: ${{ runner.os }}-pkg-18
       - name: Build
-        run: yarn build:win32
+        run: yarn build
 
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
@@ -61,18 +61,22 @@ jobs:
       - name: Install yarn deps
         if: steps.cache-node.outputs.cache-hit != 'true'
         run: yarn install --frozen-lockfile
-      - name: Generate swagger docs
-        run: yarn schema:swagger
-      - name: Upload swagger schema
+      - name: Generate openapi docs
+        run: yarn openapi
+      - name: Upload openapi schema
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./swagger.json
-          asset_name: swagger.json
+          asset_path: ./openapi/openapi.json
+          asset_name: openapi.json
           asset_content_type: application/json
-
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./openapi
+      - uses: actions/deploy-pages@v4
   linux:
     runs-on: ubuntu-22.04
     permissions: write-all
@@ -106,7 +110,7 @@ jobs:
           path: ~/.pkg-cache
           key: ${{ runner.os }}-pkg-18
       - name: Build
-        run: yarn build:linux
+        run: yarn build
 
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
@@ -114,7 +118,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./http-remote-pc-control.elf
+          asset_path: ./http-remote-pc-control
           asset_name: http-remote-pc-control.elf
           asset_content_type: application/x-executable
 
@@ -163,7 +167,7 @@ jobs:
           url="https://github.com/akoidan/http-remote-pc-control"
           tag="${{ github.event.release.tag_name }}"
           wget -q "${url}/releases/download/${tag}/http-remote-pc-control.elf"
-          wget -q "${url}/releases/download/${tag}/swagger.json"
+          wget -q "${url}/releases/download/${tag}/openapi.json"
           VERSION=$(jq -r '.version' ./package.json)
           rootdir=$(pwd)
           srcdir="${rootdir}/packages/debian"
@@ -171,7 +175,7 @@ jobs:
           sed -i "s/^Version:.*/Version: ${VERSION}/" "${srcdir}/control"
           install -D -m 644 "${srcdir}/control" "${pkgdir}/DEBIAN/control"
           install -D -m 755 "${rootdir}/http-remote-pc-control.elf" "${pkgdir}/usr/bin/http-remote-pc-control"
-          install -D -m 644 "${rootdir}/swagger.json" "${pkgdir}/usr/share/http-remote-pc-control/swagger.json"
+          install -D -m 644 "${rootdir}/openapi.json" "${pkgdir}/usr/share/http-remote-pc-control/openapi.json"
           install -D -m 644 "${rootdir}/packages/http-remote-pc-control.service" "${pkgdir}/usr/lib/systemd/user/http-remote-pc-control.service"
           install -D -m 755 "${rootdir}/packages/gen-certs.sh" "${pkgdir}/usr/share/http-remote-pc-control/gen-certs"
           install -D -m 644 "${rootdir}/san.cnf" "${pkgdir}/usr/share/http-remote-pc-control/san.cnf"

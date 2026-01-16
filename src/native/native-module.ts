@@ -1,14 +1,5 @@
-import {
-  Global,
-  Inject,
-  Logger,
-  Module,
-  type OnModuleInit,
-} from '@nestjs/common';
-import {
-  INativeModule,
-  Native,
-} from '@/native/native-model';
+import {Global, Inject, Logger, Module, type OnModuleInit} from '@nestjs/common';
+import {INativeModule, Native} from '@/native/native-model';
 import bindings from 'bindings';
 import clc from 'cli-color';
 

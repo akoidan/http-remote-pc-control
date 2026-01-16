@@ -1,22 +1,7 @@
-import {
-  Body,
-  Controller,
-  Inject,
-  Post,
-} from '@nestjs/common';
-import {
-  KeyPressRequestDto,
-  SetKeyboardLayoutRequestDto,
-  TypeTextRequestDto,
-} from '@/keyboard/keyboard-dto';
-import {
-  IKeyboardService,
-  KeyboardService,
-} from '@/keyboard/keyboard-model';
-import {
-  ApiOperation,
-  ApiTags,
-} from '@nestjs/swagger';
+import {Body, Controller, Inject, Post} from '@nestjs/common';
+import {KeyPressRequestDto, SetKeyboardLayoutRequestDto, TypeTextRequestDto} from '@/keyboard/keyboard-dto';
+import {IKeyboardService, KeyboardService} from '@/keyboard/keyboard-model';
+import {ApiOperation, ApiTags} from '@nestjs/swagger';
 
 @ApiTags('Keyboard')
 @Controller('keyboard')

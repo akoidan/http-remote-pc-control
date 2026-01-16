@@ -1,12 +1,5 @@
-import {
-  Inject,
-  Injectable,
-  Logger,
-} from '@nestjs/common';
-import {
-  access,
-  readFile,
-} from 'fs/promises';
+import {Inject, Injectable, Logger} from '@nestjs/common';
+import {access, readFile} from 'fs/promises';
 import * as path from 'path';
 import {CERT_DIR} from '@/mtls/mtls-model';
 
