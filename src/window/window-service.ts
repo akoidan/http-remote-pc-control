@@ -16,6 +16,7 @@ export class WindowService {
   ) {
   }
 
+  /** @deprecated * use native.getWindowsByProcessId */
   public getAllWindows(): UIWindow[] {
     return this.addon.getWindows().map((id: number) => {
       const initRes = this.addon.initWindow(id);
@@ -32,6 +33,9 @@ export class WindowService {
   public async getAllWindowsByPid(pid: number): Promise<number[]> {
     if (!['win32', 'linux'].includes(this.os)) {
       throw new NotImplementedException(`Unsupported platform: ${this.os}`);
+    }
+    if (this.os === 'win32') {
+        return this.addon.getWindowsByProcessId(pid);
     }
     const windowsRaw = this.getAllWindows();
     this.logger.debug(`Found following windows ids ${windowsRaw.map((win: UIWindow) => win.processId).join(', ')}`);

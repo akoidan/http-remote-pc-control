@@ -42,6 +42,8 @@ interface WindowNativeModule {
 
   getWindows(): number[];
 
+  getWindowsByProcessId(pid: number): number[];
+
   initWindow(id: number): InitWindowResult;
 
   getActiveWindowInfo(): ActiveWindowInfo;
@@ -72,6 +74,8 @@ interface WindowNativeModule {
   setWindowOwner(id: number, owner: number): void;
 
   redrawWindow(id: number): void;
+
+  getProcessMainWindow(pid: number): number;
 }
 
 // New interface to represent monitor-related native APIs
@@ -88,8 +92,7 @@ interface MonitorNativeModule {
 // New interface to represent process-related native APIs
 interface ProcessNativeModule {
   createProcess(path: string, cmd?: string): number;
-
-  getProcessMainWindow(pid: number): number;
+  isProcessElevated(): boolean;
 }
 
 interface KeyboardNativeModule {
