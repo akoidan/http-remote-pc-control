@@ -126,6 +126,7 @@ BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM lparam) {
   return TRUE;
 }
 
+// Get all window handles
 Napi::Array getWindows(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
@@ -141,6 +142,49 @@ Napi::Array getWindows(const Napi::CallbackInfo& info) {
   return arr;
 }
 
+// Enumerate windows by process ID
+struct EnumWindowsCallbackArgs {
+  DWORD processId;
+  std::vector<HWND> handles;
+};
+
+BOOL CALLBACK EnumWindowsByProcessIdProc(HWND hwnd, LPARAM lparam) {
+  auto& args = *reinterpret_cast<EnumWindowsCallbackArgs*>(lparam);
+  DWORD processId = 0;
+  GetWindowThreadProcessId(hwnd, &processId);
+  
+  if (processId == args.processId) {
+    args.handles.push_back(hwnd);
+  }
+  
+  return TRUE; // Continue enumeration
+}
+
+// Get all window handles for a specified process ID
+Napi::Array getWindowsByProcessId(const Napi::CallbackInfo& info) {
+  Napi::Env env{info.Env()};
+
+  if (info.Length() < 1 || !info[0].IsNumber()) {
+    throw Napi::TypeError::New(env, "Process ID must be a number");
+  }
+
+  DWORD processId = info[0].As<Napi::Number>().Uint32Value();
+  EnumWindowsCallbackArgs args{processId, {}};
+  
+  if (!EnumWindows(EnumWindowsByProcessIdProc, reinterpret_cast<LPARAM>(&args))) {
+    DWORD err = GetLastError();
+    throw Napi::Error::New(env, "EnumWindows failed with error: " + std::to_string(err));
+  }
+
+  auto result = Napi::Array::New(env, args.handles.size());
+  for (size_t i = 0; i < args.handles.size(); ++i) {
+    result.Set(i, Napi::Number::New(env, reinterpret_cast<int64_t>(args.handles[i])));
+  }
+
+  return result;
+}
+
+// Initialize a window object
 Napi::Object initWindow(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
@@ -160,6 +204,7 @@ Napi::Object initWindow(const Napi::CallbackInfo& info) {
   return obj;
 }
 
+// Get the bounds of a window
 Napi::Object getWindowBounds(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
@@ -178,6 +223,7 @@ Napi::Object getWindowBounds(const Napi::CallbackInfo& info) {
   return bounds;
 }
 
+// Get the title of a window
 Napi::String getWindowTitle(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
@@ -193,6 +239,7 @@ Napi::String getWindowTitle(const Napi::CallbackInfo& info) {
   return Napi::String::New(env, title);
 }
 
+// Get the opacity of a window
 Napi::Number getWindowOpacity(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
@@ -204,6 +251,7 @@ Napi::Number getWindowOpacity(const Napi::CallbackInfo& info) {
   return Napi::Number::New(env, static_cast<double>(opacity) / 255.);
 }
 
+// Get the owner of a window
 Napi::Number getWindowOwner(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
@@ -212,6 +260,7 @@ Napi::Number getWindowOwner(const Napi::CallbackInfo& info) {
   return Napi::Number::New(env, GetWindowLongPtrA(handle, GWLP_HWNDPARENT));
 }
 
+// Toggle the transparency of a window
 void toggleWindowTransparency(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
@@ -228,6 +277,7 @@ void toggleWindowTransparency(const Napi::CallbackInfo& info) {
   }
 }
 
+// Set the opacity of a window
 void setWindowOpacity(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
@@ -246,6 +296,7 @@ void setWindowOpacity(const Napi::CallbackInfo& info) {
   }
 }
 
+// Set the bounds of a window
 void setWindowBounds(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
@@ -269,6 +320,7 @@ void setWindowBounds(const Napi::CallbackInfo& info) {
   }
 }
 
+// Set the owner of a window
 void setWindowOwner(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
@@ -287,6 +339,7 @@ void setWindowOwner(const Napi::CallbackInfo& info) {
   }
 }
 
+// Show a window
 void showWindow(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
@@ -318,6 +371,7 @@ void showWindow(const Napi::CallbackInfo& info) {
   }
 }
 
+// Bring a window to the top
 Napi::Boolean bringWindowToTop(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
   auto handle{getValueFromCallbackData<HWND>(info, 0)};
@@ -340,6 +394,7 @@ Napi::Boolean bringWindowToTop(const Napi::CallbackInfo& info) {
   return Napi::Boolean::New(env, b);
 }
 
+// Redraw a window
 void redrawWindow(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
@@ -355,6 +410,7 @@ void redrawWindow(const Napi::CallbackInfo& info) {
   }
 }
 
+// Check if a window is valid
 Napi::Boolean isWindow(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
@@ -363,6 +419,7 @@ Napi::Boolean isWindow(const Napi::CallbackInfo& info) {
   return Napi::Boolean::New(env, IsWindow(handle));
 }
 
+// Check if a window is visible
 Napi::Boolean isWindowVisible(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
@@ -371,6 +428,7 @@ Napi::Boolean isWindowVisible(const Napi::CallbackInfo& info) {
   return Napi::Boolean::New(env, IsWindowVisible(handle));
 }
 
+// Get information about the active window
 Napi::Object getActiveWindowInfo(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
@@ -390,6 +448,7 @@ Napi::Object getActiveWindowInfo(const Napi::CallbackInfo& info) {
   return result;
 }
 
+// Initialize the window module
 Napi::Object window_init(Napi::Env env, Napi::Object exports) {
   exports.Set(Napi::String::New(env, "getActiveWindow"), Napi::Function::New(env, getActiveWindow));
   exports.Set(Napi::String::New(env, "setWindowBounds"), Napi::Function::New(env, setWindowBounds));
@@ -408,6 +467,7 @@ Napi::Object window_init(Napi::Env env, Napi::Object exports) {
   exports.Set(Napi::String::New(env, "getWindowOwner"), Napi::Function::New(env, getWindowOwner));
   exports.Set(Napi::String::New(env, "getWindowOpacity"), Napi::Function::New(env, getWindowOpacity));
   exports.Set(Napi::String::New(env, "getWindows"), Napi::Function::New(env, getWindows));
+  exports.Set(Napi::String::New(env, "getWindowsByProcessId"), Napi::Function::New(env, getWindowsByProcessId));
   exports.Set(Napi::String::New(env, "getProcessMainWindow"), Napi::Function::New(env, getProcessMainWindow));
   exports.Set(Napi::String::New(env, "getActiveWindowInfo"), Napi::Function::New(env, getActiveWindowInfo));
 

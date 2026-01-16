@@ -42,6 +42,8 @@ interface WindowNativeModule {
 
   getWindows(): number[];
 
+  getWindowsByProcessId(pid: number): number[];
+
   initWindow(id: number): InitWindowResult;
 
   getActiveWindowInfo(): ActiveWindowInfo;
