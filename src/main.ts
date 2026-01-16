@@ -35,6 +35,9 @@ async function parseArgs(): Promise<{port: number, certDir: string}> {
 
 asyncLocalStorage.run(new Map<string, string>().set('comb', 'init'), () => {
   const customLogger = new CustomLogger();
+  // eslint-disable-next-line
+  const packageJson: string = require('../package.json').version;
+  customLogger.log(`Booting http-remote-pc-control ${packageJson}`);
   (async function startApp(): Promise<void> {
     const logger = new CustomLogger();
     // experimental
