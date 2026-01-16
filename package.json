@@ -60,7 +60,7 @@
       "build/Debug/native.node"
     ],
     "targets": [
-      "node18-win-x64"
+      "host"
     ]
   },
   "bin": "dist/main.js",

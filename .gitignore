@@ -6,6 +6,7 @@
 /certs
 /!certs/.gitkeep
 /.vs
+/http-remote-pc-control
 /Project1
 /app
 /cmake-build-debug
