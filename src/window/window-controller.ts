@@ -134,7 +134,7 @@ export class WindowController {
     return {isValid: this.windowService.isWindow(wid)};
   }
 
-  @Get('is-visible/:wid')
+  @Get(':wid/is-visible')
   @ApiOperation({summary: 'Check if window is visible'})
   @ApiResponse({type: IsWindowVisibleResponseDto})
   isWindowVisible(@Param('wid', ParseIntPipe) wid: number): IsWindowVisibleResponse {
