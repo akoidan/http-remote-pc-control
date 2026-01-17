@@ -6,19 +6,10 @@
 #include "./headers/process.h"
 
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
-    // Initialize window management
     window_init(env, exports);
-    
-    // Initialize keyboard functions
     keyboard_init(env, exports);
-    
-    // Initialize mouse functions
-    init_mouse(env, exports);
-
-    // Initialize monitor functions
+    mouse_init(env, exports);
     monitor_init(env, exports);
-
-    // Initialize process functions
     process_init(env, exports);
 
     return exports;

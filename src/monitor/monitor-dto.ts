@@ -15,10 +15,33 @@ const monitorInfoSchema = z.object({
   isPrimary: z.boolean().describe('True if this is the primary display'),
 }).describe('Monitor information');
 
+const monitorIdResponseSchema = z.object({
+  mid: z.number().describe('Monitor ID'),
+}).describe('Monitor ID');
+
+const monitorScaleFactorResponseSchema = z.object({
+  scaleFactor: z.number().describe('Monitor scale factor'),
+}).describe('Monitor scale factor');
+
 class MonitorInfoResponseDto extends createZodDto(monitorInfoSchema) {}
+
+class MonitorIdResponseDto extends createZodDto(monitorIdResponseSchema) {}
+class MonitorScaleFactorResponseDto extends createZodDto(monitorScaleFactorResponseSchema) {}
+
+type MonitorIdResponse = z.infer<typeof monitorIdResponseSchema>;
+type MonitorScaleFactorResponse = z.infer<typeof monitorScaleFactorResponseSchema>;
 
 export {
   monitorBoundsSchema,
   monitorInfoSchema,
+  monitorIdResponseSchema,
+  monitorScaleFactorResponseSchema,
   MonitorInfoResponseDto,
+  MonitorIdResponseDto,
+  MonitorScaleFactorResponseDto,
+};
+
+export type {
+  MonitorIdResponse,
+  MonitorScaleFactorResponse,
 };

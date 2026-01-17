@@ -1,0 +1,20 @@
+Source: http-remote-pc-control
+Section: utils
+Priority: optional
+Maintainer: Andrew Koidan <deathangel908@gmail.com>
+Standards-Version: 4.6.1
+Homepage: https://github.com/deathangel908/http-remote-pc-control
+Vcs-Browser: https://github.com/deathangel908/http-remote-pc-control
+Vcs-Git: https://github.com/deathangel908/http-remote-pc-control.git
+Rules-Requires-Root: no
+Version: UNSET
+Package: http-remote-pc-control
+Architecture: amd64
+Depends: libxtst6,
+         libxcb-ewmh2,
+         libxcb1,
+         libdbus-1-3
+Description: HTTP Remote PC Control
+ A tool to control your PC remotely via HTTP requests.
+ This package provides a system service that allows remote control
+ of the PC through HTTP endpoints.

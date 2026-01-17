@@ -10,7 +10,8 @@ export class ProcessService {
     private readonly addon: INativeModule,
     @Inject(OS_INJECT)
     private readonly os: NodeJS.Platform,
-  ) {}
+  ) {
+  }
 
   public createProcess(path: string, cmd?: string): number {
     if (!['win32'].includes(this.os)) {

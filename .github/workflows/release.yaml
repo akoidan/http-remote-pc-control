@@ -1,0 +1,193 @@
+name: release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  win32:
+    runs-on: windows-2022
+    permissions: write-all
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Restore node_modules cache
+        id: cache-node
+        # DO not create cache on release, only on master
+        uses: actions/cache/restore@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('yarn.lock') }}
+      - name: Install yarn deps
+        if: steps.cache-node.outputs.cache-hit != 'true'
+        run: yarn install --frozen-lockfile
+      - name: Restore pkg cache
+        id: cache-pkg
+        # DO not create cache on release, only on master
+        uses: actions/cache/restore@v4
+        with:
+          path: ~/.pkg-cache
+          key: ${{ runner.os }}-pkg-18
+      - name: Build
+        run: yarn build
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./http-remote-pc-control.exe
+          asset_name: http-remote-pc-control.exe
+          asset_content_type: application/vnd.microsoft.portable-executable
+
+  docs:
+    runs-on: ubuntu-22.04
+    permissions: write-all
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Restore node_modules cache
+        id: cache-node
+        # DO not create cache on release, only on master
+        uses: actions/cache/restore@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('yarn.lock') }}
+      - name: Install yarn deps
+        if: steps.cache-node.outputs.cache-hit != 'true'
+        run: yarn install --frozen-lockfile
+      - name: Generate openapi docs
+        run: yarn openapi
+      - name: Upload openapi schema
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./openapi/openapi.json
+          asset_name: openapi.json
+          asset_content_type: application/json
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./openapi
+      - uses: actions/deploy-pages@v4
+  linux:
+    runs-on: ubuntu-22.04
+    permissions: write-all
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies # TODO cache
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libx11-dev libxtst-dev libxcb-ewmh-dev libxcb1-dev cmake g++ make libdbus-1-dev
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Restore node_modules cache
+        id: cache-node
+        # DO not create cache on release, only on master
+        uses: actions/cache/restore@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('yarn.lock') }}
+      - name: Install yarn deps
+        if: steps.cache-node.outputs.cache-hit != 'true'
+        run: yarn install --frozen-lockfile
+      - name: Restore pkg cache
+        id: cache-pkg
+        # DO not create cache on release, only on master
+        uses: actions/cache/restore@v4
+        with:
+          path: ~/.pkg-cache
+          key: ${{ runner.os }}-pkg-18
+      - name: Build
+        run: yarn build
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./http-remote-pc-control
+          asset_name: http-remote-pc-control.elf
+          asset_content_type: application/x-executable
+
+  aur:
+    needs: [linux, docs]
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Copy PKGBUILD and related files
+        run: |
+          TAG=${{ github.event.release.tag_name }}
+          VERSION=$(jq -r '.version' package.json)
+          sed -i "s/^pkgver=.*/pkgver=${VERSION}/" ./packages/arch/PKGBUILD
+          sed -i "s/^tag=.*/tag=${TAG}/" ./packages/arch/PKGBUILD
+
+      - name: Publish to AUR
+        uses: KSXGitHub/github-actions-deploy-aur@v4.1.1
+        with:
+          pkgname: http-remote-pc-control
+          pkgbuild: ./packages/arch/PKGBUILD
+          assets: |
+            ./packages/arch/http-remote-pc-control.install
+            ./packages/http-remote-pc-control.service
+            ./packages/gen-certs.sh
+            ./san.cnf
+          commit_username: "GitHub Actions Bot"
+          updpkgsums: "true"
+          commit_email: "actions@github.com"
+          ssh_private_key: ${{ secrets.PK_ARCH }}
+          push_timeout: 1m
+
+  deb:
+    runs-on: ubuntu-22.04
+    needs: [linux, docs]
+    permissions: write-all
+    steps:
+      - uses: actions/checkout@v3
+      - name: Prepare package
+        env:
+          DEBEMAIL: "deathangel908@gmail.com"
+          DEBFULLNAME: "Andrew Koidan"
+        run: |
+          url="https://github.com/akoidan/http-remote-pc-control"
+          tag="${{ github.event.release.tag_name }}"
+          wget -q "${url}/releases/download/${tag}/http-remote-pc-control.elf"
+          wget -q "${url}/releases/download/${tag}/openapi.json"
+          VERSION=$(jq -r '.version' ./package.json)
+          rootdir=$(pwd)
+          srcdir="${rootdir}/packages/debian"
+          pkgdir="${srcdir}/http-remote-pc-control"
+          sed -i "s/^Version:.*/Version: ${VERSION}/" "${srcdir}/control"
+          install -D -m 644 "${srcdir}/control" "${pkgdir}/DEBIAN/control"
+          install -D -m 755 "${rootdir}/http-remote-pc-control.elf" "${pkgdir}/usr/bin/http-remote-pc-control"
+          install -D -m 644 "${rootdir}/openapi.json" "${pkgdir}/usr/share/http-remote-pc-control/openapi.json"
+          install -D -m 644 "${rootdir}/packages/http-remote-pc-control.service" "${pkgdir}/usr/lib/systemd/user/http-remote-pc-control.service"
+          install -D -m 755 "${rootdir}/packages/gen-certs.sh" "${pkgdir}/usr/share/http-remote-pc-control/gen-certs"
+          install -D -m 644 "${rootdir}/san.cnf" "${pkgdir}/usr/share/http-remote-pc-control/san.cnf"
+          cd "$srcdir"
+          dpkg-deb --build http-remote-pc-control http-remote-pc-control-amd64.deb
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: packages/debian/http-remote-pc-control-amd64.deb
+          asset_name: http-remote-pc-control.deb
+          asset_content_type: application/vnd.debian.binary-package

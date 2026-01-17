@@ -7,20 +7,20 @@
 
 // Enable ANSI escape sequences for Windows console
 inline void enableAnsiColors() {
-    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
-    DWORD dwMode = 0;
-    GetConsoleMode(hOut, &dwMode);
-    dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
-    SetConsoleMode(hOut, dwMode);
+  HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+  DWORD dwMode = 0;
+  GetConsoleMode(hOut, &dwMode);
+  dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+  SetConsoleMode(hOut, dwMode);
 }
 
 // ANSI color codes matching cli-color
 namespace AnsiColor {
-    const char* const Reset = "\x1b[0m";
-    // Exact matches for cli-color xterm codes
-    const char* const Time = "\x1b[38;5;100m";     // clc.xterm(100) - timestamp (dark gold)
-    const char* const Label = "\x1b[38;5;2m";      // clc.xterm(2) - label
-    const char* const Message = "\x1b[38;5;7m";    // clc.xterm(7) - message
+  const char* const Reset = "\x1b[0m";
+  // Exact matches for cli-color xterm codes
+  const char* const Time = "\x1b[38;5;100m"; // clc.xterm(100) - timestamp (dark gold)
+  const char* const Label = "\x1b[38;5;2m"; // clc.xterm(2) - label
+  const char* const Message = "\x1b[38;5;7m"; // clc.xterm(7) - message
 }
 
 #define LOG_TIME() do { \
@@ -37,9 +37,10 @@ namespace AnsiColor {
               << AnsiColor::Reset; \
 } while(0)
 
-#define LOG(msg) do { \
+#define LOG(fmt, ...) do { \
     LOG_TIME(); \
-    std::cout << AnsiColor::Label << "cwin: " \
-              << AnsiColor::Message << msg \
-              << AnsiColor::Reset << std::endl; \
+    char buffer[1024]; \
+    snprintf(buffer, sizeof(buffer), "%s[native] %s" fmt "%s\n", \
+             AnsiColor::Label, AnsiColor::Message, ##__VA_ARGS__, AnsiColor::Reset); \
+    std::cout << buffer; \
 } while(0)

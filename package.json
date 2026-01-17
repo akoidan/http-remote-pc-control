@@ -1,26 +1,18 @@
 {
-  "name": "l2",
-  "version": "1.0.0",
-  "main": "index.js",
-  "repository": "git@github.com:akoidan/l2.git",
+  "name": "http-remote-pc-control",
+  "version": "2.0.0",
+  "repository": "git@github.com:akoidan/http-remote-pc-control.git",
   "author": "akoidan <deathangel908@gmail.com>",
   "license": "MIT",
   "scripts": {
     "start": "rm -rf ./dist/ && node -r tsconfig-paths/register -r ts-node/register src/main.ts",
     "clean": "rm -rf ./dist/ && rm -rf ./build",
-    "transpile": "nest build",
-    "build:local": "npm-run-all -s clean native:configure:debug native:build:debug",
-    "schema:swagger": "rm -rf ./dist/ && node -r tsconfig-paths/register -r ts-node/register src/swagger.ts",
-    "pkg:win32": "pkg . --targets win --output app.exe",
-    "pkg:linux": "pkg . --targets linux --output app",
-    "build:win32": "npm-run-all -s clean native:configure native:build transpile pkg:win32",
-    "build:linux": "npm-run-all -s clean native:configure native:build transpile pkg:linux",
-    "vs2022": "cmake-js configure --generator \"Visual Studio 17 2022\" --debug",
-    "wine": "wine app.exe",
-    "native:configure": "cmake-js configure",
-    "native:build": "cmake-js compile",
-    "native:configure:debug": "rm -rf build && cmake-js configure --debug",
-    "native:build:debug": "cmake-js build --debug",
+    "openapi": "rm -rf ./dist/ && node -r tsconfig-paths/register -r ts-node/register src/open-api.ts",
+    "cmake": "cmake-js build",
+    "cmake:debug": "cmake-js build --debug",
+    "nest": "nest build",
+    "native": "pkg .",
+    "build": "npm-run-all -s cmake nest native",
     "lint": "eslint --ext .ts --max-warnings=0 src",
     "autoformat": "eslint --ext .ts --max-warnings=0 --fix src",
     "postinstall": "patch-package"
@@ -35,6 +27,7 @@
     "@types/bindings": "^1.5.5",
     "@types/cli-color": "^2.0.6",
     "@types/express": "^5.0.0",
+    "@types/yargs": "^17.0.35",
     "@typescript-eslint/eslint-plugin": "^7.7.2",
     "@typescript-eslint/parser": "^7.7.2",
     "cmake-js": "^7.3.0",
@@ -67,7 +60,7 @@
       "build/Debug/native.node"
     ],
     "targets": [
-      "node18-win-x64"
+      "host"
     ]
   },
   "bin": "dist/main.js",
@@ -81,8 +74,8 @@
     "@nestjs/swagger": "^11.0.6",
     "bindings": "^1.5.0",
     "cli-color": "^2.0.4",
-    "openapi3-ts": "^4.4.0",
     "reflect-metadata": "^0.2.2",
+    "yargs": "^17.7.2",
     "zod": "^3.24.2"
   },
   "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
