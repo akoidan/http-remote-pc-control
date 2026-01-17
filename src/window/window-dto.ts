@@ -8,6 +8,7 @@ const pidSchema = z.object({
   pid: z.number().describe('Process ID whose top-level window should receive focus'),
 }).describe('Focus window by process ID');
 
+
 const widObjectSchema = z.object({
   wid: z.number().describe('Window handle (HWND as number)'),
 }).describe('Target a specific window by handle');
@@ -15,12 +16,6 @@ const widObjectSchema = z.object({
 const windowsSchema = z.object({
   wids: z.array(z.number().describe('Window handle (HWND as number)')).describe('Handles of all windows belonging to the specified process'),
 }).describe('List of window handles for a process');
-
-const activeWindowSchema = z.object({
-  path: z.string().describe('Absolute path to the process executable for the active window'),
-  wid: z.number().describe('Active window handle (HWND as number)'),
-  pid: z.number().describe('Process ID of the active window'),
-}).describe('Information about the current foreground window');
 
 // New schemas for extended window operations
 const boundsSchema = z.object({
@@ -31,6 +26,18 @@ const boundsSchema = z.object({
 }).describe('Rectangle bounds for a window');
 
 const widSchema = z.number().describe('Target window handle (HWND as number)');
+
+const getWindowResponseShema = z.object({
+  bound: boundsSchema,
+  wid: widSchema,
+  pid: z.number().describe('Process ID of the active window'),
+  path: z.string().describe('Absolute path to the process executable for the active window'),
+  isVisible: z.boolean().describe('True if the window is visible'),
+  owner: z.number().describe('Parent window id'),
+  opacity: z.number().min(0).max(1).describe('Opacity value in range 0..1 where 1 is fully opaque'),
+  title: z.string().describe('Window title'),
+});
+
 
 const setBoundsRequestSchema = z.object({
   wid: widSchema,
@@ -43,7 +50,6 @@ const showWindowRequestSchema = z.object({
 }).describe('Show/Hide/Minimize/Restore/Maximize a window');
 
 const setOpacityRequestSchema = z.object({
-  wid: widSchema,
   opacity: z.number().min(0).max(1).describe('Opacity value in range 0..1 where 1 is fully opaque'),
 }).describe('Set layered window opacity');
 
@@ -57,18 +63,12 @@ const setOwnerRequestSchema = z.object({
   owner: z.number().describe('New owner window handle (HWND as number) or 0 to clear'),
 }).describe('Set window owner (GWLP_HWNDPARENT)');
 
-const createProcessRequestSchema = z.object({
-  path: z.string().describe('Executable file path to start'),
-  cmd: z.string().optional().describe('Optional command line string'),
-}).describe('Create a new process and return its PID');
+
 
 const activeWindowIdResponseSchema = z.object({
   wid: z.number().describe('Active window handle (HWND as number)'),
 }).describe('Active window ID');
 
-const windowTitleResponseSchema = z.object({
-  title: z.string().describe('Window title'),
-}).describe('Window title');
 
 const windowOpacityResponseSchema = z.object({
   opacity: z.number().min(0).max(1).describe('Window opacity in range 0..1'),
@@ -82,13 +82,8 @@ const isWindowResponseSchema = z.object({
   isValid: z.boolean().describe('True if the handle is a valid window'),
 }).describe('Is window valid');
 
-const isWindowVisibleResponseSchema = z.object({
-  isVisible: z.boolean().describe('True if the window is visible'),
-}).describe('Is window visible');
-
 // Create DTO class for Swagger
 class FocusExeRequestDto extends createZodDto(pidSchema) {}
-class ActiveWindowResponseDto extends createZodDto(activeWindowSchema) {}
 class FocusWindowRequestDto extends createZodDto(widObjectSchema) {}
 
 // New DTOs
@@ -97,22 +92,18 @@ class ShowWindowRequestDto extends createZodDto(showWindowRequestSchema) {}
 class SetOpacityRequestDto extends createZodDto(setOpacityRequestSchema) {}
 class ToggleTransparencyRequestDto extends createZodDto(toggleTransparencyRequestSchema) {}
 class SetOwnerRequestDto extends createZodDto(setOwnerRequestSchema) {}
-class CreateProcessRequestDto extends createZodDto(createProcessRequestSchema) {}
+
 
 class ActiveWindowIdResponseDto extends createZodDto(activeWindowIdResponseSchema) {}
-class WindowTitleResponseDto extends createZodDto(windowTitleResponseSchema) {}
+class WindowResponseDto extends createZodDto(getWindowResponseShema) {}
 class WindowOpacityResponseDto extends createZodDto(windowOpacityResponseSchema) {}
 class WindowOwnerResponseDto extends createZodDto(windowOwnerResponseSchema) {}
 class IsWindowResponseDto extends createZodDto(isWindowResponseSchema) {}
-class IsWindowVisibleResponseDto extends createZodDto(isWindowVisibleResponseSchema) {}
 
-// Response DTOs for Swagger
-class BoundsResponseDto extends createZodDto(boundsSchema) {}
 
 // Export types
 type FocusExeRequest = z.infer<typeof pidSchema>;
 type GetPidWindowsRequest = z.infer<typeof widObjectSchema>;
-type GetActiveWindowResponse = z.infer<typeof activeWindowSchema>;
 type Bounds = z.infer<typeof boundsSchema>;
 
 type SetBoundsRequest = z.infer<typeof setBoundsRequestSchema>;
@@ -120,20 +111,18 @@ type ShowWindowRequest = z.infer<typeof showWindowRequestSchema>;
 type SetOpacityRequest = z.infer<typeof setOpacityRequestSchema>;
 type ToggleTransparencyRequest = z.infer<typeof toggleTransparencyRequestSchema>;
 type SetOwnerRequest = z.infer<typeof setOwnerRequestSchema>;
-type CreateProcessRequest = z.infer<typeof createProcessRequestSchema>;
+
 
 type ActiveWindowIdResponse = z.infer<typeof activeWindowIdResponseSchema>;
-type WindowTitleResponse = z.infer<typeof windowTitleResponseSchema>;
+type WindowResponse = z.infer<typeof getWindowResponseShema>;
 type WindowOpacityResponse = z.infer<typeof windowOpacityResponseSchema>;
 type WindowOwnerResponse = z.infer<typeof windowOwnerResponseSchema>;
 type IsWindowResponse = z.infer<typeof isWindowResponseSchema>;
-type IsWindowVisibleResponse = z.infer<typeof isWindowVisibleResponseSchema>;
 
 export {
   pidSchema,
   widObjectSchema,
   windowsSchema,
-  activeWindowSchema,
   boundsSchema,
   setBoundsRequestSchema,
   showWindowRequestSchema,
@@ -142,14 +131,12 @@ export {
   setOwnerRequestSchema,
   createProcessRequestSchema,
   activeWindowIdResponseSchema,
-  windowTitleResponseSchema,
+  WindowResponseDto,
   windowOpacityResponseSchema,
   windowOwnerResponseSchema,
   isWindowResponseSchema,
-  isWindowVisibleResponseSchema,
   FocusExeRequestDto,
   FocusWindowRequestDto,
-  ActiveWindowResponseDto,
   SetBoundsRequestDto,
   ShowWindowRequestDto,
   SetOpacityRequestDto,
@@ -157,15 +144,14 @@ export {
   SetOwnerRequestDto,
   CreateProcessRequestDto,
   ActiveWindowIdResponseDto,
-  WindowTitleResponseDto,
   WindowOpacityResponseDto,
   WindowOwnerResponseDto,
   IsWindowResponseDto,
   IsWindowVisibleResponseDto,
-  BoundsResponseDto,
 };
 
 export type {
+  WindowResponse,
   GetActiveWindowResponse,
   GetPidWindowsRequest,
   FocusExeRequest,
@@ -177,7 +163,6 @@ export type {
   SetOwnerRequest,
   CreateProcessRequest,
   ActiveWindowIdResponse,
-  WindowTitleResponse,
   WindowOpacityResponse,
   WindowOwnerResponse,
   IsWindowResponse,

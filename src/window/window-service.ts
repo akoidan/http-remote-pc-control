@@ -3,7 +3,7 @@ import {BadRequestException, Inject, Injectable, Logger, NotImplementedException
 import {UIWindow} from '@/window/window-model';
 import {INativeModule, MonitorBounds, Native, WindowAction, WindowBounds} from '@/native/native-model';
 import {OS_INJECT} from '@/window/window-consts';
-import {ActiveWindowResponseDto} from '@/window/window-dto';
+import {ActiveWindowResponseDto, WindowResponse} from '@/window/window-dto';
 
 @Injectable()
 export class WindowService {
@@ -18,14 +18,11 @@ export class WindowService {
 
   // eslint-disable-next-line @typescript-eslint/require-await
   public async getAllWindowsByPid(pid: number): Promise<number[]> {
-    if (!['win32', 'linux'].includes(this.os)) {
-      throw new NotImplementedException(`Unsupported platform: ${this.os}`);
-    }
     return this.addon.getWindowsByProcessId(pid);
   }
 
   // eslint-disable-next-line @typescript-eslint/require-await
-  public async getActiveWindowInfo(): Promise<ActiveWindowResponseDto> {
+  public async getActiveWindowInfo(): Promise<WindowResponse> {
     if (!['win32', 'linux'].includes(this.os)) {
       throw new NotImplementedException(`Unsupported platform: ${this.os}`);
     }
@@ -47,16 +44,6 @@ export class WindowService {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/require-await
-  public async activateWindowByPid(pid: number): Promise<void> {
-    const requiredWindows = await this.getAllWindowsByPid(pid);
-    const requireWindow = requiredWindows[requiredWindows.length - 1];
-    if (requiredWindows.length > 1) {
-      this.logger.debug(`Found ${requiredWindows.length} windows for pid ${pid}. Picking  ${requireWindow}`);
-    }
-    await this.focusWindowId(requireWindow);
-  }
-
   // Extended window operations following consistent logging and error handling
   public getActiveWindow(): number {
     try {
@@ -68,6 +55,18 @@ export class WindowService {
   }
 
   public getWindowBounds(wid: number): WindowBounds {
+    if (!['win32', 'linux'].includes(this.os)) {
+      throw new NotImplementedException(`Unsupported platform: ${this.os}`);
+    }
+    try {
+      this.logger.log(`Calling getWindowBounds for #${wid}`);
+      return this.addon.getWindowBounds(wid);
+    } catch (e) {
+      throw new BadRequestException(`Unable to get window #${wid} bounds because ${e?.message}`);
+    }
+  }
+
+  public getWindowInfo(wid: number): WindowResponse {
     if (!['win32', 'linux'].includes(this.os)) {
       throw new NotImplementedException(`Unsupported platform: ${this.os}`);
     }
