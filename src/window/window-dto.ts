@@ -30,6 +30,7 @@ const widSchema = z.number().describe('Target window handle (HWND as number)');
 const getWindowResponseShema = z.object({
   bound: boundsSchema,
   wid: widSchema,
+  mid: z.number().describe('Window handle (HWND as number)'),
   pid: z.number().describe('Process ID of the active window'),
   path: z.string().describe('Absolute path to the process executable for the active window'),
   isVisible: z.boolean().describe('True if the window is visible'),

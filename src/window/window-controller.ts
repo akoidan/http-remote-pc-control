@@ -26,6 +26,7 @@ import {
 } from '@/window/window-dto';
 import {WindowService} from '@/window/window-service';
 import {WindowBounds} from '@/native/native-model';
+import {MonitorIdResponse, MonitorIdResponseDto} from "@/monitor/monitor-dto";
 
 @ApiTags('Window')
 @Controller('window')

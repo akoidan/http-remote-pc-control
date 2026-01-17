@@ -26,6 +26,7 @@ interface MonitorBounds {
 interface MonitorInfo {
   bounds: MonitorBounds;
   workArea: MonitorBounds;
+  scale: number;
   isPrimary: boolean
 }
 
@@ -86,7 +87,7 @@ interface MonitorNativeModule {
 
   getMonitorScaleFactor(monitor: number): number;
 
-  getMonitorInfo(monitor: number): MonitorInfo;
+  getMonitorInfo(monitor: number): Omit<MonitorInfo, 'scale'>; // TODO this in C are 2 different methods
 }
 
 // New interface to represent process-related native APIs
