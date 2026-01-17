@@ -16,34 +16,12 @@ export class WindowService {
   ) {
   }
 
-  /** @deprecated * use native.getWindowsByProcessId */
-  public getAllWindows(): UIWindow[] {
-    return this.addon.getWindows().map((id: number) => {
-      const initRes = this.addon.initWindow(id);
-      const res: UIWindow = {
-        id,
-        path: initRes.path,
-        processId: initRes.processId,
-      };
-      return res;
-    }) as UIWindow[];
-  }
-
   // eslint-disable-next-line @typescript-eslint/require-await
   public async getAllWindowsByPid(pid: number): Promise<number[]> {
     if (!['win32', 'linux'].includes(this.os)) {
       throw new NotImplementedException(`Unsupported platform: ${this.os}`);
     }
-    if (this.os === 'win32') {
-        return this.addon.getWindowsByProcessId(pid);
-    }
-    const windowsRaw = this.getAllWindows();
-    this.logger.debug(`Found following windows ids ${windowsRaw.map((win: UIWindow) => win.processId).join(', ')}`);
-    const requiredWindows = windowsRaw.filter((win: UIWindow) => win.processId === pid).map((win: UIWindow) => win.id);
-    if (requiredWindows.length === 0) {
-      throw new BadRequestException(`No windows for pid ${pid} were found`);
-    }
-    return requiredWindows;
+    return this.addon.getWindowsByProcessId(pid);
   }
 
   // eslint-disable-next-line @typescript-eslint/require-await
@@ -90,7 +68,7 @@ export class WindowService {
   }
 
   public getWindowBounds(wid: number): WindowBounds {
-    if (!['win32'].includes(this.os)) {
+    if (!['win32', 'linux'].includes(this.os)) {
       throw new NotImplementedException(`Unsupported platform: ${this.os}`);
     }
     try {
