@@ -2,32 +2,105 @@
 
 # Exit script on error
 set -e
-mkdir -p ./client
-mkdir -p ./certs
 
-# Generate CA Key and Certificate
-openssl genrsa -out ca-key.pem 2048
-openssl req -new -x509 -key ca-key.pem -out ca-cert.pem -days 3650 -subj "/C=US/ST=CA/L=SF/O=Example Org/CN=Example Root CA"
+OUT_DIR=./gencert
 
-# Generate Server Key and CSR
-openssl genrsa -out ./certs/key.pem 2048
-openssl req -new -key ./certs/key.pem -out ./certs/csr.pem -subj "/C=US/ST=CA/L=SF/O=Example Org/CN=localhost"
 
-# Sign Server Certificate with CA including SAN
-openssl x509 -req -in ./certs/csr.pem -CA ca-cert.pem -CAkey ca-key.pem -CAcreateserial -out ./certs/cert.pem -days 365 -extfile san.cnf -extensions v3_req
+HRPC_CA_KEY=$OUT_DIR/ca/ca-key.pem
+HRPC_CA_CERT=$OUT_DIR/ca/ca-cert.pem
+SAN_CNF=./san.cnf
 
-# Generate Client Key and CSR
-openssl genrsa -out ./client/key.pem 2048
-openssl req -new -key ./client/key.pem -out ./client/csr.pem -subj "/C=US/ST=CA/L=SF/O=Example Org/CN=Client"
 
-# Sign Client Certificate with CA
-openssl x509 -req -in ./client/csr.pem -CA ca-cert.pem -CAkey ca-key.pem -CAcreateserial -out ./client/cert.pem -days 365
-cp ./ca-cert.pem ./client/ca-cert.pem
-cp ./ca-cert.pem ./certs/ca-cert.pem
-rm ./ca-key.pem
-rm ./ca-cert.pem
-rm ./ca-cert.srl
-rm ./certs/csr.pem
-rm ./client/csr.pem
-# Output success message
-echo "Done!"
+chp(){
+    size=${#1}
+    indent=$((25 - $size))
+    printf "\e[1;37;40m$1\e[0;36;40m"
+    printf " "
+    for (( c=1; c<= $indent; c++))  ; do
+    printf "."
+    done
+    printf " \e[0;33;40m$2\n\e[0;37;40m"
+}
+
+genCa() {
+    if [ -f "$HRPC_CA_KEY" ]; then
+        echo -e "\033[0;31mCA key already exists at $HRPC_CA_KEY\033[0m"
+        echo -e "Run \e[1;37;40mbash gen-certs.sh clean\033[0m first"
+        exit 1
+    fi
+    mkdir -p $OUT_DIR/ca
+    set -x
+    openssl genrsa -out $HRPC_CA_KEY 2048
+    export MSYS2_ARG_CONV_EXCL='*'
+    openssl req -new -x509 -key $HRPC_CA_KEY -out $HRPC_CA_CERT -days 3650 -subj "/C=US/ST=CA/L=SF/O=Example Org/CN=Example Root CA"
+    set +x
+    echo "CA certificate and key generated successfully in $OUT_DIR/ca/"
+}
+
+genClient() {
+    local client_name=$1
+    if [ -z "$client_name" ]; then
+        echo -e "\033[0;31mError: output directory name is required\033[0m"
+        show_help
+        exit 1
+    fi
+    mkdir -p $OUT_DIR/$client_name
+    HRPC_CLIENT_KEY=$OUT_DIR/$client_name/key.pem
+    HRPC_CLIENT_CSR=$OUT_DIR/$client_name/csr.pem
+    HRPC_CLIENT_CERT=$OUT_DIR/$client_name/cert.pem
+    HRPC_CLIENT_CA_CERT=$OUT_DIR/$client_name/ca-cert.pem
+    echo "Generating client certificate in: $OUT_DIR/$client_name"
+    ## Generate Server Key and CSR
+    set -x
+    openssl genrsa -out $HRPC_CLIENT_KEY 2048
+    MSYS2_ARG_CONV_EXCL='*' openssl req -new -key $HRPC_CLIENT_KEY -out $HRPC_CLIENT_CSR -subj "/C=US/ST=CA/L=SF/O=Example Org/CN=localhost"
+    ## Sign Server Certificate with CA including SAN
+    openssl x509 -req -in $HRPC_CLIENT_CSR -CA $HRPC_CA_CERT -CAkey $HRPC_CA_KEY -CAcreateserial -out $HRPC_CLIENT_CERT -days 365 -extfile $SAN_CNF -extensions v3_req
+    cp $HRPC_CA_CERT $HRPC_CLIENT_CA_CERT
+    set +x
+    rm $HRPC_CLIENT_CSR
+    echo Created $HRPC_CLIENT_KEY $HRPC_CLIENT_CERT
+}
+
+# Show help if no arguments
+show_help() {
+    chp ca "Creates CA (required to generate clients)"
+    chp "client <name>" "Generates client certificate with given name"
+    chp clean "Removes $OUT_DIR"
+    chp all "Generates CA as well as client and server certificates"
+    chp help "Prints this help"
+}
+
+# Main script logic
+if [ $# -eq 0 ]; then
+    echo -e "\033[0;31mError: Command required\033[0m"
+    show_help
+    exit 1
+fi
+
+
+case "$1" in
+    help)
+        show_help
+        exit 0
+        ;;
+    client)
+        genClient "$2"
+        ;;
+    ca)
+        genCa
+        ;;
+    clean)
+        rm -r $OUT_DIR
+        ;;
+    all)
+        genCa
+        genClient server
+        genClient client
+        ;;
+    *)
+        echo -e "\033[0;31mError: Unknown command '$1'\033[0m"
+        show_help
+        exit 1
+        ;;
+esac

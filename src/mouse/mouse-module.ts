@@ -1,7 +1,4 @@
-import {
-  Logger,
-  Module,
-} from '@nestjs/common';
+import {Logger, Module} from '@nestjs/common';
 import {MouseController} from '@/mouse/mouse-controller';
 import {MouseService} from '@/mouse/mouse-service';
 

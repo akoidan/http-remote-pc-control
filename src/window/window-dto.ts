@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+
 import {z} from 'zod';
 import {createZodDto} from '@anatine/zod-nestjs';
 import {WindowAction} from '@/native/native-model';
@@ -60,9 +62,32 @@ const createProcessRequestSchema = z.object({
   cmd: z.string().optional().describe('Optional command line string'),
 }).describe('Create a new process and return its PID');
 
+const activeWindowIdResponseSchema = z.object({
+  wid: z.number().describe('Active window handle (HWND as number)'),
+}).describe('Active window ID');
+
+const windowTitleResponseSchema = z.object({
+  title: z.string().describe('Window title'),
+}).describe('Window title');
+
+const windowOpacityResponseSchema = z.object({
+  opacity: z.number().min(0).max(1).describe('Window opacity in range 0..1'),
+}).describe('Window opacity');
+
+const windowOwnerResponseSchema = z.object({
+  wid: z.number().describe('Window owner handle (HWND as number)'),
+}).describe('Window owner handle');
+
+const isWindowResponseSchema = z.object({
+  isValid: z.boolean().describe('True if the handle is a valid window'),
+}).describe('Is window valid');
+
+const isWindowVisibleResponseSchema = z.object({
+  isVisible: z.boolean().describe('True if the window is visible'),
+}).describe('Is window visible');
+
 // Create DTO class for Swagger
 class FocusExeRequestDto extends createZodDto(pidSchema) {}
-class WindowsIdsResponseDto extends createZodDto(windowsSchema) {}
 class ActiveWindowResponseDto extends createZodDto(activeWindowSchema) {}
 class FocusWindowRequestDto extends createZodDto(widObjectSchema) {}
 
@@ -73,6 +98,13 @@ class SetOpacityRequestDto extends createZodDto(setOpacityRequestSchema) {}
 class ToggleTransparencyRequestDto extends createZodDto(toggleTransparencyRequestSchema) {}
 class SetOwnerRequestDto extends createZodDto(setOwnerRequestSchema) {}
 class CreateProcessRequestDto extends createZodDto(createProcessRequestSchema) {}
+
+class ActiveWindowIdResponseDto extends createZodDto(activeWindowIdResponseSchema) {}
+class WindowTitleResponseDto extends createZodDto(windowTitleResponseSchema) {}
+class WindowOpacityResponseDto extends createZodDto(windowOpacityResponseSchema) {}
+class WindowOwnerResponseDto extends createZodDto(windowOwnerResponseSchema) {}
+class IsWindowResponseDto extends createZodDto(isWindowResponseSchema) {}
+class IsWindowVisibleResponseDto extends createZodDto(isWindowVisibleResponseSchema) {}
 
 // Response DTOs for Swagger
 class BoundsResponseDto extends createZodDto(boundsSchema) {}
@@ -107,7 +139,6 @@ class WindowVisibleResponseDto extends createZodDto(windowVisibleResponseSchema)
 // Export types
 type FocusExeRequest = z.infer<typeof pidSchema>;
 type GetPidWindowsRequest = z.infer<typeof widObjectSchema>;
-type GetPidWindowsResponse = z.infer<typeof windowsSchema>;
 type GetActiveWindowResponse = z.infer<typeof activeWindowSchema>;
 type Bounds = z.infer<typeof boundsSchema>;
 type ActiveWindowIdResponse = z.infer<typeof activeWindowIdResponseSchema>;
@@ -123,6 +154,13 @@ type ToggleTransparencyRequest = z.infer<typeof toggleTransparencyRequestSchema>
 type SetOwnerRequest = z.infer<typeof setOwnerRequestSchema>;
 type CreateProcessRequest = z.infer<typeof createProcessRequestSchema>;
 
+type ActiveWindowIdResponse = z.infer<typeof activeWindowIdResponseSchema>;
+type WindowTitleResponse = z.infer<typeof windowTitleResponseSchema>;
+type WindowOpacityResponse = z.infer<typeof windowOpacityResponseSchema>;
+type WindowOwnerResponse = z.infer<typeof windowOwnerResponseSchema>;
+type IsWindowResponse = z.infer<typeof isWindowResponseSchema>;
+type IsWindowVisibleResponse = z.infer<typeof isWindowVisibleResponseSchema>;
+
 export {
   pidSchema,
   widObjectSchema,
@@ -135,9 +173,14 @@ export {
   toggleTransparencyRequestSchema,
   setOwnerRequestSchema,
   createProcessRequestSchema,
+  activeWindowIdResponseSchema,
+  windowTitleResponseSchema,
+  windowOpacityResponseSchema,
+  windowOwnerResponseSchema,
+  isWindowResponseSchema,
+  isWindowVisibleResponseSchema,
   FocusExeRequestDto,
   FocusWindowRequestDto,
-  WindowsIdsResponseDto,
   ActiveWindowResponseDto,
   SetBoundsRequestDto,
   ShowWindowRequestDto,
@@ -145,6 +188,12 @@ export {
   ToggleTransparencyRequestDto,
   SetOwnerRequestDto,
   CreateProcessRequestDto,
+  ActiveWindowIdResponseDto,
+  WindowTitleResponseDto,
+  WindowOpacityResponseDto,
+  WindowOwnerResponseDto,
+  IsWindowResponseDto,
+  IsWindowVisibleResponseDto,
   BoundsResponseDto,
   ActiveWindowIdResponseDto,
   WindowTitleResponseDto,
@@ -154,7 +203,6 @@ export {
 };
 
 export type {
-  GetPidWindowsResponse,
   GetActiveWindowResponse,
   GetPidWindowsRequest,
   FocusExeRequest,
@@ -169,4 +217,10 @@ export type {
   ToggleTransparencyRequest,
   SetOwnerRequest,
   CreateProcessRequest,
+  ActiveWindowIdResponse,
+  WindowTitleResponse,
+  WindowOpacityResponse,
+  WindowOwnerResponse,
+  IsWindowResponse,
+  IsWindowVisibleResponse,
 };

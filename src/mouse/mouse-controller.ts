@@ -1,14 +1,7 @@
-import {
-  Body,
-  Controller,
-  Post,
-} from '@nestjs/common';
-import {MouseMoveClickRequestDto} from '@/mouse/mouse-dto';
+import {Body, Controller, Get, Post} from '@nestjs/common';
+import {MouseMoveClickRequestDto, MouseMoveHumanClickRequestDto, MousePositionResponseDto} from '@/mouse/mouse-dto';
 import {MouseService} from '@/mouse/mouse-service';
-import {
-  ApiOperation,
-  ApiTags,
-} from '@nestjs/swagger';
+import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 
 @ApiTags('Mouse')
 @Controller('mouse')
@@ -18,14 +11,34 @@ export class MouseController {
   ) {
   }
 
-  @Post('mouse-move-click')
-  @ApiOperation({summary: 'Move mouse and click'})
+  @Post('move-left-click')
+  @ApiOperation({summary: 'Instantly moves mouse to the position and performs a left click there'})
   async mouseMoveClick(@Body() event: MouseMoveClickRequestDto): Promise<void> {
-    await this.mouseService.leftMouseMoveClick(event.x, event.y);
+    await this.mouseService.mouseMove(event.x, event.y);
   }
 
-  @Post('left-mouse-click')
-  @ApiOperation({summary: 'Left click'})
+  @Post('move')
+  @ApiOperation({summary: 'Mouse move to the point, absolute coordinate for all monitors'})
+  async mouseMove(@Body() event: MouseMoveClickRequestDto): Promise<void> {
+    await this.mouseService.mouseMove(event.x, event.y);
+  }
+
+  @Get('position')
+  @ApiOperation({summary: 'Returns X,Y of current mouse position, absolute to all monitors'})
+  @ApiResponse({type: MousePositionResponseDto})
+  // eslint-disable-next-line @typescript-eslint/require-await
+  async getMousePosition(): Promise<MousePositionResponseDto> {
+    return this.mouseService.getMousePos();
+  }
+
+  @Post('move-human')
+  @ApiOperation({summary: 'Moves mouse in a human pattern with time'})
+  async mouseMoveHuman(@Body() event: MouseMoveHumanClickRequestDto): Promise<void> {
+    await this.mouseService.moveMouseHuman(event);
+  }
+
+  @Post('left-click')
+  @ApiOperation({summary: 'Left click on the current position'})
   async leftMouseClick(): Promise<void> {
     await this.mouseService.click();
   }

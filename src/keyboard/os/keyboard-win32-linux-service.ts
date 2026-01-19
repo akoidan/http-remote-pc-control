@@ -1,11 +1,9 @@
-/*
- eslint-disable no-await-in-loop
- */
-import {Injectable, Logger} from '@nestjs/common';
+import {BadRequestException, Injectable, Logger} from '@nestjs/common';
 import {IKeyboardService} from '@/keyboard/keyboard-model';
 import {INativeModule} from '@/native/native-model';
 import {sleep} from '@/shared';
 import {RandomService} from '@/random/random-service';
+import {KeyboardLayoutValue} from '@/keyboard/keyboard-dto';
 
 @Injectable()
 export class KeyboardWin32LinuxService implements IKeyboardService {
@@ -20,14 +18,24 @@ export class KeyboardWin32LinuxService implements IKeyboardService {
   public async type(text: string, delay?: number, deviationDelay?: number): Promise<void> {
     this.logger.log(`Type: \u001b[35m${text}`);
     if (delay) {
-      const realDelay = deviationDelay ? this.rs.calcDiviation(delay, deviationDelay) : delay;
+      const realDelay = deviationDelay ? this.rs.calcDeviation(delay, deviationDelay) : delay;
       for (const char of text.split('')) {
         await sleep(realDelay); // sleep before, in case we are typing on the same pc the shorcut was triggered from
         // to avoid meta keys in keystrokes
-        await this.addon.typeString(char);
+        this.addon.typeString(char);
       }
     } else {
-      await this.addon.typeString(text);
+      this.addon.typeString(text);
+    }
+  }
+
+  public setKeyboardLayout(layout: KeyboardLayoutValue): void {
+    this.logger.log(`Setting keyboard layout to: ${layout}`);
+    try {
+      this.addon.setKeyboardLayout(layout);
+    } catch (e) {
+      this.logger.error(`Failed to set keyboard layout: ${e.message}`, e.stack);
+      throw new BadRequestException(e.message);
     }
   }
 
@@ -36,7 +44,7 @@ export class KeyboardWin32LinuxService implements IKeyboardService {
       this.logger.log(`HoldKey: \u001b[35m${key}`);
       // libnut.keyToggle(key, 'down', [])
       this.addon.keyToggle(key, [], true);
-      await sleep(50);
+      await sleep(100);
     }
     for (const key of keys) {
       this.logger.log(`KeyPress: \u001b[35m${key}`);
@@ -47,12 +55,12 @@ export class KeyboardWin32LinuxService implements IKeyboardService {
       } else {
         this.addon.keyTap(key, []);
       }
-      await sleep(50);
+      await sleep(100);
     }
     for (const key of holdKeys) {
       this.logger.log(`ReleaseKey: \u001b[35m${key}`);
       this.addon.keyToggle(key, [], false);
-      await sleep(50);
+      await sleep(100);
     }
   }
 }

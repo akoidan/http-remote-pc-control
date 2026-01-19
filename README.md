@@ -5,67 +5,67 @@ Allows to remotely control this PC using http api. Events like:
  - Running executabe files or killing executable
  - Operating windows, like focus, resize
 
-You can also use https://github.com/akoidan/hotkey-hub for doing this via system wide keyboard shortcut from a remote PC.
+You can also use [hotkey-hub](https://github.com/akoidan/hotkey-hub) for managing PC via system wide keyboard shortcut on a remote PC.
+
+## Api documentation
+- Check [github pages](https://akoidan.github.io/http-remote-pc-control/) for latest version api specification.
+- For specific version address at `openapi.json` under [releases](https://github.com/akoidan/http-remote-pc-control/releases). You can load this file into openapi tool, e.g. [Swagger Editor](https://editor.swagger.io/)
 
 ## Get started
 
 ### Certificates
-The client server app both use [mutual TLS authentication](https://www.cloudflare.com/learning/access-management/what-is-mutual-tls/).
-You can use my helper script to generate certificates with [gen-cert.sh](./gen-cert.sh).
+The client server app both rely on [mutual TLS authentication](https://www.cloudflare.com/learning/access-management/what-is-mutual-tls/).
+If you use a package (Ubuntu/Debian/Archlinux) the service will generate certificates for you. No actions are required. For Windows or other Linux distros you can use my helper script to generate certificates with [gen-cert.sh](./gen-cert.sh). Download it and run it with bash.
 
 ```bash
-bash ./gen-cert.sh
+bash ./gen-cert.sh all
 ```
+Note that on Windows you need bash, you can either use [git bash](https://git-scm.com/install/windows) or [WSL](https://learn.microsoft.com/en-us/windows/wsl/install)
 
-It will generate:
- - self-sign CA certificate with its private key and put CA cert into both ./certs/ca-cert.pem and ./client/ca-cert.pem
- - server and client private key in the ./certs/key.pem and ./client/key.pem
- - server and client certificate that are signed with CA private key and put it into ./certs/cert.pem and ./client/cert.pem
+You have to:
+- Copy ./gencert/server into ./certs directory where app executable is
+- Copy ./gencert/client into ./certs on the remote PC from where you use the api. The client PC should not validate domain name.
 
-Leave certs directory in the project or within the same directory you are running app executable file.
-Copy client directory to the remote PC where you have the [server](https://github.com/akoidan/hotkey-hub)
+### Ubuntu
+ - Install dependencies `sudo apt-get install libxcb-ewmh2 libxtst6 libxcb-ewmh2 libxcb1 libdbus-1-3` if you dont have them yet 
+ - Download `http-remote-pc-control.deb` from [releases](https://github.com/akoidan/http-remote-pc-control/releases).
+ - Install the package `sudo dpkg -i http-remote-pc-control.deb`
+ - Start the service with the same user as logged in X `systemctl --user start http-remote-pc-control`
+ - You will find certificates in `~/.local/share/http-remote-pc-control/certs`
+ - You will openapi documentation in  `/usr/share/http-remote-pc-control/openapi.json`
+ - To view logs check `journalctl --user -o cat -u http-remote-pc-control -f`
 
-### Download the app
-Here are instructions for windows, for linux you can just ignore windows specific intructions.
+#### Archlinux
+ - Install the package with `yay` or `paru` from AUR `yay -S http-remote-pc-control`
+ - Start the service with the same user as logged in X `systemctl --user start http-remote-pc-control`
+ - You will find certificates in `~/.local/share/http-remote-pc-control/certs`
+ - You will openapi documentation in  `/usr/share/http-remote-pc-control/openapi.json`
+ - To view logs check `journalctl --user -o cat -u http-remote-pc-control -f`
 
- - Download client you want to receive shorcuts [releases](https://github.com/akoidan/http-remote-pc-control/releases).
- - If windows antivirus deletes a file, you can allow it in **Virus & threat protection** -> **Protection History** -> Expaned recently blocked threat and allow it
- - Ensure directory with the executalbe, or project direcotry contains `certs` directory with certificates
+#### Other Linux distro
+- You need X11 server + XC Binding  (libX11, libXext, xcb-util-wm, xorg-setxkbmap)
+- Download `http-remote-pc-control.elf` from [releases](https://github.com/akoidan/http-remote-pc-control/releases).
+- Ensure directory with the executalbe, or project direcotry contains `certs` directory with certificates
+- run `chmod +x http-remote-pc-control.elf && ./http-remote-pc-control.elf 5000`
+- If you need systemd unit, check [http-remote-pc-control.service](./packages/http-remote-pc-control.service)
+
+#### Windows
+ - Download `http-remote-pc-control.exe` from [releases](https://github.com/akoidan/http-remote-pc-control/releases).
+ - If Antivirus deletes a file, you can allow it in **Virus & threat protection** -> **Protection History** -> Expaned recently blocked threat and allow it
+ - Ensure directory with the executalbe, or project direcotry contains `certs` directory with certificates (check step above)
  - Run exe files as Administrator. 
  - If windows antivirus complains about security Open **Virus & threat protection** -> **Virus & threat protection settings** -> **Exclusions Add or remove exclusions** -> **Add an exclusion**. 
- - If it crashes , open powershell and run exe file from it, it's a CLI app.
+ - If it crashes, open powershell and run exe file from it, it's a CLI app.
 
-### Api documentation
-You can find api documentation under [releases](https://github.com/akoidan/http-remote-pc-control/releases). You can put this file into any swagger ui, e.g. [Swagger Editor](https://editor.swagger.io/). This file can be generated locally with
-```bash
-yarn schema:swagger
-```
-
-This will create ./swagger.json in the project directory.
-
-### NAT
-If your current PC doesn't have a static IP or under NAT, you can use VPN or some 3rd party service like [ngrok](https://ngrok.com/) [localtunel](https://github.com/localtunnel/localtunnel) or [cloudflared](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/) to expose it to the world. Example with ngrock:
-```bash
-ngrok http 5000
-```
-
-### Custom port
-By default app is listening port 5000, in order to change the port specify it as a first argument on the app executable. Example
-```bash
-./app.exe 5001
-```
-In order to change port on [server](https://github.com/akoidan/hotkey-hub) app, specify it as clientPort its config.jsonc
-
-
-### Autostart on Windows OS
-This program has to be started as Admin so it has permision to send keystrokes or move mouse. Add a script to autostart in Windows with admin petrmissions: Replace path to your app.exe:
+#### Autostart on Windows OS
+This program has to be started as Admin so it has permision to send keystrokes or move mouse. Add a script to autostart in Windows with admin petrmissions: Replace path to your http-remote-pc-control.exe:
 ```shell
 @echo off
 setlocal
 
 :: Replace with the path to your program
-set "ProgramPath=C:\Users\msi\Downloads\app.exe"
-set "ProgramName=L2"
+set "ProgramPath=C:\Users\msi\Downloads\http-remote-pc-control.exe"
+set "ProgramName=RemotePcControl"
 
 :: Create the task in Task Scheduler for admin startup
 schtasks /create /tn "%ProgramName%" /tr "\"%ProgramPath%\"" /sc onlogon /rl highest /f
@@ -79,87 +79,60 @@ echo Failed to add program to startup.
 pause
 ```
 
-## Develop locally
+## Client example
+You can call the api programmaticaly via https my providing client private key, CA certificate and client certificate that was signed with CA certificate. Server uses certificate that was also signed by CA
 
-### Requirements:
-You need cmake, yarn, node version 18 or nvm, and a proper C/C++ compiler toolchain of the given platform
+```typescript
+import {
+  Agent,
+  request,
+} from 'https';
+import { readFile } from 'fs/promises';
 
-#### Windows
-  - [Visual C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/). If you installed nodejs with the installer, you can install these when prompted.
-  - An alternate way is to install the [Chocolatey package manager](https://chocolatey.org/install), and run `choco install visualstudio2017-workload-vctools` in an Administrator Powershell
-  - If you have multiple versions installed, you can select a specific version with `npm config set msvs_version 2017` (Note: this will also affect `node-gyp`)
-  - [cmake](https://cmake.org/download/),
-  - Node version 18 or [nvm](https://github.com/nvm-sh/nvm) 
-  - [yarn](https://yarnpkg.com/). 
-#### Unix/Posix
-  - Clang or GCC
-  - Ninja or Make (Ninja will be picked if both present)
-  - Node version 18 or [nvm](https://github.com/nvm-sh/nvm)
-  - [yarn](https://yarnpkg.com/).
-#### MacOS  
-  - brew install cmake nvm yarn
-#### ArchLinux:
-  - sudo pacman -S xcb-util-wm nvm yarn cmake g++
-
-### Run in dev mode
-
-To build the client you need
-
-```sh
-nvm use 18 # If you already have node 18, skip it
-yarn # install depenencies
-yarn build:local # builds native c++ modules 
-yarn start # starts a nestjs server 
+(async function main() {
+  let data = '';
+  const req = request({
+    agent: new Agent({
+      cert: await readFile('./gencert/client/cert.pem', 'utf8'),
+      key: await readFile('./gencert/client/key.pem', 'utf8'),
+      ca: await readFile('./gencert/client/ca-cert.pem', 'utf8'),
+      rejectUnauthorized: true, // force to fail upon wrong public keys
+      checkServerIdentity: () => undefined, // we don't care about domain name, since we rely on PK in mtls
+    }),
+    port: 5000,
+    host: 'localhost', // replace with remote IP
+    protocol: 'https:',
+    path: '/app/ping',
+    method: 'GET',
+    header: {
+      'x-request-id': 'r2d2' // unique request id, can be ommited
+    },
+  }, (res) => {
+    let data = '';
+    res.on('data', (chunk: string) => (data += chunk));
+    res.on('end', () => {
+      if (res.statusCode! < 400) {
+        console.debug('.');
+      } else {
+        console.log(data)
+      }
+    });
+    res.on('error', (error: Error) => console.error(error));
+  });
+})()
 ```
 
-### Debugging Native Code with CLion
-
-If you want to debug native Node.js modules in **CLion**, you need to build the module in **Debug mode**.
-
-#### 1. Build the Native Module
-Run:
+### NAT
+If your current PC doesn't have a static IP or under [NAT](https://en.wikipedia.org/wiki/Network_address_translation), you can use VPN or some 3rd party service like [ngrok](https://ngrok.com/) [localtunel](https://github.com/localtunnel/localtunnel) or [cloudflared](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/) to expose it to the world. Example with ngrock:
 ```bash
-yarn build:local
-```  
-This command already builds the native module in Debug mode.
-
-#### 2. Start and Attach the Debugger
-- Start your app with:
-  ```bash
-  yarn start
-  ```  
-- Once the native module loads, attach CLion’s debugger (`gdb`) to the running Node.js process.
-- CLion will automatically pull sourcemaps, allowing you to place breakpoints in native C++ code.
-
-#### 3. Enable Syntax Highlighting for Node.js Headers
-CLion does not automatically pick up Node.js and N-API headers. You must add them manually:
-
-**Steps:**
-1. Go to **Settings → Build, Execution, Deployment → CMake**.
-2. Add a new configuration.
-3. Add the following to **CMake options** (adjust paths for your system).
-
-##### Arch Linux example
-```cmake
--DCMAKE_CXX_FLAGS="-I/home/andrew/.nvm/versions/node/v18.18.2/include/node -I/home/andrew/it/my-projects/http-remote-pc-control/node_modules/node-addon-api"
+ngrok http 5000
 ```
 
-##### Windows example
-```cmake
--DCMAKE_CXX_FLAGS="-IC:\Users\death\.cmake-js\node-x64\v18.20.5\include\node -IC:\Users\death\WebstormProjects\http-remote-pc-control\node_modules\node-addon-api"
+### Help
+App allows minimal configuration, check the following command for options
+```bash
+./http-remote-pc-control --help
 ```
 
-#### 4. Required Directories
-You need to provide **two include directories**:
-
-- **Node.js headers**
-    - Example: `.../include/node`
-    - Contains `node.h`, `node_api.h`, etc.
-    - If missing, run:
-      ```bash
-      npx cmake-js print-cmakejs-src
-      ```  
-
-- **N-API headers**
-    - Example: `.../node_modules/node-addon-api`
-    - Contains `napi.h` and related files.  
+## Develop locally
+Check [DEVELOPMENT.md](DEVELOPMENT.md)

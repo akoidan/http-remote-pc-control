@@ -7,17 +7,17 @@
 #include <thread>
 #include <fstream>
 
-extern "C" AXError _AXUIElementGetWindow(AXUIElementRef, CGWindowID* out);
+extern "C" AXError _AXUIElementGetWindow(AXUIElementRef, CGWindowID * out);
 
 // CGWindowID to AXUIElementRef windows map
 std::map<int, AXUIElementRef> windowsMap;
 
 bool _requestAccessibility(bool showDialog) {
-  NSDictionary* opts = @{static_cast<id> (kAXTrustedCheckOptionPrompt): showDialog ? @YES : @NO};
-  return AXIsProcessTrustedWithOptions(static_cast<CFDictionaryRef> (opts));
+  NSDictionary* opts = @{static_cast<id>(kAXTrustedCheckOptionPrompt): showDialog ? @YES : @NO};
+  return AXIsProcessTrustedWithOptions(static_cast<CFDictionaryRef>(opts));
 }
 
-Napi::Boolean requestAccessibility(const Napi::CallbackInfo &info) {
+Napi::Boolean requestAccessibility(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
   return Napi::Boolean::New(env, _requestAccessibility(true));
 }
@@ -26,14 +26,14 @@ NSDictionary* getWindowInfo(int handle) {
   CGWindowListOption listOptions = kCGWindowListOptionOnScreenOnly | kCGWindowListExcludeDesktopElements;
   CFArrayRef windowList = CGWindowListCopyWindowInfo(listOptions, kCGNullWindowID);
 
-  for (NSDictionary *info in (NSArray *)windowList) {
-    NSNumber *windowNumber = info[(id)kCGWindowNumber];
+  for (NSDictionary * info in (NSArray*)windowList) {
+    NSNumber* windowNumber = info[(id)kCGWindowNumber];
 
     if ([windowNumber intValue] == handle) {
-        // Retain property list so it doesn't get release w. windowList
-        CFRetain((CFPropertyListRef)info);
-        CFRelease(windowList);
-        return info;
+      // Retain property list so it doesn't get release w. windowList
+      CFRetain((CFPropertyListRef)info);
+      CFRelease(windowList);
+      return info;
     }
   }
 
@@ -49,8 +49,8 @@ AXUIElementRef getAXWindow(int pid, int handle) {
   CFArrayRef windows;
   AXUIElementCopyAttributeValues(app, kAXWindowsAttribute, 0, 100, &windows);
 
-  for (id child in  (NSArray *)windows) {
-    AXUIElementRef window = (AXUIElementRef) child;
+  for (id child in (NSArray*)windows) {
+    AXUIElementRef window = (AXUIElementRef)child;
 
     CGWindowID windowId;
     _AXUIElementGetWindow(window, &windowId);
@@ -79,8 +79,8 @@ void cacheWindow(int handle, int pid) {
 
 void cacheWindowByInfo(NSDictionary* info) {
   if (info) {
-    NSNumber *ownerPid = info[(id)kCGWindowOwnerPID];
-    NSNumber *windowNumber = info[(id)kCGWindowNumber];
+    NSNumber* ownerPid = info[(id)kCGWindowOwnerPID];
+    NSNumber* windowNumber = info[(id)kCGWindowNumber];
     // Release dictionary info property since we're done with it
     CFRelease((CFPropertyListRef)info);
     cacheWindow([windowNumber intValue], [ownerPid intValue]);
@@ -102,7 +102,7 @@ AXUIElementRef getAXWindowById(int handle) {
   return win;
 }
 
-Napi::Array getWindows(const Napi::CallbackInfo &info) {
+Napi::Array getWindows(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
   CGWindowListOption listOptions = kCGWindowListOptionOnScreenOnly | kCGWindowListExcludeDesktopElements;
@@ -110,11 +110,13 @@ Napi::Array getWindows(const Napi::CallbackInfo &info) {
 
   std::vector<Napi::Number> vec;
 
-  for (NSDictionary *info in (NSArray *)windowList) {
-    NSNumber *ownerPid = info[(id)kCGWindowOwnerPID];
-    NSNumber *windowNumber = info[(id)kCGWindowNumber];
+  for (NSDictionary* info in (NSArray*)windowList) {
+    NSNumber* ownerPid = info[(id)kCGWindowOwnerPID];
+    NSNumber* windowNumber = info[(id)kCGWindowNumber];
 
-    auto app = [NSRunningApplication runningApplicationWithProcessIdentifier: [ownerPid intValue]];
+    auto app = [NSRunningApplication runningApplicationWithProcessIdentifier: [ownerPid intValue]
+    ]
+    ;
     auto path = app ? [app.bundleURL.path UTF8String] : "";
 
     if (app && path != "") {
@@ -131,21 +133,23 @@ Napi::Array getWindows(const Napi::CallbackInfo &info) {
   if (windowList) {
     CFRelease(windowList);
   }
-  
+
   return arr;
 }
 
-Napi::Number getActiveWindow(const Napi::CallbackInfo &info) {
+Napi::Number getActiveWindow(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
   CGWindowListOption listOptions = kCGWindowListOptionOnScreenOnly | kCGWindowListExcludeDesktopElements;
   CFArrayRef windowList = CGWindowListCopyWindowInfo(listOptions, kCGNullWindowID);
 
-  for (NSDictionary *info in (NSArray *)windowList) {
-    NSNumber *ownerPid = info[(id)kCGWindowOwnerPID];
-    NSNumber *windowNumber = info[(id)kCGWindowNumber];
+  for (NSDictionary* info in (NSArray*)windowList) {
+    NSNumber* ownerPid = info[(id)kCGWindowOwnerPID];
+    NSNumber* windowNumber = info[(id)kCGWindowNumber];
 
-    auto app = [NSRunningApplication runningApplicationWithProcessIdentifier: [ownerPid intValue]];
+    auto app = [NSRunningApplication runningApplicationWithProcessIdentifier: [ownerPid intValue]
+    ]
+    ;
 
     if (![app isActive]) {
       continue;
@@ -161,7 +165,7 @@ Napi::Number getActiveWindow(const Napi::CallbackInfo &info) {
   return Napi::Number::New(env, 0);
 }
 
-Napi::Object initWindow(const Napi::CallbackInfo &info) {
+Napi::Object initWindow(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
   int handle = info[0].As<Napi::Number>().Int32Value();
@@ -169,8 +173,10 @@ Napi::Object initWindow(const Napi::CallbackInfo &info) {
   auto wInfo = getWindowInfo(handle);
 
   if (wInfo) {
-    NSNumber *ownerPid = wInfo[(id)kCGWindowOwnerPID];
-    NSRunningApplication *app = [NSRunningApplication runningApplicationWithProcessIdentifier: [ownerPid intValue]];
+    NSNumber* ownerPid = wInfo[(id)kCGWindowOwnerPID];
+    NSRunningApplication* app = [NSRunningApplication runningApplicationWithProcessIdentifier: [ownerPid intValue]
+    ]
+    ;
 
     auto obj = Napi::Object::New(env);
     obj.Set("processId", [ownerPid intValue]);
@@ -184,7 +190,7 @@ Napi::Object initWindow(const Napi::CallbackInfo &info) {
   return Napi::Object::New(env);
 }
 
-Napi::String getWindowTitle(const Napi::CallbackInfo &info) {
+Napi::String getWindowTitle(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
   int handle = info[0].As<Napi::Number>().Int32Value();
@@ -192,15 +198,15 @@ Napi::String getWindowTitle(const Napi::CallbackInfo &info) {
   auto wInfo = getWindowInfo(handle);
 
   if (wInfo) {
-    NSString *windowName = wInfo[(id)kCGWindowOwnerName];
+    NSString* windowName = wInfo[(id)kCGWindowOwnerName];
     return Napi::String::New(env, [windowName UTF8String]);
   }
 
   return Napi::String::New(env, "");
 }
 
-Napi::Object getWindowBounds(const Napi::CallbackInfo &info) {
-   Napi::Env env{info.Env()};
+Napi::Object getWindowBounds(const Napi::CallbackInfo& info) {
+  Napi::Env env{info.Env()};
 
   int handle = info[0].As<Napi::Number>().Int32Value();
 
@@ -236,13 +242,13 @@ Napi::Value setWindowBounds(const Napi::CallbackInfo &info) {
   auto win = getAXWindowById(handle);
 
   if (win) {
-    NSPoint point = NSMakePoint((CGFloat) x, (CGFloat) y);
-    NSSize size = NSMakeSize((CGFloat) width, (CGFloat) height);
+    NSPoint point = NSMakePoint((CGFloat)x, (CGFloat)y);
+    NSSize size = NSMakeSize((CGFloat)width, (CGFloat)height);
 
-    CFTypeRef positionStorage = (CFTypeRef)(AXValueCreate((AXValueType)kAXValueCGPointType, (const void *)&point));
+    CFTypeRef positionStorage = (CFTypeRef)(AXValueCreate((AXValueType)kAXValueCGPointType, (const void*)&point));
     AXUIElementSetAttributeValue(win, kAXPositionAttribute, positionStorage);
 
-    CFTypeRef sizeStorage = (CFTypeRef)(AXValueCreate((AXValueType)kAXValueCGSizeType, (const void *)&size));
+    CFTypeRef sizeStorage = (CFTypeRef)(AXValueCreate((AXValueType)kAXValueCGSizeType, (const void*)&size));
     AXUIElementSetAttributeValue(win, kAXSizeAttribute, sizeStorage);
   }
 
@@ -284,18 +290,19 @@ Napi::Value setWindowMaximized(const Napi::CallbackInfo &info) {
   auto handle = info[0].As<Napi::Number>().Int32Value();
   auto win = getAXWindowById(handle);
 
-  if(win) {
-    NSRect screenSizeRect = [[NSScreen mainScreen] frame];
+  if (win) {
+    NSRect screenSizeRect =
+    [[NSScreen mainScreen] frame];
     int screenWidth = screenSizeRect.size.width;
     int screenHeight = screenSizeRect.size.height;
 
-    NSPoint point = NSMakePoint((CGFloat) 0, (CGFloat) 0);
-    NSSize size = NSMakeSize((CGFloat) screenWidth, (CGFloat) screenHeight);
+    NSPoint point = NSMakePoint((CGFloat)0, (CGFloat)0);
+    NSSize size = NSMakeSize((CGFloat)screenWidth, (CGFloat)screenHeight);
 
-    CFTypeRef positionStorage = (CFTypeRef)(AXValueCreate((AXValueType)kAXValueCGPointType, (const void *)&point));
+    CFTypeRef positionStorage = (CFTypeRef)(AXValueCreate((AXValueType)kAXValueCGPointType, (const void*)&point));
     AXUIElementSetAttributeValue(win, kAXPositionAttribute, positionStorage);
 
-    CFTypeRef sizeStorage = (CFTypeRef)(AXValueCreate((AXValueType)kAXValueCGSizeType, (const void *)&size));
+    CFTypeRef sizeStorage = (CFTypeRef)(AXValueCreate((AXValueType)kAXValueCGSizeType, (const void*)&size));
     AXUIElementSetAttributeValue(win, kAXSizeAttribute, sizeStorage);
   }
 
@@ -304,26 +311,26 @@ Napi::Value setWindowMaximized(const Napi::CallbackInfo &info) {
 
 
 Napi::Object window_init(Napi::Env env, Napi::Object exports) {
-    exports.Set(Napi::String::New(env, "getWindows"),
-                Napi::Function::New(env, getWindows));
-    exports.Set(Napi::String::New(env, "getActiveWindow"),
-                Napi::Function::New(env, getActiveWindow));
-    exports.Set(Napi::String::New(env, "setWindowBounds"),
-                Napi::Function::New(env, setWindowBounds));
-    exports.Set(Napi::String::New(env, "getWindowBounds"),
-                Napi::Function::New(env, getWindowBounds));
-    exports.Set(Napi::String::New(env, "getWindowTitle"),
-                Napi::Function::New(env, getWindowTitle));
-    exports.Set(Napi::String::New(env, "initWindow"),
-                Napi::Function::New(env, initWindow));
-    exports.Set(Napi::String::New(env, "bringWindowToTop"),
-                Napi::Function::New(env, bringWindowToTop));
-    exports.Set(Napi::String::New(env, "setWindowMinimized"),
-                Napi::Function::New(env, setWindowMinimized));
-    exports.Set(Napi::String::New(env, "setWindowMaximized"),
-                Napi::Function::New(env, setWindowMaximized));
-    exports.Set(Napi::String::New(env, "requestAccessibility"),
-                Napi::Function::New(env, requestAccessibility));
+  exports.Set(Napi::String::New(env, "getWindows"),
+              Napi::Function::New(env, getWindows));
+  exports.Set(Napi::String::New(env, "getActiveWindow"),
+              Napi::Function::New(env, getActiveWindow));
+  exports.Set(Napi::String::New(env, "setWindowBounds"),
+              Napi::Function::New(env, setWindowBounds));
+  exports.Set(Napi::String::New(env, "getWindowBounds"),
+              Napi::Function::New(env, getWindowBounds));
+  exports.Set(Napi::String::New(env, "getWindowTitle"),
+              Napi::Function::New(env, getWindowTitle));
+  exports.Set(Napi::String::New(env, "initWindow"),
+              Napi::Function::New(env, initWindow));
+  exports.Set(Napi::String::New(env, "bringWindowToTop"),
+              Napi::Function::New(env, bringWindowToTop));
+  exports.Set(Napi::String::New(env, "setWindowMinimized"),
+              Napi::Function::New(env, setWindowMinimized));
+  exports.Set(Napi::String::New(env, "setWindowMaximized"),
+              Napi::Function::New(env, setWindowMaximized));
+  exports.Set(Napi::String::New(env, "requestAccessibility"),
+              Napi::Function::New(env, requestAccessibility));
 
-    return exports;
+  return exports;
 }

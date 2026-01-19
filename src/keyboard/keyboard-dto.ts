@@ -1,5 +1,6 @@
 import {z} from 'zod';
 import {createZodDto} from '@anatine/zod-nestjs';
+import {keyboardLayoutValueSchema} from '@/keyboard/keyboard-layout-dto';
 
 /* eslint-disable array-element-newline */
 const allowedKeys = [
@@ -22,7 +23,7 @@ const allowedKeys = [
   'lights_mon_up', 'lights_mon_down',
   'lights_kbd_toggle', 'lights_kbd_up', 'lights_kbd_down',
   'menu', 'pause',
-];
+] as const;
 const modifierKeys = [
   'control', 'right_control',
   'alt', 'right_alt',
@@ -31,11 +32,14 @@ const modifierKeys = [
   'win', 'right_win',
   'cmd', 'right_cmd',
   'fn',
-];
-/* eslint-enable array-element-newline */
+] as const;
 
-const keySchema = z.enum(([...allowedKeys, ...modifierKeys]) as any)
+const keySchema = z.enum(([...allowedKeys, ...modifierKeys]))
   .describe('A key to be sent.');
+
+const setKeyboardLayoutSchema = z.object({
+  layout: keyboardLayoutValueSchema,
+}).describe('Request to change keyboard layout');
 
 const keyPressRequestSchema = z.object({
   keys: z.array(keySchema),
@@ -64,15 +68,32 @@ const typeTextRequestSchema = z.object({
 
 // Create DTO classes for Swagger
 class KeyPressRequestDto extends createZodDto(keyPressRequestSchema) {}
+
 class TypeTextRequestDto extends createZodDto(typeTextRequestSchema) {}
+
+class SetKeyboardLayoutRequestDto extends createZodDto(setKeyboardLayoutSchema) {}
 
 // Export types and schemas
 type KeyPressRequest = z.infer<typeof keyPressRequestSchema>;
 type TypeTextRequest = z.infer<typeof typeTextRequestSchema>;
+type SetKeyboardLayoutRequest = z.infer<typeof setKeyboardLayoutSchema>;
+type KeyboardLayoutValue = z.infer<typeof keyboardLayoutValueSchema>;
+
 
 export type {
   KeyPressRequest,
   TypeTextRequest,
+  KeyboardLayoutValue,
+  SetKeyboardLayoutRequest,
 };
 
-export {keySchema, keyPressRequestSchema, typeTextRequestSchema, KeyPressRequestDto, TypeTextRequestDto};
+export {
+  keySchema,
+  keyPressRequestSchema,
+  keyboardLayoutValueSchema,
+  typeTextRequestSchema,
+  setKeyboardLayoutSchema,
+  SetKeyboardLayoutRequestDto,
+  KeyPressRequestDto,
+  TypeTextRequestDto,
+};

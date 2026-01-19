@@ -1,8 +1,5 @@
 /* eslint-disable no-console */
-import {
-  ConsoleLogger,
-  Injectable,
-} from '@nestjs/common';
+import {ConsoleLogger, Injectable} from '@nestjs/common';
 import clc from 'cli-color';
 import {AsyncLocalStorage} from 'async_hooks';
 
