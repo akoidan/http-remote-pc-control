@@ -109,11 +109,43 @@ class IsWindowVisibleResponseDto extends createZodDto(isWindowVisibleResponseSch
 // Response DTOs for Swagger
 class BoundsResponseDto extends createZodDto(boundsSchema) {}
 
+// New response schemas for primitive-returning endpoints
+const activeWindowIdResponseSchema = z.object({
+  wid: z.number().describe('Active window handle (HWND as number)'),
+}).describe('Active window id (raw handle)');
+
+const windowTitleResponseSchema = z.object({
+  title: z.string().describe('Window title string'),
+}).describe('Window title');
+
+const windowOpacityResponseSchema = z.object({
+  opacity: z.number().min(0).max(1).describe('Opacity value in range 0..1'),
+}).describe('Window opacity');
+
+const windowOwnerResponseSchema = z.object({
+  owner: z.number().describe('Owner window handle (HWND as number) or 0 if none'),
+}).describe('Window owner handle');
+
+const windowVisibleResponseSchema = z.object({
+  visible: z.boolean().describe('Whether the window is visible on screen'),
+}).describe('Window visibility flag');
+
+class ActiveWindowIdResponseDto extends createZodDto(activeWindowIdResponseSchema) {}
+class WindowTitleResponseDto extends createZodDto(windowTitleResponseSchema) {}
+class WindowOpacityResponseDto extends createZodDto(windowOpacityResponseSchema) {}
+class WindowOwnerResponseDto extends createZodDto(windowOwnerResponseSchema) {}
+class WindowVisibleResponseDto extends createZodDto(windowVisibleResponseSchema) {}
+
 // Export types
 type FocusExeRequest = z.infer<typeof pidSchema>;
 type GetPidWindowsRequest = z.infer<typeof widObjectSchema>;
 type GetActiveWindowResponse = z.infer<typeof activeWindowSchema>;
 type Bounds = z.infer<typeof boundsSchema>;
+type ActiveWindowIdResponse = z.infer<typeof activeWindowIdResponseSchema>;
+type WindowTitleResponse = z.infer<typeof windowTitleResponseSchema>;
+type WindowOpacityResponse = z.infer<typeof windowOpacityResponseSchema>;
+type WindowOwnerResponse = z.infer<typeof windowOwnerResponseSchema>;
+type WindowVisibleResponse = z.infer<typeof windowVisibleResponseSchema>;
 
 type SetBoundsRequest = z.infer<typeof setBoundsRequestSchema>;
 type ShowWindowRequest = z.infer<typeof showWindowRequestSchema>;
@@ -163,6 +195,11 @@ export {
   IsWindowResponseDto,
   IsWindowVisibleResponseDto,
   BoundsResponseDto,
+  ActiveWindowIdResponseDto,
+  WindowTitleResponseDto,
+  WindowOpacityResponseDto,
+  WindowOwnerResponseDto,
+  WindowVisibleResponseDto,
 };
 
 export type {
@@ -170,6 +207,10 @@ export type {
   GetPidWindowsRequest,
   FocusExeRequest,
   Bounds,
+  ActiveWindowIdResponse,
+  WindowTitleResponse,
+  WindowOpacityResponse,
+  WindowOwnerResponse,
   SetBoundsRequest,
   ShowWindowRequest,
   SetOpacityRequest,

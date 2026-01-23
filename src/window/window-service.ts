@@ -231,6 +231,3 @@ export class WindowService {
     }
   }
 }
-
-
-
