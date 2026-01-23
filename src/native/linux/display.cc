@@ -25,7 +25,7 @@ Display* XGetMainDisplay(void) {
     mainDisplay = XOpenDisplay(displayName);
 
     if (mainDisplay == NULL) {
-      fputs("Could not open main display\n", stderr);
+      LOG("Could not open main display");;
     }
     else if (!registered) {
       atexit(&XCloseMainDisplay);
