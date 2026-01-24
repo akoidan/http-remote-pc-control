@@ -29,6 +29,11 @@ const executableNameRequestSchema = z.object({
   name: z.string().regex(/[a-zA-Z0-9._ -]/u).describe('Process name. Allows only specific symbols due to security reasons'),
 });
 
+const createProcessRequestSchema = z.object({
+  path: z.string().describe('Executable file path to start'),
+  cmd: z.string().optional().describe('Optional command line string'),
+}).describe('Create a new process and return its PID');
+
 const processIdRequestSchema = z.object({
   pid: z.number().describe('Process ID'),
 });
@@ -46,6 +51,7 @@ class KillExeByNameRequestDto extends createZodDto(executableNameRequestSchema) 
 
 class FindExeByNameRequestDto extends createZodDto(executableNameRequestSchema) {
 }
+class CreateProcessRequestDto extends createZodDto(createProcessRequestSchema) {}
 
 class KillExeByPidRequestDto extends createZodDto(processIdRequestSchema) {
 }
@@ -62,6 +68,7 @@ type KillExeByNameRequest = z.infer<typeof executableNameRequestSchema>;
 type FindExeByNameRequest = z.infer<typeof executableNameRequestSchema>;
 type KillExeByPidRequest = z.infer<typeof processIdRequestSchema>;
 type LaunchPidResponse = z.infer<typeof processIdRequestSchema>;
+type CreateProcessRequest = z.infer<typeof createProcessRequestSchema>;
 
 export {
   processIdsReponseSchema,
@@ -78,9 +85,12 @@ export {
   windowHandleResponseSchema,
   ProcessIdResponseDto,
   WindowHandleResponseDto,
+  CreateProcessRequestDto,
+  createProcessRequestSchema,
 };
 
 export type {
+  CreateProcessRequest,
   LaunchExeRequest,
   KillExeByNameRequest,
   KillExeByPidRequest,

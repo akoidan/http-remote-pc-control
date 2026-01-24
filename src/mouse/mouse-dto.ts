@@ -1,5 +1,6 @@
 import {z} from 'zod';
 import {createZodDto} from '@anatine/zod-nestjs';
+import {MouseButton} from '@/native/native-model';
 
 const mouseMoveClickRequestSchema = z.object({
   x: z.number().describe('X coordinate to move mouse to'),
@@ -57,18 +58,38 @@ const mouseMoveHumanClickRequestSchema = z.object({
   .describe('Request to move mouse with human-like movement. The movement follows a natural curved path with smooth acceleration and deceleration. ' +
   'The path includes subtle variations to mimic human motor control, with configurable curve intensity and movement variance.');
 
+const mouseButtonSchema = z.nativeEnum(MouseButton)
+    .describe('Mouse button, left=1, right=2 , middle=3');
+
+const mouseClickSchemaRequestSchema = z.object({
+  button: mouseButtonSchema.default(MouseButton.LEFT),
+}).describe('Request to perform a mouse button click');
+
 // Create DTO class for Swagger
 class MouseMoveClickRequestDto extends createZodDto(mouseMoveClickRequestSchema) {}
 class MouseMoveHumanClickRequestDto extends createZodDto(mouseMoveHumanClickRequestSchema) {}
 class MousePositionResponseDto extends createZodDto(mousePositionResponseSchema) {}
+class MouseClickRequestDto extends createZodDto(mouseClickSchemaRequestSchema) {}
 
 type MouseMoveHumanClickRequest = z.infer<typeof mouseMoveHumanClickRequestSchema>;
 type MousePositionResponse = z.infer<typeof mousePositionResponseSchema>;
+type MouseClickRequest = z.infer<typeof mouseClickSchemaRequestSchema>;
 
 // Export values
-export {mouseMoveClickRequestSchema, MouseMoveClickRequestDto, mouseMoveHumanClickRequestSchema, MousePositionResponseDto};
+export {
+  mouseMoveClickRequestSchema, 
+  MouseMoveClickRequestDto,
+  mouseButtonSchema,
+  mouseMoveHumanClickRequestSchema,
+  mouseClickSchemaRequestSchema,
+  MousePositionResponseDto,
+  MouseClickRequestDto,
+};
 
 
 export type {
-  MouseMoveHumanClickRequestDto, MouseMoveHumanClickRequest, MousePositionResponse,
+  MouseMoveHumanClickRequestDto,
+  MouseMoveHumanClickRequest,
+  MousePositionResponse,
+  MouseClickRequest,
 };

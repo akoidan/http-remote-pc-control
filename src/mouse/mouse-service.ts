@@ -1,9 +1,9 @@
 /* eslint-disable max-lines */
 
 import {Inject, Injectable, Logger} from '@nestjs/common';
-import {INativeModule, Native} from '@/native/native-model';
+import {INativeModule, MouseButton, Native} from '@/native/native-model';
 import {sleep} from '@/shared';
-import {MouseMoveHumanClickRequest, MousePositionResponse} from '@/mouse/mouse-dto';
+import {MouseClickRequest, MouseMoveHumanClickRequest, MousePositionResponse} from '@/mouse/mouse-dto';
 
 
 @Injectable()
@@ -19,7 +19,7 @@ export class MouseService {
   async leftMouseMoveClick(x: number, y: number): Promise<void> {
     this.logger.log(`Left click: \u001b[35m[${x},${y}]`);
     this.addon.mouseMove(x, y);
-    this.addon.mouseClick();
+    this.addon.mouseClick(MouseButton.LEFT);
   }
 
 
@@ -159,8 +159,8 @@ export class MouseService {
   }
 
   // eslint-disable-next-line @typescript-eslint/require-await
-  async click(): Promise<void> {
-    this.logger.log('Left click on current position');
-    this.addon.mouseClick();
+  async click(body: MouseClickRequest): Promise<void> {
+    this.logger.log(`#${body.button} mouse click on current position`);
+    this.addon.mouseClick(body.button);
   }
 }

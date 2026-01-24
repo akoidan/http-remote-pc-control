@@ -12,16 +12,13 @@ const monitorBoundsSchema = z.object({
 const monitorInfoSchema = z.object({
   bounds: monitorBoundsSchema.describe('Full monitor bounds'),
   workArea: monitorBoundsSchema.describe('Usable desktop area excluding taskbar/docks'),
+  scaleFactor: z.number().describe('Monitor scale factor'),
   isPrimary: z.boolean().describe('True if this is the primary display'),
 }).describe('Monitor information');
 
 const monitorIdResponseSchema = z.object({
   mid: z.number().describe('Monitor ID'),
 }).describe('Monitor ID');
-
-const monitorScaleFactorResponseSchema = z.object({
-  scaleFactor: z.number().describe('Monitor scale factor'),
-}).describe('Monitor scale factor');
 
 class MonitorInfoResponseDto extends createZodDto(monitorInfoSchema) {}
 

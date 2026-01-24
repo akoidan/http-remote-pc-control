@@ -20,6 +20,21 @@ export class ProcessService {
     return this.addon.createProcess(path, cmd);
   }
 
+  // eslint-disable-next-line @typescript-eslint/require-await
+  public async getAllWindowsByPid(pid: number): Promise<number[]> {
+    return this.addon.getWindowsByProcessId(pid);
+  }
+
+  // eslint-disable-next-line @typescript-eslint/require-await
+  public async activateWindowByPid(pid: number): Promise<void> {
+    const requiredWindows = await this.getAllWindowsByPid(pid);
+    const requireWindow = requiredWindows[requiredWindows.length - 1];
+    if (requiredWindows.length > 1) {
+      this.logger.debug(`Found ${requiredWindows.length} windows for pid ${pid}. Picking  ${requireWindow}`);
+    }
+    this.addon.bringWindowToTop(requireWindow);
+  }
+
   public getProcessMainWindow(pid: number): number {
     if (!['win32'].includes(this.os)) {
       throw new NotImplementedException(`Unsupported platform: ${this.os}`);

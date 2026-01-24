@@ -28,18 +28,4 @@ export class MonitorController {
   getMonitorInfo(@Param('mid', ParseIntPipe) mid: number): MonitorInfo {
     return this.monitorService.getMonitorInfo(mid);
   }
-
-  @Get('from-window/:wid')
-  @ApiOperation({summary: 'Get monitor for window'})
-  @ApiResponse({type: MonitorIdResponseDto})
-  getMonitorFromWindow(@Param('wid', ParseIntPipe) wid: number): MonitorIdResponse {
-    return {mid: this.monitorService.getMonitorFromWindow(wid)};
-  }
-
-  @Get(':mid/scale')
-  @ApiOperation({summary: 'Get monitor scale factor'})
-  @ApiResponse({type: MonitorScaleFactorResponseDto})
-  getMonitorScaleFactor(@Param('mid', ParseIntPipe) mid: number): MonitorScaleFactorResponse {
-    return {scaleFactor: this.monitorService.getMonitorScaleFactor(mid)};
-  }
 }

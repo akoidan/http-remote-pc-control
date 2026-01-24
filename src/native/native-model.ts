@@ -26,6 +26,7 @@ interface MonitorBounds {
 interface MonitorInfo {
   bounds: MonitorBounds;
   workArea: MonitorBounds;
+  scale: number;
   isPrimary: boolean
 }
 
@@ -35,6 +36,12 @@ enum WindowAction {
   MINIMIZE = 'minimize',
   RESTORE = 'restore',
   MAXIMIZE = 'maximize',
+}
+
+enum MouseButton {
+  LEFT = 1,
+  RIGHT = 2,
+  MIDDLE = 3,
 }
 
 interface WindowNativeModule {
@@ -86,7 +93,7 @@ interface MonitorNativeModule {
 
   getMonitorScaleFactor(monitor: number): number;
 
-  getMonitorInfo(monitor: number): MonitorInfo;
+  getMonitorInfo(monitor: number): Omit<MonitorInfo, 'scale'>; // TODO this in C are 2 different methods
 }
 
 // New interface to represent process-related native APIs
@@ -106,7 +113,7 @@ interface KeyboardNativeModule {
 }
 
 interface MouseNativeModule {
-  mouseClick(): void;
+  mouseClick(button: MouseButton): void;
 
   mouseMove(x: number, y: number): void;
 
@@ -134,4 +141,4 @@ export type {
   MouseNativeModule,
 };
 
-export {WindowAction, Native};
+export {WindowAction, Native, MouseButton};
