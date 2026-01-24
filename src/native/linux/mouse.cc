@@ -56,7 +56,12 @@ void clickMouse(unsigned int button) {
 }
 
 void _mouseClick(const Napi::CallbackInfo& info) {
-  clickMouse(LEFT_BUTTON);
+  Napi::Env env = info.Env();
+  unsigned int button = info[0].As<Napi::Number>().Int32Value();
+  if (button < 1 || button > 3) {
+    throw Napi::Error::New(env, "Invalid button number.");
+  }
+  clickMouse(button);
 }
 
 void _moveMouse(const Napi::CallbackInfo& info) {

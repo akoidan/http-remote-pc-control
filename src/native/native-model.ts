@@ -38,6 +38,12 @@ enum WindowAction {
   MAXIMIZE = 'maximize',
 }
 
+enum MouseButton {
+  LEFT = 1,
+  RIGHT = 2,
+  MIDDLE = 3,
+}
+
 interface WindowNativeModule {
   bringWindowToTop(id: number): void;
 
@@ -107,7 +113,7 @@ interface KeyboardNativeModule {
 }
 
 interface MouseNativeModule {
-  mouseClick(): void;
+  mouseClick(button: MouseButton): void;
 
   mouseMove(x: number, y: number): void;
 
@@ -135,4 +141,4 @@ export type {
   MouseNativeModule,
 };
 
-export {WindowAction, Native};
+export {WindowAction, Native, MouseButton};
