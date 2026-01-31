@@ -1,21 +1,25 @@
-import {BadRequestException, Injectable, Logger} from '@nestjs/common';
-import {IKeyboardService} from '@/keyboard/keyboard-model';
+import {Inject, Injectable, Logger} from '@nestjs/common';
 import {INativeModule} from '@/native/native-model';
 import {sleep} from '@/shared';
 import {RandomService} from '@/random/random-service';
 import {KeyboardLayoutValue} from '@/keyboard/keyboard-dto';
+import {Safe400} from "@/utils/decorators";
+import {OS_INJECT} from "@/global/global-model";
 
 @Injectable()
-export class KeyboardWin32LinuxService implements IKeyboardService {
+export class KeyboardService {
   constructor(
-    private readonly logger: Logger,
+    readonly logger: Logger,
+    @Inject(OS_INJECT)
+    readonly os: NodeJS.Platform,
     private readonly addon: INativeModule,
     private readonly rs: RandomService
   ) {
   }
 
 
-  public async type(text: string, delay?: number, deviationDelay?: number): Promise<void> {
+  @Safe400(['darwin'])
+  public async typeText(text: string, delay?: number, deviationDelay?: number): Promise<void> {
     this.logger.log(`Type: \u001b[35m${text}`);
     if (delay) {
       const realDelay = deviationDelay ? this.rs.calcDeviation(delay, deviationDelay) : delay;
@@ -29,17 +33,13 @@ export class KeyboardWin32LinuxService implements IKeyboardService {
     }
   }
 
-  public setKeyboardLayout(layout: KeyboardLayoutValue): void {
-    this.logger.log(`Setting keyboard layout to: ${layout}`);
-    try {
-      this.addon.setKeyboardLayout(layout);
-    } catch (e) {
-      this.logger.error(`Failed to set keyboard layout: ${e.message}`, e.stack);
-      throw new BadRequestException(e.message);
-    }
+  @Safe400(['darwin'])
+  public setLayout(layout: KeyboardLayoutValue): void {
+    this.addon.setKeyboardLayout(layout);
   }
 
-  public async sendKey(keys: string[], holdKeys: string[], duration?: number): Promise<void> {
+  @Safe400(['darwin'])
+  public async keyPress(keys: string[], holdKeys: string[], duration?: number): Promise<void> {
     for (const key of holdKeys) {
       this.logger.log(`HoldKey: \u001b[35m${key}`);
       // libnut.keyToggle(key, 'down', [])

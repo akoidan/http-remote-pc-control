@@ -7,11 +7,6 @@ import os from 'os';
 @Module({
   controllers: [MonitorController],
   providers: [
-    {
-      provide: OS_INJECT,
-      useFactory: os.platform,
-    },
-    Logger,
     MonitorService,
   ],
 })

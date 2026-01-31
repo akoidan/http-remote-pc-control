@@ -4,48 +4,89 @@ import {Inject, Injectable, Logger} from '@nestjs/common';
 import {INativeModule, MouseButton, Native} from '@/native/native-model';
 import {sleep} from '@/shared';
 import {MouseClickRequest, MouseMoveHumanClickRequest, MousePositionResponse} from '@/mouse/mouse-dto';
+import {OS_INJECT} from "@/global/global-model";
+import {Safe400} from "@/utils/decorators";
 
 
 @Injectable()
 export class MouseService {
   constructor(
-    private readonly logger: Logger,
+    readonly logger: Logger,
+    @Inject(OS_INJECT)
+    readonly os: NodeJS.Platform,
     @Inject(Native)
     private readonly addon: INativeModule,
   ) {
   }
 
+  @Safe400(['darwin'])
   // eslint-disable-next-line @typescript-eslint/require-await
-  async leftMouseMoveClick(x: number, y: number): Promise<void> {
+  moveLeftClick(x: number, y: number): void {
     this.logger.log(`Left click: \u001b[35m[${x},${y}]`);
     this.addon.mouseMove(x, y);
     this.addon.mouseClick(MouseButton.LEFT);
   }
 
-
-  // eslint-disable-next-line @typescript-eslint/require-await
-  async mouseMove(x: number, y: number): Promise<void> {
+  @Safe400(['darwin'])
+  move(x: number, y: number): void {
     this.logger.log(`Mouse move: \u001b[35m[${x},${y}]`);
     this.addon.mouseMove(x, y);
   }
 
-  rand(min: number, max: number): number {
-    return Math.random() * (max - min) + min;
-  }
-
-  // 
-  // Robert Penner’s easing equation
-  // Smoothly accelerates and decelerates motion over time (ease-in-out cubic curve).
-  // Input: t ∈ [0,1] → Output: eased progress ∈ [0,1], slower at start/end, faster in middle.
-  // 
-  easeInOut(t: number): number {
-    return t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2;
-  }
-
-  getMousePos(): MousePositionResponse {
+  @Safe400(['darwin'])
+  getPosition(): MousePositionResponse {
     return this.addon.getMousePos();
   }
 
+  @Safe400(['darwin'])
+  click(body: MouseClickRequest): void {
+    this.addon.mouseClick(body.button);
+  }
+
+  @Safe400(['darwin'])
+  async moveMouseHuman(event: MouseMoveHumanClickRequest): Promise<void> {
+    this.logger.log(`Mouse human: \u001b[35m[${event.x},${event.y}]`);
+    const {x: x1, y: y1} = this.addon.getMousePos();
+    let x2 = event.x;
+    let y2 = event.y;
+
+    // Add final position randomization if specified
+    if (event.destinationRandomX) {
+      x2 += Math.round((Math.random() * 2 - 1) * event.destinationRandomX);
+    }
+    if (event.destinationRandomY) {
+      y2 += Math.round((Math.random() * 2 - 1) * event.destinationRandomY);
+    }
+
+    // Calculate distance and movement parameters
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+    const distance = Math.hypot(dx, dy);
+
+    // Calculate steps with configurable speed
+    const basePxPerIt = event.pixelsPerIteration ?? 50;
+    const steps = Math.max(3, Math.round(distance / basePxPerIt));
+
+    // Calculate curve intensity with deviation
+    const baseCurveIntensity = Math.min(1, Math.max(0.1, event.curveIntensity ?? 0.3));
+    const curveDeviation = (event.curveIntensityDeviation ?? 0.2) * baseCurveIntensity;
+    const curveIntensity = Math.min(1, Math.max(0.1,
+        baseCurveIntensity + (Math.random() * 2 - 1) * curveDeviation));
+
+    this.logger.debug(`Mouse human: \u001b[35m[${x1},${y1}] -> [${x2},${y2}] in ${steps} steps with curve intensity ${curveIntensity.toFixed(2)}`);
+    // Move through the curve
+    for (let i = 1; i < steps; i++) {
+      const t = i / steps;
+      // Get point on the smooth curve
+      const {x, y} = this.getCurvePoint(t, x1, y1, x2, y2, curveIntensity);
+      // Move to the calculated position
+      this.addon.mouseMove(Math.round(x), Math.round(y));
+      await sleep(event.delayBetweenIterations ?? 5);
+    }
+
+    // Ensure we hit the target exactly
+    this.addon.mouseMove(x2, y2);
+  }
 
   /**
    * Calculate a point on a quadratic Bézier curve
@@ -114,53 +155,16 @@ export class MouseService {
     return {x, y};
   }
 
-  async moveMouseHuman(event: MouseMoveHumanClickRequest): Promise<void> {
-    this.logger.log(`Mouse human: \u001b[35m[${event.x},${event.y}]`);
-    const {x: x1, y: y1} = this.addon.getMousePos();
-    let x2 = event.x;
-    let y2 = event.y;
-    
-    // Add final position randomization if specified
-    if (event.destinationRandomX) {
-      x2 += Math.round((Math.random() * 2 - 1) * event.destinationRandomX);
-    }
-    if (event.destinationRandomY) {
-      y2 += Math.round((Math.random() * 2 - 1) * event.destinationRandomY);
-    }
-    
-    // Calculate distance and movement parameters
-    const dx = x2 - x1;
-    const dy = y2 - y1;
-    const distance = Math.hypot(dx, dy);
-    
-    // Calculate steps with configurable speed
-    const basePxPerIt = event.pixelsPerIteration ?? 50;
-    const steps = Math.max(3, Math.round(distance / basePxPerIt));
-    
-    // Calculate curve intensity with deviation
-    const baseCurveIntensity = Math.min(1, Math.max(0.1, event.curveIntensity ?? 0.3));
-    const curveDeviation = (event.curveIntensityDeviation ?? 0.2) * baseCurveIntensity;
-    const curveIntensity = Math.min(1, Math.max(0.1, 
-      baseCurveIntensity + (Math.random() * 2 - 1) * curveDeviation));
-
-    this.logger.debug(`Mouse human: \u001b[35m[${x1},${y1}] -> [${x2},${y2}] in ${steps} steps with curve intensity ${curveIntensity.toFixed(2)}`);
-    // Move through the curve
-    for (let i = 1; i < steps; i++) {
-      const t = i / steps;
-      // Get point on the smooth curve
-      const {x, y} = this.getCurvePoint(t, x1, y1, x2, y2, curveIntensity);
-      // Move to the calculated position
-      this.addon.mouseMove(Math.round(x), Math.round(y));
-      await sleep(event.delayBetweenIterations ?? 5);
-    }
-    
-    // Ensure we hit the target exactly
-    this.addon.mouseMove(x2, y2);
+  private rand(min: number, max: number): number {
+    return Math.random() * (max - min) + min;
   }
 
-  // eslint-disable-next-line @typescript-eslint/require-await
-  async click(body: MouseClickRequest): Promise<void> {
-    this.logger.log(`#${body.button} mouse click on current position`);
-    this.addon.mouseClick(body.button);
+  //
+  // Robert Penner’s easing equation
+  // Smoothly accelerates and decelerates motion over time (ease-in-out cubic curve).
+  // Input: t ∈ [0,1] → Output: eased progress ∈ [0,1], slower at start/end, faster in middle.
+  //
+  private easeInOut(t: number): number {
+    return t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2;
   }
 }

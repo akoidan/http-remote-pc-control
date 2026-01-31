@@ -19,21 +19,20 @@ export class MouseController {
   @Get('position')
   @ApiOperation({summary: 'Returns X,Y of current mouse position, absolute to all monitors'})
   @ApiResponse({type: MousePositionResponseDto})
-  // eslint-disable-next-line @typescript-eslint/require-await
-  async getMousePosition(): Promise<MousePositionResponseDto> {
-    return this.mouseService.getMousePos();
+  getPosition(): MousePositionResponseDto {
+    return this.mouseService.getPosition();
   }
 
   @Post('move-left-click')
   @ApiOperation({summary: 'Instantly moves mouse to the position and performs a left click there'})
-  async mouseMoveClick(@Body() event: MouseMoveClickRequestDto): Promise<void> {
-    await this.mouseService.mouseMove(event.x, event.y);
+  moveLeftClick(@Body() event: MouseMoveClickRequestDto): void {
+    this.mouseService.moveLeftClick(event.x, event.y);
   }
 
   @Post('move')
   @ApiOperation({summary: 'Mouse move to the point, absolute coordinate for all monitors'})
-  async mouseMove(@Body() event: MouseMoveClickRequestDto): Promise<void> {
-    await this.mouseService.mouseMove(event.x, event.y);
+  mouseMove(@Body() event: MouseMoveClickRequestDto): void {
+    this.mouseService.move(event.x, event.y);
   }
 
   @Post('move-human')
