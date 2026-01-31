@@ -19,7 +19,7 @@ export class MonitorController {
   @Get(':mid/info')
   @ApiOperation({summary: 'Get monitor info'})
   @ApiResponse({type: MonitorInfoResponseDto})
-  getMonitorInfo(@Param('mid', ParseIntPipe) mid: number): MonitorInfo {
+  getMonitorInfo(@Param('mid', ParseIntPipe) mid: number): MonitorInfoResponseDto {
     return this.monitorService.getMonitorInfo(mid);
   }
 }

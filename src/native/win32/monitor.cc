@@ -37,18 +37,6 @@ static Napi::Number getMonitorFromWindow(const Napi::CallbackInfo& info) {
 
 using lp_GetScaleFactorForMonitor = int(__stdcall*)(HMONITOR, DEVICE_SCALE_FACTOR*);
 
-static Napi::Number getMonitorScaleFactor(const Napi::CallbackInfo& info) {
-  Napi::Env env{info.Env()};
-
-  HMODULE hShcore{LoadLibraryA("SHcore.dll")};
-  auto f = (lp_GetScaleFactorForMonitor)GetProcAddress(hShcore, "GetScaleFactorForMonitor");
-
-  DEVICE_SCALE_FACTOR sf{};
-  f(getValueFromCallbackData<HMONITOR>(info, 0), &sf);
-
-  return Napi::Number::New(env, static_cast<double>(sf) / 100.);
-}
-
 static Napi::Object getMonitorInfo(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
@@ -80,7 +68,17 @@ static Napi::Object getMonitorInfo(const Napi::CallbackInfo& info) {
   Napi::Object obj{Napi::Object::New(env)};
   obj.Set("bounds", bounds);
   obj.Set("workArea", workArea);
+  obj.Set("workArea", workArea);
   obj.Set("isPrimary", (mInfo.dwFlags & MONITORINFOF_PRIMARY) != 0);
+
+  HMODULE hShcore{LoadLibraryA("SHcore.dll")};
+  auto f = (lp_GetScaleFactorForMonitor)GetProcAddress(hShcore, "GetScaleFactorForMonitor");
+
+  DEVICE_SCALE_FACTOR sf{};
+  f(getValueFromCallbackData<HMONITOR>(info, 0), &sf);
+
+  obj.Set("scale", static_cast<double>(sf) / 100.);
+
 
   return obj;
 }
@@ -89,6 +87,5 @@ Napi::Object monitor_init(Napi::Env env, Napi::Object exports) {
   exports.Set(Napi::String::New(env, "getMonitors"), Napi::Function::New(env, getMonitors));
   exports.Set(Napi::String::New(env, "getMonitorFromWindow"), Napi::Function::New(env, getMonitorFromWindow));
   exports.Set(Napi::String::New(env, "getMonitorInfo"), Napi::Function::New(env, getMonitorInfo));
-  exports.Set(Napi::String::New(env, "getMonitorScaleFactor"), Napi::Function::New(env, getMonitorScaleFactor));
   return exports;
 }

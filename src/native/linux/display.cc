@@ -1,4 +1,5 @@
 #include "./headers/display.h"
+#include "./headers/logger.h"
 #include <iostream>
 
 Display* mainDisplay = NULL;

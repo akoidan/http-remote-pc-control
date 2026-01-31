@@ -20,11 +20,6 @@ static Napi::Number getMonitorFromWindow(const Napi::CallbackInfo& info) {
     return Napi::Number::New(env, 1);
 }
 
-static Napi::Number getMonitorScaleFactor(const Napi::CallbackInfo& info) {
-    Napi::Env env = info.Env();
-    // Default scale factor for Linux; advanced environments may vary
-    return Napi::Number::New(env, 1.0);
-}
 
 static Napi::Object getMonitorInfo(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
@@ -49,6 +44,7 @@ static Napi::Object getMonitorInfo(const Napi::CallbackInfo& info) {
     obj.Set("bounds", bounds);
     obj.Set("workArea", bounds); // No EWMH work area support in this minimal version
     obj.Set("isPrimary", true);
+    obj.Set("scale", 1);
 
     XCloseDisplay(display);
     return obj;
@@ -58,6 +54,5 @@ Napi::Object monitor_init(Napi::Env env, Napi::Object exports) {
     exports.Set(Napi::String::New(env, "getMonitors"), Napi::Function::New(env, getMonitors));
     exports.Set(Napi::String::New(env, "getMonitorFromWindow"), Napi::Function::New(env, getMonitorFromWindow));
     exports.Set(Napi::String::New(env, "getMonitorInfo"), Napi::Function::New(env, getMonitorInfo));
-    exports.Set(Napi::String::New(env, "getMonitorScaleFactor"), Napi::Function::New(env, getMonitorScaleFactor));
     return exports;
 }

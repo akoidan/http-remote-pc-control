@@ -22,20 +22,14 @@ const monitorIdResponseSchema = z.object({
 
 class MonitorInfoResponseDto extends createZodDto(monitorInfoSchema) {}
 
-class MonitorIdResponseDto extends createZodDto(monitorIdResponseSchema) {}
-class MonitorScaleFactorResponseDto extends createZodDto(monitorScaleFactorResponseSchema) {}
-
 type MonitorIdResponse = z.infer<typeof monitorIdResponseSchema>;
-type MonitorScaleFactorResponse = z.infer<typeof monitorScaleFactorResponseSchema>;
 
 export {
   monitorBoundsSchema,
   monitorInfoSchema,
   monitorIdResponseSchema,
-  monitorScaleFactorResponseSchema,
   MonitorInfoResponseDto,
-  MonitorIdResponseDto,
-  MonitorScaleFactorResponseDto,
+
 };
 
 export type {

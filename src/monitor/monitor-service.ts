@@ -29,7 +29,8 @@ export class MonitorService {
     }
     try {
       this.logger.log(`Calling getMonitorInfo for monitor #${mid}`);
-      return this.addon.getMonitorInfo(mid);
+      const info =  this.addon.getMonitorInfo(mid);
+      const info =  this.addon.getMonitorScaleFactor(mid);
     } catch (e) {
       throw new BadRequestException(`Unable to get monitor #${mid} info because ${e?.message}`);
     }

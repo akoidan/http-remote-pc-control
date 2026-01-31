@@ -91,8 +91,6 @@ interface MonitorNativeModule {
 
   getMonitorFromWindow(id: number): number;
 
-  getMonitorScaleFactor(monitor: number): number;
-
   getMonitorInfo(monitor: number): Omit<MonitorInfo, 'scale'>; // TODO this in C are 2 different methods
 }
 
