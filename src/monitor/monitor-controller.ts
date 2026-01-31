@@ -2,13 +2,7 @@ import {Controller, Get, Param, ParseIntPipe} from '@nestjs/common';
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import {MonitorService} from '@/monitor/monitor-service';
 import {MonitorInfo} from '@/native/native-model';
-import {
-  MonitorIdResponse,
-  MonitorIdResponseDto,
-  MonitorInfoResponseDto,
-  MonitorScaleFactorResponse,
-  MonitorScaleFactorResponseDto,
-} from '@/monitor/monitor-dto';
+import {MonitorInfoResponseDto} from '@/monitor/monitor-dto';
 
 @ApiTags('Monitor')
 @Controller('monitor')

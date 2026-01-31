@@ -1,9 +1,8 @@
 /* eslint-disable max-lines */
 import {BadRequestException, Inject, Injectable, Logger, NotImplementedException} from '@nestjs/common';
-import {UIWindow} from '@/window/window-model';
 import {INativeModule, MonitorBounds, Native, WindowAction, WindowBounds} from '@/native/native-model';
 import {OS_INJECT} from '@/window/window-consts';
-import {ActiveWindowResponseDto, WindowResponse} from '@/window/window-dto';
+import {WindowResponse} from '@/window/window-dto';
 
 @Injectable()
 export class WindowService {

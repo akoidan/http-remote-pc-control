@@ -2,31 +2,15 @@ import {Body, Controller, Get, Param, ParseIntPipe, Post} from '@nestjs/common';
 
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import {
-  ActiveWindowIdResponse,
-  ActiveWindowIdResponseDto,
-  ActiveWindowResponseDto,
-  FocusExeRequestDto,
   FocusWindowRequestDto,
-  GetActiveWindowResponse,
-  IsWindowResponse,
-  IsWindowResponseDto,
-  IsWindowVisibleResponse,
-  IsWindowVisibleResponseDto,
   SetBoundsRequestDto,
   SetOpacityRequestDto,
   SetOwnerRequestDto,
   ShowWindowRequestDto,
   ToggleTransparencyRequestDto,
-  WindowOpacityResponse,
-  WindowOpacityResponseDto,
-  WindowOwnerResponse,
-  WindowOwnerResponseDto, WindowResponse, WindowResponseDto,
-  WindowTitleResponse,
-  WindowTitleResponseDto,
+  WindowResponseDto,
 } from '@/window/window-dto';
 import {WindowService} from '@/window/window-service';
-import {WindowBounds} from '@/native/native-model';
-import {MonitorIdResponse, MonitorIdResponseDto} from "@/monitor/monitor-dto";
 
 @ApiTags('Window')
 @Controller('window')

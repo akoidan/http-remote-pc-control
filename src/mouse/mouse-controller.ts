@@ -1,9 +1,9 @@
 import {Body, Controller, Get, Post} from '@nestjs/common';
 import {
-  MouseClickRequest, MouseClickRequestDto,
+  MouseClickRequestDto,
   MouseMoveClickRequestDto,
   MouseMoveHumanClickRequestDto,
-  MousePositionResponseDto
+  MousePositionResponseDto,
 } from '@/mouse/mouse-dto';
 import {MouseService} from '@/mouse/mouse-service';
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
