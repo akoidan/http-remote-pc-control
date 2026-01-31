@@ -11,10 +11,8 @@ export class MonitorService {
     @Inject(OS_INJECT) private readonly os: NodeJS.Platform,
   ) {}
 
+
   public getMonitors(): number[] {
-    if (!['win32', 'linux'].includes(this.os)) {
-      throw new NotImplementedException(`Unsupported platform: ${this.os}`);
-    }
     try {
       this.logger.log('Calling getMonitors');
       return this.addon.getMonitors();
@@ -24,39 +22,20 @@ export class MonitorService {
   }
 
   public getMonitorInfo(mid: number): MonitorInfo {
-    if (!['win32'].includes(this.os)) {
-      throw new NotImplementedException(`Unsupported platform: ${this.os}`);
-    }
     try {
       this.logger.log(`Calling getMonitorInfo for monitor #${mid}`);
-      const info =  this.addon.getMonitorInfo(mid);
-      const info =  this.addon.getMonitorScaleFactor(mid);
+      return this.addon.getMonitorInfo(mid);
     } catch (e) {
       throw new BadRequestException(`Unable to get monitor #${mid} info because ${e?.message}`);
     }
   }
 
   public getMonitorFromWindow(wid: number): number {
-    if (!['win32'].includes(this.os)) {
-      throw new NotImplementedException(`Unsupported platform: ${this.os}`);
-    }
     try {
       this.logger.log(`Calling getMonitorFromWindow for window #${wid}`);
       return this.addon.getMonitorFromWindow(wid);
     } catch (e) {
       throw new BadRequestException(`Unable to get monitor from window #${wid} because ${e?.message}`);
-    }
-  }
-
-  public getMonitorScaleFactor(mid: number): number {
-    if (!['win32'].includes(this.os)) {
-      throw new NotImplementedException(`Unsupported platform: ${this.os}`);
-    }
-    try {
-      this.logger.log(`Calling getMonitorScaleFactor for monitor #${mid}`);
-      return this.addon.getMonitorScaleFactor(mid);
-    } catch (e) {
-      throw new BadRequestException(`Unable to get monitor #${mid} scale factor because ${e?.message}`);
     }
   }
 }

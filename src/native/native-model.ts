@@ -91,7 +91,7 @@ interface MonitorNativeModule {
 
   getMonitorFromWindow(id: number): number;
 
-  getMonitorInfo(monitor: number): Omit<MonitorInfo, 'scale'>; // TODO this in C are 2 different methods
+  getMonitorInfo(monitor: number): MonitorInfo;
 }
 
 // New interface to represent process-related native APIs
