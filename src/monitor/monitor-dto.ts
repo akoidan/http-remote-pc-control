@@ -12,7 +12,7 @@ const monitorBoundsSchema = z.object({
 const monitorInfoSchema = z.object({
   bounds: monitorBoundsSchema.describe('Full monitor bounds'),
   workArea: monitorBoundsSchema.describe('Usable desktop area excluding taskbar/docks'),
-  scaleFactor: z.number().describe('Monitor scale factor'),
+  scale: z.number().describe('Monitor scale factor'),
   isPrimary: z.boolean().describe('True if this is the primary display'),
 }).describe('Monitor information');
 

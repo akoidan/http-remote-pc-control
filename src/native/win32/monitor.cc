@@ -79,7 +79,6 @@ static Napi::Object getMonitorInfo(const Napi::CallbackInfo& info) {
 
   obj.Set("scale", static_cast<double>(sf) / 100.);
 
-
   return obj;
 }
 
