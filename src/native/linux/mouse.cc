@@ -3,16 +3,8 @@
 #include <napi.h>
 #include <X11/extensions/XTest.h>
 
-/**
- * Move the mouse to a specific point.
- * @param point The coordinates to move the mouse to (x, y).
- */
-void moveMouse(MMPoint point) {
-  Display* display = XGetMainDisplay();
-  int screen = -1;
-  XTestFakeMotionEvent(display, screen, point.x, point.y, CurrentTime);
-  XFlush(display);
-}
+#include "headers/validators.h"
+
 
 MMPoint getMousePos() {
   int x, y; /* This is all we care about. Seriously. */
@@ -64,22 +56,24 @@ void _mouseClick(const Napi::CallbackInfo& info) {
   clickMouse(button);
 }
 
-void _moveMouse(const Napi::CallbackInfo& info) {
+void moveMouse(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
 
-  if (info.Length() != 2) {
-    throw Napi::Error::New(env, "Invalid number of arguments.");
-  }
+  ASSERT_NUMBER(info, 0)
+  ASSERT_NUMBER(info, 1)
 
   MMPoint point;
   point.x = info[0].As<Napi::Number>().Int32Value();
   point.y = info[1].As<Napi::Number>().Int32Value();
-  moveMouse(point);
+  Display* display = XGetMainDisplay();
+  int screen = -1;
+  XTestFakeMotionEvent(display, screen, point.x, point.y, CurrentTime);
+  XFlush(display);
 }
 
 
 Napi::Object mouse_init(Napi::Env env, Napi::Object exports) {
-  exports.Set(Napi::String::New(env, "mouseMove"), Napi::Function::New(env, _moveMouse));
+  exports.Set(Napi::String::New(env, "mouseMove"), Napi::Function::New(env, moveMouse));
   exports.Set(Napi::String::New(env, "mouseClick"), Napi::Function::New(env, _mouseClick));
   exports.Set(Napi::String::New(env, "getMousePos"), Napi::Function::New(env, _getMousePos));
   return exports;

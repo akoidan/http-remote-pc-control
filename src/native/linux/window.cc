@@ -4,6 +4,7 @@
 #include "./headers/window.h"
 #include "./headers/logger.h"
 #include "./headers/process.h"
+#include "./headers/validators.h"
 
 
 // Global XCB connection
@@ -63,7 +64,6 @@ void ensure_xcb_initialized(Napi::Env env) {
 
 // Get PID for a window
 pid_t get_window_pid(xcb_window_t window, Napi::Env env) {
-  ensure_xcb_initialized(env);
 
   xcb_get_property_cookie_t cookie = xcb_get_property(
     connection,
@@ -93,10 +93,7 @@ pid_t get_window_pid(xcb_window_t window, Napi::Env env) {
 
 void bringWindowToTop(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
-
-  if (info.Length() < 1 || !info[0].IsNumber()) {
-    throw Napi::TypeError::New(env, "Window handle (number) expected");
-  }
+  ASSERT_NUMBER(info, 0);
 
   ensure_xcb_initialized(env);
 
@@ -141,13 +138,44 @@ Napi::Number getActiveWindowId(const Napi::CallbackInfo& info) {
 Napi::Object getWindowInfo(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
 
-  if (info.Length() < 1 || !info[0].IsNumber()) {
-    throw Napi::TypeError::New(env, "Window ID must be a number");
-  }
+  ASSERT_NUMBER(info, 0);
 
   ensure_xcb_initialized(env);
 
   xcb_window_t window_id = info[0].As<Napi::Number>().Uint32Value();
+
+
+  ensure_xcb_initialized(env);
+
+  // Get window geometry
+  xcb_get_geometry_cookie_t geom_cookie = xcb_get_geometry(connection, window_id);
+  xcb_get_geometry_reply_t* geom_reply = xcb_get_geometry_reply(connection, geom_cookie, nullptr);
+
+  if (!geom_reply) {
+    throw Napi::Error::New(env, "Failed to get window geometry");
+  }
+
+  // Get window's absolute position (accounting for window decorations)
+  xcb_translate_coordinates_cookie_t trans_cookie = xcb_translate_coordinates(
+    connection, window_id, root_window, 0, 0);
+  xcb_translate_coordinates_reply_t* trans_reply =
+    xcb_translate_coordinates_reply(connection, trans_cookie, nullptr);
+
+  if (!trans_reply) {
+    free(geom_reply);
+    throw Napi::Error::New(env, "Failed to translate window coordinates");
+  }
+
+  Napi::Object bounds = Napi::Object::New(env);
+  bounds.Set("x", Napi::Number::New(env, trans_reply->dst_x));
+  bounds.Set("y", Napi::Number::New(env, trans_reply->dst_y));
+  bounds.Set("width", Napi::Number::New(env, geom_reply->width));
+  bounds.Set("height", Napi::Number::New(env, geom_reply->height));
+
+  free(geom_reply);
+  free(trans_reply);
+
+
   pid_t pid = get_window_pid(window_id, env);
   std::string path = get_process_path(pid, env);
 
@@ -155,6 +183,7 @@ Napi::Object getWindowInfo(const Napi::CallbackInfo& info) {
   result.Set("wid", Napi::Number::New(env, static_cast<int64_t>(window_id)));
   result.Set("pid", Napi::Number::New(env, pid));
   result.Set("path", Napi::String::New(env, path));
+  result.Set("bounds", bounds);
 
   return result;
 }
@@ -164,9 +193,7 @@ Napi::Object getWindowInfo(const Napi::CallbackInfo& info) {
 Napi::Array getWindowsByProcessId(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
 
-  if (info.Length() < 1 || !info[0].IsNumber()) {
-    throw Napi::TypeError::New(env, "Process ID must be a number");
-  }
+  ASSERT_NUMBER(info, 0);
 
   pid_t target_pid = info[0].As<Napi::Number>().Uint32Value();
   Napi::Array result = Napi::Array::New(env);
@@ -202,6 +229,13 @@ void setWindowBounds(const Napi::CallbackInfo& info) {
 
   ensure_xcb_initialized(env);
 
+  ASSERT_NUMBER(info, 0);
+  ASSERT_OBJECT(info, 1);
+  ASSERT_OBJECT_NUMBER(info, 1, "x");
+  ASSERT_OBJECT_NUMBER(info, 1, "y");
+  ASSERT_OBJECT_NUMBER(info, 1, "width");
+  ASSERT_OBJECT_NUMBER(info, 1, "height");
+
   xcb_window_t window_id = static_cast<xcb_window_t>(info[0].ToNumber().Int64Value());
 
   Napi::Object bounds = info[1].As<Napi::Object>();
@@ -223,47 +257,7 @@ void setWindowBounds(const Napi::CallbackInfo& info) {
   xcb_flush(connection);
 }
 
-Napi::Object getWindowBounds(const Napi::CallbackInfo& info) {
-  Napi::Env env{info.Env()};
 
-  if (info.Length() < 1 || !info[0].IsNumber()) {
-    throw Napi::TypeError::New(env, "Window handle (number) expected");
-  }
-
-  xcb_window_t window = static_cast<xcb_window_t>(info[0].As<Napi::Number>().Uint32Value());
-  ensure_xcb_initialized(env);
-
-  // Get window geometry
-  xcb_get_geometry_cookie_t geom_cookie = xcb_get_geometry(connection, window);
-  xcb_get_geometry_reply_t* geom_reply = xcb_get_geometry_reply(connection, geom_cookie, nullptr);
-
-  if (!geom_reply) {
-    throw Napi::Error::New(env, "Failed to get window geometry");
-  }
-
-  // Get window's absolute position (accounting for window decorations)
-  xcb_translate_coordinates_cookie_t trans_cookie = xcb_translate_coordinates(
-    connection, window, root_window, 0, 0);
-  xcb_translate_coordinates_reply_t* trans_reply =
-    xcb_translate_coordinates_reply(connection, trans_cookie, nullptr);
-
-  if (!trans_reply) {
-    free(geom_reply);
-    throw Napi::Error::New(env, "Failed to translate window coordinates");
-  }
-
-  // Create result object
-  Napi::Object result = Napi::Object::New(env);
-  result.Set("x", Napi::Number::New(env, trans_reply->dst_x));
-  result.Set("y", Napi::Number::New(env, trans_reply->dst_y));
-  result.Set("width", Napi::Number::New(env, geom_reply->width));
-  result.Set("height", Napi::Number::New(env, geom_reply->height));
-
-  free(geom_reply);
-  free(trans_reply);
-
-  return result;
-}
 
 Napi::Object window_init(Napi::Env env, Napi::Object exports) {
   exports.Set("bringWindowToTop", Napi::Function::New(env, bringWindowToTop));
@@ -271,6 +265,5 @@ Napi::Object window_init(Napi::Env env, Napi::Object exports) {
   exports.Set("getWindowsByProcessId", Napi::Function::New(env, getWindowsByProcessId));
   exports.Set("getWindowInfo", Napi::Function::New(env, getWindowInfo));
   exports.Set("setWindowBounds", Napi::Function::New(env, setWindowBounds));
-  exports.Set("getWindowBounds", Napi::Function::New(env, getWindowBounds));
   return exports;
 }
