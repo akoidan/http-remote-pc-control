@@ -67,8 +67,12 @@ void moveMouse(const Napi::CallbackInfo& info) {
   point.y = info[1].As<Napi::Number>().Int32Value();
   Display* display = XGetMainDisplay(env);
   int screen = -1;
-  XTestFakeMotionEvent(display, screen, point.x, point.y, CurrentTime);
-  XFlush(display);
+  if (!XTestFakeMotionEvent(display, screen, point.x, point.y, CurrentTime)) {
+    throw Napi::Error::New(env, "Failed to send XTestFakeMotionEvent");
+  }
+  if (!XFlush(display)) {
+    throw Napi::Error::New(env, "Failed to XFlush");
+  }
 }
 
 
