@@ -3,10 +3,11 @@ interface InitWindowResult {
   processId: number;
 }
 
-interface ActiveWindowInfo {
+interface WindowInfo {
   wid: number;
   pid: number;
   path: string;
+  bounds: WindowBounds;
 }
 
 interface WindowBounds {
@@ -26,6 +27,7 @@ interface MonitorBounds {
 interface MonitorInfo {
   bounds: MonitorBounds;
   workArea: MonitorBounds;
+  scale: number;
   isPrimary: boolean
 }
 
@@ -37,45 +39,18 @@ enum WindowAction {
   MAXIMIZE = 'maximize',
 }
 
+enum MouseButton {
+  LEFT = 1,
+  RIGHT = 2,
+  MIDDLE = 3,
+}
+
 interface WindowNativeModule {
   bringWindowToTop(id: number): void;
-
-  getWindows(): number[];
-
   getWindowsByProcessId(pid: number): number[];
-
-  initWindow(id: number): InitWindowResult;
-
-  getActiveWindowInfo(): ActiveWindowInfo;
-
-  // Window methods
-  getActiveWindow(): number;
-
-  getWindowBounds(id: number): WindowBounds;
-
-  getWindowTitle(id: number): string;
-
-  getWindowOpacity(id: number): number;
-
-  getWindowOwner(id: number): number;
-
-  isWindow(id: number): boolean;
-
-  isWindowVisible(id: number): boolean;
-
   setWindowBounds(id: number, bounds: MonitorBounds): void;
-
-  showWindow(id: number, type: WindowAction): void;
-
-  setWindowOpacity(id: number, opacity: number): void;
-
-  toggleWindowTransparency(id: number, toggle: boolean): void;
-
-  setWindowOwner(id: number, owner: number): void;
-
-  redrawWindow(id: number): void;
-
-  getProcessMainWindow(pid: number): number;
+  getWindowInfo(id: number): WindowInfo;
+  getActiveWindowId(): number;
 }
 
 // New interface to represent monitor-related native APIs
@@ -83,8 +58,6 @@ interface MonitorNativeModule {
   getMonitors(): number[];
 
   getMonitorFromWindow(id: number): number;
-
-  getMonitorScaleFactor(monitor: number): number;
 
   getMonitorInfo(monitor: number): MonitorInfo;
 }
@@ -106,7 +79,7 @@ interface KeyboardNativeModule {
 }
 
 interface MouseNativeModule {
-  mouseClick(): void;
+  mouseClick(button: MouseButton): void;
 
   mouseMove(x: number, y: number): void;
 
@@ -134,4 +107,4 @@ export type {
   MouseNativeModule,
 };
 
-export {WindowAction, Native};
+export {WindowAction, Native, MouseButton};

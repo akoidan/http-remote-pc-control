@@ -34,7 +34,7 @@ const modifierKeys = [
   'fn',
 ] as const;
 
-const keySchema = z.enum(([...allowedKeys, ...modifierKeys]))
+const keySchema = z.enum([...allowedKeys, ...modifierKeys])
   .describe('A key to be sent.');
 
 const setKeyboardLayoutSchema = z.object({

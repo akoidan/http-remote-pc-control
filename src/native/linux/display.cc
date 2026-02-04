@@ -1,5 +1,7 @@
 #include "./headers/display.h"
+#include "./headers/logger.h"
 #include <iostream>
+#include <napi.h>
 
 Display* mainDisplay = NULL;
 int registered = 0;
@@ -13,7 +15,7 @@ void XCloseMainDisplay(void) {
   }
 }
 
-Display* XGetMainDisplay(void) {
+Display* XGetMainDisplay(Napi::Env env) {
   /* Close the display if displayName has changed */
   if (hasDisplayNameChanged) {
     XCloseMainDisplay();
@@ -25,9 +27,9 @@ Display* XGetMainDisplay(void) {
     mainDisplay = XOpenDisplay(displayName);
 
     if (mainDisplay == NULL) {
-      fputs("Could not open main display\n", stderr);
+      throw Napi::Error::New(env, "Couldn't open main display");
     }
-    else if (!registered) {
+    if (!registered) {
       atexit(&XCloseMainDisplay);
       registered = 1;
     }

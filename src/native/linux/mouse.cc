@@ -3,39 +3,23 @@
 #include <napi.h>
 #include <X11/extensions/XTest.h>
 
-/**
- * Move the mouse to a specific point.
- * @param point The coordinates to move the mouse to (x, y).
- */
-void moveMouse(MMPoint point) {
-  Display* display = XGetMainDisplay();
-  int screen = -1;
-  XTestFakeMotionEvent(display, screen, point.x, point.y, CurrentTime);
-  XFlush(display);
-}
+#include "headers/validators.h"
 
-MMPoint getMousePos() {
+
+
+Napi::Object getMousePos(const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
   int x, y; /* This is all we care about. Seriously. */
   Window garb1, garb2; /* Why you can't specify NULL as a parameter */
   int garb_x, garb_y; /* is beyond me. */
   unsigned int more_garbage;
 
-  Display* display = XGetMainDisplay();
+  Display* display = XGetMainDisplay(env);
   XQueryPointer(display, XDefaultRootWindow(display), &garb1, &garb2, &x, &y, &garb_x, &garb_y, &more_garbage);
 
-  MMPoint point;
-  point.x = x;
-  point.y = y;
-  return point;
-}
-
-
-Napi::Object _getMousePos(const Napi::CallbackInfo& info) {
-  Napi::Env env = info.Env();
-  MMPoint p = getMousePos();
   Napi::Object obj = Napi::Object::New(env);
-  obj.Set("x", Napi::Number::New(env, p.x));
-  obj.Set("y", Napi::Number::New(env, p.y));
+  obj.Set("x", Napi::Number::New(env, x));
+  obj.Set("y", Napi::Number::New(env, y));
   return obj;
 }
 
@@ -44,38 +28,51 @@ Napi::Object _getMousePos(const Napi::CallbackInfo& info) {
  * @param down   True for down, false for up.
  * @param button The button to press down or release.
  */
-void toggleMouse(bool down, unsigned int button) {
-  Display* display = XGetMainDisplay();
-  XTestFakeButtonEvent(display, button, down ? True : False, CurrentTime);
-  XFlush(display);
+void toggleMouse(Napi::Env env, bool down, unsigned int button) {
+  Display* display = XGetMainDisplay(env);
+
+  if (!XTestFakeButtonEvent(display, button, down ? True : False, CurrentTime)) {
+    throw Napi::Error::New(env, "Failed to send XTestFakeMotionEvent");
+  }
+  if (!XFlush(display)) {
+    throw Napi::Error::New(env, "Failed to XFlush");
+  }
 }
 
-void clickMouse(unsigned int button) {
-  toggleMouse(true, button);
-  toggleMouse(false, button);
+
+void mouseClick(const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
+  ASSERT_NUMBER(info, 0)
+  unsigned int button = info[0].As<Napi::Number>().Int32Value();
+  if (button < 1 || button > 3) {
+    throw Napi::Error::New(env, "Invalid button number.");
+  }
+  toggleMouse(env, true, button);
+  toggleMouse(env, false, button);
 }
 
-void _mouseClick(const Napi::CallbackInfo& info) {
-  clickMouse(LEFT_BUTTON);
-}
-
-void _moveMouse(const Napi::CallbackInfo& info) {
+void moveMouse(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
 
-  if (info.Length() != 2) {
-    throw Napi::Error::New(env, "Invalid number of arguments.");
-  }
+  ASSERT_NUMBER(info, 0)
+  ASSERT_NUMBER(info, 1)
 
-  MMPoint point;
-  point.x = info[0].As<Napi::Number>().Int32Value();
-  point.y = info[1].As<Napi::Number>().Int32Value();
-  moveMouse(point);
+  int x = info[0].As<Napi::Number>().Int32Value();
+  int y = info[1].As<Napi::Number>().Int32Value();
+  Display* display = XGetMainDisplay(env);
+  int screen = -1;
+  if (!XTestFakeMotionEvent(display, screen, x, y, CurrentTime)) {
+    throw Napi::Error::New(env, "Failed to send XTestFakeMotionEvent");
+  }
+  if (!XFlush(display)) {
+    throw Napi::Error::New(env, "Failed to XFlush");
+  }
 }
 
 
 Napi::Object mouse_init(Napi::Env env, Napi::Object exports) {
-  exports.Set(Napi::String::New(env, "mouseMove"), Napi::Function::New(env, _moveMouse));
-  exports.Set(Napi::String::New(env, "mouseClick"), Napi::Function::New(env, _mouseClick));
-  exports.Set(Napi::String::New(env, "getMousePos"), Napi::Function::New(env, _getMousePos));
+  exports.Set(Napi::String::New(env, "mouseMove"), Napi::Function::New(env, moveMouse));
+  exports.Set(Napi::String::New(env, "mouseClick"), Napi::Function::New(env, mouseClick));
+  exports.Set(Napi::String::New(env, "getMousePos"), Napi::Function::New(env, getMousePos));
   return exports;
 }

@@ -12,8 +12,8 @@
 #define X_KEY_EVENT(display, key, is_press)                \
     (XTestFakeKeyEvent(display, XKeysymToKeycode(display, key), is_press, CurrentTime), XFlush(display))
 
-void toggleKeyCode(KeySym code, const bool down, unsigned int flags) {
-  Display* display = XGetMainDisplay();
+void toggleKeyCode(Napi::Env env, KeySym code, const bool down, unsigned int flags) {
+  Display* display = XGetMainDisplay(env);
   const Bool is_press = down ? True : False; /* Just to be safe. */
   if (!down) {
     X_KEY_EVENT(display, code, is_press);
@@ -57,16 +57,16 @@ KeySym keyCodeForChar(const char c) {
   return code;
 }
 
-void toggleKey(char c, const bool down, unsigned int flags) {
+void toggleKey(Napi::Env env, char c, const bool down, unsigned int flags) {
   KeySym keyCode = keyCodeForChar(c);
   if (std::isupper(c) || XShiftRequiredMap.find(c) != XShiftRequiredMap.end()) {
     flags |= ShiftMask;
   }
-  toggleKeyCode(keyCode, down, flags);
+  toggleKeyCode(env, keyCode, down, flags);
 }
 
-void typeString(const char* str) {
-  Display* display = XGetMainDisplay();
+void typeString(Napi::Env env, const char* str) {
+  Display* display = XGetMainDisplay(env);
   while (*str) {
     KeySym ks;
     bool needShift = false;
