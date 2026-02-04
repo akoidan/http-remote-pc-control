@@ -65,7 +65,7 @@ void moveMouse(const Napi::CallbackInfo& info) {
   MMPoint point;
   point.x = info[0].As<Napi::Number>().Int32Value();
   point.y = info[1].As<Napi::Number>().Int32Value();
-  Display* display = XGetMainDisplay();
+  Display* display = XGetMainDisplay(env);
   int screen = -1;
   XTestFakeMotionEvent(display, screen, point.x, point.y, CurrentTime);
   XFlush(display);
