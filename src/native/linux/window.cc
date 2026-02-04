@@ -3,32 +3,13 @@
 #include <xcb/xcb_ewmh.h>
 #include "./headers/window.h"
 #include "./headers/logger.h"
-
+#include "./headers/process.h"
 
 
 // Global XCB connection
 static xcb_connection_t* connection = nullptr;
 static xcb_ewmh_connection_t ewmh;
 static xcb_window_t root_window;
-
-
-// Helper function to get process path from PID
-std::string get_process_path(pid_t pid, Napi::Env env) {
-  if (pid <= 0) {
-    throw Napi::Error::New(env, "Invalid pid");
-  }
-
-  char path[1024];
-  char proc_path[1024];
-  snprintf(proc_path, sizeof(proc_path), "/proc/%d/exe", pid);
-
-  ssize_t len = readlink(proc_path, path, sizeof(path) - 1);
-  if (len == -1) {
-    throw Napi::Error::New(env, "Failed to get process path");
-  }
-  path[len] = '\0';
-  return std::string(path);
-}
 
 
 // Initialize XCB if not already initialized
@@ -84,8 +65,15 @@ void ensure_xcb_initialized(Napi::Env env) {
 pid_t get_window_pid(xcb_window_t window, Napi::Env env) {
   ensure_xcb_initialized(env);
 
-  xcb_get_property_cookie_t cookie = xcb_get_property(connection, 0, window,
-                                                      ewmh._NET_WM_PID, XCB_ATOM_CARDINAL, 0, 1);
+  xcb_get_property_cookie_t cookie = xcb_get_property(
+    connection,
+    0,
+    window,
+    ewmh._NET_WM_PID,
+    XCB_ATOM_CARDINAL,
+    0,
+    1
+    );
 
   xcb_get_property_reply_t* reply = xcb_get_property_reply(connection, cookie, nullptr);
   if (!reply) {
@@ -96,80 +84,19 @@ pid_t get_window_pid(xcb_window_t window, Napi::Env env) {
   if (reply->type == XCB_ATOM_CARDINAL && reply->format == 32 && reply->length == 1) {
     pid = *(pid_t*)xcb_get_property_value(reply);
     free(reply);
-  }
-  else {
+  } else {
     free(reply);
     throw Napi::Error::New(env, "Failed to get PID from XCB reply");
   }
   return pid;
 }
 
-// Get active window
-xcb_window_t get_active_window(Napi::Env env) {
-  ensure_xcb_initialized(env);
-
-  xcb_get_property_cookie_t cookie = xcb_ewmh_get_active_window(&ewmh, 0);
-  xcb_window_t active_window = 0;
-
-  if (!xcb_ewmh_get_active_window_reply(&ewmh, cookie, &active_window, nullptr)) {
-    throw Napi::Error::New(env, "Failed to get active window");
-  }
-  return active_window;
-}
-
-// Get all windows
-std::vector<WindowInfo> get_all_windows(Napi::Env env) {
-  std::vector<WindowInfo> windows;
-  ensure_xcb_initialized(env);
-
-  xcb_get_property_cookie_t cookie = xcb_ewmh_get_client_list(&ewmh, 0);
-  xcb_ewmh_get_windows_reply_t clients;
-
-  if (!xcb_ewmh_get_client_list_reply(&ewmh, cookie, &clients, nullptr)) {
-    throw Napi::Error::New(env, "Failed to get client list");
-  }
-  for (unsigned int i = 0; i < clients.windows_len; i++) {
-    pid_t pid = get_window_pid(clients.windows[i], env);
-    if (pid > 0) {
-      WindowInfo info = {clients.windows[i], pid};
-      windows.push_back(info);
-      LOG("Found window - ID: %lu, PID: %d", (unsigned long)clients.windows[i], pid);
-    }
-  }
-  xcb_ewmh_get_windows_reply_wipe(&clients);
-
-  return windows;
-}
-
-Napi::Array getWindows(const Napi::CallbackInfo& info) {
-  Napi::Env env = info.Env();
-  auto windows = get_all_windows(env);
-
-  auto arr = Napi::Array::New(env);
-  for (size_t i = 0; i < windows.size(); i++) {
-    arr.Set(i, Napi::Number::New(env, static_cast<int64_t>(windows[i].id)));
-  }
-  return arr;
-}
-
-Napi::Object initWindow(const Napi::CallbackInfo& info) {
-  Napi::Env env = info.Env();
-
-  xcb_window_t window_id = static_cast<xcb_window_t>(info[0].ToNumber().Int64Value());
-  LOG("Window ID: %lu", (unsigned long)window_id);
-
-  pid_t pid = get_window_pid(window_id, env);
-  std::string path = get_process_path(pid, env);
-
-  Napi::Object obj = Napi::Object::New(env);
-  obj.Set("processId", Napi::Number::New(env, pid));
-  obj.Set("path", Napi::String::New(env, path));
-
-  return obj;
-}
-
 void bringWindowToTop(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
+
+  if (info.Length() < 1 || !info[0].IsNumber()) {
+    throw Napi::TypeError::New(env, "Window handle (number) expected");
+  }
 
   ensure_xcb_initialized(env);
 
@@ -198,16 +125,29 @@ void bringWindowToTop(const Napi::CallbackInfo& info) {
   xcb_flush(connection);
 }
 
-Napi::Number getActiveWindow(const Napi::CallbackInfo& info) {
+Napi::Number getActiveWindowId(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
-  xcb_window_t active_window = get_active_window(env);
+  ensure_xcb_initialized(env);
+  xcb_get_property_cookie_t cookie = xcb_ewmh_get_active_window(&ewmh, 0);
+  xcb_window_t active_window = 0;
+
+  if (!xcb_ewmh_get_active_window_reply(&ewmh, cookie, &active_window, nullptr)) {
+    throw Napi::Error::New(env, "Failed to get active window");
+  }
+
   return Napi::Number::New(env, static_cast<int64_t>(active_window));
 }
 
-Napi::Object getActiveWindowInfo(const Napi::CallbackInfo& info) {
+Napi::Object getWindowInfo(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
 
-  xcb_window_t window_id = get_active_window(env);
+  if (info.Length() < 1 || !info[0].IsNumber()) {
+    throw Napi::TypeError::New(env, "Window ID must be a number");
+  }
+
+  ensure_xcb_initialized(env);
+
+  xcb_window_t window_id = info[0].As<Napi::Number>().Uint32Value();
   pid_t pid = get_window_pid(window_id, env);
   std::string path = get_process_path(pid, env);
 
@@ -326,12 +266,10 @@ Napi::Object getWindowBounds(const Napi::CallbackInfo& info) {
 }
 
 Napi::Object window_init(Napi::Env env, Napi::Object exports) {
-  exports.Set("getWindows", Napi::Function::New(env, getWindows));
-  exports.Set("initWindow", Napi::Function::New(env, initWindow));
   exports.Set("bringWindowToTop", Napi::Function::New(env, bringWindowToTop));
-  exports.Set("getActiveWindow", Napi::Function::New(env, getActiveWindow));
+  exports.Set("getActiveWindowId", Napi::Function::New(env, getActiveWindowId));
   exports.Set("getWindowsByProcessId", Napi::Function::New(env, getWindowsByProcessId));
-  exports.Set("getActiveWindowInfo", Napi::Function::New(env, getActiveWindowInfo));
+  exports.Set("getWindowInfo", Napi::Function::New(env, getWindowInfo));
   exports.Set("setWindowBounds", Napi::Function::New(env, setWindowBounds));
   exports.Set("getWindowBounds", Napi::Function::New(env, getWindowBounds));
   return exports;

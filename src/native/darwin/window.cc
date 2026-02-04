@@ -137,7 +137,7 @@ Napi::Array getWindows(const Napi::CallbackInfo& info) {
   return arr;
 }
 
-Napi::Number getActiveWindow(const Napi::CallbackInfo& info) {
+Napi::Number getActiveWindowId(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
   CGWindowListOption listOptions = kCGWindowListOptionOnScreenOnly | kCGWindowListExcludeDesktopElements;
@@ -313,8 +313,8 @@ Napi::Value setWindowMaximized(const Napi::CallbackInfo &info) {
 Napi::Object window_init(Napi::Env env, Napi::Object exports) {
   exports.Set(Napi::String::New(env, "getWindows"),
               Napi::Function::New(env, getWindows));
-  exports.Set(Napi::String::New(env, "getActiveWindow"),
-              Napi::Function::New(env, getActiveWindow));
+  exports.Set(Napi::String::New(env, "getActiveWindowId"),
+              Napi::Function::New(env, getActiveWindowId));
   exports.Set(Napi::String::New(env, "setWindowBounds"),
               Napi::Function::New(env, setWindowBounds));
   exports.Set(Napi::String::New(env, "getWindowBounds"),

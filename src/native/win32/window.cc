@@ -111,7 +111,7 @@ Napi::Number getProcessMainWindow(const Napi::CallbackInfo& info) {
   return Napi::Number::New(env, reinterpret_cast<int64_t>(handle));
 }
 
-Napi::Number getActiveWindow(const Napi::CallbackInfo& info) {
+Napi::Number getActiveWindowId(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
   auto handle = GetForegroundWindow();
@@ -428,29 +428,10 @@ Napi::Boolean isWindowVisible(const Napi::CallbackInfo& info) {
   return Napi::Boolean::New(env, IsWindowVisible(handle));
 }
 
-// Get information about the active window
-Napi::Object getActiveWindowInfo(const Napi::CallbackInfo& info) {
-  Napi::Env env{info.Env()};
-
-  auto handle = GetForegroundWindow();
-  Process process{0, std::string()};
-  if (!handle) {
-    LOG("Active window handle is null");
-  } else {
-    process = getWindowProcess(handle, env);
-  }
-
-  Napi::Object result = Napi::Object::New(env);
-  result.Set("wid", Napi::Number::New(env, reinterpret_cast<int64_t>(handle)));
-  result.Set("pid", Napi::Number::New(env, process.pid));
-  result.Set("path", Napi::String::New(env, process.path));
-
-  return result;
-}
 
 // Initialize the window module
 Napi::Object window_init(Napi::Env env, Napi::Object exports) {
-  exports.Set(Napi::String::New(env, "getActiveWindow"), Napi::Function::New(env, getActiveWindow));
+  exports.Set(Napi::String::New(env, "getActiveWindowId"), Napi::Function::New(env, getActiveWindowId));
   exports.Set(Napi::String::New(env, "setWindowBounds"), Napi::Function::New(env, setWindowBounds));
   exports.Set(Napi::String::New(env, "showWindow"), Napi::Function::New(env, showWindow));
   exports.Set(Napi::String::New(env, "bringWindowToTop"), Napi::Function::New(env, bringWindowToTop));

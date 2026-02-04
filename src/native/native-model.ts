@@ -53,10 +53,8 @@ interface WindowNativeModule {
 
   initWindow(id: number): InitWindowResult;
 
-  getActiveWindowInfo(): ActiveWindowInfo;
-
   // Window methods
-  getActiveWindow(): number;
+  getActiveWindowId(): number;
 
   getWindowBounds(id: number): WindowBounds;
 

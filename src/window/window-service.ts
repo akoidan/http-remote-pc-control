@@ -3,6 +3,7 @@ import {BadRequestException, Inject, Injectable, Logger, NotImplementedException
 import {INativeModule, MonitorBounds, Native, WindowAction, WindowBounds} from '@/native/native-model';
 import {OS_INJECT} from '@/window/window-consts';
 import {WindowResponse} from '@/window/window-dto';
+import {Safe400} from "@/utils/decorators";
 
 @Injectable()
 export class WindowService {
@@ -21,6 +22,7 @@ export class WindowService {
   }
 
   // eslint-disable-next-line @typescript-eslint/require-await
+  @Safe400(['darwin'])
   public async getActiveWindowInfo(): Promise<WindowResponse> {
     if (!['win32', 'linux'].includes(this.os)) {
       throw new NotImplementedException(`Unsupported platform: ${this.os}`);
@@ -44,10 +46,10 @@ export class WindowService {
   }
 
   // Extended window operations following consistent logging and error handling
-  public getActiveWindow(): number {
+  public getActiveWindowId(): number {
     try {
-      this.logger.log('Calling getActiveWindow');
-      return this.addon.getActiveWindow();
+      this.logger.log('Calling getActiveWindowId');
+      return this.addon.getActiveWindowId();
     } catch (e) {
       throw new BadRequestException(`Unable to get active window because ${e?.message}`);
     }

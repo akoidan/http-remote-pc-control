@@ -7,6 +7,25 @@
 #include <cstring>
 #include "./headers/process.h"
 
+
+std::string get_process_path(pid_t pid, Napi::Env env) {
+    if (pid <= 0) {
+        throw Napi::Error::New(env, "Invalid pid");
+    }
+
+    char path[1024];
+    char proc_path[1024];
+    snprintf(proc_path, sizeof(proc_path), "/proc/%d/exe", pid);
+
+    ssize_t len = readlink(proc_path, path, sizeof(path) - 1);
+    if (len == -1) {
+        throw Napi::Error::New(env, "Failed to get process path");
+    }
+    path[len] = '\0';
+    return std::string(path);
+}
+
+
 static Napi::Number createProcess(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
 
