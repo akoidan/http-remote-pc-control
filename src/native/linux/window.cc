@@ -263,32 +263,74 @@ void setWindowBounds(const Napi::CallbackInfo& info) {
 void setWindowVisibility(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
-  auto handle{getValueFromCallbackData<HWND>(info, 0)};
-  if (!IsWindow(handle)) {
-    throw Napi::Error::New(env, "Invalid window handle");
-  }
+  ensure_xcb_initialized(env);
+  
+  ASSERT_NUMBER(info, 0);
+  ASSERT_STRING(info, 1);
 
+  xcb_window_t window_id = static_cast<xcb_window_t>(info[0].ToNumber().Int64Value());
   std::string type{info[1].As<Napi::String>()};
 
-  int flag = SW_SHOW;
-
-  if (type == "show")
-    flag = SW_SHOW;
-  else if (type == "hide")
-    flag = SW_HIDE;
-  else if (type == "minimize")
-    flag = SW_MINIMIZE;
-  else if (type == "restore")
-    flag = SW_RESTORE;
-  else if (type == "maximize")
-    flag = SW_MAXIMIZE;
-  else {
+  if (type == "show") {
+    // Map the window (make it visible)
+    xcb_map_window(connection, window_id);
+  } else if (type == "hide") {
+    // Unmap the window (make it invisible)
+    xcb_unmap_window(connection, window_id);
+  } else if (type == "minimize") {
+    // Send _NET_WM_STATE_HIDDEN message to minimize
+    xcb_client_message_event_t event;
+    memset(&event, 0, sizeof(event));
+    event.response_type = XCB_CLIENT_MESSAGE;
+    event.format = 32;
+    event.window = window_id;
+    event.type = ewmh._NET_WM_STATE;
+    event.data.data32[0] = 1; // _NET_WM_STATE_ADD
+    event.data.data32[1] = ewmh._NET_WM_STATE_HIDDEN;
+    event.data.data32[2] = XCB_NONE;
+    event.data.data32[3] = 0;
+    
+    xcb_send_event(connection, 0, root_window,
+                   XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY | XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT,
+                   (const char*)&event);
+  } else if (type == "restore") {
+    // Remove hidden state and map window
+    xcb_client_message_event_t event;
+    memset(&event, 0, sizeof(event));
+    event.response_type = XCB_CLIENT_MESSAGE;
+    event.format = 32;
+    event.window = window_id;
+    event.type = ewmh._NET_WM_STATE;
+    event.data.data32[0] = 0; // _NET_WM_STATE_REMOVE
+    event.data.data32[1] = ewmh._NET_WM_STATE_HIDDEN;
+    event.data.data32[2] = XCB_NONE;
+    event.data.data32[3] = 0;
+    
+    xcb_send_event(connection, 0, root_window,
+                   XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY | XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT,
+                   (const char*)&event);
+    xcb_map_window(connection, window_id);
+  } else if (type == "maximize") {
+    // Send _NET_WM_STATE_MAXIMIZED_VERT and _NET_WM_STATE_MAXIMIZED_HORZ
+    xcb_client_message_event_t event;
+    memset(&event, 0, sizeof(event));
+    event.response_type = XCB_CLIENT_MESSAGE;
+    event.format = 32;
+    event.window = window_id;
+    event.type = ewmh._NET_WM_STATE;
+    event.data.data32[0] = 1; // _NET_WM_STATE_ADD
+    event.data.data32[1] = ewmh._NET_WM_STATE_MAXIMIZED_VERT;
+    event.data.data32[2] = ewmh._NET_WM_STATE_MAXIMIZED_HORZ;
+    event.data.data32[3] = 0;
+    
+    xcb_send_event(connection, 0, root_window,
+                   XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY | XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT,
+                   (const char*)&event);
+  } else {
     throw Napi::Error::New(env, "Invalid window show type");
   }
 
-  if (!ShowWindow(handle, flag)) {
-    throw Napi::Error::New(env, "Failed to change window state");
-  }
+  xcb_flush(connection);
 }
 
 

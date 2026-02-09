@@ -3,6 +3,12 @@ if (info.Length() <= index || !info[index].IsNumber()) { \
 throw Napi::TypeError::New(info.Env(), "Argument " #index " must be a number"); \
 }
 
+
+#define ASSERT_STRING(info, index) \
+if (info.Length() <= index || !info[index].IsString()) { \
+throw Napi::TypeError::New(info.Env(), "Argument " #index " must be a string"); \
+}
+
 #define ASSERT_OBJECT(info, index) \
 if (info.Length() <= index || !info[index].IsObject()) { \
 throw Napi::TypeError::New(info.Env(), "Argument " #index " must be an object"); \
