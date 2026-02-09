@@ -1,4 +1,4 @@
-import {Body, Controller, Get, Post} from '@nestjs/common';
+import {Body, Controller, Get, HttpCode, Post} from '@nestjs/common';
 import {
   MouseClickRequestDto,
   MouseMoveClickRequestDto,
@@ -25,24 +25,28 @@ export class MouseController {
 
   @Post('move-left-click')
   @ApiOperation({summary: 'Instantly moves mouse to the position and performs a left click there'})
+  @HttpCode(204)
   moveLeftClick(@Body() event: MouseMoveClickRequestDto): void {
     this.mouseService.moveLeftClick(event.x, event.y);
   }
 
   @Post('move')
   @ApiOperation({summary: 'Mouse move to the point, absolute coordinate for all monitors'})
+  @HttpCode(204)
   mouseMove(@Body() event: MouseMoveClickRequestDto): void {
     this.mouseService.move(event.x, event.y);
   }
 
   @Post('move-human')
   @ApiOperation({summary: 'Moves mouse in a human pattern with time'})
+  @HttpCode(204)
   async mouseMoveHuman(@Body() event: MouseMoveHumanClickRequestDto): Promise<void> {
     await this.mouseService.moveMouseHuman(event);
   }
 
   @Post('click')
   @ApiOperation({summary: 'Left click on the current position'})
+  @HttpCode(204)
   async leftMouseClick(@Body() event: MouseClickRequestDto): Promise<void> {
     await this.mouseService.click(event);
   }

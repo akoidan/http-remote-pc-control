@@ -6,9 +6,17 @@ const processIdResponseSchema = z.object({
   pid: z.number().describe('Process ID'),
 }).describe('Process ID');
 
+const pidSchema = z.object({
+  pid: z.number().describe('Process ID whose top-level window should receive focus'),
+}).describe('Focus window by process ID');
+
 const windowHandleResponseSchema = z.object({
   wid: z.number().describe('Window handle (HWND as number)'),
 }).describe('Window handle');
+
+// Create DTO class for Swagger
+class FocusExeRequestDto extends createZodDto(pidSchema) {}
+
 
 class ProcessIdResponseDto extends createZodDto(processIdResponseSchema) {
 }
@@ -68,9 +76,11 @@ type KillExeByNameRequest = z.infer<typeof executableNameRequestSchema>;
 type FindExeByNameRequest = z.infer<typeof executableNameRequestSchema>;
 type KillExeByPidRequest = z.infer<typeof processIdRequestSchema>;
 type LaunchPidResponse = z.infer<typeof processIdRequestSchema>;
-type CreateProcessRequest = z.infer<typeof createProcessRequestSchema>;
+type CreateProcessRequest = z.infer<typeof createProcessRequestSchema>;// Export types
+type FocusExeRequest = z.infer<typeof pidSchema>;
 
 export {
+  pidSchema,
   processIdsReponseSchema,
   launchExeRequestSchema,
   processIdRequestSchema,
@@ -90,6 +100,7 @@ export {
 };
 
 export type {
+  FocusExeRequest,
   CreateProcessRequest,
   LaunchExeRequest,
   KillExeByNameRequest,

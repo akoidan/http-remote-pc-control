@@ -2,17 +2,17 @@
 import {BadRequestException, Inject, Injectable, Logger, NotImplementedException} from '@nestjs/common';
 import {INativeModule, MonitorBounds, Native, WindowAction, WindowBounds} from '@/native/native-model';
 import {OS_INJECT} from '@/window/window-consts';
-import {WindowResponse} from '@/window/window-dto';
+import {SetWindowPropertiesRequest, WindowResponse} from '@/window/window-dto';
 import {Safe400} from "@/utils/decorators";
 
 @Injectable()
 export class WindowService {
   constructor(
-    private readonly logger: Logger,
+    public readonly logger: Logger,
     @Inject(Native)
     private readonly addon: INativeModule,
     @Inject(OS_INJECT)
-    private readonly os: NodeJS.Platform,
+    public readonly os: NodeJS.Platform,
   ) {
   }
 
@@ -27,7 +27,8 @@ export class WindowService {
     if (!['win32', 'linux'].includes(this.os)) {
       throw new NotImplementedException(`Unsupported platform: ${this.os}`);
     }
-    const windowsRaw = this.addon.getActiveWindowInfo();
+    const wid = this.addon.getActiveWindowId();
+    const windowsRaw = this.addon.getWindowInfo(wid);
     this.logger.debug(`Found following windows ids ${JSON.stringify(windowsRaw)}`);
     if (!windowsRaw.wid) {
       throw new BadRequestException('Error detecting active window');
@@ -77,6 +78,10 @@ export class WindowService {
     } catch (e) {
       throw new BadRequestException(`Unable to get window #${wid} bounds because ${e?.message}`);
     }
+  }
+
+  public setWindowState(wid: number, windowState: SetWindowPropertiesRequest) {
+
   }
 
   public setWindowBounds(wid: number, bounds: MonitorBounds): void {
@@ -161,10 +166,8 @@ export class WindowService {
     }
   }
 
+  @Safe400(['linux', 'darwin'])
   public setWindowOwner(wid: number, owner: number): void {
-    if (!['win32'].includes(this.os)) {
-      throw new NotImplementedException(`Unsupported platform: ${this.os}`);
-    }
     try {
       this.logger.log(`Calling setWindowOwner for #${wid} to ${owner}`);
       this.addon.setWindowOwner(wid, owner);

@@ -1,4 +1,4 @@
-import {Body, Controller, Delete, Get, Inject, Param, ParseIntPipe, Post, Put, Query} from '@nestjs/common';
+import {Body, Controller, Delete, Get, HttpCode, Inject, Param, ParseIntPipe, Post, Put, Query} from '@nestjs/common';
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import {ProcessService} from '@/process/process-service';
 import {CreateProcessRequestDto, FocusExeRequestDto} from '@/window/window-dto';
@@ -41,7 +41,7 @@ export class ProcessController {
     return this.processService.getAllWindowsByPid(id);
   }
 
-  @Put()
+  @Post()
   @ApiOperation({summary: 'Launches an application'})
   @ApiResponse({type: ProcessIdResponseDto})
   createProcess(@Body() body: CreateProcessRequestDto): ProcessIdResponse {
@@ -50,21 +50,15 @@ export class ProcessController {
 
   @Post(':pid/focus')
   @ApiOperation({summary: 'Focus main process window'})
+  @HttpCode(204)
   async focusExe(@Body() body: FocusExeRequestDto): Promise<void> {
     await this.processService.activateWindowByPid(body.pid);
   }
 
-  @Post()
-  @ApiOperation({summary: 'Launches an application (same as put but from nodejsapi)'})
-  @ApiResponse({type: LaunchPidResponseDto})
-  async lunchExe(@Body() body: LaunchExeRequestDto): Promise<LaunchPidResponse> {
-    const pid = await this.executionService.launchExe(body.path, body.arguments, body.waitTillFinish);
-    return {pid};
-  }
-
   @Delete()
   @ApiOperation({summary: 'Kill process by name'})
-  async killExeByName(@Query() query: KillExeByNameRequestDto): Promise<void> {
+  @HttpCode(204)
+  async killExeByName(@Query() query: FindExeByNameRequestDto): Promise<void> {
     await this.executionService.killExeByName(query.name);
   }
 
@@ -77,6 +71,7 @@ export class ProcessController {
 
   @Delete(':pid')
   @ApiOperation({summary: 'Kill process by PID'})
+  @HttpCode(204)
   async killExeByPid(@Body() body: KillExeByPidRequestDto): Promise<void> {
     await this.executionService.killExeByPid(body.pid);
   }
