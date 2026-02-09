@@ -208,39 +208,41 @@ Napi::Object getWindowInfo(const Napi::CallbackInfo& info) {
     throw Napi::Error::New(env, "Failed to get _NET_WM_STATE property reply");
   }
   
-  if (state_reply->type != XCB_ATOM) {
+  // If property doesn't exist, it's not minimized or maximized
+  if (state_reply->type == XCB_NONE) {
+    free(state_reply);
+    // Keep default visibility (show/hide based on mapped state)
+  } else if (state_reply->type != XCB_ATOM) {
     free(state_reply);
     throw Napi::Error::New(env, "_NET_WM_STATE property type is not ATOM");
-  }
-  
-  if (state_reply->format != 32) {
+  } else if (state_reply->format != 32) {
     free(state_reply);
     throw Napi::Error::New(env, "_NET_WM_STATE property format is not 32");
-  }
-  
-  xcb_atom_t* atoms = (xcb_atom_t*)xcb_get_property_value(state_reply);
-  int atom_count = state_reply->value_len;
-  
-  bool is_hidden = false;
-  bool is_maximized = false;
-  
-  for (int i = 0; i < atom_count; i++) {
-    if (atoms[i] == ewmh._NET_WM_STATE_HIDDEN) {
-      is_hidden = true;
+  } else {
+    xcb_atom_t* atoms = (xcb_atom_t*)xcb_get_property_value(state_reply);
+    int atom_count = state_reply->value_len;
+    
+    bool is_hidden = false;
+    bool is_maximized = false;
+    
+    for (int i = 0; i < atom_count; i++) {
+      if (atoms[i] == ewmh._NET_WM_STATE_HIDDEN) {
+        is_hidden = true;
+      }
+      if (atoms[i] == ewmh._NET_WM_STATE_MAXIMIZED_VERT || 
+          atoms[i] == ewmh._NET_WM_STATE_MAXIMIZED_HORZ) {
+        is_maximized = true;
+      }
     }
-    if (atoms[i] == ewmh._NET_WM_STATE_MAXIMIZED_VERT || 
-        atoms[i] == ewmh._NET_WM_STATE_MAXIMIZED_HORZ) {
-      is_maximized = true;
+    
+    if (is_hidden) {
+      visibility = "minimize";
+    } else if (is_maximized) {
+      visibility = "maximize";
     }
+    
+    free(state_reply);
   }
-  
-  if (is_hidden) {
-    visibility = "minimize";
-  } else if (is_maximized) {
-    visibility = "maximize";
-  }
-  
-  free(state_reply);
   
   result.Set("visibility", Napi::String::New(env, visibility));
 
