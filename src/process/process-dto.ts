@@ -1,18 +1,15 @@
 import {z} from 'zod';
 import {createZodDto} from '@anatine/zod-nestjs';
 
-const processIdResponseSchema = z.object({
+const processSchema = z.object({
   // eslint-disable-next-line sonarjs/no-duplicate-string
   pid: z.number().describe('Process ID'),
+  path: z.string().describe('Executable path'),
+  wids: z.array(z.number()).describe('List of all windows id of the process')
 }).describe('Process ID');
 
-const pidSchema = z.object({
-  pid: z.number().describe('Process ID whose top-level window should receive focus'),
-}).describe('Focus window by process ID');
+class ProcessResponseDto extends createZodDto(processSchema) {}
 
-const windowHandleResponseSchema = z.object({
-  wid: z.number().describe('Window handle (HWND as number)'),
-}).describe('Window handle');
 
 // Create DTO class for Swagger
 class FocusExeRequestDto extends createZodDto(pidSchema) {}

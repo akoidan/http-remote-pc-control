@@ -64,42 +64,6 @@ Process getWindowProcess(HWND handle, Napi::Env env) {
   return {static_cast<int>(pid), path};
 }
 
-HWND find_top_window(DWORD pid, Napi::Env env) {
-  std::pair<HWND, DWORD> params = {0, pid};
-
-  SetLastError(0);
-
-  BOOL bResult = EnumWindows(
-    [](HWND hwnd, LPARAM lParam) -> BOOL {
-      auto pParams = (std::pair<HWND, DWORD>*)(lParam);
-
-      DWORD processId;
-      if (GetWindowThreadProcessId(hwnd, &processId) && processId == pParams->second) {
-        SetLastError(-1);
-        pParams->first = hwnd;
-        return FALSE;
-      }
-
-      return TRUE;
-    },
-    (LPARAM) & params);
-
-  DWORD err = GetLastError();
-  if (!bResult) {
-    if (err == (DWORD)-1 && params.first) {
-      return params.first;
-    }
-    if (err != 0) {
-      throw Napi::Error::New(env, "EnumWindows failed err=" + std::to_string(err));
-    }
-  }
-
-  if (!params.first) {
-    throw Napi::Error::New(env, "Top window not found for process");
-  }
-
-  return params.first;
-}
 
 Napi::Number getProcessMainWindow(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
@@ -431,10 +395,15 @@ Napi::Boolean isWindowVisible(const Napi::CallbackInfo& info) {
 
 // Initialize the window module
 Napi::Object window_init(Napi::Env env, Napi::Object exports) {
-  exports.Set(Napi::String::New(env, "getActiveWindowId"), Napi::Function::New(env, getActiveWindowId));
-  exports.Set(Napi::String::New(env, "setWindowBounds"), Napi::Function::New(env, setWindowBounds));
-  exports.Set(Napi::String::New(env, "showWindow"), Napi::Function::New(env, showWindow));
   exports.Set(Napi::String::New(env, "bringWindowToTop"), Napi::Function::New(env, bringWindowToTop));
+  exports.Set(Napi::String::New(env, "getActiveWindowId"), Napi::Function::New(env, getActiveWindowId));
+  exports.Set(Napi::String::New(env, "getWindowsByProcessId"), Napi::Function::New(env, getWindowsByProcessId));
+
+
+  exports.Set(Napi::String::New(env, "setWindowBounds"), Napi::Function::New(env, setWindowBounds));
+
+
+  exports.Set(Napi::String::New(env, "setVisibility"), Napi::Function::New(env, showWindow));
   exports.Set(Napi::String::New(env, "redrawWindow"), Napi::Function::New(env, redrawWindow));
   exports.Set(Napi::String::New(env, "isWindow"), Napi::Function::New(env, isWindow));
   exports.Set(Napi::String::New(env, "isWindowVisible"), Napi::Function::New(env, isWindowVisible));
@@ -448,7 +417,6 @@ Napi::Object window_init(Napi::Env env, Napi::Object exports) {
   exports.Set(Napi::String::New(env, "getWindowOwner"), Napi::Function::New(env, getWindowOwner));
   exports.Set(Napi::String::New(env, "getWindowOpacity"), Napi::Function::New(env, getWindowOpacity));
   exports.Set(Napi::String::New(env, "getWindows"), Napi::Function::New(env, getWindows));
-  exports.Set(Napi::String::New(env, "getWindowsByProcessId"), Napi::Function::New(env, getWindowsByProcessId));
   exports.Set(Napi::String::New(env, "getProcessMainWindow"), Napi::Function::New(env, getProcessMainWindow));
   exports.Set(Napi::String::New(env, "getActiveWindowInfo"), Napi::Function::New(env, getActiveWindowInfo));
 

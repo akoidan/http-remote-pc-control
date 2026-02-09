@@ -14,15 +14,17 @@ export class ProcessService {
   }
 
   public createProcess(path: string, cmd?: string): number {
-    if (!['win32'].includes(this.os)) {
-      throw new NotImplementedException(`Unsupported platform: ${this.os}`);
-    }
     return this.addon.createProcess(path, cmd);
   }
 
   // eslint-disable-next-line @typescript-eslint/require-await
   public async getAllWindowsByPid(pid: number): Promise<number[]> {
     return this.addon.getWindowsByProcessId(pid);
+  }
+
+  public async getProcessInfo(pid: number): Promise<number[]> {
+    const windows =  this.addon.getWindowsByProcessId(pid);
+    const windows =  this.addon.get(pid);
   }
 
   // eslint-disable-next-line @typescript-eslint/require-await
@@ -35,10 +37,4 @@ export class ProcessService {
     this.addon.bringWindowToTop(requireWindow);
   }
 
-  public getProcessMainWindow(pid: number): number {
-    if (!['win32'].includes(this.os)) {
-      throw new NotImplementedException(`Unsupported platform: ${this.os}`);
-    }
-    return this.addon.getProcessMainWindow(pid);
-  }
 }

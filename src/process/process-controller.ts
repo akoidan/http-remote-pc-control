@@ -1,14 +1,9 @@
-import {Body, Controller, Delete, Get, HttpCode, Inject, Param, ParseIntPipe, Post, Put, Query} from '@nestjs/common';
+import {Body, Controller, Delete, Get, HttpCode, Inject, Param, ParseIntPipe, Post, Query} from '@nestjs/common';
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import {ProcessService} from '@/process/process-service';
-import {CreateProcessRequestDto, FocusExeRequestDto} from '@/window/window-dto';
 import {
   FindExeByNameRequestDto,
-  KillExeByNameRequestDto,
   KillExeByPidRequestDto,
-  LaunchExeRequestDto,
-  LaunchPidResponse,
-  LaunchPidResponseDto,
   ProcessIdResponse,
   ProcessIdResponseDto,
   WindowHandleResponse,
@@ -34,10 +29,10 @@ export class ProcessController {
     return {wid: this.processService.getProcessMainWindow(pid)};
   }
 
-  @Get(':pid/windows')
+  @Get(':pid')
   @ApiOperation({summary: 'Get all windows with their IDs for a concrete process id'})
   @ApiResponse({type: Number, isArray: true})
-  async getWindowsIdByPid(@Param('id', ParseIntPipe) id: number): Promise<number[]> {
+  async getWindowsIdByPid(@Param('id', ParseIntPipe) id: number): Promise<ProcessIdResponseDto> {
     return this.processService.getAllWindowsByPid(id);
   }
 

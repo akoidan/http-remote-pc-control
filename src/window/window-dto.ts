@@ -4,9 +4,6 @@ import {z} from 'zod';
 import {createZodDto} from '@anatine/zod-nestjs';
 import {WindowAction} from '@/native/native-model';
 
-const windowsSchema = z.object({
-  wids: z.array(z.number().describe('Window handle (HWND as number)')).describe('Handles of all windows belonging to the specified process'),
-}).describe('List of window handles for a process');
 
 // New schemas for extended window operations
 const boundsSchema = z.object({
@@ -19,9 +16,8 @@ const boundsSchema = z.object({
 const widSchema = z.number().describe('Target window handle (HWND as number)');
 
 const getWindowResponseShema = z.object({
-  bound: boundsSchema,
+  bounds: boundsSchema,
   wid: widSchema,
-  mid: z.number().describe('Window handle (HWND as number)'),
   pid: z.number().describe('Process ID of the active window'),
   path: z.string().describe('Absolute path to the process executable for the active window'),
   isVisible: z.boolean().describe('True if the window is visible'),
@@ -50,9 +46,7 @@ const activeWindowIdResponseSchema = z.object({
 class SetWindowPropertiesRequestDto extends createZodDto(setWindowsPropertiesRequestSchema) {}
 
 
-
-class ActiveWindowIdResponseDto extends createZodDto(activeWindowIdResponseSchema) {}
-class WindowResponseDto extends createZodDto(getWindowResponseShema) {}
+class GetWindowResponseDto extends createZodDto(getWindowResponseShema) {}
 
 
 
@@ -61,19 +55,16 @@ type Bounds = z.infer<typeof boundsSchema>;
 type SetWindowPropertiesRequest = z.infer<typeof setWindowsPropertiesRequestSchema>;
 
 
-
 type ActiveWindowIdResponse = z.infer<typeof activeWindowIdResponseSchema>;
 type WindowResponse = z.infer<typeof getWindowResponseShema>;
 
 
 export {
-  windowsSchema,
   boundsSchema,
   setWindowsPropertiesRequestSchema,
   activeWindowIdResponseSchema,
-  WindowResponseDto,
+  GetWindowResponseDto,
   SetWindowPropertiesRequestDto,
-  ActiveWindowIdResponseDto,
 };
 
 export type {

@@ -1,7 +1,7 @@
 import {Body, Controller, Get, HttpCode, Param, ParseIntPipe, Patch, Post} from '@nestjs/common';
 
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
-import {SetWindowPropertiesRequestDto, WindowResponseDto} from '@/window/window-dto';
+import {SetWindowPropertiesRequestDto, GetWindowResponseDto} from '@/window/window-dto';
 import {WindowService} from '@/window/window-service';
 
 @ApiTags('Window')
@@ -13,16 +13,16 @@ export class WindowController {
   }
 
   @Get(':wid')
-  @ApiResponse({type: WindowResponseDto})
+  @ApiResponse({type: GetWindowResponseDto})
   @ApiOperation({summary: 'Get window coordinates and parameters (x,y, width, height)'})
-  getWindowBounds(@Param('wid', ParseIntPipe) wid: number): WindowResponseDto {
+  getWindowBounds(@Param('wid', ParseIntPipe) wid: number): GetWindowResponseDto {
     return this.windowService.getWindowInfo(wid);
   }
 
   @Get('active')
-  @ApiResponse({type: WindowResponseDto})
+  @ApiResponse({type: GetWindowResponseDto})
   @ApiOperation({summary: 'Get information about current active window'})
-  async getActiveWindowId(): Promise<WindowResponseDto> {
+  async getActiveWindowId(): Promise<GetWindowResponseDto> {
     return this.windowService.getActiveWindowInfo();
   }
 
