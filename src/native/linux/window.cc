@@ -184,6 +184,55 @@ Napi::Object getWindowInfo(const Napi::CallbackInfo& info) {
   result.Set("pid", Napi::Number::New(env, pid));
   result.Set("path", Napi::String::New(env, path));
   result.Set("bounds", bounds);
+  
+  // Get window visibility state
+  std::string visibility = "show"; // default
+  
+  // Check if window is mapped (visible)
+  xcb_get_window_attributes_cookie_t attr_cookie = xcb_get_window_attributes(connection, window_id);
+  xcb_get_window_attributes_reply_t* attr_reply = xcb_get_window_attributes_reply(connection, attr_cookie, nullptr);
+  
+  if (attr_reply) {
+    if (attr_reply->map_state != XCB_MAP_STATE_VIEWABLE) {
+      visibility = "hide";
+    }
+    free(attr_reply);
+  }
+  
+  // Check for minimized state
+  xcb_get_property_cookie_t state_cookie = xcb_get_property(
+    connection, 0, window_id, ewmh._NET_WM_STATE, XCB_ATOM_ATOM, 0, 1024);
+  xcb_get_property_reply_t* state_reply = xcb_get_property_reply(connection, state_cookie, nullptr);
+  
+  if (state_reply && state_reply->type == XCB_ATOM && state_reply->format == 32) {
+    xcb_atom_t* atoms = (xcb_atom_t*)xcb_get_property_value(state_reply);
+    int atom_count = state_reply->value_len;
+    
+    bool is_hidden = false;
+    bool is_maximized = false;
+    
+    for (int i = 0; i < atom_count; i++) {
+      if (atoms[i] == ewmh._NET_WM_STATE_HIDDEN) {
+        is_hidden = true;
+      }
+      if (atoms[i] == ewmh._NET_WM_STATE_MAXIMIZED_VERT || 
+          atoms[i] == ewmh._NET_WM_STATE_MAXIMIZED_HORZ) {
+        is_maximized = true;
+      }
+    }
+    
+    if (is_hidden) {
+      visibility = "minimize";
+    } else if (is_maximized) {
+      visibility = "maximize";
+    }
+    
+    free(state_reply);
+  } else {
+    throw Napi::Error::New(env, "Unable to get visiblity");
+  }
+  
+  result.Set("visibility", Napi::String::New(env, visibility));
 
   return result;
 }

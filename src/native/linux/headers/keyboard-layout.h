@@ -22,4 +22,3 @@ bool switchToKdeLayout(uint32_t layoutIndex);
 bool fallbackLayoutSwitch();
 
 // Main keyboard layout switching function (Napi wrapper)
-Napi::Value _setKeyboardLayout(const Napi::CallbackInfo& info);

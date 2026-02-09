@@ -8,6 +8,7 @@
 #include "./headers/display.h"
 #include "./headers/keypress.h"
 #include "./headers/keyboard-layout.h"
+#include "./headers/validators.h"
 
 #define X_KEY_EVENT(display, key, is_press)                \
     (XTestFakeKeyEvent(display, XKeysymToKeycode(display, key), is_press, CurrentTime), XFlush(display))
@@ -65,7 +66,13 @@ void toggleKey(Napi::Env env, char c, const bool down, unsigned int flags) {
   toggleKeyCode(env, keyCode, down, flags);
 }
 
-void typeString(Napi::Env env, const char* str) {
+void typeString(const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
+
+  ASSERT_STRING(info, 0)
+
+  std::string strstd = info[0].As<Napi::String>();
+  const char* str = strstd.c_str();
   Display* display = XGetMainDisplay(env);
   while (*str) {
     KeySym ks;
@@ -170,44 +177,87 @@ unsigned int assignKeyCode(std::string& keyName) {
   return 0;
 }
 
-Napi::Value _keyTap(const Napi::CallbackInfo& info) {
+void keyTap(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
+  ASSERT_STRING(info, 0)
+  ASSERT_ARRAY(info, 1)
   unsigned int flags = getAllFlags(env, info[1]);
   std::string keyName = info[0].As<Napi::String>();
   unsigned int key = assignKeyCode(keyName);
-  toggleKeyCode(key, true, flags);
-  toggleKeyCode(key, false, flags);
-  return env.Undefined();
+  toggleKeyCode(env, key, true, flags);
+  toggleKeyCode(env, key, false, flags);
 }
 
-Napi::Value _keyToggle(const Napi::CallbackInfo& info) {
+void keyToggle(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
 
+  ASSERT_STRING(info, 0)
+  ASSERT_ARRAY(info, 1)
+  ASSERT_BOOL(info, 2)
+
+  std::string keyName = info[0].As<Napi::String>();
+  unsigned int flags = getAllFlags(env, info[1]);
   bool down = info[2].As<Napi::Boolean>().Value();
 
-  unsigned int flags = getAllFlags(env, info[1]);
-
-  std::string keyName = info[0].As<Napi::String>();
   unsigned int key = assignKeyCode(keyName);
 
-  toggleKeyCode(key, down, flags);
-  return env.Undefined();
+  toggleKeyCode(env, key, down, flags);
 }
 
-Napi::Value _typeString(const Napi::CallbackInfo& info) {
+
+void setKeyboardLayout(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
 
-  std::string str = info[0].As<Napi::String>();
-  typeString(str.c_str());
+  ASSERT_STRING(info, 0)
 
-  return env.Undefined();
+  std::string layoutId = info[0].As<Napi::String>();
+
+  // Try KDE's DBus interface first - query available layouts and validate
+  std::vector<KdeLayout> availableLayouts = getKdeAvailableLayouts();
+
+  if (!availableLayouts.empty()) {
+    // Check if requested layout is available and get its index
+    int layoutIndex = -1;
+    for (size_t i = 0; i < availableLayouts.size(); ++i) {
+      if (availableLayouts[i].code == layoutId) {
+        layoutIndex = i;
+        break;
+      }
+    }
+
+    if (layoutIndex == -1) {
+      // Build error message with available layouts
+      std::string availableList;
+      for (size_t i = 0; i < availableLayouts.size(); ++i) {
+        availableList += availableLayouts[i].code + " (" + availableLayouts[i].displayName + ")";
+        if (i < availableLayouts.size() - 1) availableList += ", ";
+      }
+
+      throw Napi::Error::New(env, "Layout '" + layoutId + "' not found. Available layouts: " + availableList);
+    }
+
+    // Layout is available, try to switch to it by index
+    if (switchToKdeLayout(layoutIndex)) {
+      return;
+    }
+
+    throw Napi::Error::New(env, "Failed to switch to layout '" + layoutId + "' via KDE DBus");
+  }
+
+  // Fallback to direct XKB group switching (works on non-KDE systems or when DBus is unavailable)
+  if (fallbackLayoutSwitch()) {
+    return;
+  }
+
+  // If both methods fail, throw error
+  throw Napi::Error::New(env, "Failed to switch keyboard layout. KDE service not available and XKB fallback failed.");
 }
 
 
 Napi::Object keyboard_init(Napi::Env env, Napi::Object exports) {
-  exports.Set("keyTap", Napi::Function::New(env, _keyTap));
-  exports.Set("keyToggle", Napi::Function::New(env, _keyToggle));
-  exports.Set("typeString", Napi::Function::New(env, _typeString));
-  exports.Set("setKeyboardLayout", Napi::Function::New(env, _setKeyboardLayout));
+  exports.Set("keyTap", Napi::Function::New(env, keyTap));
+  exports.Set("keyToggle", Napi::Function::New(env, keyToggle));
+  exports.Set("typeString", Napi::Function::New(env, typeString));
+  exports.Set("setKeyboardLayout", Napi::Function::New(env, setKeyboardLayout));
   return exports;
 }
