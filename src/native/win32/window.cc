@@ -303,8 +303,11 @@ void setWindowOwner(const Napi::CallbackInfo& info) {
   }
 }
 
+void getWindowVisibility(const Napi::CallbackInfo& info) {
+}
+
 // Show a window
-void showWindow(const Napi::CallbackInfo& info) {
+void setWindowVisibility(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
   auto handle{getValueFromCallbackData<HWND>(info, 0)};
@@ -358,21 +361,6 @@ Napi::Boolean bringWindowToTop(const Napi::CallbackInfo& info) {
   return Napi::Boolean::New(env, b);
 }
 
-// Redraw a window
-void redrawWindow(const Napi::CallbackInfo& info) {
-  Napi::Env env{info.Env()};
-
-  auto handle{getValueFromCallbackData<HWND>(info, 0)};
-  if (!IsWindow(handle)) {
-    throw Napi::Error::New(env, "Invalid window handle");
-  }
-
-  if (!SetWindowPos(handle, 0, 0, 0, 0, 0,
-                    SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER |
-                    SWP_NOOWNERZORDER | SWP_NOACTIVATE | SWP_DRAWFRAME | SWP_NOCOPYBITS)) {
-    throw Napi::Error::New(env, "Failed to redraw window");
-  }
-}
 
 // Check if a window is valid
 Napi::Boolean isWindow(const Napi::CallbackInfo& info) {
@@ -393,32 +381,72 @@ Napi::Boolean isWindowVisible(const Napi::CallbackInfo& info) {
 }
 
 
+
+Napi::Object getWindowInfo(const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
+
+  ASSERT_NUMBER(info, 0);
+
+  ensure_xcb_initialized(env);
+
+  xcb_window_t window_id = info[0].As<Napi::Number>().Uint32Value();
+
+
+  ensure_xcb_initialized(env);
+
+  // Get window geometry
+  xcb_get_geometry_cookie_t geom_cookie = xcb_get_geometry(connection, window_id);
+  xcb_get_geometry_reply_t* geom_reply = xcb_get_geometry_reply(connection, geom_cookie, nullptr);
+
+  if (!geom_reply) {
+    throw Napi::Error::New(env, "Failed to get window geometry");
+  }
+
+  // Get window's absolute position (accounting for window decorations)
+  xcb_translate_coordinates_cookie_t trans_cookie = xcb_translate_coordinates(
+    connection, window_id, root_window, 0, 0);
+  xcb_translate_coordinates_reply_t* trans_reply =
+    xcb_translate_coordinates_reply(connection, trans_cookie, nullptr);
+
+  if (!trans_reply) {
+    free(geom_reply);
+    throw Napi::Error::New(env, "Failed to translate window coordinates");
+  }
+
+  Napi::Object bounds = Napi::Object::New(env);
+  bounds.Set("x", Napi::Number::New(env, trans_reply->dst_x));
+  bounds.Set("y", Napi::Number::New(env, trans_reply->dst_y));
+  bounds.Set("width", Napi::Number::New(env, geom_reply->width));
+  bounds.Set("height", Napi::Number::New(env, geom_reply->height));
+
+  free(geom_reply);
+  free(trans_reply);
+
+
+  pid_t pid = get_window_pid(window_id, env);
+  std::string path = get_process_path(pid, env);
+
+  Napi::Object result = Napi::Object::New(env);
+  result.Set("wid", Napi::Number::New(env, static_cast<int64_t>(window_id)));
+  result.Set("pid", Napi::Number::New(env, pid));
+  result.Set("path", Napi::String::New(env, path));
+  result.Set("bounds", bounds);
+
+  return result;
+}
+
+
 // Initialize the window module
 Napi::Object window_init(Napi::Env env, Napi::Object exports) {
+
   exports.Set(Napi::String::New(env, "bringWindowToTop"), Napi::Function::New(env, bringWindowToTop));
   exports.Set(Napi::String::New(env, "getActiveWindowId"), Napi::Function::New(env, getActiveWindowId));
   exports.Set(Napi::String::New(env, "getWindowsByProcessId"), Napi::Function::New(env, getWindowsByProcessId));
-
-
+  exports.Set(Napi::String::New(env, "setWindowVisibility"), Napi::Function::New(env, setWindowVisibility));
+  exports.Set(Napi::String::New(env, "getWindowInfo"), Napi::Function::New(env, getWindowVisibility));
   exports.Set(Napi::String::New(env, "setWindowBounds"), Napi::Function::New(env, setWindowBounds));
-
-
   exports.Set(Napi::String::New(env, "setVisibility"), Napi::Function::New(env, showWindow));
-  exports.Set(Napi::String::New(env, "redrawWindow"), Napi::Function::New(env, redrawWindow));
-  exports.Set(Napi::String::New(env, "isWindow"), Napi::Function::New(env, isWindow));
-  exports.Set(Napi::String::New(env, "isWindowVisible"), Napi::Function::New(env, isWindowVisible));
-  exports.Set(Napi::String::New(env, "setWindowOpacity"), Napi::Function::New(env, setWindowOpacity));
-  exports.Set(Napi::String::New(env, "toggleWindowTransparency"),
-              Napi::Function::New(env, toggleWindowTransparency));
-  exports.Set(Napi::String::New(env, "setWindowOwner"), Napi::Function::New(env, setWindowOwner));
-  exports.Set(Napi::String::New(env, "initWindow"), Napi::Function::New(env, initWindow));
-  exports.Set(Napi::String::New(env, "getWindowBounds"), Napi::Function::New(env, getWindowBounds));
-  exports.Set(Napi::String::New(env, "getWindowTitle"), Napi::Function::New(env, getWindowTitle));
-  exports.Set(Napi::String::New(env, "getWindowOwner"), Napi::Function::New(env, getWindowOwner));
-  exports.Set(Napi::String::New(env, "getWindowOpacity"), Napi::Function::New(env, getWindowOpacity));
-  exports.Set(Napi::String::New(env, "getWindows"), Napi::Function::New(env, getWindows));
-  exports.Set(Napi::String::New(env, "getProcessMainWindow"), Napi::Function::New(env, getProcessMainWindow));
-  exports.Set(Napi::String::New(env, "getActiveWindowInfo"), Napi::Function::New(env, getActiveWindowInfo));
+
 
   return exports;
 }
