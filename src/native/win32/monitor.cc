@@ -11,7 +11,7 @@
 
 static std::vector<int64_t> g_monitors;
 
-static BOOL CALLBACK enumMonitorsProc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM dwData) {
+static BOOL CALLBACK EnumMonitorsProc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM dwData) {
   g_monitors.push_back(reinterpret_cast<int64_t>(hMonitor));
   return TRUE;
 }
@@ -20,7 +20,7 @@ static Napi::Array getMonitors(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
   g_monitors.clear();
-  if (!EnumDisplayMonitors(NULL, NULL, &enumMonitorsProc, NULL)) {
+  if (!EnumDisplayMonitors(NULL, NULL, &EnumMonitorsProc, NULL)) {
     throw Napi::Error::New(env, "Unable to enumarate monitors, winAPI returned error");
   }
   auto arr = Napi::Array::New(env);
