@@ -136,7 +136,7 @@ std::wstring utf8_to_utf16(const char* str) {
 void typeString(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
     GET_STRING(info, 0, sstr)
-    const char* str = sstr.c_str(),
+    const char* str = sstr.c_str();
 
     // Ensure Caps Lock is disabled before typing
     ensureCapsLockDisabled();
@@ -234,7 +234,7 @@ void keyTap(const Napi::CallbackInfo& info) {
     toggleKeyCode(key, false, flags);
 }
 
-void _keyToggle(const Napi::CallbackInfo& info) {
+void keyToggle(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
 
     GET_STRING(info, 0, keyName)
@@ -257,7 +257,7 @@ void setKeyboardLayout(const Napi::CallbackInfo& info) {
 
 Napi::Object keyboard_init(Napi::Env env, Napi::Object exports) {
     exports.Set("keyTap", Napi::Function::New(env, keyTap));
-    exports.Set("keyToggle", Napi::Function::New(env, _keyToggle));
+    exports.Set("keyToggle", Napi::Function::New(env, keyToggle));
     exports.Set("typeString", Napi::Function::New(env, typeString));
     exports.Set("setKeyboardLayout", Napi::Function::New(env, setKeyboardLayout));
     return exports;

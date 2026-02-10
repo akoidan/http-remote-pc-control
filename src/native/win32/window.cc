@@ -154,7 +154,7 @@ void setWindowBounds(const Napi::CallbackInfo& info) {
     throw Napi::Error::New(env, "Invalid window handle");
   }
 
-  Napi::Object bounds{info[1].As<Napi::Object>()};
+  GET_OBJECT(info, 1, bounds);
   int x = bounds.Get("x").ToNumber().Int32Value();
   int y = bounds.Get("y").ToNumber().Int32Value();
   int width = bounds.Get("width").ToNumber().Int32Value();
@@ -175,11 +175,10 @@ void setWindowVisibility(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
   GET_INT_64(info, 0, handle, HWND);
+  GET_STRING(info, 1, type);
   if (!IsWindow(handle)) {
     throw Napi::Error::New(env, "Invalid window handle");
   }
-
-  std::string type{info[1].As<Napi::String>()};
 
   int flag = SW_SHOW;
 
