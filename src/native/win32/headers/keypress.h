@@ -10,4 +10,4 @@ struct KeyModifier {
   int winBit; // Windows modifier bit
 };
 
-Napi::Object keyboard_init(Napi::Env env, Napi::Object exports);
+Napi::Object keyboardInit(Napi::Env env, Napi::Object exports);

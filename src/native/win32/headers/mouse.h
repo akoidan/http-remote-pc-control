@@ -7,4 +7,4 @@
 #define RIGHT_BUTTON 2
 #define MIDDLE_BUTTON 3
 
-Napi::Object mouse_init(Napi::Env env, Napi::Object exports);
+Napi::Object mouseInit(Napi::Env env, Napi::Object exports);

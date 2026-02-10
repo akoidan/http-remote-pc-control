@@ -396,7 +396,7 @@ void setWindowState(const Napi::CallbackInfo& info) {
 
 
 
-Napi::Object window_init(Napi::Env env, Napi::Object exports) {
+Napi::Object windowInit(Napi::Env env, Napi::Object exports) {
   exports.Set("getWindowActiveId", Napi::Function::New(env, getWindowActiveId));
   exports.Set("getWindowsByProcessId", Napi::Function::New(env, getWindowsByProcessId));
   exports.Set("getWindowInfo", Napi::Function::New(env, getWindowInfo));

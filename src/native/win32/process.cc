@@ -37,7 +37,7 @@ Napi::Boolean isProcessElevated(const Napi::CallbackInfo& info) {
     return Napi::Boolean::New(env, elevation.TokenIsElevated != 0);
 }
 
-Napi::Object process_init(Napi::Env env, Napi::Object exports) {
+Napi::Object processInit(Napi::Env env, Napi::Object exports) {
   exports.Set(Napi::String::New(env, "createProcess"), Napi::Function::New(env, createProcess));
   exports.Set(Napi::String::New(env, "isProcessElevated"), Napi::Function::New(env, isProcessElevated));
   return exports;

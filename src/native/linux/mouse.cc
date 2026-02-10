@@ -70,7 +70,7 @@ void moveMouse(const Napi::CallbackInfo& info) {
 }
 
 
-Napi::Object mouse_init(Napi::Env env, Napi::Object exports) {
+Napi::Object mouseInit(Napi::Env env, Napi::Object exports) {
   exports.Set(Napi::String::New(env, "setMousePosition"), Napi::Function::New(env, moveMouse));
   exports.Set(Napi::String::New(env, "setMouseButtonToState"), Napi::Function::New(env, setMouseButtonToState));
   exports.Set(Napi::String::New(env, "getMousePosition"), Napi::Function::New(env, getMousePosition));

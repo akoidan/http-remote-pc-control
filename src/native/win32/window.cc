@@ -10,8 +10,6 @@
 #include "./headers/utils.h"
 #include "./headers/validators.h"
 
-typedef int (__stdcall*lp_GetScaleFactorForMonitor)(HMONITOR, DEVICE_SCALE_FACTOR*);
-
 
 Process getWindowProcess(HWND handle, Napi::Env env) {
   DWORD pid{0};
@@ -210,6 +208,26 @@ Napi::Boolean setWindowActive(const Napi::CallbackInfo& info) {
   return Napi::Boolean::New(env, b);
 }
 
+
+Napi::Object getWindowBound(Napi::Env env, HWND handle) {
+  RECT rect{};
+  GetWindowRect(handle, &rect);
+  Napi::Object bounds{Napi::Object::New(env)};
+  bounds.Set("x", rect.left);
+  bounds.Set("y", rect.top);
+  bounds.Set("width", rect.right - rect.left);
+  bounds.Set("height", rect.bottom - rect.top);
+  return bounds;
+}
+
+std::string getWindowTitle(Napi::Env env, HWND handle) {
+  int bufsize = GetWindowTextLengthW(handle) + 1;
+  LPWSTR t = new WCHAR[bufsize];
+  GetWindowTextW(handle, t, bufsize);
+  std::wstring ws(t);
+  return toUtf8(ws);
+}
+
 Napi::Object getWindowInfo(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
@@ -219,24 +237,13 @@ Napi::Object getWindowInfo(const Napi::CallbackInfo& info) {
     throw Napi::Error::New(env, "Window with current id not found");
   }
 
-  int bufsize = GetWindowTextLengthW(handle) + 1;
-  LPWSTR t = new WCHAR[bufsize];
-  GetWindowTextW(handle, t, bufsize);
-  std::wstring ws(t);
-  std::string title = toUtf8(ws);
+ std::string title = getWindowTitle(env, handle);
 
   auto process = getWindowProcess(handle, env);
   BYTE opacity{};
   GetLayeredWindowAttributes(handle, NULL, &opacity, NULL);
 
-  RECT rect{};
-  GetWindowRect(handle, &rect);
-  Napi::Object bounds{Napi::Object::New(env)};
-  bounds.Set("x", rect.left);
-  bounds.Set("y", rect.top);
-  bounds.Set("width", rect.right - rect.left);
-  bounds.Set("height", rect.bottom - rect.top);
-
+  Napi::Object bounds = getWindowBound(env, handle);
 
   Napi::Object result = Napi::Object::New(env);
   result.Set("wid", Napi::Number::New(env, static_cast<double>(reinterpret_cast<uintptr_t>(handle))));
@@ -254,7 +261,7 @@ Napi::Object getWindowInfo(const Napi::CallbackInfo& info) {
 
 
 // Initialize the window module
-Napi::Object window_init(Napi::Env env, Napi::Object exports) {
+Napi::Object windowInit(Napi::Env env, Napi::Object exports) {
 
   exports.Set(Napi::String::New(env, "setWindowActive"), Napi::Function::New(env, setWindowActive));
   exports.Set(Napi::String::New(env, "getWindowActiveId"), Napi::Function::New(env, getWindowActiveId));

@@ -16,4 +16,4 @@ struct EnumWindowsCallbackArgs {
   std::vector<HWND> handles;
 };
 
-Napi::Object window_init(Napi::Env env, Napi::Object exports);
+Napi::Object windowInit(Napi::Env env, Napi::Object exports);

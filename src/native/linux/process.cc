@@ -83,7 +83,7 @@ static Napi::Number getProcessMainWindow(const Napi::CallbackInfo& info) {
     return Napi::Number::New(env, 0);
 }
 
-Napi::Object process_init(Napi::Env env, Napi::Object exports) {
+Napi::Object processInit(Napi::Env env, Napi::Object exports) {
     exports.Set(Napi::String::New(env, "createProcess"), Napi::Function::New(env, createProcess));
     exports.Set(Napi::String::New(env, "getProcessMainWindow"), Napi::Function::New(env, getProcessMainWindow));
     return exports;

@@ -16,7 +16,9 @@ interface WindowInfo {
   pid: number;
   path: string;
   bounds: WindowBounds;
-  opacity?: number;
+  opacity: number;
+  title: number;
+  parentWid: number;
 }
 
 interface MonitorBounds {

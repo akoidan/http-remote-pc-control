@@ -310,7 +310,7 @@ Napi::Value setWindowMaximized(const Napi::CallbackInfo &info) {
 }
 
 
-Napi::Object window_init(Napi::Env env, Napi::Object exports) {
+Napi::Object windowInit(Napi::Env env, Napi::Object exports) {
   exports.Set(Napi::String::New(env, "getWindows"),
               Napi::Function::New(env, getWindows));
   exports.Set(Napi::String::New(env, "getWindowActiveId"),
