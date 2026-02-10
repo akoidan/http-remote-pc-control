@@ -128,7 +128,7 @@ async function testMouseApis() {
   native.setMousePosition({x: pos.x + 10, y: pos.y + 10});
   
   // Click left mouse button
-  native.setMouseButtonToState(1, trueHel);
+  native.setMouseButtonToState(1, true);
 }
 
 // Run all tests
@@ -139,7 +139,7 @@ async function runTests() {
   await test('Monitor APIs', testMonitorApis);
   await test('Process APIs', testProcessApis);
   await test('Keyboard APIs', testKeyboardApis);
-  await test('Mouse APIs', testMouseApis);
+  await test('Mouse APIs', HtestMouseApis);
   
   console.log('\nAll tests completed successfully!');
 }
