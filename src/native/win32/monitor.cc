@@ -7,9 +7,11 @@
 
 #include <shtypes.h>
 
+#include "headers/validators.h"
+
 static std::vector<int64_t> g_monitors;
 
-static BOOL CALLBACK EnumMonitorsProc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM dwData) {
+static BOOL CALLBACK enumMonitorsProc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM dwData) {
   g_monitors.push_back(reinterpret_cast<int64_t>(hMonitor));
   return TRUE;
 }
@@ -18,7 +20,7 @@ static Napi::Array getMonitors(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
   g_monitors.clear();
-  if (!EnumDisplayMonitors(NULL, NULL, &EnumMonitorsProc, NULL)) {
+  if (!EnumDisplayMonitors(NULL, NULL, &enumMonitorsProc, NULL)) {
     throw Napi::Error::New(env, "Unable to enumarate monitors, winAPI returned error");
   }
   auto arr = Napi::Array::New(env);
@@ -31,7 +33,8 @@ static Napi::Array getMonitors(const Napi::CallbackInfo& info) {
 
 static Napi::Number getMonitorFromWindow(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
-  auto handle = getValueFromCallbackData<HWND>(info, 0);
+  ASSERT_NUMBER(info, 0)
+  HWND handle = reinterpret_cast<HWND>(info[0].As<Napi::Number>().Int64Value());
   return Napi::Number::New(env, reinterpret_cast<int64_t>(MonitorFromWindow(handle, 0)));
 }
 
@@ -40,7 +43,8 @@ using lp_GetScaleFactorForMonitor = int(__stdcall*)(HMONITOR, DEVICE_SCALE_FACTO
 static Napi::Object getMonitorInfo(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
-  auto handle{getValueFromCallbackData<HMONITOR>(info, 0)};
+  ASSERT_NUMBER(info, 0)
+  HMONITOR handle = reinterpret_cast<HMONITOR>(info[0].As<Napi::Number>().Int64Value());
 
   if (handle == nullptr) {
     throw Napi::Error::New(env, "Monitor handle is null or invalid");
@@ -75,7 +79,7 @@ static Napi::Object getMonitorInfo(const Napi::CallbackInfo& info) {
   auto f = (lp_GetScaleFactorForMonitor)GetProcAddress(hShcore, "GetScaleFactorForMonitor");
 
   DEVICE_SCALE_FACTOR sf{};
-  f(getValueFromCallbackData<HMONITOR>(info, 0), &sf);
+  f(handle, &sf);
 
   obj.Set("scale", static_cast<double>(sf) / 100.);
 

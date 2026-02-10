@@ -111,7 +111,8 @@ Napi::Array getWindowsByProcessId(const Napi::CallbackInfo& info) {
 Napi::Object getWindowBounds(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
-  auto handle{getValueFromCallbackData<HWND>(info, 0)};
+  ASSERT_NUMBER(info, 0)
+  HWND handle = reinterpret_cast<HWND>(info[0].As<Napi::Number>().Int64Value());
 
   RECT rect{};
   GetWindowRect(handle, &rect);
@@ -130,7 +131,8 @@ Napi::Object getWindowBounds(const Napi::CallbackInfo& info) {
 Napi::String getWindowTitle(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
-  auto handle{getValueFromCallbackData<HWND>(info, 0)};
+  ASSERT_NUMBER(info, 0)
+    HWND handle = reinterpret_cast<HWND>(info[0].As<Napi::Number>().Int64Value());
 
   int bufsize = GetWindowTextLengthW(handle) + 1;
   LPWSTR t = new WCHAR[bufsize];
@@ -146,7 +148,8 @@ Napi::String getWindowTitle(const Napi::CallbackInfo& info) {
 Napi::Number getWindowOpacity(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
-  auto handle{getValueFromCallbackData<HWND>(info, 0)};
+  ASSERT_NUMBER(info, 0)
+    HWND handle = reinterpret_cast<HWND>(info[0].As<Napi::Number>().Int64Value());
 
   BYTE opacity{};
   GetLayeredWindowAttributes(handle, NULL, &opacity, NULL);
@@ -158,7 +161,8 @@ Napi::Number getWindowOpacity(const Napi::CallbackInfo& info) {
 Napi::Number getWindowOwner(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
-  auto handle{getValueFromCallbackData<HWND>(info, 0)};
+  ASSERT_NUMBER(info, 0)
+    HWND handle = reinterpret_cast<HWND>(info[0].As<Napi::Number>().Int64Value());
 
   return Napi::Number::New(env, GetWindowLongPtrA(handle, GWLP_HWNDPARENT));
 }
@@ -167,7 +171,8 @@ Napi::Number getWindowOwner(const Napi::CallbackInfo& info) {
 void toggleWindowTransparency(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
-  auto handle{getValueFromCallbackData<HWND>(info, 0)};
+  ASSERT_NUMBER(info, 0)
+  HWND handle = reinterpret_cast<HWND>(info[0].As<Napi::Number>().Int64Value());
   if (!IsWindow(handle)) {
     throw Napi::Error::New(env, "Invalid window handle");
   }
@@ -184,7 +189,8 @@ void toggleWindowTransparency(const Napi::CallbackInfo& info) {
 void setWindowOpacity(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
-  auto handle{getValueFromCallbackData<HWND>(info, 0)};
+  ASSERT_NUMBER(info, 0)
+  HWND handle = reinterpret_cast<HWND>(info[0].As<Napi::Number>().Int64Value());
   if (!IsWindow(handle)) {
     throw Napi::Error::New(env, "Invalid window handle");
   }
@@ -203,7 +209,8 @@ void setWindowOpacity(const Napi::CallbackInfo& info) {
 void setWindowBounds(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
-  auto handle{getValueFromCallbackData<HWND>(info, 0)};
+  ASSERT_NUMBER(info, 0)
+  HWND handle = reinterpret_cast<HWND>(info[0].As<Napi::Number>().Int64Value());
   if (!IsWindow(handle)) {
     throw Napi::Error::New(env, "Invalid window handle");
   }
@@ -227,7 +234,8 @@ void setWindowBounds(const Napi::CallbackInfo& info) {
 void setWindowOwner(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
-  auto handle{getValueFromCallbackData<HWND>(info, 0)};
+  ASSERT_NUMBER(info, 0)
+  HWND handle = reinterpret_cast<HWND>(info[0].As<Napi::Number>().Int64Value());
   if (!IsWindow(handle)) {
     throw Napi::Error::New(env, "Invalid window handle");
   }
@@ -249,7 +257,8 @@ void getWindowVisibility(const Napi::CallbackInfo& info) {
 void setWindowVisibility(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
-  auto handle{getValueFromCallbackData<HWND>(info, 0)};
+  ASSERT_NUMBER(info, 0)
+  HWND handle = reinterpret_cast<HWND>(info[0].As<Napi::Number>().Int64Value());
   if (!IsWindow(handle)) {
     throw Napi::Error::New(env, "Invalid window handle");
   }
@@ -280,7 +289,8 @@ void setWindowVisibility(const Napi::CallbackInfo& info) {
 // Bring a window to the top
 Napi::Boolean bringWindowToTop(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
-  auto handle{getValueFromCallbackData<HWND>(info, 0)};
+  ASSERT_NUMBER(info, 0)
+  HWND handle = reinterpret_cast<HWND>(info[0].As<Napi::Number>().Int64Value());
   if (!IsWindow(handle)) {
     throw Napi::Error::New(env, "Window with current id not found");
   }
@@ -305,7 +315,8 @@ Napi::Boolean bringWindowToTop(const Napi::CallbackInfo& info) {
 Napi::Boolean isWindow(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
-  auto handle{getValueFromCallbackData<HWND>(info, 0)};
+  ASSERT_NUMBER(info, 0)
+  HWND handle = reinterpret_cast<HWND>(info[0].As<Napi::Number>().Int64Value());
 
   return Napi::Boolean::New(env, IsWindow(handle));
 }
@@ -405,7 +416,8 @@ Napi::Object window_init(Napi::Env env, Napi::Object exports) {
 // Napi::Object initWindow(const Napi::CallbackInfo& info) {
 //   Napi::Env env{info.Env()};
 //
-//   auto handle{getValueFromCallbackData<HWND>(info, 0)};
+//   ASSERT_NUMBER(info, 0)
+  HWND handle = reinterpret_cast<HWND>(info[0].As<Napi::Number>().Int64Value());
 //
 //   if (!IsWindow(handle)) {
 //     throw Napi::Error::New(env, "Window with current id not found");
@@ -425,7 +437,8 @@ Napi::Object window_init(Napi::Env env, Napi::Object exports) {
 // Napi::Boolean isWindowVisible(const Napi::CallbackInfo& info) {
 //   Napi::Env env{info.Env()};
 //
-//   auto handle{getValueFromCallbackData<HWND>(info, 0)};
+//   ASSERT_NUMBER(info, 0)
+  HWND handle = reinterpret_cast<HWND>(info[0].As<Napi::Number>().Int64Value());
 //
 //   return Napi::Boolean::New(env, IsWindowVisible(handle));
 // }
