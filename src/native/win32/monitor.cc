@@ -71,7 +71,6 @@ static Napi::Object getMonitorInfo(const Napi::CallbackInfo& info) {
   Napi::Object obj{Napi::Object::New(env)};
   obj.Set("bounds", bounds);
   obj.Set("workArea", workArea);
-  obj.Set("workArea", workArea);
   obj.Set("isPrimary", (mInfo.dwFlags & MONITORINFOF_PRIMARY) != 0);
 
   HMODULE hShcore{LoadLibraryA("SHcore.dll")};

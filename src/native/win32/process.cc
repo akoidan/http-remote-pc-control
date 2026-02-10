@@ -6,17 +6,13 @@
 #include <string>
 #include <windows.h>
 #include "./headers/logger.h"
+#include "headers/validators.h"
 
 Napi::Number createProcess(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
-  auto path = info[0].ToString().Utf8Value();
-
-  std::string cmd = "";
-
-  if (info[1].IsString()) {
-    cmd = info[1].ToString().Utf8Value();
-  }
+  GET_STRING(info, 0, path);
+  GET_STRING_UTF8(info, 1, cmd);
 
   STARTUPINFOA sInfo = {sizeof (sInfo)};
   PROCESS_INFORMATION processInfo;
