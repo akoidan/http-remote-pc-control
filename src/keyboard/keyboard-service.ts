@@ -3,8 +3,8 @@ import {INativeModule} from '@/native/native-model';
 import {sleep} from '@/shared';
 import {RandomService} from '@/random/random-service';
 import {KeyboardLayoutValue} from '@/keyboard/keyboard-dto';
-import {Safe400} from "@/utils/decorators";
-import {OS_INJECT} from "@/global/global-model";
+import {Safe400} from '@/utils/decorators';
+import {OS_INJECT} from '@/global/global-model';
 
 @Injectable()
 export class KeyboardService {
@@ -18,7 +18,7 @@ export class KeyboardService {
   }
 
 
-  @Safe400(['darwin'])
+  @Safe400(['win32', 'linux'])
   public async typeText(text: string, delay?: number, deviationDelay?: number): Promise<void> {
     this.logger.log(`Type: \u001b[35m${text}`);
     if (delay) {
@@ -33,12 +33,12 @@ export class KeyboardService {
     }
   }
 
-  @Safe400(['darwin'])
+  @Safe400(['win32', 'linux'])
   public setLayout(layout: KeyboardLayoutValue): void {
     this.addon.setKeyboardLayout(layout);
   }
 
-  @Safe400(['darwin'])
+  @Safe400(['win32', 'linux'])
   public async keyPress(keys: string[], holdKeys: string[], duration?: number): Promise<void> {
     for (const key of holdKeys) {
       this.logger.log(`HoldKey: \u001b[35m${key}`);

@@ -39,13 +39,6 @@ export class WindowController {
   @ApiOperation({summary: 'Focuses a window by its id'})
   @HttpCode(204)
   async focusWindowId(@Param('wid', ParseIntPipe) wid: number): Promise<void> {
-    await this.windowService.focusWindowId(wid);
-  }
-
-  @Post(':wid/redraw')
-  @ApiOperation({summary: 'Force window redraw'})
-  @HttpCode(204)
-  redrawWindow(@Param('wid', ParseIntPipe) wid: number): void {
-    this.windowService.redrawWindow(wid);
+    await this.windowService.setWindowActive(wid);
   }
 }

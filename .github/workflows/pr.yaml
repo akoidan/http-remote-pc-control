@@ -84,7 +84,7 @@ jobs:
         run: yarn nest
       - name: native
         run: yarn native
-      - name: native
+      - name: test
         run: yarn test
 
   linux:
@@ -126,3 +126,5 @@ jobs:
         run: yarn nest
       - name: native
         run: yarn native
+      - name: test
+        run: yarn test

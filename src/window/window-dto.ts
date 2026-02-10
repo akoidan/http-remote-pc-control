@@ -20,8 +20,7 @@ const getWindowResponseShema = z.object({
   wid: widSchema,
   pid: z.number().describe('Process ID of the active window'),
   path: z.string().describe('Absolute path to the process executable for the active window'),
-  isVisible: z.boolean().describe('True if the window is visible'),
-  owner: z.number().describe('Parent window id'),
+  parentWid: z.number().describe('Parent window id'),
   opacity: z.number().min(0).max(1).describe('Opacity value in range 0..1 where 1 is fully opaque'),
   title: z.string().describe('Window title'),
 });
@@ -29,10 +28,8 @@ const getWindowResponseShema = z.object({
 
 const setWindowsPropertiesRequestSchema = z.object({
   bounds: boundsSchema.optional(),
-  visibility: z.nativeEnum(WindowAction).optional().describe('Action to apply: show | hide | minimize | restore | maximize'),
+  state: z.nativeEnum(WindowAction).optional().describe('Action to apply: show | hide | minimize | restore | maximize'),
   opacity: z.number().min(0).max(1).optional().describe('Opacity value in range 0..1 where 1 is fully opaque'),
-  transparency: z.boolean().optional().describe('If true: set WS_EX_LAYERED flag; if false: remove it'),
-  owner: z.number().optional().describe('New owner window handle (HWND as number) or 0 to clear'),
 });
 
 

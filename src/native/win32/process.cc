@@ -37,8 +37,25 @@ Napi::Boolean isProcessElevated(const Napi::CallbackInfo &info) {
   return Napi::Boolean::New(env, elevation.TokenIsElevated != 0);
 }
 
+
+Napi::Boolean getProcessInfo(const Napi::CallbackInfo &info) {
+  Napi::Env env{info.Env()};
+
+  GET_UINT_32(info, 0, pid, DWORD);
+
+  HANDLE pHandle = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, pid);
+  if (!pHandle) {
+    DWORD err = GetLastError();
+    throw Napi::Error::New(env, "OpenProcess failed err=" + std::to_string(err));
+  }
+
+  CloseHandle(pHandle);
+  return Napi::Boolean::New(env, elevation.TokenIsElevated != 0);
+}
+
 Napi::Object processInit(Napi::Env env, Napi::Object exports) {
   exports.Set(Napi::String::New(env, "createProcess"), Napi::Function::New(env, createProcess));
   exports.Set(Napi::String::New(env, "isProcessElevated"), Napi::Function::New(env, isProcessElevated));
+  exports.Set(Napi::String::New(env, "getProcessInfo"), Napi::Function::New(env, getProcessInfo));
   return exports;
 }

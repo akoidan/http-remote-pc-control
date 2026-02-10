@@ -12,13 +12,18 @@ interface MousePosition {
  y: number;
 }
 
+interface ProcessInfo {
+  pid: number;
+  path: string;
+}
+
 interface WindowInfo {
   wid: number;
   pid: number;
   path: string;
   bounds: WindowBounds;
   opacity: number;
-  title: number;
+  title: string;
   parentWid: number;
 }
 
@@ -113,6 +118,13 @@ interface ProcessNativeModule {
    * Sometimes this process is required to run from AdminPowerShell and admin CMD would return true despite it doesn't have all
    */
   isProcessElevated(): boolean;
+
+
+  /**
+   * Checks if http-remote-pc-control has Admin privileges (which also sometimes can't be enought for every operation
+   * Sometimes this process is required to run from AdminPowerShell and admin CMD would return true despite it doesn't have all
+   */
+  processInfo(): ;
 }
 
 interface KeyboardNativeModule {
