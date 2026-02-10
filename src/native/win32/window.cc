@@ -86,17 +86,6 @@ Napi::Array getWindowsByProcessId(const Napi::CallbackInfo& info) {
 }
 
 
-
-
-// Get the owner of a window
-Napi::Number getWindowOwner(const Napi::CallbackInfo& info) {
-  Napi::Env env{info.Env()};
-
-  GET_INT_64(info, 0, handle, HWND);
-
-  return Napi::Number::New(env, GetWindowLongPtrA(handle, GWLP_HWNDPARENT));
-}
-
 // Toggle the transparency of a window
 void setWindowIsTransparent(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
@@ -257,6 +246,9 @@ Napi::Object getWindowInfo(const Napi::CallbackInfo& info) {
   result.Set("title", Napi::String::New(env, title));
   result.Set("opacity", Napi::Number::New(env, static_cast<double>(opacity) / 255.));
 
+  HWND parentHwnd = reinterpret_cast<HWND>(GetWindowLongPtrA(handle, GWLP_HWNDPARENT));
+
+  result.Set("parentWid",  Napi::Number::New(env, reinterpret_cast<uintptr_t>(parentHwnd)));
   return result;
 }
 
