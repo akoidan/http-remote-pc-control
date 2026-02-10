@@ -19,10 +19,11 @@ throw Napi::TypeError::New(info.Env(), "Argument " #index " must be a number"); 
 } \
 type varName = info[0].As<Napi::Number>().Uint32Value();
 
-#define ASSERT_STRING(info, index) \
+#define GET_STRING(info, index, varName) \
 if (info.Length() <= index || !info[index].IsString()) { \
 throw Napi::TypeError::New(info.Env(), "Argument " #index " must be a string"); \
-}
+} \
+std::string varName = info[index].As<Napi::String>();
 
 
 #define ASSERT_BOOL(info, index) \
