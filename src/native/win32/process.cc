@@ -152,7 +152,7 @@ Napi::Boolean isProcessElevated(const Napi::CallbackInfo &info) {
   if (!OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &hToken)) {
     return Napi::Boolean::New(env, false);
   }
-  BOOL isElavated = isProcessElevatedImp(env, hToken);
+  BOOL isElavated = isProcessElevatedImp(env, GetCurrentProcess());
   CloseHandle(hToken);
   return Napi::Boolean::New(env, isElavated);
 }
@@ -190,8 +190,25 @@ Napi::Object getProcessInfo(const Napi::CallbackInfo &info) {
   result.Set("parentPid", Napi::Number::New(env, std::get<0>(threads)));
   result.Set("threadCount", Napi::Number::New(env, std::get<1>(threads)));
 
-  BOOL isElevated = isProcessElevatedImp(env, pHandle);
-  result.Set("isElevated", Napi::Boolean::New(env, isElevated));
+  // Check if process is elevated
+  HANDLE hToken = nullptr;
+  if (!OpenProcessToken(pHandle, TOKEN_QUERY, &hToken)) {
+    DWORD err = GetLastError();
+    CloseHandle(pHandle);
+    throw Napi::Error::New(env, "OpenProcessToken failed err=" + std::to_string(err));
+  }
+
+  TOKEN_ELEVATION elevation;
+  DWORD retLen = 0;
+  if (!GetTokenInformation(hToken, TokenElevation, &elevation, sizeof(elevation), &retLen)) {
+    DWORD err = GetLastError();
+    CloseHandle(hToken);
+    CloseHandle(pHandle);
+    throw Napi::Error::New(env, "GetTokenInformation failed err=" + std::to_string(err));
+  }
+  
+  result.Set("isElevated", Napi::Boolean::New(env, elevation.TokenIsElevated != 0));
+  CloseHandle(hToken);
 
   CloseHandle(pHandle);
   return result;

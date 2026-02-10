@@ -113,8 +113,8 @@ describe('NativeService', () => {
     it('should get process info for current process', () => {
       const processInfo = nativeService.getProcessInfo(testPid);
       
-      expect(processInfo).toHaveProperty('processId');
-      expect(processInfo).toHaveProperty('exePath');
+      expect(processInfo).toHaveProperty('pid');
+      expect(processInfo).toHaveProperty('path');
       expect(processInfo).toHaveProperty('isElevated');
       expect(processInfo).toHaveProperty('memory');
       expect(processInfo).toHaveProperty('times');
@@ -127,7 +127,7 @@ describe('NativeService', () => {
       expect(processInfo.memory).toHaveProperty('workingSetSize');
       expect(processInfo.memory).toHaveProperty('peakWorkingSetSize');
       expect(processInfo.memory).toHaveProperty('privateUsage');
-      expect(processInfo.memory).toHaveProperty('pagefileUsage');
+      expect(processInfo.memory).toHaveProperty('pageFileUsage');
       
       expect(typeof processInfo.memory.workingSetSize).toBe('number');
       expect(typeof processInfo.memory.peakWorkingSetSize).toBe('number');
