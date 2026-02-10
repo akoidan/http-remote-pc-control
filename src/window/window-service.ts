@@ -27,7 +27,7 @@ export class WindowService {
     if (!['win32', 'linux'].includes(this.os)) {
       throw new NotImplementedException(`Unsupported platform: ${this.os}`);
     }
-    const wid = this.addon.getActiveWindowId();
+    const wid = this.addon.getWindowActiveId();
     const windowsRaw = this.addon.getWindowInfo(wid);
     this.logger.debug(`Found following windows ids ${JSON.stringify(windowsRaw)}`);
     if (!windowsRaw.wid) {
@@ -40,17 +40,17 @@ export class WindowService {
   public async focusWindowId(wid: number): Promise<void> {
     try {
       this.logger.log(`Focusing window: \u001b[35m#${wid}`);
-      this.addon.bringWindowToTop(wid);
+      this.addon.setWindowActive(wid);
     } catch (e) {
       throw new BadRequestException(`Unable to focus window ${wid} because ${e?.message}`);
     }
   }
 
   // Extended window operations following consistent logging and error handling
-  public getActiveWindowId(): number {
+  public getWindowActiveId(): number {
     try {
-      this.logger.log('Calling getActiveWindowId');
-      return this.addon.getActiveWindowId();
+      this.logger.log('Calling getWindowActiveId');
+      return this.addon.getWindowActiveId();
     } catch (e) {
       throw new BadRequestException(`Unable to get active window because ${e?.message}`);
     }
@@ -142,13 +142,13 @@ export class WindowService {
     }
   }
 
-  public toggleWindowTransparency(wid: number, toggle: boolean): void {
+  public setWindowIsTransparent(wid: number, toggle: boolean): void {
     if (!['win32'].includes(this.os)) {
       throw new NotImplementedException(`Unsupported platform: ${this.os}`);
     }
     try {
-      this.logger.log(`Calling toggleWindowTransparency for #${wid} to ${toggle}`);
-      this.addon.toggleWindowTransparency(wid, toggle);
+      this.logger.log(`Calling setWindowIsTransparent for #${wid} to ${toggle}`);
+      this.addon.setWindowIsTransparent(wid, toggle);
     } catch (e) {
       throw new BadRequestException(`Unable to toggle window #${wid} transparency: ${e?.message || 'Unknown error'}`);
     }

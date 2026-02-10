@@ -3,7 +3,7 @@
 import {Inject, Injectable, Logger} from '@nestjs/common';
 import {INativeModule, MouseButton, Native} from '@/native/native-model';
 import {sleep} from '@/shared';
-import {MouseClickRequest, MouseMoveHumanClickRequest, MousePositionResponse} from '@/mouse/mouse-dto';
+import {MouseClickRequest, MouseMoveHumanClickRequest, MousePositionRR} from '@/mouse/mouse-dto';
 import {OS_INJECT} from "@/global/global-model";
 import {Safe400} from "@/utils/decorators";
 
@@ -21,32 +21,34 @@ export class MouseService {
 
   @Safe400(['darwin'])
   // eslint-disable-next-line @typescript-eslint/require-await
-  moveLeftClick(x: number, y: number): void {
-    this.logger.log(`Left click: \u001b[35m[${x},${y}]`);
-    this.addon.mouseMove(x, y);
-    this.addon.mouseClick(MouseButton.LEFT);
+  moveLeftClick(pos: MousePositionRR): void {
+    this.logger.log(`Left click: \u001b[35m${JSON.stringify(pos)}`);
+    this.addon.setMousePosition(pos);
+    this.addon.setMouseButtonToState(MouseButton.LEFT, true);
+    this.addon.setMouseButtonToState(MouseButton.LEFT, false);
   }
 
   @Safe400(['darwin'])
-  move(x: number, y: number): void {
-    this.logger.log(`Mouse move: \u001b[35m[${x},${y}]`);
-    this.addon.mouseMove(x, y);
+  move(pos: MousePositionRR): void {
+    this.logger.log(`Mouse move: \u001b[35m${JSON.stringify(pos)}`);
+    this.addon.setMousePosition(pos);
   }
 
   @Safe400(['darwin'])
-  getPosition(): MousePositionResponse {
-    return this.addon.getMousePos();
+  getPosition(): MousePositionRR {
+    return this.addon.getMousePosition();
   }
 
   @Safe400(['darwin'])
   click(body: MouseClickRequest): void {
-    this.addon.mouseClick(body.button);
+    this.addon.setMouseButtonToState(body.button, true);
+    this.addon.setMouseButtonToState(body.button, false);
   }
 
   @Safe400(['darwin'])
   async moveMouseHuman(event: MouseMoveHumanClickRequest): Promise<void> {
     this.logger.log(`Mouse human: \u001b[35m[${event.x},${event.y}]`);
-    const {x: x1, y: y1} = this.addon.getMousePos();
+    const {x: x1, y: y1} = this.addon.getMousePosition();
     let x2 = event.x;
     let y2 = event.y;
 
@@ -80,12 +82,12 @@ export class MouseService {
       // Get point on the smooth curve
       const {x, y} = this.getCurvePoint(t, x1, y1, x2, y2, curveIntensity);
       // Move to the calculated position
-      this.addon.mouseMove(Math.round(x), Math.round(y));
+      this.addon.setMousePosition(Math.round(x), Math.round(y));
       await sleep(event.delayBetweenIterations ?? 5);
     }
 
     // Ensure we hit the target exactly
-    this.addon.mouseMove(x2, y2);
+    this.addon.setMousePosition(x2, y2);
   }
 
   /**

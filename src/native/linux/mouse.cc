@@ -7,7 +7,7 @@
 
 
 
-Napi::Object getMousePos(const Napi::CallbackInfo& info) {
+Napi::Object getMousePosition(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   int x, y; /* This is all we care about. Seriously. */
   Window garb1, garb2; /* Why you can't specify NULL as a parameter */
@@ -40,7 +40,7 @@ void toggleMouse(Napi::Env env, bool down, unsigned int button) {
 }
 
 
-void mouseClick(const Napi::CallbackInfo& info) {
+void setMouseButtonToState(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   ASSERT_NUMBER(info, 0)
   unsigned int button = info[0].As<Napi::Number>().Int32Value();
@@ -71,8 +71,8 @@ void moveMouse(const Napi::CallbackInfo& info) {
 
 
 Napi::Object mouse_init(Napi::Env env, Napi::Object exports) {
-  exports.Set(Napi::String::New(env, "mouseMove"), Napi::Function::New(env, moveMouse));
-  exports.Set(Napi::String::New(env, "mouseClick"), Napi::Function::New(env, mouseClick));
-  exports.Set(Napi::String::New(env, "getMousePos"), Napi::Function::New(env, getMousePos));
+  exports.Set(Napi::String::New(env, "setMousePosition"), Napi::Function::New(env, moveMouse));
+  exports.Set(Napi::String::New(env, "setMouseButtonToState"), Napi::Function::New(env, setMouseButtonToState));
+  exports.Set(Napi::String::New(env, "getMousePosition"), Napi::Function::New(env, getMousePosition));
   return exports;
 }

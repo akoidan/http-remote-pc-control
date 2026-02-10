@@ -5,6 +5,12 @@ interface WindowBounds {
   height: number;
 }
 
+
+interface MousePosition {
+ x: number;
+ y: number;
+}
+
 interface WindowInfo {
   wid: number;
   pid: number;
@@ -43,16 +49,16 @@ enum MouseButton {
 
 interface WindowNativeModule {
   // Window management
-  bringWindowToTop(handle: number): boolean;
-  getActiveWindowId(): number;
+  setWindowActive(handle: number): boolean;
+  getWindowActiveId(): number;
   getWindowsByProcessId(pid: number): number[];
-  setWindowVisibility(handle: number, visible: boolean): void;
+  setWindowState(handle: number, visibility: WindowAction): void;
   getWindowInfo(handle: number): WindowInfo;
   setWindowBounds(handle: number, bounds: WindowBounds): void;
   setVisibility(handle: number, action: WindowAction): void;
   
   // Window transparency
-  toggleWindowTransparency(handle: number, enabled: boolean): void;
+  setWindowIsTransparent(handle: number, enabled: boolean): void;
   setWindowOpacity(handle: number, opacity: number): void;
 }
 
@@ -75,9 +81,9 @@ interface KeyboardNativeModule {
 }
 
 interface MouseNativeModule {
-  mouseClick(button: MouseButton): void;
-  mouseMove(x: number, y: number): void;
-  getMousePos(): { x: number; y: number };
+  setMouseButtonToState(button: MouseButton, isDown: boolean): void;
+  setMousePosition(pos: MousePosition): void;
+  getMousePosition(): MousePosition;
 }
 
 interface INativeModule extends

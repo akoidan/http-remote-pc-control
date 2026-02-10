@@ -22,7 +22,7 @@ export class WindowController {
   @Get('active')
   @ApiResponse({type: GetWindowResponseDto})
   @ApiOperation({summary: 'Get information about current active window'})
-  async getActiveWindowId(): Promise<GetWindowResponseDto> {
+  async getWindowActiveId(): Promise<GetWindowResponseDto> {
     return this.windowService.getActiveWindowInfo();
   }
 

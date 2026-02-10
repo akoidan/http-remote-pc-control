@@ -7,9 +7,10 @@
 #define ABSOLUTE_COORD_CONST 65536
 
 
-void mouseMove(const Napi::CallbackInfo& info) {
-  GET_INT_32_NC(info, 0, nx, size_t);
-  GET_INT_32_NC(info, 0, ny, size_t);
+void setMousePosition(const Napi::CallbackInfo& info) {
+  GET_OBJECT(info, 0, bounds);
+  size_t nx = bounds.Get("x").ToNumber().Int32Value();
+  size_t ny = bounds.Get("y").ToNumber().Int32Value();
 
   INPUT input = {0};
 
@@ -54,17 +55,18 @@ void toggleMouse(bool down, unsigned int button) {
 }
 
 
-void mouseClick(const Napi::CallbackInfo& info) {
+void setMouseButtonToState(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   GET_INT_32_NC(info, 0, button, unsigned int);
+  GET_BOOL(info, 1, isDown);
   if (button < 1 || button > 3) {
     throw Napi::Error::New(env, "Invalid button number.");
   }
-  toggleMouse(true, button);
-  toggleMouse(false, button);
+
+  toggleMouse(isDown, button);
 }
 
-Napi::Object getMousePos(const Napi::CallbackInfo& info) {
+Napi::Object getMousePosition(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   POINT point;
   if (!GetCursorPos(&point)) {
@@ -109,9 +111,9 @@ Napi::Object getMousePos(const Napi::CallbackInfo& info) {
 }
 
 Napi::Object mouse_init(Napi::Env env, Napi::Object exports) {
-  exports.Set(Napi::String::New(env, "mouseMove"), Napi::Function::New(env, mouseMove));
-  exports.Set(Napi::String::New(env, "mouseClick"), Napi::Function::New(env, mouseClick));
-  exports.Set(Napi::String::New(env, "getMousePos"), Napi::Function::New(env, getMousePos));
+  exports.Set(Napi::String::New(env, "setMousePosition"), Napi::Function::New(env, setMousePosition));
+  exports.Set(Napi::String::New(env, "setMouseButtonToState"), Napi::Function::New(env, setMouseButtonToState));
+  exports.Set(Napi::String::New(env, "getMousePosition"), Napi::Function::New(env, getMousePosition));
   return exports;
 }
 

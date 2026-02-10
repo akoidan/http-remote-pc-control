@@ -44,7 +44,7 @@ Process getWindowProcess(HWND handle, Napi::Env env) {
 }
 
 
-Napi::Number getActiveWindowId(const Napi::CallbackInfo& info) {
+Napi::Number getWindowActiveId(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
   auto handle = GetForegroundWindow();
@@ -98,7 +98,7 @@ Napi::Number getWindowOwner(const Napi::CallbackInfo& info) {
 }
 
 // Toggle the transparency of a window
-void toggleWindowTransparency(const Napi::CallbackInfo& info) {
+void setWindowIsTransparent(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
   GET_INT_64(info, 0, handle, HWND);
@@ -161,7 +161,7 @@ void setWindowBounds(const Napi::CallbackInfo& info) {
 
 
 // Show a window
-void setWindowVisibility(const Napi::CallbackInfo& info) {
+void setWindowState(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
   GET_INT_64(info, 0, handle, HWND);
@@ -192,7 +192,7 @@ void setWindowVisibility(const Napi::CallbackInfo& info) {
 }
 
 // Bring a window to the top
-Napi::Boolean bringWindowToTop(const Napi::CallbackInfo& info) {
+Napi::Boolean setWindowActive(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
   GET_INT_32(info, 0, handle, HWND);
   if (!IsWindow(handle)) {
@@ -288,16 +288,16 @@ void setVisibility(const Napi::CallbackInfo& info) {
 // Initialize the window module
 Napi::Object window_init(Napi::Env env, Napi::Object exports) {
 
-  exports.Set(Napi::String::New(env, "bringWindowToTop"), Napi::Function::New(env, bringWindowToTop));
-  exports.Set(Napi::String::New(env, "getActiveWindowId"), Napi::Function::New(env, getActiveWindowId));
+  exports.Set(Napi::String::New(env, "setWindowActive"), Napi::Function::New(env, setWindowActive));
+  exports.Set(Napi::String::New(env, "getWindowActiveId"), Napi::Function::New(env, getWindowActiveId));
   exports.Set(Napi::String::New(env, "getWindowsByProcessId"), Napi::Function::New(env, getWindowsByProcessId));
-  exports.Set(Napi::String::New(env, "setWindowVisibility"), Napi::Function::New(env, setWindowVisibility));
+  exports.Set(Napi::String::New(env, "setWindowState"), Napi::Function::New(env, setWindowState));
   exports.Set(Napi::String::New(env, "getWindowInfo"), Napi::Function::New(env, getWindowInfo));
   exports.Set(Napi::String::New(env, "setWindowBounds"), Napi::Function::New(env, setWindowBounds));
   exports.Set(Napi::String::New(env, "setVisibility"), Napi::Function::New(env, setVisibility));
 
   // WINDOWS only
-  exports.Set(Napi::String::New(env, "toggleWindowTransparency"), Napi::Function::New(env, toggleWindowTransparency));
+  exports.Set(Napi::String::New(env, "setWindowIsTransparent"), Napi::Function::New(env, setWindowIsTransparent));
 
   return exports;
 }

@@ -34,7 +34,7 @@ export class ProcessService {
     if (requiredWindows.length > 1) {
       this.logger.debug(`Found ${requiredWindows.length} windows for pid ${pid}. Picking  ${requireWindow}`);
     }
-    this.addon.bringWindowToTop(requireWindow);
+    this.addon.setWindowActive(requireWindow);
   }
 
 }
