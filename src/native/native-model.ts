@@ -16,7 +16,7 @@ interface ProcessMemory {
   workingSetSize: number;
   peakWorkingSetSize: number;
   privateUsage: number;
-  pagefileUsage: number;
+  pageFileUsage: number;
 }
 interface ProcessCpuTimes {
   creationTime: number;
@@ -25,10 +25,10 @@ interface ProcessCpuTimes {
 }
 
 interface ProcessInfo {
-  processId: number;
-  parentId?: number;
-  threadCount?: number;
-  exePath: string;
+  pid: number;
+  parentPid: number;
+  threadCount: number;
+  path: string;
   isElevated: boolean;
   memory: ProcessMemory;
   times: ProcessCpuTimes;

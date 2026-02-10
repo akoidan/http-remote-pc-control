@@ -3,6 +3,7 @@ import {exec} from 'child_process';
 import {promisify} from 'util';
 import {IExecuteService} from '@/process/process-model';
 import {LauncherService} from '@/process/launcher-service';
+import {LaunchExeRequest} from "@/process/process-dto";
 
 @Injectable()
 export class ExecuteWin32Service implements IExecuteService {
@@ -12,8 +13,8 @@ export class ExecuteWin32Service implements IExecuteService {
   ) {
   }
 
-  async launchExe(pathToExe: string, args: string[], waitTillFinish: boolean): Promise<number> {
-    return this.launcher.launchExe(pathToExe, args, waitTillFinish);
+  async launchExe(data: LaunchExeRequest): Promise<number> {
+    return this.launcher.launchExe(data);
   }
 
   async killExeByName(name: string): Promise<void> {

@@ -1,5 +1,5 @@
 import {Inject, Injectable, Logger} from '@nestjs/common';
-import {INativeModule} from '@/native/native-model';
+import {KeyboardNativeModule, Native} from '@/native/native-model';
 import {sleep} from '@/shared';
 import {RandomService} from '@/random/random-service';
 import {KeyboardLayoutValue} from '@/keyboard/keyboard-dto';
@@ -12,7 +12,8 @@ export class KeyboardService {
     readonly logger: Logger,
     @Inject(OS_INJECT)
     readonly os: NodeJS.Platform,
-    private readonly addon: INativeModule,
+    @Inject(Native)
+    private readonly addon: KeyboardNativeModule,
     private readonly rs: RandomService
   ) {
   }

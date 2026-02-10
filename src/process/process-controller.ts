@@ -2,11 +2,8 @@ import {Body, Controller, Delete, Get, HttpCode, Inject, Param, ParseIntPipe, Po
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import {ProcessService} from '@/process/process-service';
 import {
-  CreateProcessRequestDto,
-  FindExeByNameRequestDto,
-  KillExeByPidRequestDto,
-  ProcessIdResponse,
-  ProcessIdResponseDto,
+  FindExeByNameRequestDto, LaunchExeRequestDto,
+  ProcessResponseDto,
 } from '@/process/process-dto';
 import {ExecuteService, IExecuteService} from '@/process/process-model';
 
@@ -23,15 +20,15 @@ export class ProcessController {
   @Get(':pid')
   @ApiOperation({summary: 'Get all windows with their IDs for a concrete process id'})
   @ApiResponse({type: Number, isArray: true})
-  getWindowsIdByPid(@Param('id', ParseIntPipe) id: number): ProcessIdResponseDto {
+  getWindowsIdByPid(@Param('id', ParseIntPipe) id: number): ProcessResponseDto {
     return this.processService.getProcessInfo(id);
   }
 
   @Post()
   @ApiOperation({summary: 'Launches an application'})
-  @ApiResponse({type: ProcessIdResponseDto})
-  createProcess(@Body() body: CreateProcessRequestDto): ProcessIdResponse {
-    return {pid: this.processService.createProcess(body.path, body.cmd)};
+  @ApiResponse({type: ProcessResponseDto})
+  async createProcess(@Body() body: LaunchExeRequestDto): Promise<ProcessResponseDto> {
+    return this.processService.createProcess(body);
   }
 
   @Delete()
@@ -51,7 +48,7 @@ export class ProcessController {
   @Delete(':pid')
   @ApiOperation({summary: 'Kill process by PID'})
   @HttpCode(204)
-  async killExeByPid(@Body() body: KillExeByPidRequestDto): Promise<void> {
-    await this.executionService.killExeByPid(body.pid);
+  async killExeByPid(@Param('mid', ParseIntPipe) pid: number): Promise<void> {
+    await this.executionService.killExeByPid(pid);
   }
 }

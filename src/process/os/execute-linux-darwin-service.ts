@@ -1,8 +1,9 @@
-import {Injectable, InternalServerErrorException, Logger} from '@nestjs/common';
+import {BadRequestException, Injectable, InternalServerErrorException, Logger} from '@nestjs/common';
 import {exec} from 'child_process';
 import {promisify} from 'util';
 import {IExecuteService} from '@/process/process-model';
 import {LauncherService} from '@/process/launcher-service';
+import {LaunchExeRequest} from "@/process/process-dto";
 
 @Injectable()
 export class ExecuteLinuxDarwinService implements IExecuteService {
@@ -12,20 +13,18 @@ export class ExecuteLinuxDarwinService implements IExecuteService {
   ) {
   }
 
-  async launchExe(pathToExe: string, args: string[], waitTillFinish: boolean): Promise<number> {
-    return this.launcher.launchExe(pathToExe, args, waitTillFinish);
+  async launchExe(data: LaunchExeRequest): Promise<number> {
+    return this.launcher.launchExe(data);
   }
 
-  async killExeByName(name: string): Promise<boolean> {
+  async killExeByName(name: string): Promise<void> {
     this.logger.log(`Kill ${name}`);
     try {
       const {stdout, stderr} = await promisify(exec)(`pkill -9 '${name}'`);
       this.logger.debug(`Process "${name}" killed successfully:`, stdout || stderr);
-      return true;
     } catch (e) {
       if (e?.code === 1) {
-        this.logger.debug(`Process "${name}" is not up. Skipping it`);
-        return false;
+        throw new BadRequestException(`Unable to kill "${name}" since it's not found`);
       }
       throw new InternalServerErrorException(e);
     }
@@ -42,16 +41,14 @@ export class ExecuteLinuxDarwinService implements IExecuteService {
       .map(pid => parseInt(pid, 10));
   }
 
-  async killExeByPid(pid: number): Promise<boolean> {
+  async killExeByPid(pid: number): Promise<void> {
     this.logger.log(`Kill ${pid}`);
     try {
       const {stdout, stderr} = await promisify(exec)(`kill -9 ${pid}`);
       this.logger.debug(`Process "${pid}" killed successfully:`, stdout || stderr);
-      return true;
     } catch (e) {
       if (e?.code === 1) {
-        this.logger.debug(`Process "${pid}" is not up. Skipping it`);
-        return false;
+        throw new BadRequestException(`Unable to kill "${pid}" since it's not found`);
       }
       throw new InternalServerErrorException(e);
     }

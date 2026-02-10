@@ -1,5 +1,7 @@
+import {LaunchExeRequest} from "@/process/process-dto";
+
 export interface IExecuteService {
-  launchExe(pathToExe: string, args: string[], waitTillFinish: boolean): Promise<number>;
+  launchExe(data: LaunchExeRequest): Promise<number>;
 
   killExeByName(name: string): Promise<void>;
 
