@@ -1,11 +1,3 @@
-/*
- * This file was originally sourced from the node-window-manager library
- * (https://github.com/sentialx/node-window-manager).
- *
- * Licensed under the MIT License. See LICENSE file in the root of this repository
- * or https://github.com/sentialx/node-window-manager?tab=MIT-1-ov-file#readme for details.
- */
-
 #include <cmath>
 #include <cstdint>
 #include <iostream>
@@ -60,15 +52,6 @@ Napi::Number getActiveWindowId(const Napi::CallbackInfo& info) {
   return Napi::Number::New(env, reinterpret_cast<int64_t>(handle));
 }
 
-std::vector<int64_t> _windows;
-
-
-
-// Enumerate windows by process ID
-struct EnumWindowsCallbackArgs {
-  DWORD processId;
-  std::vector<HWND> handles;
-};
 
 BOOL CALLBACK enumWindowsByProcessIdProc(HWND hwnd, LPARAM lparam) {
   auto& args = *reinterpret_cast<EnumWindowsCallbackArgs*>(lparam);
@@ -103,22 +86,6 @@ Napi::Array getWindowsByProcessId(const Napi::CallbackInfo& info) {
 }
 
 
-// Get the title of a window
-Napi::String getWindowTitle(const Napi::CallbackInfo& info) {
-  Napi::Env env{info.Env()};
-
-  GET_INT_64(info, 0, handle, HWND);
-
-  int bufsize = GetWindowTextLengthW(handle) + 1;
-  LPWSTR t = new WCHAR[bufsize];
-  GetWindowTextW(handle, t, bufsize);
-
-  std::wstring ws(t);
-  std::string title = toUtf8(ws);
-
-  return Napi::String::New(env, title);
-}
-
 // Get the opacity of a window
 Napi::Number getWindowOpacity(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
@@ -145,12 +112,12 @@ void toggleWindowTransparency(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
   GET_INT_64(info, 0, handle, HWND);
+  GET_BOOL(info, 1, toggle);
 
   if (!IsWindow(handle)) {
     throw Napi::Error::New(env, "Invalid window handle");
   }
 
-  bool toggle{info[1].As<Napi::Boolean>()};
   LONG_PTR style{GetWindowLongPtrA(handle, GWL_EXSTYLE)};
 
   if (!SetWindowLongPtrA(handle, GWL_EXSTYLE, ((toggle) ? (style | WS_EX_LAYERED) : (style & (~WS_EX_LAYERED))))) {
@@ -163,12 +130,12 @@ void setWindowOpacity(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
   GET_INT_64(info, 0, handle, HWND);
+  GET_DOUBLE(info, 1, opacity);
 
   if (!IsWindow(handle)) {
     throw Napi::Error::New(env, "Invalid window handle");
   }
 
-  double opacity{info[1].As<Napi::Number>().DoubleValue()};
   if (opacity < 0.0 || opacity > 1.0) {
     throw Napi::Error::New(env, "Opacity must be between 0 and 1");
   }
@@ -202,27 +169,6 @@ void setWindowBounds(const Napi::CallbackInfo& info) {
   }
 }
 
-// Set the owner of a window
-void setWindowOwner(const Napi::CallbackInfo& info) {
-  Napi::Env env{info.Env()};
-
-  GET_INT_64(info, 0, handle, HWND);
-  if (!IsWindow(handle)) {
-    throw Napi::Error::New(env, "Invalid window handle");
-  }
-
-  auto newOwner{static_cast<LONG_PTR>(info[1].As<Napi::Number>().Int64Value())};
-  if (newOwner != 0 && !IsWindow(reinterpret_cast<HWND>(newOwner))) {
-    throw Napi::Error::New(env, "Invalid owner window handle");
-  }
-
-  if (SetWindowLongPtrA(handle, GWLP_HWNDPARENT, newOwner) == 0 && GetLastError() != 0) {
-    throw Napi::Error::New(env, "Failed to set window owner");
-  }
-}
-
-void getWindowVisibility(const Napi::CallbackInfo& info) {
-}
 
 // Show a window
 void setWindowVisibility(const Napi::CallbackInfo& info) {
@@ -279,17 +225,6 @@ Napi::Boolean bringWindowToTop(const Napi::CallbackInfo& info) {
   return Napi::Boolean::New(env, b);
 }
 
-
-// Check if a window is valid
-Napi::Boolean isWindow(const Napi::CallbackInfo& info) {
-  Napi::Env env{info.Env()};
-
-  GET_INT_64(info, 0, handle, HWND);
-
-  return Napi::Boolean::New(env, IsWindow(handle));
-}
-
-
 Napi::Object getWindowInfo(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
@@ -299,7 +234,15 @@ Napi::Object getWindowInfo(const Napi::CallbackInfo& info) {
     throw Napi::Error::New(env, "Window with current id not found");
   }
 
+  int bufsize = GetWindowTextLengthW(handle) + 1;
+  LPWSTR t = new WCHAR[bufsize];
+  GetWindowTextW(handle, t, bufsize);
+  std::wstring ws(t);
+  std::string title = toUtf8(ws);
+
   auto process = getWindowProcess(handle, env);
+  BYTE opacity{};
+  GetLayeredWindowAttributes(handle, NULL, &opacity, NULL);
 
   RECT rect{};
   GetWindowRect(handle, &rect);
@@ -315,6 +258,8 @@ Napi::Object getWindowInfo(const Napi::CallbackInfo& info) {
   result.Set("pid", process.pid);
   result.Set("path", process.path);
   result.Set("bounds", bounds);
+  result.Set("title", Napi::String::New(env, title));
+  result.Set("opacity", Napi::Number::New(env, static_cast<double>(opacity) / 255.));
 
   return result;
 }
@@ -358,14 +303,18 @@ Napi::Object window_init(Napi::Env env, Napi::Object exports) {
   exports.Set(Napi::String::New(env, "getActiveWindowId"), Napi::Function::New(env, getActiveWindowId));
   exports.Set(Napi::String::New(env, "getWindowsByProcessId"), Napi::Function::New(env, getWindowsByProcessId));
   exports.Set(Napi::String::New(env, "setWindowVisibility"), Napi::Function::New(env, setWindowVisibility));
-  exports.Set(Napi::String::New(env, "getWindowInfo"), Napi::Function::New(env, getWindowVisibility));
+  exports.Set(Napi::String::New(env, "getWindowInfo"), Napi::Function::New(env, getWindowInfo));
   exports.Set(Napi::String::New(env, "setWindowBounds"), Napi::Function::New(env, setWindowBounds));
   exports.Set(Napi::String::New(env, "setVisibility"), Napi::Function::New(env, setVisibility));
+
+  // WINDOWS only
+  exports.Set(Napi::String::New(env, "toggleWindowTransparency"), Napi::Function::New(env, toggleWindowTransparency));
 
   return exports;
 }
 
 
+// std::vector<int64_t> _windows;
 // BOOL CALLBACK enumWindowsProc(HWND hwnd, LPARAM lparam) {
 //   _windows.push_back(reinterpret_cast<int64_t>(hwnd));
 //   return TRUE;
@@ -398,4 +347,24 @@ Napi::Object window_init(Napi::Env env, Napi::Object exports) {
   // HWND handle = reinterpret_cast<HWND>(info[0].As<Napi::Number>().Int64Value());
 //
 //   return Napi::Boolean::New(env, IsWindowVisible(handle));
+// }
+
+
+// Set the owner of a window
+// void setWindowOwner(const Napi::CallbackInfo& info) {
+//   Napi::Env env{info.Env()};
+//
+//   GET_INT_64(info, 0, handle, HWND);
+//   if (!IsWindow(handle)) {
+//     throw Napi::Error::New(env, "Invalid window handle");
+//   }
+//
+//   auto newOwner{static_cast<LONG_PTR>(info[1].As<Napi::Number>().Int64Value())};
+//   if (newOwner != 0 && !IsWindow(reinterpret_cast<HWND>(newOwner))) {
+//     throw Napi::Error::New(env, "Invalid owner window handle");
+//   }
+//
+//   if (SetWindowLongPtrA(handle, GWLP_HWNDPARENT, newOwner) == 0 && GetLastError() != 0) {
+//     throw Napi::Error::New(env, "Failed to set window owner");
+//   }
 // }
