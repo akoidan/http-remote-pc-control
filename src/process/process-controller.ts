@@ -2,12 +2,11 @@ import {Body, Controller, Delete, Get, HttpCode, Inject, Param, ParseIntPipe, Po
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import {ProcessService} from '@/process/process-service';
 import {
+  CreateProcessRequestDto,
   FindExeByNameRequestDto,
   KillExeByPidRequestDto,
   ProcessIdResponse,
   ProcessIdResponseDto,
-  WindowHandleResponse,
-  WindowHandleResponseDto,
 } from '@/process/process-dto';
 import {ExecuteService, IExecuteService} from '@/process/process-model';
 
@@ -21,19 +20,11 @@ export class ProcessController {
   ) {
   }
 
-
-  @Get(':pid/main-window')
-  @ApiOperation({summary: 'Get process\' main window'})
-  @ApiResponse({type: WindowHandleResponseDto})
-  getProcessMainWindow(@Param('pid', ParseIntPipe) pid: number): WindowHandleResponse {
-    return {wid: this.processService.getProcessMainWindow(pid)};
-  }
-
   @Get(':pid')
   @ApiOperation({summary: 'Get all windows with their IDs for a concrete process id'})
   @ApiResponse({type: Number, isArray: true})
-  async getWindowsIdByPid(@Param('id', ParseIntPipe) id: number): Promise<ProcessIdResponseDto> {
-    return this.processService.getAllWindowsByPid(id);
+  getWindowsIdByPid(@Param('id', ParseIntPipe) id: number): ProcessIdResponseDto {
+    return this.processService.getProcessInfo(id);
   }
 
   @Post()
@@ -41,13 +32,6 @@ export class ProcessController {
   @ApiResponse({type: ProcessIdResponseDto})
   createProcess(@Body() body: CreateProcessRequestDto): ProcessIdResponse {
     return {pid: this.processService.createProcess(body.path, body.cmd)};
-  }
-
-  @Post(':pid/focus')
-  @ApiOperation({summary: 'Focus main process window'})
-  @HttpCode(204)
-  async focusExe(@Body() body: FocusExeRequestDto): Promise<void> {
-    await this.processService.activateWindowByPid(body.pid);
   }
 
   @Delete()

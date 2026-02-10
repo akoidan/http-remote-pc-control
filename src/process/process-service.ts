@@ -1,40 +1,33 @@
-import {Inject, Injectable, Logger, NotImplementedException} from '@nestjs/common';
-import {INativeModule, Native} from '@/native/native-model';
-import {OS_INJECT} from '@/window/window-consts';
+import {Inject, Injectable, Logger} from '@nestjs/common';
+import {Native, ProcessNativeModule, WindowNativeModule} from '@/native/native-model';
+import {Safe400} from "@/utils/decorators";
+import {OS_INJECT} from "@/global/global-model";
 
 @Injectable()
 export class ProcessService {
   constructor(
-    private readonly logger: Logger,
+    public readonly logger: Logger,
     @Inject(Native)
-    private readonly addon: INativeModule,
+    private readonly addonProcess: ProcessNativeModule,
+    @Inject(Native)
+    private readonly addonWindow: WindowNativeModule,
     @Inject(OS_INJECT)
-    private readonly os: NodeJS.Platform,
+    public readonly os: NodeJS.Platform,
   ) {
   }
 
+  @Safe400(['win32', 'linux'])
   public createProcess(path: string, cmd?: string): number {
-    return this.addon.createProcess(path, cmd);
+    return this.addonProcess.createProcess(path, cmd);
   }
 
-  // eslint-disable-next-line @typescript-eslint/require-await
-  public async getAllWindowsByPid(pid: number): Promise<number[]> {
-    return this.addon.getWindowsByProcessId(pid);
+  @Safe400(['win32', 'linux'])
+  public getProcessInfo(pid: number): any {
+    const info = this.addonProcess.getProcessInfo(pid);
+    const wids = this.addonWindow.getWindowsByProcessId(pid);
+    return {
+      ...info,
+      wids,
+    };
   }
-
-  public async getProcessInfo(pid: number): Promise<number[]> {
-    const windows =  this.addon.getWindowsByProcessId(pid);
-    const windows =  this.addon.get(pid);
-  }
-
-  // eslint-disable-next-line @typescript-eslint/require-await
-  public async activateWindowByPid(pid: number): Promise<void> {
-    const requiredWindows = await this.getAllWindowsByPid(pid);
-    const requireWindow = requiredWindows[requiredWindows.length - 1];
-    if (requiredWindows.length > 1) {
-      this.logger.debug(`Found ${requiredWindows.length} windows for pid ${pid}. Picking  ${requireWindow}`);
-    }
-    this.addon.setWindowActive(requireWindow);
-  }
-
 }

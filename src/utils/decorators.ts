@@ -6,7 +6,7 @@ interface HasLogger {
   os : NodeJS.Platform;
 }
 
-export function Safe400(supported: NodeJS.Platform[] = []) {
+export function Safe400(supported?: NodeJS.Platform[]) {
   // eslint-disable-next-line
   return function(
       target: HasLogger,
@@ -18,7 +18,7 @@ export function Safe400(supported: NodeJS.Platform[] = []) {
       // eslint-disable-next-line func-names
       descriptor.value = function(...args: unknown[]): unknown {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-        if (!supported.includes(this.os)) {
+        if (typeof supported !== 'undefined' && !supported.includes(this.os)) {
           throw new BadRequestException(`Unsupported method ${String(propertyKey)} on platform ${this.os}`);
         }
         this.logger.log(`Calling getMonitors ${String(propertyKey)} with arguments ${JSON.stringify(args)}`);
@@ -35,7 +35,7 @@ export function Safe400(supported: NodeJS.Platform[] = []) {
       // eslint-disable-next-line func-names
       descriptor.value = async function(...args: unknown[]): Promise<unknown> {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-        if (!supported.includes(this.os)) {
+        if (typeof supported !== 'undefined' && !supported.includes(this.os)) {
           throw new BadRequestException(`Unsupported method ${String(propertyKey)} on platform ${this.os}`);
         }
         this.logger.log(`Calling getMonitors ${String(propertyKey)} with arguments ${JSON.stringify(args)}`);
