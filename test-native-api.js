@@ -58,10 +58,6 @@ async function testWindowApis() {
   console.log('  Showing window');
   native.setWindowState(activeWindowId, "show");
 
-  console.log('\n6. Testing setWindowIsTransparent()');
-  console.log('  Enabling transparency');
-  native.setWindowIsTransparent(activeWindowId, true);
-
 
   // Test window opacity
   console.log('\n5. Testing window opacity functions');

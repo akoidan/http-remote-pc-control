@@ -5,6 +5,7 @@
 #include <shtypes.h>
 #include <string>
 #include <windows.h>
+#include <cinttypes>
 #include "./headers/window.h"
 #include "./headers/logger.h"
 #include "./headers/utils.h"
@@ -54,7 +55,9 @@ Napi::Number getWindowActiveId(const Napi::CallbackInfo &info) {
 BOOL CALLBACK enumWindowsByProcessIdProc(HWND hwnd, LPARAM lparam) {
   auto &args = *reinterpret_cast<EnumWindowsCallbackArgs *>(lparam);
   DWORD processId = 0;
-  GetWindowThreadProcessId(hwnd, &processId);
+  if (!GetWindowThreadProcessId(hwnd, &processId)) {
+    LOG("Failed to check if window %" PRIuPTR " belongs to current process or not\n",  (uintptr_t)hwnd);
+  };
 
   if (processId == args.processId) {
     args.handles.push_back(hwnd);
