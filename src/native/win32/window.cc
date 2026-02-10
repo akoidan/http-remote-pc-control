@@ -131,7 +131,14 @@ void setWindowOpacity(const Napi::CallbackInfo& info) {
   }
 
   if (!SetLayeredWindowAttributes(handle, NULL, static_cast<BYTE>(opacity * 255.), LWA_ALPHA)) {
-    throw Napi::Error::New(env, "Failed to set window opacity");
+    DWORD err = GetLastError();
+    LONG_PTR style   = GetWindowLongPtr(handle, GWL_STYLE);
+    LONG_PTR exstyle = GetWindowLongPtr(handle, GWL_EXSTYLE);
+    bool canUseOpacity = !(style & WS_CHILD) &&  (exstyle & WS_EX_LAYERED);
+    if (!canUseOpacity) {
+      throw Napi::Error::New( env, "Window does not support opacity (not layered or is a child window)" + std::to_string(err));
+    }
+    throw Napi::Error::New(env, "SetLayeredWindowAttributes failed err=" + std::to_string(err));
   }
 }
 

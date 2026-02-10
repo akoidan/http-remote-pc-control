@@ -57,18 +57,19 @@ async function testWindowApis() {
   console.log('\n4. Testing setWindowState()');
   console.log('  Showing window');
   native.setWindowState(activeWindowId, "show");
-  
+
+  console.log('\n6. Testing setWindowIsTransparent()');
+  console.log('  Enabling transparency');
+  native.setWindowIsTransparent(activeWindowId, true);
+
+
   // Test window opacity
   console.log('\n5. Testing window opacity functions');
   console.log('  Setting opacity to 0.8');
   native.setWindowOpacity(activeWindowId, 0.8);
-  const opacity = native.getWindowOpacity(activeWindowId);
-  console.log('  Current window opacity:', opacity);
-  
+
   // Test window transparency
-  console.log('\n6. Testing setWindowIsTransparent()');
-  console.log('  Enabling transparency');
-  native.setWindowIsTransparent(activeWindowId, true);
+
   
   // Bring window to top
   console.log('\n7. Testing setWindowActive()');
