@@ -16,23 +16,10 @@
 #include "./headers/window.h"
 #include "./headers/logger.h"
 #include "./headers/utils.h"
+#include "./headers/validators.h"
 
 typedef int (__stdcall*lp_GetScaleFactorForMonitor)(HMONITOR, DEVICE_SCALE_FACTOR*);
 
-
-std::wstring get_wstring(const std::string str) {
-  return std::wstring(str.begin(), str.end());
-}
-
-std::string toUtf8(const std::wstring& str) {
-  std::string ret;
-  int len = WideCharToMultiByte(CP_UTF8, 0, str.c_str(), str.length(), NULL, 0, NULL, NULL);
-  if (len > 0) {
-    ret.resize(len);
-    WideCharToMultiByte(CP_UTF8, 0, str.c_str(), str.length(), &ret[0], len, NULL, NULL);
-  }
-  return ret;
-}
 
 Process getWindowProcess(HWND handle, Napi::Env env) {
   DWORD pid{0};
@@ -65,16 +52,6 @@ Process getWindowProcess(HWND handle, Napi::Env env) {
 }
 
 
-Napi::Number getProcessMainWindow(const Napi::CallbackInfo& info) {
-  Napi::Env env{info.Env()};
-
-  unsigned long process_id = info[0].ToNumber().Uint32Value();
-
-  auto handle = find_top_window(process_id, env);
-
-  return Napi::Number::New(env, reinterpret_cast<int64_t>(handle));
-}
-
 Napi::Number getActiveWindowId(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
@@ -85,26 +62,7 @@ Napi::Number getActiveWindowId(const Napi::CallbackInfo& info) {
 
 std::vector<int64_t> _windows;
 
-BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM lparam) {
-  _windows.push_back(reinterpret_cast<int64_t>(hwnd));
-  return TRUE;
-}
 
-// Get all window handles
-Napi::Array getWindows(const Napi::CallbackInfo& info) {
-  Napi::Env env{info.Env()};
-
-  _windows.clear();
-  EnumWindows(&EnumWindowsProc, NULL);
-
-  auto arr = Napi::Array::New(env);
-  auto i = 0;
-  for (auto _win : _windows) {
-    arr.Set(i++, Napi::Number::New(env, _win));
-  }
-
-  return arr;
-}
 
 // Enumerate windows by process ID
 struct EnumWindowsCallbackArgs {
@@ -112,7 +70,7 @@ struct EnumWindowsCallbackArgs {
   std::vector<HWND> handles;
 };
 
-BOOL CALLBACK EnumWindowsByProcessIdProc(HWND hwnd, LPARAM lparam) {
+BOOL CALLBACK enumWindowsByProcessIdProc(HWND hwnd, LPARAM lparam) {
   auto& args = *reinterpret_cast<EnumWindowsCallbackArgs*>(lparam);
   DWORD processId = 0;
   GetWindowThreadProcessId(hwnd, &processId);
@@ -128,14 +86,13 @@ BOOL CALLBACK EnumWindowsByProcessIdProc(HWND hwnd, LPARAM lparam) {
 Napi::Array getWindowsByProcessId(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
-  if (info.Length() < 1 || !info[0].IsNumber()) {
-    throw Napi::TypeError::New(env, "Process ID must be a number");
-  }
+
+  ASSERT_NUMBER(info, 0)
 
   DWORD processId = info[0].As<Napi::Number>().Uint32Value();
   EnumWindowsCallbackArgs args{processId, {}};
   
-  if (!EnumWindows(EnumWindowsByProcessIdProc, reinterpret_cast<LPARAM>(&args))) {
+  if (!EnumWindows(enumWindowsByProcessIdProc, reinterpret_cast<LPARAM>(&args))) {
     DWORD err = GetLastError();
     throw Napi::Error::New(env, "EnumWindows failed with error: " + std::to_string(err));
   }
@@ -148,25 +105,7 @@ Napi::Array getWindowsByProcessId(const Napi::CallbackInfo& info) {
   return result;
 }
 
-// Initialize a window object
-Napi::Object initWindow(const Napi::CallbackInfo& info) {
-  Napi::Env env{info.Env()};
 
-  auto handle{getValueFromCallbackData<HWND>(info, 0)};
-
-  if (!IsWindow(handle)) {
-    throw Napi::Error::New(env, "Window with current id not found");
-  }
-
-  auto process = getWindowProcess(handle, env);
-
-  Napi::Object obj{Napi::Object::New(env)};
-
-  obj.Set("processId", process.pid);
-  obj.Set("path", process.path);
-
-  return obj;
-}
 
 // Get the bounds of a window
 Napi::Object getWindowBounds(const Napi::CallbackInfo& info) {
@@ -371,16 +310,6 @@ Napi::Boolean isWindow(const Napi::CallbackInfo& info) {
   return Napi::Boolean::New(env, IsWindow(handle));
 }
 
-// Check if a window is visible
-Napi::Boolean isWindowVisible(const Napi::CallbackInfo& info) {
-  Napi::Env env{info.Env()};
-
-  auto handle{getValueFromCallbackData<HWND>(info, 0)};
-
-  return Napi::Boolean::New(env, IsWindowVisible(handle));
-}
-
-
 
 Napi::Object getWindowInfo(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
@@ -447,6 +376,56 @@ Napi::Object window_init(Napi::Env env, Napi::Object exports) {
   exports.Set(Napi::String::New(env, "setWindowBounds"), Napi::Function::New(env, setWindowBounds));
   exports.Set(Napi::String::New(env, "setVisibility"), Napi::Function::New(env, showWindow));
 
-
   return exports;
 }
+
+
+// BOOL CALLBACK enumWindowsProc(HWND hwnd, LPARAM lparam) {
+//   _windows.push_back(reinterpret_cast<int64_t>(hwnd));
+//   return TRUE;
+// }
+//
+// // Get all window handles
+// Napi::Array getWindows(const Napi::CallbackInfo& info) {
+//   Napi::Env env{info.Env()};
+//
+//   _windows.clear();
+//   EnumWindows(&enumWindowsProc, NULL);
+//
+//   auto arr = Napi::Array::New(env);
+//   auto i = 0;
+//   for (auto _win : _windows) {
+//     arr.Set(i++, Napi::Number::New(env, _win));
+//   }
+//
+//   return arr;
+// }
+
+// Initialize a window object
+// Napi::Object initWindow(const Napi::CallbackInfo& info) {
+//   Napi::Env env{info.Env()};
+//
+//   auto handle{getValueFromCallbackData<HWND>(info, 0)};
+//
+//   if (!IsWindow(handle)) {
+//     throw Napi::Error::New(env, "Window with current id not found");
+//   }
+//
+//   auto process = getWindowProcess(handle, env);
+//
+//   Napi::Object obj{Napi::Object::New(env)};
+//
+//   obj.Set("processId", process.pid);
+//   obj.Set("path", process.path);
+//
+//   return obj;
+// }
+
+// Check if a window is visible
+// Napi::Boolean isWindowVisible(const Napi::CallbackInfo& info) {
+//   Napi::Env env{info.Env()};
+//
+//   auto handle{getValueFromCallbackData<HWND>(info, 0)};
+//
+//   return Napi::Boolean::New(env, IsWindowVisible(handle));
+// }
