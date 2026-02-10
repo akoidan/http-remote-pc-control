@@ -113,7 +113,7 @@ void setWindowOpacity(const Napi::CallbackInfo &info) {
   LONG_PTR style = GetWindowLongPtr(handle, GWL_STYLE);
   LONG_PTR exstyle = GetWindowLongPtr(handle, GWL_EXSTYLE);
   bool canUseOpacity = !(style & WS_CHILD) && (exstyle & WS_EX_LAYERED);
-  if (!canUseOpacity && opacity < 1.0) {
+  if (!canUseOpacity) {
     LONG_PTR style{GetWindowLongPtrA(handle, GWL_EXSTYLE)};
     if (!SetWindowLongPtrA(handle, GWL_EXSTYLE, style | WS_EX_LAYERED)) {
       throw Napi::Error::New(env, "Failed to toggle window transparency setting");
