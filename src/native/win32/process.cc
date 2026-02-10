@@ -41,7 +41,7 @@ Napi::Boolean isProcessElevated(const Napi::CallbackInfo &info) {
 
 Napi::Object getProcessInfo(const Napi::CallbackInfo &info) {
   Napi::Env env{info.Env()};
-
+  
   GET_UINT_32(info, 0, pid, DWORD);
 
   // Open process with query rights
@@ -58,6 +58,7 @@ Napi::Object getProcessInfo(const Napi::CallbackInfo &info) {
   DWORD pathSize = MAX_PATH;
   if (!QueryFullProcessImageNameW(pHandle, 0, exePath, &pathSize)) {
     DWORD err = GetLastError();
+    CloseHandle(pHandle);
     throw Napi::Error::New(env, "QueryFullProcessImageNameW failed err=" + std::to_string(err));
   }
   
@@ -65,6 +66,7 @@ Napi::Object getProcessInfo(const Napi::CallbackInfo &info) {
   int utf8Size = WideCharToMultiByte(CP_UTF8, 0, exePath, pathSize, nullptr, 0, nullptr, nullptr);
   if (utf8Size <= 0) {
     DWORD err = GetLastError();
+    CloseHandle(pHandle);
     throw Napi::Error::New(env, "WideCharToMultiByte (size calculation) failed err=" + std::to_string(err));
   }
   
@@ -72,6 +74,7 @@ Napi::Object getProcessInfo(const Napi::CallbackInfo &info) {
   int convertedSize = WideCharToMultiByte(CP_UTF8, 0, exePath, pathSize, &utf8Path[0], utf8Size, nullptr, nullptr);
   if (convertedSize <= 0) {
     DWORD err = GetLastError();
+    CloseHandle(pHandle);
     throw Napi::Error::New(env, "WideCharToMultiByte (conversion) failed err=" + std::to_string(err));
   }
   
@@ -81,6 +84,7 @@ Napi::Object getProcessInfo(const Napi::CallbackInfo &info) {
   PROCESS_MEMORY_COUNTERS_EX pmc;
   if (!GetProcessMemoryInfo(pHandle, (PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc))) {
     DWORD err = GetLastError();
+    CloseHandle(pHandle);
     throw Napi::Error::New(env, "GetProcessMemoryInfo failed err=" + std::to_string(err));
   }
   Napi::Object memory = Napi::Object::New(env);
@@ -94,6 +98,7 @@ Napi::Object getProcessInfo(const Napi::CallbackInfo &info) {
   FILETIME creationTime, exitTime, kernelTime, userTime;
   if (!GetProcessTimes(pHandle, &creationTime, &exitTime, &kernelTime, &userTime)) {
     DWORD err = GetLastError();
+    CloseHandle(pHandle);
     throw Napi::Error::New(env, "GetProcessTimes failed err=" + std::to_string(err));
   }
   Napi::Object times = Napi::Object::New(env);
@@ -116,6 +121,7 @@ Napi::Object getProcessInfo(const Napi::CallbackInfo &info) {
   HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
   if (snapshot == INVALID_HANDLE_VALUE) {
     DWORD err = GetLastError();
+    CloseHandle(pHandle);
     throw Napi::Error::New(env, "CreateToolhelp32Snapshot failed err=" + std::to_string(err));
   }
   
@@ -124,6 +130,7 @@ Napi::Object getProcessInfo(const Napi::CallbackInfo &info) {
   if (!Process32FirstW(snapshot, &pe32)) {
     DWORD err = GetLastError();
     CloseHandle(snapshot);
+    CloseHandle(pHandle);
     throw Napi::Error::New(env, "Process32FirstW failed err=" + std::to_string(err));
   }
   
@@ -139,6 +146,7 @@ Napi::Object getProcessInfo(const Napi::CallbackInfo &info) {
   CloseHandle(snapshot);
 
   if (!found) {
+    CloseHandle(pHandle);
     throw Napi::Error::New(env, "Process not found in snapshot");
   }
 

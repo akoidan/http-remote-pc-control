@@ -1,4 +1,5 @@
 /dist
+coverage
 /gencert
 /build
 /app.exe

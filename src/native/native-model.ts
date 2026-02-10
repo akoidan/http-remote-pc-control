@@ -12,9 +12,26 @@ interface MousePosition {
  y: number;
 }
 
+interface ProcessMemory {
+  workingSetSize: number;
+  peakWorkingSetSize: number;
+  privateUsage: number;
+  pagefileUsage: number;
+}
+interface ProcessCpuTimes {
+  creationTime: number;
+  kernelTime: number;
+  userTime: number;
+}
+
 interface ProcessInfo {
-  pid: number;
-  path: string;
+  processId: number;
+  parentId?: number;
+  threadCount?: number;
+  exePath: string;
+  isElevated: boolean;
+  memory: ProcessMemory;
+  times: ProcessCpuTimes;
 }
 
 interface WindowInfo {
@@ -121,10 +138,9 @@ interface ProcessNativeModule {
 
 
   /**
-   * Checks if http-remote-pc-control has Admin privileges (which also sometimes can't be enought for every operation
-   * Sometimes this process is required to run from AdminPowerShell and admin CMD would return true despite it doesn't have all
+   * Gets detailed information about a process
    */
-  processInfo(): ;
+  getProcessInfo(pid: number): ProcessInfo;
 }
 
 interface KeyboardNativeModule {
