@@ -17,7 +17,7 @@ HKL GetSystemKeyboardLayout();
 HKL GetCurrentKeyboardLayout();
 
 // Get the keyboard layout for a specific language
-HKL GetKeyboardLayoutForLanguage(const char* languageCode);
+HKL GetKeyboardLayoutForLanguage(const char *languageCode);
 
 // Set the keyboard layout for the current thread and active window
 void SetThreadKeyboardLayout(HKL layout, Napi::Env env);
@@ -30,13 +30,13 @@ HKL SaveAndSetKeyboardLayout(HKL newLayout, Napi::Env env);
 void RestoreKeyboardLayout(HKL savedLayout, Napi::Env env);
 
 // Set keyboard layout by layout ID string (e.g., "00000409" for US English)
-void setKeyboardLayoutImpl(const char* layoutId, Napi::Env env);
+void setKeyboardLayoutImpl(const char *layoutId, Napi::Env env);
 
 // Detect language from Unicode character
-const char* DetectLanguageFromChar(wchar_t ch);
+const char *DetectLanguageFromChar(wchar_t ch);
 
 // Get virtual key and required modifiers for a Unicode character
-void GetVirtualKeyForChar(wchar_t ch, HKL layout, UINT* virtualKey, UINT* modifiers, Napi::Env env);
+void GetVirtualKeyForChar(wchar_t ch, HKL layout, UINT *virtualKey, UINT *modifiers, Napi::Env env);
 
 // Check if Caps Lock is enabled
 bool isCapsLockEnabled();

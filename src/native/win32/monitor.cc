@@ -13,7 +13,7 @@ static BOOL CALLBACK enumMonitorsProc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT 
   return TRUE;
 }
 
-static Napi::Array getMonitors(const Napi::CallbackInfo& info) {
+static Napi::Array getMonitors(const Napi::CallbackInfo &info) {
   Napi::Env env{info.Env()};
 
   gMonitors.clear();
@@ -22,13 +22,13 @@ static Napi::Array getMonitors(const Napi::CallbackInfo& info) {
   }
   auto arr = Napi::Array::New(env);
   uint32_t i = 0;
-  for (auto handle : gMonitors) {
+  for (auto handle: gMonitors) {
     arr.Set(i++, Napi::Number::New(env, handle));
   }
   return arr;
 }
 
-static Napi::Number getMonitorFromWindow(const Napi::CallbackInfo& info) {
+static Napi::Number getMonitorFromWindow(const Napi::CallbackInfo &info) {
   Napi::Env env{info.Env()};
   GET_INT_64(info, 0, handle, HWND);
   HMONITOR mid = MonitorFromWindow(handle, 0);
@@ -39,13 +39,13 @@ DEVICE_SCALE_FACTOR getMonitorScale(HMONITOR handle) {
   // Load DLL dynamically
   if (HMODULE hShcore = LoadLibraryA("SHcore.dll")) {
     // Get function pointer
-    using GetScaleFunc = int(__stdcall*)(HMONITOR, DEVICE_SCALE_FACTOR*);
+    using GetScaleFunc = int(__stdcall*)(HMONITOR, DEVICE_SCALE_FACTOR *);
     FARPROC addr = GetProcAddress(hShcore, "GetScaleFactorForMonitor");
     if (auto f = reinterpret_cast<GetScaleFunc>(addr)) {
-        DEVICE_SCALE_FACTOR sf{};
-        f(handle, &sf);
-        FreeLibrary(hShcore);
-        return sf;
+      DEVICE_SCALE_FACTOR sf{};
+      f(handle, &sf);
+      FreeLibrary(hShcore);
+      return sf;
     }
     FreeLibrary(hShcore);
   }
@@ -54,7 +54,7 @@ DEVICE_SCALE_FACTOR getMonitorScale(HMONITOR handle) {
 }
 
 
-static Napi::Object getMonitorInfo(const Napi::CallbackInfo& info) {
+static Napi::Object getMonitorInfo(const Napi::CallbackInfo &info) {
   Napi::Env env{info.Env()};
 
   GET_INT_64(info, 0, handle, HMONITOR);

@@ -5,7 +5,7 @@
 #include <windows.h>
 #include "./headers/validators.h"
 
-Napi::Number createProcess(const Napi::CallbackInfo& info) {
+Napi::Number createProcess(const Napi::CallbackInfo &info) {
   Napi::Env env{info.Env()};
 
   GET_STRING(info, 0, path);
@@ -19,22 +19,22 @@ Napi::Number createProcess(const Napi::CallbackInfo& info) {
   return Napi::Number::New(env, processInfo.dwProcessId);
 }
 
-Napi::Boolean isProcessElevated(const Napi::CallbackInfo& info) {
-    Napi::Env env{info.Env()};
-    HANDLE hToken = nullptr;
-    if (!OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &hToken)) {
-        return Napi::Boolean::New(env, false);
-    }
+Napi::Boolean isProcessElevated(const Napi::CallbackInfo &info) {
+  Napi::Env env{info.Env()};
+  HANDLE hToken = nullptr;
+  if (!OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &hToken)) {
+    return Napi::Boolean::New(env, false);
+  }
 
-    TOKEN_ELEVATION elevation;
-    DWORD retLen = 0;
-    if (!GetTokenInformation(hToken, TokenElevation, &elevation, sizeof(elevation), &retLen)) {
-        CloseHandle(hToken);
-        return Napi::Boolean::New(env, false);
-    }
-
+  TOKEN_ELEVATION elevation;
+  DWORD retLen = 0;
+  if (!GetTokenInformation(hToken, TokenElevation, &elevation, sizeof(elevation), &retLen)) {
     CloseHandle(hToken);
-    return Napi::Boolean::New(env, elevation.TokenIsElevated != 0);
+    return Napi::Boolean::New(env, false);
+  }
+
+  CloseHandle(hToken);
+  return Napi::Boolean::New(env, elevation.TokenIsElevated != 0);
 }
 
 Napi::Object processInit(Napi::Env env, Napi::Object exports) {

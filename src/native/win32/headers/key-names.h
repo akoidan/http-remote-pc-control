@@ -1,7 +1,7 @@
 #pragma once
 
 typedef struct {
-  const char* name;
+  const char *name;
   int key;
 } KeyNames;
 

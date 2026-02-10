@@ -7,7 +7,7 @@
 #define ABSOLUTE_COORD_CONST 65536
 
 
-void setMousePosition(const Napi::CallbackInfo& info) {
+void setMousePosition(const Napi::CallbackInfo &info) {
   GET_OBJECT(info, 0, bounds);
   size_t nx = bounds.Get("x").ToNumber().Int32Value();
   size_t ny = bounds.Get("y").ToNumber().Int32Value();
@@ -40,22 +40,22 @@ void toggleMouse(bool down, unsigned int button) {
   input.type = INPUT_MOUSE;
 
   switch (button) {
-  case LEFT_BUTTON:
-    input.mi.dwFlags = down ? MOUSEEVENTF_LEFTDOWN : MOUSEEVENTF_LEFTUP;
-    break;
-  case RIGHT_BUTTON:
-    input.mi.dwFlags = down ? MOUSEEVENTF_RIGHTDOWN : MOUSEEVENTF_RIGHTUP;
-    break;
-  case MIDDLE_BUTTON:
-    input.mi.dwFlags = down ? MOUSEEVENTF_MIDDLEDOWN : MOUSEEVENTF_MIDDLEUP;
-    break;
+    case LEFT_BUTTON:
+      input.mi.dwFlags = down ? MOUSEEVENTF_LEFTDOWN : MOUSEEVENTF_LEFTUP;
+      break;
+    case RIGHT_BUTTON:
+      input.mi.dwFlags = down ? MOUSEEVENTF_RIGHTDOWN : MOUSEEVENTF_RIGHTUP;
+      break;
+    case MIDDLE_BUTTON:
+      input.mi.dwFlags = down ? MOUSEEVENTF_MIDDLEDOWN : MOUSEEVENTF_MIDDLEUP;
+      break;
   }
 
   SendInput(1, &input, sizeof(INPUT));
 }
 
 
-void setMouseButtonToState(const Napi::CallbackInfo& info) {
+void setMouseButtonToState(const Napi::CallbackInfo &info) {
   Napi::Env env = info.Env();
   GET_INT_32_NC(info, 0, button, unsigned int);
   GET_BOOL(info, 1, isDown);
@@ -66,7 +66,7 @@ void setMouseButtonToState(const Napi::CallbackInfo& info) {
   toggleMouse(isDown, button);
 }
 
-Napi::Object getMousePosition(const Napi::CallbackInfo& info) {
+Napi::Object getMousePosition(const Napi::CallbackInfo &info) {
   Napi::Env env = info.Env();
   POINT point;
   if (!GetCursorPos(&point)) {
@@ -88,19 +88,19 @@ Napi::Object getMousePosition(const Napi::CallbackInfo& info) {
 
   // Ensure the position is within bounds
   if (rx < 0) {
-    LOG("Cursor pos x=%ld is smaller than 0, setting 0", (long)point.x);
+    LOG("Cursor pos x=%ld is smaller than 0, setting 0", (long) point.x);
     rx = 0;
   }
   if (ry < 0) {
-    LOG("Cursor pos y=%ld is smaller than 0, setting 0", (long)point.y);
+    LOG("Cursor pos y=%ld is smaller than 0, setting 0", (long) point.y);
     ry = 0;
   }
   if (rx >= width) {
-    LOG("Cursor pos x=%ld is greater than width %ld, setting %ld", (long)point.y, long(width), long(height - 1));
+    LOG("Cursor pos x=%ld is greater than width %ld, setting %ld", (long) point.y, long(width), long(height - 1));
     rx = width - 1;
   }
   if (ry >= height) {
-    LOG("Cursor pos y=%ld is greater than height %ld, setting %ld", (long)point.y, long(height), long(height - 1));
+    LOG("Cursor pos y=%ld is greater than height %ld, setting %ld", (long) point.y, long(height), long(height - 1));
     ry = height - 1;
   }
 

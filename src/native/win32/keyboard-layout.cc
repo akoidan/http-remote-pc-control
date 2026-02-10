@@ -61,7 +61,7 @@ HKL GetCurrentKeyboardLayout() {
   return GetKeyboardLayout(0);
 }
 
-HKL GetKeyboardLayoutForLanguage(const char* languageCode) {
+HKL GetKeyboardLayoutForLanguage(const char *languageCode) {
   std::string lang(languageCode);
   auto it = LAYOUT_MAP.find(lang);
 
@@ -75,7 +75,7 @@ HKL GetKeyboardLayoutForLanguage(const char* languageCode) {
 
   // If we couldn't load the specific layout, try to find a compatible one
   std::vector<HKL> layouts = GetInstalledKeyboardLayouts();
-  for (HKL layout : layouts) {
+  for (HKL layout: layouts) {
     char layoutName[KL_NAMELENGTH];
     if (GetKeyboardLayoutNameA(layoutName)) {
       std::string name(layoutName);
@@ -109,7 +109,7 @@ void SetThreadKeyboardLayout(HKL layout, Napi::Env env) {
     if (AttachThreadInput(GetCurrentThreadId(), threadId, TRUE)) {
       // Set layout for the foreground window's thread
       SystemParametersInfo(SPI_SETDEFAULTINPUTLANG, 0, &layout, SPIF_SENDCHANGE);
-      PostMessage(foreground, WM_INPUTLANGCHANGEREQUEST, 0, (LPARAM)layout);
+      PostMessage(foreground, WM_INPUTLANGCHANGEREQUEST, 0, (LPARAM) layout);
       // Detach thread input
       AttachThreadInput(GetCurrentThreadId(), threadId, FALSE);
     }
@@ -130,8 +130,7 @@ void RestoreKeyboardLayout(HKL savedLayout, Napi::Env env) {
 }
 
 // Set keyboard layout by layout ID string (e.g., "00000409" for US English)
-void setKeyboardLayoutImpl(const char* layoutId, Napi::Env env) {
-
+void setKeyboardLayoutImpl(const char *layoutId, Napi::Env env) {
   if (!layoutId || strlen(layoutId) == 0) {
     throw Napi::Error::New(env, "Invalid parameter lang code");
   }
@@ -190,7 +189,7 @@ void setKeyboardLayoutImpl(const char* layoutId, Napi::Env env) {
   }
 }
 
-const char* DetectLanguageFromChar(wchar_t ch) {
+const char *DetectLanguageFromChar(wchar_t ch) {
   if (ch <= 0x007F) return "en"; // ASCII (English)
   else if (ch >= 0x0400 && ch <= 0x04FF) return "ru"; // Cyrillic
   else if (ch >= 0x0500 && ch <= 0x052F) return "uk"; // Ukrainian
@@ -199,15 +198,14 @@ const char* DetectLanguageFromChar(wchar_t ch) {
     if (ch >= 0x00C0 && ch <= 0x00C5) return "fr"; // French
     if (ch >= 0x00D6 && ch <= 0x00DC) return "de"; // German
     return "en";
-  }
-  else if (ch >= 0x3040 && ch <= 0x309F) return "ja"; // Hiragana
+  } else if (ch >= 0x3040 && ch <= 0x309F) return "ja"; // Hiragana
   else if (ch >= 0x30A0 && ch <= 0x30FF) return "ja"; // Katakana
   else if (ch >= 0x4E00 && ch <= 0x9FFF) return "zh"; // CJK
   else if (ch >= 0xAC00 && ch <= 0xD7AF) return "ko"; // Korean
   return "en"; // Default to English
 }
 
-void GetVirtualKeyForChar(wchar_t ch, HKL layout, UINT* virtualKey, UINT* modifiers, Napi::Env env) {
+void GetVirtualKeyForChar(wchar_t ch, HKL layout, UINT *virtualKey, UINT *modifiers, Napi::Env env) {
   SHORT vk = VkKeyScanExW(ch, layout);
   if (vk == -1) {
     throw Napi::Error::New(env, "Unable to map character to virtual key");

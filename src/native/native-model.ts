@@ -81,7 +81,7 @@ interface WindowNativeModule {
    */
   setWindowOpacity(handle: number, opacity: number): void;
   /**
-   * Attaches to window, sharing common keyboard
+   * Attaches to window, sharing common keyboard. Only is available on Windows OS
    */
   setWindowAttached(handle: number): void;
 }

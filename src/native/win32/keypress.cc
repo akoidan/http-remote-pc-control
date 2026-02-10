@@ -12,45 +12,45 @@
 
 // Define all modifiers in one place
 static const KeyModifier MODIFIERS[] = {
-    {"shift", 1 << 0, VK_LSHIFT, 1},
-    {"control", 1 << 1, VK_LCONTROL, 2},
-    {"ctrl", 1 << 1, VK_LCONTROL, 2},
-    {"alt", 1 << 2, VK_LMENU, 4},
-    {"win", 1 << 3, VK_LWIN, 0},
-    {"command", 1 << 3, VK_LWIN, 0},
-    {"meta", 1 << 3, VK_LWIN, 0},
+  {"shift", 1 << 0, VK_LSHIFT, 1},
+  {"control", 1 << 1, VK_LCONTROL, 2},
+  {"ctrl", 1 << 1, VK_LCONTROL, 2},
+  {"alt", 1 << 2, VK_LMENU, 4},
+  {"win", 1 << 3, VK_LWIN, 0},
+  {"command", 1 << 3, VK_LWIN, 0},
+  {"meta", 1 << 3, VK_LWIN, 0},
 };
 static const int MODIFIER_COUNT = sizeof(MODIFIERS) / sizeof(MODIFIERS[0]);
 
-unsigned int getModifierFlag(const char* name) {
-    for (int i = 0; i < MODIFIER_COUNT; i++) {
-        if (strcmp(name, MODIFIERS[i].name) == 0) {
-            return MODIFIERS[i].flag;
-        }
+unsigned int getModifierFlag(const char *name) {
+  for (int i = 0; i < MODIFIER_COUNT; i++) {
+    if (strcmp(name, MODIFIERS[i].name) == 0) {
+      return MODIFIERS[i].flag;
     }
-    return 0;
+  }
+  return 0;
 }
 
 unsigned int getModifiersFromWindowsBits(int windowsModifiers) {
-    unsigned int flags = 0;
-    for (int i = 0; i < MODIFIER_COUNT; i++) {
-        if (MODIFIERS[i].winBit && (windowsModifiers & MODIFIERS[i].winBit)) {
-            flags |= MODIFIERS[i].flag;
-        }
+  unsigned int flags = 0;
+  for (int i = 0; i < MODIFIER_COUNT; i++) {
+    if (MODIFIERS[i].winBit && (windowsModifiers & MODIFIERS[i].winBit)) {
+      flags |= MODIFIERS[i].flag;
     }
-    return flags;
+  }
+  return flags;
 }
 
 // Helper function to convert Windows modifiers to our flags
 unsigned int convertWindowsModifiersToFlags(int windowsModifiers) {
-    return getModifiersFromWindowsBits(windowsModifiers);
+  return getModifiersFromWindowsBits(windowsModifiers);
 }
 
 void win32KeyEvent(int key, unsigned int flags) {
-    UINT scan = MapVirtualKey(key & 0xff, MAPVK_VK_TO_VSC);
+  UINT scan = MapVirtualKey(key & 0xff, MAPVK_VK_TO_VSC);
 
-    /* Set the scan code for extended keys */
-    switch (key) {
+  /* Set the scan code for extended keys */
+  switch (key) {
     case VK_RCONTROL:
     case VK_SNAPSHOT: /* Print Screen */
     case VK_RMENU: /* Right Alt / Alt Gr */
@@ -83,181 +83,181 @@ void win32KeyEvent(int key, unsigned int flags) {
     case VK_BROWSER_FAVORITES:
     case VK_BROWSER_HOME:
     case VK_LAUNCH_MAIL: {
-        flags |= KEYEVENTF_EXTENDEDKEY;
-        break;
+      flags |= KEYEVENTF_EXTENDEDKEY;
+      break;
     }
-    }
+  }
 
-    INPUT keyboardInput;
-    keyboardInput.type = INPUT_KEYBOARD;
-    keyboardInput.ki.wScan = (WORD)scan;
-    keyboardInput.ki.wVk = (WORD)key;
-    keyboardInput.ki.dwFlags = KEYEVENTF_SCANCODE | flags;
-    keyboardInput.ki.time = 0;
-    SendInput(1, &keyboardInput, sizeof(keyboardInput));
+  INPUT keyboardInput;
+  keyboardInput.type = INPUT_KEYBOARD;
+  keyboardInput.ki.wScan = (WORD) scan;
+  keyboardInput.ki.wVk = (WORD) key;
+  keyboardInput.ki.dwFlags = KEYEVENTF_SCANCODE | flags;
+  keyboardInput.ki.time = 0;
+  SendInput(1, &keyboardInput, sizeof(keyboardInput));
 }
 
 void toggleKeyCode(unsigned int code, const bool down, unsigned int flags) {
-    const DWORD dwFlags = down ? 0 : KEYEVENTF_KEYUP;
+  const DWORD dwFlags = down ? 0 : KEYEVENTF_KEYUP;
 
-    if (!down) {
-        win32KeyEvent(code, dwFlags);
-    }
+  if (!down) {
+    win32KeyEvent(code, dwFlags);
+  }
 
-    // Handle modifiers
-    for (int i = 0; i < MODIFIER_COUNT; i++) {
-        if (flags & MODIFIERS[i].flag) {
-            win32KeyEvent(MODIFIERS[i].vkey, dwFlags);
-        }
+  // Handle modifiers
+  for (int i = 0; i < MODIFIER_COUNT; i++) {
+    if (flags & MODIFIERS[i].flag) {
+      win32KeyEvent(MODIFIERS[i].vkey, dwFlags);
     }
+  }
 
-    if (down) {
-        win32KeyEvent(code, dwFlags);
-    }
+  if (down) {
+    win32KeyEvent(code, dwFlags);
+  }
 }
 
 void toggleKey(char c, const bool down, unsigned int flags) {
-    unsigned int keyCode = VkKeyScan(c);
-    flags |= getModifiersFromWindowsBits(keyCode >> 8); // Add modifiers from VkKeyScan
-    keyCode = keyCode & 0xff; // Mask out modifiers
-    toggleKeyCode(keyCode, down, flags);
+  unsigned int keyCode = VkKeyScan(c);
+  flags |= getModifiersFromWindowsBits(keyCode >> 8); // Add modifiers from VkKeyScan
+  keyCode = keyCode & 0xff; // Mask out modifiers
+  toggleKeyCode(keyCode, down, flags);
 }
 
-std::wstring utf8_to_utf16(Napi::Env env, const char* str) {
-    try {
-        std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
-        return converter.from_bytes(str);
-    } catch (...) {
-        throw Napi::Error::New(env, "Unable to do string conversion");
-    }
+std::wstring utf8_to_utf16(Napi::Env env, const char *str) {
+  try {
+    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t> > converter;
+    return converter.from_bytes(str);
+  } catch (...) {
+    throw Napi::Error::New(env, "Unable to do string conversion");
+  }
 }
 
-void typeString(const Napi::CallbackInfo& info) {
-    Napi::Env env = info.Env();
-    GET_STRING(info, 0, sstr)
-    const char* str = sstr.c_str();
+void typeString(const Napi::CallbackInfo &info) {
+  Napi::Env env = info.Env();
+  GET_STRING(info, 0, sstr)
+  const char *str = sstr.c_str();
 
-    // Ensure Caps Lock is disabled before typing
-    ensureCapsLockDisabled();
+  // Ensure Caps Lock is disabled before typing
+  ensureCapsLockDisabled();
 
-    HKL savedLayout = GetSystemKeyboardLayout();
-    HKL currentLayout = savedLayout;
+  HKL savedLayout = GetSystemKeyboardLayout();
+  HKL currentLayout = savedLayout;
 
-    // Convert input UTF-8 string to UTF-16
-    std::wstring wstr = utf8_to_utf16(env, str);
+  // Convert input UTF-8 string to UTF-16
+  std::wstring wstr = utf8_to_utf16(env, str);
 
-    for (size_t i = 0; i < wstr.length(); i++) {
-        wchar_t wc = wstr[i];
+  for (size_t i = 0; i < wstr.length(); i++) {
+    wchar_t wc = wstr[i];
 
-        // Skip surrogate pairs - we'll handle them in the next iteration
-        if (i < wstr.length() - 1 && (0xD800 <= wc && wc <= 0xDBFF)) {
-            continue;
-        }
-
-        // Detect language and switch layout if needed
-        const char* detectedLang = DetectLanguageFromChar(wc);
-        HKL neededLayout = GetKeyboardLayoutForLanguage(detectedLang);
-
-        if (neededLayout != currentLayout) {
-            LOG("Switching keyboard layout lang=%s from=0x%p to=0x%p", 
-               detectedLang, 
-               reinterpret_cast<void*>(currentLayout), 
-               reinterpret_cast<void*>(neededLayout));
-            SetThreadKeyboardLayout(neededLayout, env);
-            currentLayout = neededLayout;
-            Sleep(50);
-            // wait timeout so first letters typging is not affected by lang changed
-        }
-
-        // Get virtual key and modifiers for the character
-        UINT virtualKey, modifiers;
-        GetVirtualKeyForChar(wc, currentLayout, &virtualKey, &modifiers, env);
-            // Convert Windows modifiers to our flags
-        unsigned int flags = getModifiersFromWindowsBits(modifiers);
-
-        // Use toggleKeyCode to handle the keypress with modifiers
-        toggleKeyCode(virtualKey, true, flags);
-        toggleKeyCode(virtualKey, false, flags);
+    // Skip surrogate pairs - we'll handle them in the next iteration
+    if (i < wstr.length() - 1 && (0xD800 <= wc && wc <= 0xDBFF)) {
+      continue;
     }
-    // Restore the original layout, wait timeout so last letter typing is not affected by lang change
-    // leave the layout as it was, fuck it
-    // Sleep(50);
-    // SetThreadKeyboardLayout(savedLayout);
+
+    // Detect language and switch layout if needed
+    const char *detectedLang = DetectLanguageFromChar(wc);
+    HKL neededLayout = GetKeyboardLayoutForLanguage(detectedLang);
+
+    if (neededLayout != currentLayout) {
+      LOG("Switching keyboard layout lang=%s from=0x%p to=0x%p",
+          detectedLang,
+          reinterpret_cast<void *>(currentLayout),
+          reinterpret_cast<void *>(neededLayout));
+      SetThreadKeyboardLayout(neededLayout, env);
+      currentLayout = neededLayout;
+      Sleep(50);
+      // wait timeout so first letters typging is not affected by lang changed
+    }
+
+    // Get virtual key and modifiers for the character
+    UINT virtualKey, modifiers;
+    GetVirtualKeyForChar(wc, currentLayout, &virtualKey, &modifiers, env);
+    // Convert Windows modifiers to our flags
+    unsigned int flags = getModifiersFromWindowsBits(modifiers);
+
+    // Use toggleKeyCode to handle the keypress with modifiers
+    toggleKeyCode(virtualKey, true, flags);
+    toggleKeyCode(virtualKey, false, flags);
+  }
+  // Restore the original layout, wait timeout so last letter typing is not affected by lang change
+  // leave the layout as it was, fuck it
+  // Sleep(50);
+  // SetThreadKeyboardLayout(savedLayout);
 }
 
 unsigned int getFlag(napi_env env, napi_value value) {
-    char buffer[32];
-    size_t copied;
-    napi_get_value_string_utf8(env, value, buffer, sizeof(buffer), &copied);
-    return getModifierFlag(buffer);
+  char buffer[32];
+  size_t copied;
+  napi_get_value_string_utf8(env, value, buffer, sizeof(buffer), &copied);
+  return getModifierFlag(buffer);
 }
 
 unsigned int arrayToFlags(napi_env env, napi_value value) {
-    unsigned int flags = 0;
+  unsigned int flags = 0;
 
-    uint32_t length;
-    napi_get_array_length(env, value, &length);
+  uint32_t length;
+  napi_get_array_length(env, value, &length);
 
-    for (uint32_t i = 0; i < length; i++) {
-        napi_value element;
-        napi_get_element(env, value, i, &element);
-        unsigned int f = getFlag(env, element);
+  for (uint32_t i = 0; i < length; i++) {
+    napi_value element;
+    napi_get_element(env, value, i, &element);
+    unsigned int f = getFlag(env, element);
 
-        flags = (unsigned int)(flags | f);
+    flags = (unsigned int) (flags | f);
+  }
+  return flags;
+}
+
+unsigned int assignKeyCode(const char *keyName, Napi::Env env) {
+  if (strlen(keyName) == 1) {
+    return VkKeyScan(keyName[0]);
+  }
+  KeyNames *kn = key_names;
+  while (kn->name) {
+    if (_stricmp(keyName, kn->name) == 0) {
+      return kn->key;
     }
-    return flags;
+    kn++;
+  }
+  throw Napi::Error::New(env, "Keycode not found");
 }
 
-unsigned int assignKeyCode(const char* keyName, Napi::Env env) {
-    if (strlen(keyName) == 1) {
-        return VkKeyScan(keyName[0]);
-    }
-    KeyNames* kn = key_names;
-    while (kn->name) {
-        if (_stricmp(keyName, kn->name) == 0) {
-            return kn->key;
-        }
-        kn++;
-    }
-    throw Napi::Error::New(env, "Keycode not found");
+void keyTap(const Napi::CallbackInfo &info) {
+  Napi::Env env = info.Env();
+
+  ASSERT_ARRAY(info, 1)
+  GET_STRING(info, 0, keyName)
+  unsigned int flags = arrayToFlags(env, info[1]);
+  unsigned int key = assignKeyCode(keyName.c_str(), env);
+  toggleKeyCode(key, true, flags);
+  toggleKeyCode(key, false, flags);
 }
 
-void keyTap(const Napi::CallbackInfo& info) {
-    Napi::Env env = info.Env();
+void keyToggle(const Napi::CallbackInfo &info) {
+  Napi::Env env = info.Env();
 
-    ASSERT_ARRAY(info, 1)
-    GET_STRING(info, 0, keyName)
-    unsigned int flags = arrayToFlags(env, info[1]);
-    unsigned int key = assignKeyCode(keyName.c_str(), env);
-    toggleKeyCode(key, true, flags);
-    toggleKeyCode(key, false, flags);
-}
+  GET_STRING(info, 0, keyName)
+  ASSERT_ARRAY(info, 1)
+  GET_BOOL(info, 2, down)
 
-void keyToggle(const Napi::CallbackInfo& info) {
-    Napi::Env env = info.Env();
+  unsigned int flags = arrayToFlags(env, info[1]);
+  unsigned int key = assignKeyCode(keyName.c_str(), env);
 
-    GET_STRING(info, 0, keyName)
-    ASSERT_ARRAY(info, 1)
-    GET_BOOL(info, 2, down)
-
-    unsigned int flags = arrayToFlags(env, info[1]);
-    unsigned int key = assignKeyCode(keyName.c_str(), env);
-
-    toggleKeyCode(key, down, flags);
+  toggleKeyCode(key, down, flags);
 }
 
 
-void setKeyboardLayout(const Napi::CallbackInfo& info) {
-    Napi::Env env = info.Env();
+void setKeyboardLayout(const Napi::CallbackInfo &info) {
+  Napi::Env env = info.Env();
 
-    GET_STRING_UTF8(info, 0, layoutId)
-    setKeyboardLayoutImpl(layoutId.c_str(), env);
+  GET_STRING_UTF8(info, 0, layoutId)
+  setKeyboardLayoutImpl(layoutId.c_str(), env);
 }
 
 Napi::Object keyboardInit(Napi::Env env, Napi::Object exports) {
-    exports.Set("keyTap", Napi::Function::New(env, keyTap));
-    exports.Set("keyToggle", Napi::Function::New(env, keyToggle));
-    exports.Set("typeString", Napi::Function::New(env, typeString));
-    exports.Set("setKeyboardLayout", Napi::Function::New(env, setKeyboardLayout));
-    return exports;
+  exports.Set("keyTap", Napi::Function::New(env, keyTap));
+  exports.Set("keyToggle", Napi::Function::New(env, keyToggle));
+  exports.Set("typeString", Napi::Function::New(env, typeString));
+  exports.Set("setKeyboardLayout", Napi::Function::New(env, setKeyboardLayout));
+  return exports;
 }
