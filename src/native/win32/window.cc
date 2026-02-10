@@ -194,7 +194,7 @@ void setWindowState(const Napi::CallbackInfo& info) {
 // Bring a window to the top
 Napi::Boolean setWindowActive(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
-  GET_INT_32(info, 0, handle, HWND);
+  GET_INT_64(info, 0, handle, HWND);
   if (!IsWindow(handle)) {
     throw Napi::Error::New(env, "Window with current id not found");
   }
