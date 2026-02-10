@@ -2,6 +2,8 @@
 const path = require('path');
 const native = require('./build/Debug/native');
 
+console.log(native)
+
 // Helper function to run tests with error handling
 async function test(name, fn) {
   try {

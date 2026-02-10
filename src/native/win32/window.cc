@@ -253,37 +253,6 @@ Napi::Object getWindowInfo(const Napi::CallbackInfo& info) {
   return result;
 }
 
-void setVisibility(const Napi::CallbackInfo& info) {
-  Napi::Env env{info.Env()};
-
-  GET_INT_64(info, 0, handle, HWND);
-
-  if (!IsWindow(handle)) {
-    throw Napi::Error::New(env, "Invalid window handle");
-  }
-
-  GET_STRING(info, 1, type);
-
-  int flag = SW_SHOW;
-
-  if (type == "show")
-    flag = SW_SHOW;
-  else if (type == "hide")
-    flag = SW_HIDE;
-  else if (type == "minimize")
-    flag = SW_MINIMIZE;
-  else if (type == "restore")
-    flag = SW_RESTORE;
-  else if (type == "maximize")
-    flag = SW_MAXIMIZE;
-  else {
-    throw Napi::Error::New(env, "Invalid window show type");
-  }
-
-  if (!ShowWindow(handle, flag)) {
-    throw Napi::Error::New(env, "Failed to change window state");
-  }
-}
 
 // Initialize the window module
 Napi::Object window_init(Napi::Env env, Napi::Object exports) {
@@ -294,7 +263,6 @@ Napi::Object window_init(Napi::Env env, Napi::Object exports) {
   exports.Set(Napi::String::New(env, "setWindowState"), Napi::Function::New(env, setWindowState));
   exports.Set(Napi::String::New(env, "getWindowInfo"), Napi::Function::New(env, getWindowInfo));
   exports.Set(Napi::String::New(env, "setWindowBounds"), Napi::Function::New(env, setWindowBounds));
-  exports.Set(Napi::String::New(env, "setVisibility"), Napi::Function::New(env, setVisibility));
 
   // WINDOWS only
   exports.Set(Napi::String::New(env, "setWindowIsTransparent"), Napi::Function::New(env, setWindowIsTransparent));

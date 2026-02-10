@@ -55,7 +55,6 @@ interface WindowNativeModule {
   setWindowState(handle: number, visibility: WindowAction): void;
   getWindowInfo(handle: number): WindowInfo;
   setWindowBounds(handle: number, bounds: WindowBounds): void;
-  setVisibility(handle: number, action: WindowAction): void;
   
   // Window transparency
   setWindowIsTransparent(handle: number, enabled: boolean): void;
