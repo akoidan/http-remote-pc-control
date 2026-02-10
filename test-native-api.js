@@ -74,6 +74,27 @@ async function testWindowApis() {
   console.log('\n7. Testing setWindowActive()');
   native.setWindowActive(activeWindowId);
   console.log('  Window brought to top');
+  
+  // Test getting windows by process ID
+  console.log('\n8. Testing getWindowsByProcessId()');
+  const currentPid = process.pid;
+  console.log('  Current process ID:', currentPid);
+  
+  const windowHandles = native.getWindowsByProcessId(currentPid);
+  console.log('  Windows for current process:', windowHandles);
+  
+  if (!Array.isArray(windowHandles)) {
+    throw new Error('Expected an array of window handles');
+  }
+  
+  // If there are windows, test getting info for the first one
+  if (windowHandles.length > 0) {
+    console.log('  First window handle:', windowHandles[0]);
+    const windowInfo = native.getWindowInfo(windowHandles[0]);
+    console.log('  First window info:', JSON.stringify(windowInfo, null, 2));
+  } else {
+    console.log('  No windows found for current process');
+  }
 }
 
 // Test Monitor APIs
