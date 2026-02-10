@@ -45,7 +45,7 @@ This command already builds the native module in Debug mode.
   yarn start
   ```  
 #### Windows:
-You can only debug with VisualStudio or with `cdb`, since that toolchain was required for cmakejs. Clion wouldn't be able to pull sourcemaps. You need to  attach to the remote process that was started above.  
+You can only debug with VisualStudio or with `cdb`, since that toolchain was required for cmakejs. Clion wouldn't be able to pull sourcemaps. You need to  attach to the remote process that was started above.
 #### Linux
 You can use any debugger IDE. E.g. `gdb` or  CLion. You need to attach to the already running Node.js process. IDE should automatically pull sourcemaps, allowing you to place breakpoints in native C++ code.
 
@@ -55,17 +55,25 @@ CLion does not automatically pick up Node.js and N-API headers. You must add the
 **Steps:**
 1. Go to **Settings → Build, Execution, Deployment → CMake**.
 2. Add a new configuration.
-3. Add the following to **CMake options** (adjust paths for your system).
+3. Build directory: `build`
+4. Add the following Options:
 
 #### Arch Linux example
 ```cmake
 -DCMAKE_CXX_FLAGS="-I/home/andrew/.nvm/versions/node/v18.18.2/include/node -I/home/andrew/it/my-projects/http-remote-pc-control/node_modules/node-addon-api"
 ```
+**Generator** (adjust to your CLI match system).
+cmake or ninja, depending what your cli supports
 
 #### Windows example
+**CMake options** (adjust paths for your system).
 ```cmake
 -DCMAKE_CXX_FLAGS="-IC:\Users\death\.cmake-js\node-x64\v18.20.5\include\node -IC:\Users\death\WebstormProjects\http-remote-pc-control\node_modules\node-addon-api"
 ```
+**Generator** (adjust to your CLI match system).
+`Visual Studio 17 2022`. 
+
+If you just need to build and syntax support on CLION. Use settings cmake
 
 ### Required Directories
 You need to provide **two include directories**:
