@@ -10,7 +10,14 @@ type varName = reinterpret_cast<type>(info[index].As<Napi::Number>().Int64Value(
 if (info.Length() <= index || !info[index].IsNumber()) { \
 throw Napi::TypeError::New(info.Env(), "Argument " #index " must be a number"); \
 } \
-type varName = reinterpret_cast<type>(info[index].As<Napi::Number>().Int32Value())
+type varName = reinterpret_cast<type>(info[index].As<Napi::Number>().Uint32Value())
+
+
+#define GET_UINT_32(info, index, varName, type) \
+if (info.Length() <= index || !info[index].IsNumber()) { \
+throw Napi::TypeError::New(info.Env(), "Argument " #index " must be a number"); \
+} \
+type varName = info[0].As<Napi::Number>().Uint32Value();
 
 #define ASSERT_STRING(info, index) \
 if (info.Length() <= index || !info[index].IsString()) { \

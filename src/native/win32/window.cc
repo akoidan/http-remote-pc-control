@@ -86,10 +86,7 @@ BOOL CALLBACK enumWindowsByProcessIdProc(HWND hwnd, LPARAM lparam) {
 Napi::Array getWindowsByProcessId(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
-
-  ASSERT_NUMBER(info, 0)
-
-  DWORD processId = info[0].As<Napi::Number>().Uint32Value();
+  GET_UINT_32(info, 0, processId, DWORD);
   EnumWindowsCallbackArgs args{processId, {}};
   
   if (!EnumWindows(enumWindowsByProcessIdProc, reinterpret_cast<LPARAM>(&args))) {
@@ -106,33 +103,11 @@ Napi::Array getWindowsByProcessId(const Napi::CallbackInfo& info) {
 }
 
 
-
-// Get the bounds of a window
-Napi::Object getWindowBounds(const Napi::CallbackInfo& info) {
-  Napi::Env env{info.Env()};
-
-  ASSERT_NUMBER(info, 0)
-  HWND handle = reinterpret_cast<HWND>(info[0].As<Napi::Number>().Int64Value());
-
-  RECT rect{};
-  GetWindowRect(handle, &rect);
-
-  Napi::Object bounds{Napi::Object::New(env)};
-
-  bounds.Set("x", rect.left);
-  bounds.Set("y", rect.top);
-  bounds.Set("width", rect.right - rect.left);
-  bounds.Set("height", rect.bottom - rect.top);
-
-  return bounds;
-}
-
 // Get the title of a window
 Napi::String getWindowTitle(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
-  ASSERT_NUMBER(info, 0)
-    HWND handle = reinterpret_cast<HWND>(info[0].As<Napi::Number>().Int64Value());
+  GET_INT_64(info, 0, handle, HWND);
 
   int bufsize = GetWindowTextLengthW(handle) + 1;
   LPWSTR t = new WCHAR[bufsize];
@@ -148,8 +123,7 @@ Napi::String getWindowTitle(const Napi::CallbackInfo& info) {
 Napi::Number getWindowOpacity(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
-  ASSERT_NUMBER(info, 0)
-    HWND handle = reinterpret_cast<HWND>(info[0].As<Napi::Number>().Int64Value());
+  GET_INT_64(info, 0, handle, HWND);
 
   BYTE opacity{};
   GetLayeredWindowAttributes(handle, NULL, &opacity, NULL);
@@ -161,8 +135,7 @@ Napi::Number getWindowOpacity(const Napi::CallbackInfo& info) {
 Napi::Number getWindowOwner(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
-  ASSERT_NUMBER(info, 0)
-    HWND handle = reinterpret_cast<HWND>(info[0].As<Napi::Number>().Int64Value());
+  GET_INT_64(info, 0, handle, HWND);
 
   return Napi::Number::New(env, GetWindowLongPtrA(handle, GWLP_HWNDPARENT));
 }
@@ -171,8 +144,8 @@ Napi::Number getWindowOwner(const Napi::CallbackInfo& info) {
 void toggleWindowTransparency(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
-  ASSERT_NUMBER(info, 0)
-  HWND handle = reinterpret_cast<HWND>(info[0].As<Napi::Number>().Int64Value());
+  GET_INT_64(info, 0, handle, HWND);
+
   if (!IsWindow(handle)) {
     throw Napi::Error::New(env, "Invalid window handle");
   }
@@ -189,8 +162,8 @@ void toggleWindowTransparency(const Napi::CallbackInfo& info) {
 void setWindowOpacity(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
-  ASSERT_NUMBER(info, 0)
-  HWND handle = reinterpret_cast<HWND>(info[0].As<Napi::Number>().Int64Value());
+  GET_INT_64(info, 0, handle, HWND);
+
   if (!IsWindow(handle)) {
     throw Napi::Error::New(env, "Invalid window handle");
   }
@@ -209,8 +182,7 @@ void setWindowOpacity(const Napi::CallbackInfo& info) {
 void setWindowBounds(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
-  ASSERT_NUMBER(info, 0)
-  HWND handle = reinterpret_cast<HWND>(info[0].As<Napi::Number>().Int64Value());
+  GET_INT_64(info, 0, handle, HWND);
   if (!IsWindow(handle)) {
     throw Napi::Error::New(env, "Invalid window handle");
   }
@@ -234,8 +206,7 @@ void setWindowBounds(const Napi::CallbackInfo& info) {
 void setWindowOwner(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
-  ASSERT_NUMBER(info, 0)
-  HWND handle = reinterpret_cast<HWND>(info[0].As<Napi::Number>().Int64Value());
+  GET_INT_64(info, 0, handle, HWND);
   if (!IsWindow(handle)) {
     throw Napi::Error::New(env, "Invalid window handle");
   }
@@ -257,8 +228,7 @@ void getWindowVisibility(const Napi::CallbackInfo& info) {
 void setWindowVisibility(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
-  ASSERT_NUMBER(info, 0)
-  HWND handle = reinterpret_cast<HWND>(info[0].As<Napi::Number>().Int64Value());
+  GET_INT_64(info, 0, handle, HWND);
   if (!IsWindow(handle)) {
     throw Napi::Error::New(env, "Invalid window handle");
   }
@@ -314,66 +284,42 @@ Napi::Boolean bringWindowToTop(const Napi::CallbackInfo& info) {
 Napi::Boolean isWindow(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
-  ASSERT_NUMBER(info, 0)
-  HWND handle = reinterpret_cast<HWND>(info[0].As<Napi::Number>().Int64Value());
+  GET_INT_64(info, 0, handle, HWND);
 
   return Napi::Boolean::New(env, IsWindow(handle));
 }
 
 
 Napi::Object getWindowInfo(const Napi::CallbackInfo& info) {
-  Napi::Env env = info.Env();
 
-  ASSERT_NUMBER(info, 0);
+  Napi::Env env{info.Env()};
 
-  ensure_xcb_initialized(env);
+  GET_INT_64(info, 0, handle, HWND);
 
-  xcb_window_t window_id = info[0].As<Napi::Number>().Uint32Value();
-
-
-  ensure_xcb_initialized(env);
-
-  // Get window geometry
-  xcb_get_geometry_cookie_t geom_cookie = xcb_get_geometry(connection, window_id);
-  xcb_get_geometry_reply_t* geom_reply = xcb_get_geometry_reply(connection, geom_cookie, nullptr);
-
-  if (!geom_reply) {
-    throw Napi::Error::New(env, "Failed to get window geometry");
+  if (!IsWindow(handle)) {
+    throw Napi::Error::New(env, "Window with current id not found");
   }
 
-  // Get window's absolute position (accounting for window decorations)
-  xcb_translate_coordinates_cookie_t trans_cookie = xcb_translate_coordinates(
-    connection, window_id, root_window, 0, 0);
-  xcb_translate_coordinates_reply_t* trans_reply =
-    xcb_translate_coordinates_reply(connection, trans_cookie, nullptr);
-
-  if (!trans_reply) {
-    free(geom_reply);
-    throw Napi::Error::New(env, "Failed to translate window coordinates");
-  }
-
-  Napi::Object bounds = Napi::Object::New(env);
-  bounds.Set("x", Napi::Number::New(env, trans_reply->dst_x));
-  bounds.Set("y", Napi::Number::New(env, trans_reply->dst_y));
-  bounds.Set("width", Napi::Number::New(env, geom_reply->width));
-  bounds.Set("height", Napi::Number::New(env, geom_reply->height));
-
-  free(geom_reply);
-  free(trans_reply);
+  auto process = getWindowProcess(handle, env);
 
 
-  pid_t pid = get_window_pid(window_id, env);
-  std::string path = get_process_path(pid, env);
+  RECT rect{};
+  GetWindowRect(handle, &rect);
+  Napi::Object bounds{Napi::Object::New(env)};
+  bounds.Set("x", rect.left);
+  bounds.Set("y", rect.top);
+  bounds.Set("width", rect.right - rect.left);
+  bounds.Set("height", rect.bottom - rect.top);
+
 
   Napi::Object result = Napi::Object::New(env);
-  result.Set("wid", Napi::Number::New(env, static_cast<int64_t>(window_id)));
-  result.Set("pid", Napi::Number::New(env, pid));
-  result.Set("path", Napi::String::New(env, path));
+  result.Set("wid", Napi::Number::New(env, handle));
+  result.Set("pid", process.pid);
+  result.Set("path", process.path);
   result.Set("bounds", bounds);
 
   return result;
 }
-
 
 // Initialize the window module
 Napi::Object window_init(Napi::Env env, Napi::Object exports) {
@@ -412,25 +358,7 @@ Napi::Object window_init(Napi::Env env, Napi::Object exports) {
 // }
 
 // Initialize a window object
-// Napi::Object initWindow(const Napi::CallbackInfo& info) {
-//   Napi::Env env{info.Env()};
-//
-//   ASSERT_NUMBER(info, 0)
-  HWND handle = reinterpret_cast<HWND>(info[0].As<Napi::Number>().Int64Value());
-//
-//   if (!IsWindow(handle)) {
-//     throw Napi::Error::New(env, "Window with current id not found");
-//   }
-//
-//   auto process = getWindowProcess(handle, env);
-//
-//   Napi::Object obj{Napi::Object::New(env)};
-//
-//   obj.Set("processId", process.pid);
-//   obj.Set("path", process.path);
-//
-//   return obj;
-// }
+
 
 // Check if a window is visible
 // Napi::Boolean isWindowVisible(const Napi::CallbackInfo& info) {
