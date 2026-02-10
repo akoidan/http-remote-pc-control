@@ -8,9 +8,10 @@ import {NativeModule} from '@/native/native-module';
 import {MonitorModule} from '@/monitor/monitor-module';
 import {ProcessModule} from '@/process/process-module';
 import {GlobalModule} from '@/global/global-module';
+import {GraphQLModule} from '@/graphql/graphql.module';
 
 @Module({
-  imports: [GlobalModule, KeyboardModule, MouseModule, WindowModule, MonitorModule, ProcessModule, NativeModule],
+  imports: [GlobalModule, KeyboardModule, MouseModule, WindowModule, MonitorModule, ProcessModule, NativeModule, GraphQLModule],
   controllers: [AppController],
   providers: [RequestIdMiddleware],
 })
