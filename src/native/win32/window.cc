@@ -291,7 +291,6 @@ Napi::Boolean isWindow(const Napi::CallbackInfo& info) {
 
 
 Napi::Object getWindowInfo(const Napi::CallbackInfo& info) {
-
   Napi::Env env{info.Env()};
 
   GET_INT_64(info, 0, handle, HWND);
@@ -301,7 +300,6 @@ Napi::Object getWindowInfo(const Napi::CallbackInfo& info) {
   }
 
   auto process = getWindowProcess(handle, env);
-
 
   RECT rect{};
   GetWindowRect(handle, &rect);
@@ -313,7 +311,7 @@ Napi::Object getWindowInfo(const Napi::CallbackInfo& info) {
 
 
   Napi::Object result = Napi::Object::New(env);
-  result.Set("wid", Napi::Number::New(env, handle));
+  result.Set("wid", Napi::Number::New(env, static_cast<double>(reinterpret_cast<uintptr_t>(handle))));
   result.Set("pid", process.pid);
   result.Set("path", process.path);
   result.Set("bounds", bounds);
