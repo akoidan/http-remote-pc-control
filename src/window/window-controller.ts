@@ -1,7 +1,7 @@
 import {Body, Controller, Get, HttpCode, Param, ParseIntPipe, Patch, Post} from '@nestjs/common';
 
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
-import {SetWindowPropertiesRequestDto, GetWindowResponseDto} from '@/window/window-dto';
+import {GetWindowResponseDto, SetWindowPropertiesRequestDto} from '@/window/window-dto';
 import {WindowService} from '@/window/window-service';
 
 @ApiTags('Window')
@@ -22,7 +22,7 @@ export class WindowController {
   @Get('active')
   @ApiResponse({type: GetWindowResponseDto})
   @ApiOperation({summary: 'Get information about current active window'})
-  async getWindowActiveId(): Promise<GetWindowResponseDto> {
+  getWindowActiveId(): GetWindowResponseDto {
     return this.windowService.getActiveWindowInfo();
   }
 
@@ -32,13 +32,13 @@ export class WindowController {
     @Param('wid', ParseIntPipe) wid: number,
     @Body() body: SetWindowPropertiesRequestDto
   ): void {
-    this.windowService.setWindowState(wid, body);
+    this.windowService.setWindowProperties(wid, body);
   }
 
   @Post(':wid/focus')
   @ApiOperation({summary: 'Focuses a window by its id'})
   @HttpCode(204)
-  async focusWindowId(@Param('wid', ParseIntPipe) wid: number): Promise<void> {
-    await this.windowService.setWindowActive(wid);
+  focusWindowId(@Param('wid', ParseIntPipe) wid: number): void {
+    this.windowService.setWindowActive(wid);
   }
 }
