@@ -2,7 +2,7 @@
 #include <napi.h>
 #include <windows.h>
 #include "./headers/logger.h"
-#include "headers/validators.h"
+#include "./headers/validators.h"
 
 #define ABSOLUTE_COORD_CONST 65536
 
@@ -81,31 +81,30 @@ Napi::Object getMousePos(const Napi::CallbackInfo& info) {
   int height = GetSystemMetrics(SM_CYVIRTUALSCREEN);
 
   // Calculate relative position within virtual screen
-  MMPoint pos;
-  pos.x = point.x - x;
-  pos.y = point.y - y;
+  size_t rx = point.x - x;
+  size_t ry = point.y - y;
 
   // Ensure the position is within bounds
-  if (pos.x < 0) {
+  if (rx < 0) {
     LOG("Cursor pos x=%ld is smaller than 0, setting 0", (long)point.x);
-    pos.x = 0;
+    rx = 0;
   }
-  if (pos.y < 0) {
+  if (ry < 0) {
     LOG("Cursor pos y=%ld is smaller than 0, setting 0", (long)point.y);
-    pos.y = 0;
+    ry = 0;
   }
-  if (pos.x >= width) {
+  if (rx >= width) {
     LOG("Cursor pos x=%ld is greater than width %ld, setting %ld", (long)point.y, long(width), long(height - 1));
-    pos.x = width - 1;
+    rx = width - 1;
   }
-  if (pos.y >= height) {
+  if (ry >= height) {
     LOG("Cursor pos y=%ld is greater than height %ld, setting %ld", (long)point.y, long(height), long(height - 1));
-    pos.y = height - 1;
+    ry = height - 1;
   }
 
   Napi::Object obj = Napi::Object::New(env);
-  obj.Set("x", Napi::Number::New(env, pos.x));
-  obj.Set("y", Napi::Number::New(env, pos.y));
+  obj.Set("x", Napi::Number::New(env, rx));
+  obj.Set("y", Napi::Number::New(env, ry));
   return obj;
 }
 

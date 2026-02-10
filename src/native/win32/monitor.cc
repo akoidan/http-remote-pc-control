@@ -9,23 +9,23 @@
 
 #include "headers/validators.h"
 
-static std::vector<int64_t> g_monitors;
+static std::vector<int64_t> gMonitors;
 
 static BOOL CALLBACK EnumMonitorsProc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM dwData) {
-  g_monitors.push_back(reinterpret_cast<int64_t>(hMonitor));
+  gMonitors.push_back(reinterpret_cast<int64_t>(hMonitor));
   return TRUE;
 }
 
 static Napi::Array getMonitors(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
-  g_monitors.clear();
+  gMonitors.clear();
   if (!EnumDisplayMonitors(NULL, NULL, &EnumMonitorsProc, NULL)) {
     throw Napi::Error::New(env, "Unable to enumarate monitors, winAPI returned error");
   }
   auto arr = Napi::Array::New(env);
   uint32_t i = 0;
-  for (auto handle : g_monitors) {
+  for (auto handle : gMonitors) {
     arr.Set(i++, Napi::Number::New(env, handle));
   }
   return arr;
@@ -33,9 +33,9 @@ static Napi::Array getMonitors(const Napi::CallbackInfo& info) {
 
 static Napi::Number getMonitorFromWindow(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
-  ASSERT_NUMBER(info, 0)
-  HWND handle = reinterpret_cast<HWND>(info[0].As<Napi::Number>().Int64Value());
-  return Napi::Number::New(env, reinterpret_cast<int64_t>(MonitorFromWindow(handle, 0)));
+  GET_INT_64(info, 0, handle, HWND);
+  HMONITOR mid = MonitorFromWindow(handle, 0);
+  return Napi::Number::New(env, reinterpret_cast<int64_t>(mid));
 }
 
 using lp_GetScaleFactorForMonitor = int(__stdcall*)(HMONITOR, DEVICE_SCALE_FACTOR*);
@@ -43,8 +43,7 @@ using lp_GetScaleFactorForMonitor = int(__stdcall*)(HMONITOR, DEVICE_SCALE_FACTO
 static Napi::Object getMonitorInfo(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
-  ASSERT_NUMBER(info, 0)
-  HMONITOR handle = reinterpret_cast<HMONITOR>(info[0].As<Napi::Number>().Int64Value());
+  GET_INT_64(info, 0, handle, HMONITOR);
 
   if (handle == nullptr) {
     throw Napi::Error::New(env, "Monitor handle is null or invalid");
