@@ -86,17 +86,7 @@ Napi::Array getWindowsByProcessId(const Napi::CallbackInfo& info) {
 }
 
 
-// Get the opacity of a window
-Napi::Number getWindowOpacity(const Napi::CallbackInfo& info) {
-  Napi::Env env{info.Env()};
 
-  GET_INT_64(info, 0, handle, HWND);
-
-  BYTE opacity{};
-  GetLayeredWindowAttributes(handle, NULL, &opacity, NULL);
-
-  return Napi::Number::New(env, static_cast<double>(opacity) / 255.);
-}
 
 // Get the owner of a window
 Napi::Number getWindowOwner(const Napi::CallbackInfo& info) {
@@ -366,4 +356,17 @@ Napi::Object window_init(Napi::Env env, Napi::Object exports) {
 //   if (SetWindowLongPtrA(handle, GWLP_HWNDPARENT, newOwner) == 0 && GetLastError() != 0) {
 //     throw Napi::Error::New(env, "Failed to set window owner");
 //   }
+// }
+
+
+// Get the opacity of a window
+// Napi::Number getWindowOpacity(const Napi::CallbackInfo& info) {
+//   Napi::Env env{info.Env()};
+//
+//   GET_INT_64(info, 0, handle, HWND);
+//
+//   BYTE opacity{};
+//   GetLayeredWindowAttributes(handle, NULL, &opacity, NULL);
+//
+//   return Napi::Number::New(env, static_cast<double>(opacity) / 255.);
 // }

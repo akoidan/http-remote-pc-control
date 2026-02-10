@@ -1,6 +1,8 @@
-interface InitWindowResult {
-  path: string;
-  processId: number;
+interface WindowBounds {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
 }
 
 interface WindowInfo {
@@ -8,13 +10,7 @@ interface WindowInfo {
   pid: number;
   path: string;
   bounds: WindowBounds;
-}
-
-interface WindowBounds {
-  x: number;
-  y: number;
-  width: number;
-  height: number
+  opacity?: number;
 }
 
 interface MonitorBounds {
@@ -28,7 +24,7 @@ interface MonitorInfo {
   bounds: MonitorBounds;
   workArea: MonitorBounds;
   scale: number;
-  isPrimary: boolean
+  isPrimary: boolean;
 }
 
 enum WindowAction {
@@ -46,56 +42,58 @@ enum MouseButton {
 }
 
 interface WindowNativeModule {
-  bringWindowToTop(id: number): void;
-  getWindowsByProcessId(pid: number): number[];
-  setWindowBounds(id: number, bounds: MonitorBounds): void;
-  getWindowInfo(id: number): WindowInfo;
+  // Window management
+  bringWindowToTop(handle: number): boolean;
   getActiveWindowId(): number;
+  getWindowsByProcessId(pid: number): number[];
+  setWindowVisibility(handle: number, visible: boolean): void;
+  getWindowInfo(handle: number): WindowInfo;
+  setWindowBounds(handle: number, bounds: WindowBounds): void;
+  setVisibility(handle: number, action: WindowAction): void;
+  
+  // Window transparency
+  toggleWindowTransparency(handle: number, enabled: boolean): void;
+  setWindowOpacity(handle: number, opacity: number): void;
 }
 
-// New interface to represent monitor-related native APIs
 interface MonitorNativeModule {
   getMonitors(): number[];
-
-  getMonitorFromWindow(id: number): number;
-
+  getMonitorFromWindow(handle: number): number;
   getMonitorInfo(monitor: number): MonitorInfo;
 }
 
-// New interface to represent process-related native APIs
 interface ProcessNativeModule {
   createProcess(path: string, cmd?: string): number;
   isProcessElevated(): boolean;
 }
 
 interface KeyboardNativeModule {
-  typeString(string: string): void;
-
-  keyTap(key: string, modifier: string[]): void;
-
-  keyToggle(key: string, modifier: string[], down: boolean): void;
-
+  typeString(text: string): void;
+  keyTap(key: string, modifiers: string[]): void;
+  keyToggle(key: string, modifiers: string[], down: boolean): void;
   setKeyboardLayout(layout: string): void;
 }
 
 interface MouseNativeModule {
   mouseClick(button: MouseButton): void;
-
   mouseMove(x: number, y: number): void;
-
   getMousePos(): { x: number; y: number };
 }
 
-
-interface INativeModule extends WindowNativeModule, MonitorNativeModule, ProcessNativeModule, KeyboardNativeModule, MouseNativeModule {
-  // loaded by nodejs
+interface INativeModule extends
+  WindowNativeModule,
+  MonitorNativeModule, 
+  ProcessNativeModule, 
+  KeyboardNativeModule, 
+  MouseNativeModule 
+{
+  // Path to the native module
   path: string;
 }
 
 const Native = 'Native';
 
 export type {
-  InitWindowResult,
   INativeModule,
   MonitorBounds,
   WindowBounds,
