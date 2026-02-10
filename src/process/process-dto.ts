@@ -28,56 +28,33 @@ const processSchema = z.object({
   wids: z.array(z.number()).describe('List of all windows id of the process'),
 }).describe('Process information');
 
-class ProcessResponseDto extends createZodDto(processSchema) {}
-
-
 const launchExeRequestSchema = z.object({
   path: z.string().describe('Path to executable'),
   arguments: z.array(z.string()).describe('Command line arguments'),
   waitTillFinish: z.boolean().describe('Wait for process to finish'),
 });
 
-const executableNameRequestSchema = z.object({
-  name: z.string().regex(/[a-zA-Z0-9._ -]/u).describe('Process name. Allows only specific symbols due to security reasons'),
+const executableNameSchema = z.object({
+  name: z.string().regex(/^[a-zA-Z0-9._ -]$/u).describe('Process name. Allows only specific symbols due to security reasons'),
 });
 
 
-const processIdsResponseSchema = z.object({
-  pids: z.array(z.number()).describe('List of processes Ids'),
-});
+class LaunchExeRequestDto extends createZodDto(launchExeRequestSchema) {}
+class ExecutableNameRequestDto extends createZodDto(executableNameSchema) {}
+class ProcessResponseDto extends createZodDto(processSchema) {}
 
-// Create DTO classes for Swagger
-class LaunchExeRequestDto extends createZodDto(launchExeRequestSchema) {
-}
-
-class KillExeByNameRequestDto extends createZodDto(executableNameRequestSchema) {
-}
-
-class FindExeByNameRequestDto extends createZodDto(executableNameRequestSchema) {
-}
-
-class FindPidsByNameResponseDto extends createZodDto(processIdsResponseSchema) {
-}
-
-// Export types for TypeScript
 type LaunchExeRequest = z.infer<typeof launchExeRequestSchema>;
-type KillExeByNameRequest = z.infer<typeof executableNameRequestSchema>;
-type FindExeByNameRequest = z.infer<typeof executableNameRequestSchema>;
-
+type ProcessResponse = z.infer<typeof processSchema>;
 
 export {
-  processIdsResponseSchema,
   launchExeRequestSchema,
-  executableNameRequestSchema,
+  executableNameSchema,
   LaunchExeRequestDto,
-  FindExeByNameRequestDto,
-  FindPidsByNameResponseDto,
-  KillExeByNameRequestDto,
+  ExecutableNameRequestDto,
   ProcessResponseDto,
 };
 
 export type {
+  ProcessResponse,
   LaunchExeRequest,
-  KillExeByNameRequest,
-  FindExeByNameRequest,
 };

@@ -4,8 +4,6 @@ import {z} from 'zod';
 import {createZodDto} from '@anatine/zod-nestjs';
 import {WindowAction} from '@/native/native-model';
 
-
-// New schemas for extended window operations
 const boundsSchema = z.object({
   x: z.number().describe('Left position in screen coordinates (pixels)'),
   y: z.number().describe('Top position in screen coordinates (pixels)'),
@@ -25,7 +23,6 @@ const getWindowResponseShema = z.object({
   title: z.string().describe('Window title'),
 });
 
-
 const setWindowsPropertiesRequestSchema = z.object({
   bounds: boundsSchema.optional(),
   state: z.nativeEnum(WindowAction).optional().describe('Action to apply: show | hide | minimize | restore | maximize'),
@@ -33,40 +30,22 @@ const setWindowsPropertiesRequestSchema = z.object({
 });
 
 
-const activeWindowIdResponseSchema = z.object({
-  wid: z.number().describe('Active window handle (HWND as number)'),
-}).describe('Active window ID');
-
-
-
-// New DTOs
 class SetWindowPropertiesRequestDto extends createZodDto(setWindowsPropertiesRequestSchema) {}
-
-
 class GetWindowResponseDto extends createZodDto(getWindowResponseShema) {}
 
 
-
-type Bounds = z.infer<typeof boundsSchema>;
-
 type SetWindowPropertiesRequest = z.infer<typeof setWindowsPropertiesRequestSchema>;
-
-
-type ActiveWindowIdResponse = z.infer<typeof activeWindowIdResponseSchema>;
 type WindowResponse = z.infer<typeof getWindowResponseShema>;
 
 
 export {
   boundsSchema,
   setWindowsPropertiesRequestSchema,
-  activeWindowIdResponseSchema,
   GetWindowResponseDto,
   SetWindowPropertiesRequestDto,
 };
 
 export type {
   WindowResponse,
-  Bounds,
   SetWindowPropertiesRequest,
-  ActiveWindowIdResponse,
 };

@@ -1,10 +1,7 @@
 import {Body, Controller, Delete, Get, HttpCode, Inject, Param, ParseIntPipe, Post, Query} from '@nestjs/common';
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import {ProcessService} from '@/process/process-service';
-import {
-  FindExeByNameRequestDto, LaunchExeRequestDto,
-  ProcessResponseDto,
-} from '@/process/process-dto';
+import {ExecutableNameRequestDto, LaunchExeRequestDto, ProcessResponseDto} from '@/process/process-dto';
 import {ExecuteService, IExecuteService} from '@/process/process-model';
 
 @ApiTags('Process')
@@ -34,14 +31,14 @@ export class ProcessController {
   @Delete()
   @ApiOperation({summary: 'Kill process by name'})
   @HttpCode(204)
-  async killExeByName(@Query() query: FindExeByNameRequestDto): Promise<void> {
+  async killExeByName(@Query() query: ExecutableNameRequestDto): Promise<void> {
     await this.executionService.killExeByName(query.name);
   }
 
   @Get()
   @ApiResponse({type: Number, isArray: true})
   @ApiOperation({summary: 'Returns processes ID list based on executable name'})
-  async findPidByName(@Query() query: FindExeByNameRequestDto): Promise<number[]> {
+  async findPidByName(@Query() query: ExecutableNameRequestDto): Promise<number[]> {
     return this.executionService.findPidByName(query.name);
   }
 
