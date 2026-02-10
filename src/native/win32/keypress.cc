@@ -2,12 +2,11 @@
 #include <ctype.h>
 #include <napi.h>
 #include <stdint.h>
+#include <codecvt>
+#include <locale>
 #include "./headers/key-names.h"
 #include "./headers/keypress.h"
 #include "./headers/keyboard-layout.h"
-#include <codecvt>
-#include <locale>
-
 #include "./headers/logger.h"
 #include "./headers/validators.h"
 

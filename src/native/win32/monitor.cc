@@ -1,13 +1,9 @@
 #include <napi.h>
 #include <windows.h>
 #include <vector>
-
-#include "./headers/utils.h"
-#include "./headers/monitor.h"
-
 #include <shtypes.h>
-
-#include "headers/validators.h"
+#include "./headers/monitor.h"
+#include "./headers/validators.h"
 
 static std::vector<int64_t> gMonitors;
 

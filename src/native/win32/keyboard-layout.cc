@@ -1,11 +1,9 @@
-#include "./headers/keyboard-layout.h"
-
 #include <napi.h>
 #include <unordered_map>
 #include <string>
 #include <vector>
-#include <winnls.h>
 #include "./headers/logger.h"
+#include "./headers/keyboard-layout.h"
 
 // Helper function to create keyboard layout string from LANGID
 std::string MakeKLID(LANGID langId) {

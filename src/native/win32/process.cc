@@ -1,12 +1,9 @@
-#include <cmath>
-#include <cstdint>
 #include <iostream>
 #include <napi.h>
 #include <shtypes.h>
 #include <string>
 #include <windows.h>
-#include "./headers/logger.h"
-#include "headers/validators.h"
+#include "./headers/validators.h"
 
 Napi::Number createProcess(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};

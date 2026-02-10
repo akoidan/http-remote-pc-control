@@ -1,6 +1,6 @@
-#include "./headers/mouse.h"
 #include <napi.h>
 #include <windows.h>
+#include "./headers/mouse.h"
 #include "./headers/logger.h"
 #include "./headers/validators.h"
 
