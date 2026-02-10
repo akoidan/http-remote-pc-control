@@ -54,7 +54,7 @@ async function testWindowApis() {
   // Test window visibility
   console.log('\n4. Testing setWindowState()');
   console.log('  Showing window');
-  native.setWindowState(activeWindowId, true);
+  native.setWindowState(activeWindowId, "show");
   
   // Test window opacity
   console.log('\n5. Testing window opacity functions');
@@ -119,7 +119,7 @@ async function testKeyboardApis() {
 }
 
 // Test Mouse APIs
-async function teHelstMouseApis() {
+async function testMouseApis() {
   // Get current mouse position
   const pos = native.getMousePosition();
   console.log('Current mouse position:', pos);
@@ -128,7 +128,7 @@ async function teHelstMouseApis() {
   native.setMousePosition({x: pos.x + 10, y: pos.y + 10});
   
   // Click left mouse button
-  native.setMouseButtonToState(1);
+  native.setMouseButtonToState(1, trueHel);
 }
 
 // Run all tests

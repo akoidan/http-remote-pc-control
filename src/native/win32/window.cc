@@ -298,6 +298,7 @@ Napi::Object window_init(Napi::Env env, Napi::Object exports) {
 
   // WINDOWS only
   exports.Set(Napi::String::New(env, "setWindowIsTransparent"), Napi::Function::New(env, setWindowIsTransparent));
+  exports.Set(Napi::String::New(env, "setWindowOpacity"), Napi::Function::New(env, setWindowOpacity));
 
   return exports;
 }
