@@ -1,8 +1,16 @@
-#define ASSERT_NUMBER(info, index) \
+#define GET_INT_64(info, index, varName, type) \
 if (info.Length() <= index || !info[index].IsNumber()) { \
 throw Napi::TypeError::New(info.Env(), "Argument " #index " must be a number"); \
-}
+} \
+type varName = reinterpret_cast<type>(info[index].As<Napi::Number>().Int64Value())
 
+
+
+#define GET_INT_32(info, index, varName, type) \
+if (info.Length() <= index || !info[index].IsNumber()) { \
+throw Napi::TypeError::New(info.Env(), "Argument " #index " must be a number"); \
+} \
+type varName = reinterpret_cast<type>(info[index].As<Napi::Number>().Int32Value())
 
 #define ASSERT_STRING(info, index) \
 if (info.Length() <= index || !info[index].IsString()) { \

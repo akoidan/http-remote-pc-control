@@ -289,8 +289,7 @@ void setWindowVisibility(const Napi::CallbackInfo& info) {
 // Bring a window to the top
 Napi::Boolean bringWindowToTop(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
-  ASSERT_NUMBER(info, 0)
-  HWND handle = reinterpret_cast<HWND>(info[0].As<Napi::Number>().Int64Value());
+  GET_INT_32(info, 0, handle, HWND);
   if (!IsWindow(handle)) {
     throw Napi::Error::New(env, "Window with current id not found");
   }
