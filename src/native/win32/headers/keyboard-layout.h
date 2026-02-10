@@ -30,7 +30,7 @@ HKL SaveAndSetKeyboardLayout(HKL newLayout, Napi::Env env);
 void RestoreKeyboardLayout(HKL savedLayout, Napi::Env env);
 
 // Set keyboard layout by layout ID string (e.g., "00000409" for US English)
-void SetKeyboardLayout(const char* layoutId, const Napi::CallbackInfo& info);
+void setKeyboardLayoutImpl(const char* layoutId, Napi::Env env);
 
 // Detect language from Unicode character
 const char* DetectLanguageFromChar(wchar_t ch);

@@ -7,7 +7,9 @@
 #include "./headers/keyboard-layout.h"
 #include <codecvt>
 #include <locale>
+
 #include "./headers/logger.h"
+#include "./headers/validators.h"
 
 // Define all modifiers in one place
 static const KeyModifier MODIFIERS[] = {
@@ -131,8 +133,11 @@ std::wstring utf8_to_utf16(const char* str) {
         return std::wstring();
     }
 }
+void typeString(const Napi::CallbackInfo& info) {
+    Napi::Env env = info.Env();
+    GET_STRING(info, 0, sstr)
+    const char* str = sstr.c_str(),
 
-void typeString(const char* str, Napi::Env env) {
     // Ensure Caps Lock is disabled before typing
     ensureCapsLockDisabled();
 
@@ -188,7 +193,7 @@ unsigned int getFlag(napi_env env, napi_value value) {
     return getModifierFlag(buffer);
 }
 
-unsigned int getAllFlags(napi_env env, napi_value value) {
+unsigned int arrayToFlags(napi_env env, napi_value value) {
     unsigned int flags = 0;
 
     uint32_t length;
@@ -218,10 +223,12 @@ unsigned int assignKeyCode(const char* keyName, Napi::Env env) {
     throw Napi::Error::New(env, "Keycode not found");
 }
 
-void _keyTap(const Napi::CallbackInfo& info) {
+void keyTap(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
-    unsigned int flags = getAllFlags(env, info[1]);
-    std::string keyName = info[0].As<Napi::String>();
+
+    ASSERT_ARRAY(info, 1)
+    GET_STRING(info, 0, keyName)
+    unsigned int flags = arrayToFlags(env, info[1]);
     unsigned int key = assignKeyCode(keyName.c_str(), env);
     toggleKeyCode(key, true, flags);
     toggleKeyCode(key, false, flags);
@@ -230,36 +237,28 @@ void _keyTap(const Napi::CallbackInfo& info) {
 void _keyToggle(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
 
-    bool down = info[2].As<Napi::Boolean>().Value();
+    GET_STRING(info, 0, keyName)
+    ASSERT_ARRAY(info, 1)
+    GET_BOOL(info, 2, down)
 
-    unsigned int flags = getAllFlags(env, info[1]);
-
-    std::string keyName = info[0].As<Napi::String>();
+    unsigned int flags = arrayToFlags(env, info[1]);
     unsigned int key = assignKeyCode(keyName.c_str(), env);
 
     toggleKeyCode(key, down, flags);
 }
 
-void _typeString(const Napi::CallbackInfo& info) {
-    std::string str = info[0].As<Napi::String>();
-    typeString(str.c_str(), info.Env());
-}
 
-void _setKeyboardLayout(const Napi::CallbackInfo& info) {
+void setKeyboardLayout(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
 
-    if (info.Length() < 1 || !info[0].IsString()) {
-        throw Napi::Error::New(env, "String expected (layout ID)");
-    }
-
-    std::string layoutId = info[0].As<Napi::String>().Utf8Value();
-    SetKeyboardLayout(layoutId.c_str(), info);
+    GET_STRING_UTF8(info, 0, layoutId)
+    setKeyboardLayoutImpl(layoutId.c_str(), env);
 }
 
 Napi::Object keyboard_init(Napi::Env env, Napi::Object exports) {
-    exports.Set("keyTap", Napi::Function::New(env, _keyTap));
+    exports.Set("keyTap", Napi::Function::New(env, keyTap));
     exports.Set("keyToggle", Napi::Function::New(env, _keyToggle));
-    exports.Set("typeString", Napi::Function::New(env, _typeString));
-    exports.Set("setKeyboardLayout", Napi::Function::New(env, _setKeyboardLayout));
+    exports.Set("typeString", Napi::Function::New(env, typeString));
+    exports.Set("setKeyboardLayout", Napi::Function::New(env, setKeyboardLayout));
     return exports;
 }

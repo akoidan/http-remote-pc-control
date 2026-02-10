@@ -132,8 +132,8 @@ void RestoreKeyboardLayout(HKL savedLayout, Napi::Env env) {
 }
 
 // Set keyboard layout by layout ID string (e.g., "00000409" for US English)
-void SetKeyboardLayout(const char* layoutId, const Napi::CallbackInfo& info) {
-  Napi::Env env = info.Env();
+void setKeyboardLayoutImpl(const char* layoutId, Napi::Env env) {
+
   if (!layoutId || strlen(layoutId) == 0) {
     throw Napi::Error::New(env, "Invalid parameter lang code");
   }

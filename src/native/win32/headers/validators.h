@@ -31,6 +31,12 @@ throw Napi::TypeError::New(info.Env(), "Argument " #index " must be a string"); 
 } \
 std::string varName = info[index].As<Napi::String>();
 
+#define GET_STRING_UTF8(info, index, varName) \
+if (info.Length() <= index || !info[index].IsString()) { \
+throw Napi::TypeError::New(info.Env(), "Argument " #index " must be a string"); \
+} \
+std::string varName = info[index].As<Napi::String>().Utf8Value();
+
 
 #define GET_BOOL(info, index, varName) \
 if (info.Length() <= index || !info[index].IsBoolean()) { \
@@ -46,6 +52,10 @@ throw Napi::TypeError::New(info.Env(), "Argument " #index " must be a Number"); 
 double varName = info[index].As<Napi::Number>().DoubleValue();
 
 
+#define ASSERT_ARRAY(info, index) \
+if (info.Length() <= index || !info[index].IsArray()) { \
+throw Napi::TypeError::New(info.Env(), "Argument " #index " must be an array"); \
+}
 
 // #define ASSERT_ARRAY(info, index) \
 // if (info.Length() <= index || !info[index].IsArray()) { \
