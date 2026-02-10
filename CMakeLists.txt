@@ -6,7 +6,6 @@ project (native)
 
 add_definitions(-DNAPI_VERSION=4)
 
-
 include_directories(${CMAKE_JS_INC})
 
 
