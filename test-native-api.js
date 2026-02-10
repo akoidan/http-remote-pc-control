@@ -139,7 +139,7 @@ async function runTests() {
   await test('Monitor APIs', testMonitorApis);
   await test('Process APIs', testProcessApis);
   await test('Keyboard APIs', testKeyboardApis);
-  await test('Mouse APIs', HtestMouseApis);
+  await test('Mouse APIs', testMouseApis);
   
   console.log('\nAll tests completed successfully!');
 }
