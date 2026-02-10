@@ -123,15 +123,15 @@ void toggleKey(char c, const bool down, unsigned int flags) {
     toggleKeyCode(keyCode, down, flags);
 }
 
-std::wstring utf8_to_utf16(const char* str) {
+std::wstring utf8_to_utf16(Napi::Env env, const char* str) {
     try {
         std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
         return converter.from_bytes(str);
-    }
-    catch (...) {
-        return std::wstring();
+    } catch (...) {
+        throw Napi::Error::New(env, "Unable to do string conversion");
     }
 }
+
 void typeString(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
     GET_STRING(info, 0, sstr)
@@ -144,7 +144,7 @@ void typeString(const Napi::CallbackInfo& info) {
     HKL currentLayout = savedLayout;
 
     // Convert input UTF-8 string to UTF-16
-    std::wstring wstr = utf8_to_utf16(str);
+    std::wstring wstr = utf8_to_utf16(env, str);
 
     for (size_t i = 0; i < wstr.length(); i++) {
         wchar_t wc = wstr[i];
