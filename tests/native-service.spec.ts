@@ -119,8 +119,8 @@ describe('NativeService', () => {
       expect(processInfo).toHaveProperty('memory');
       expect(processInfo).toHaveProperty('times');
       
-      expect(typeof processInfo.processId).toBe('number');
-      expect(typeof processInfo.exePath).toBe('string');
+      expect(typeof processInfo.parentPid).toBe('number');
+      expect(typeof processInfo.path).toBe('string');
       expect(typeof processInfo.isElevated).toBe('boolean');
       
       // Check memory object structure
@@ -132,7 +132,7 @@ describe('NativeService', () => {
       expect(typeof processInfo.memory.workingSetSize).toBe('number');
       expect(typeof processInfo.memory.peakWorkingSetSize).toBe('number');
       expect(typeof processInfo.memory.privateUsage).toBe('number');
-      expect(typeof processInfo.memory.pagefileUsage).toBe('number');
+      expect(typeof processInfo.memory.pageFileUsage).toBe('number');
       
       // Check times object structure
       expect(processInfo.times).toHaveProperty('creationTime');
@@ -144,16 +144,16 @@ describe('NativeService', () => {
       expect(typeof processInfo.times.userTime).toBe('number');
       
       // Verify the process ID matches
-      expect(processInfo.processId).toBe(testPid);
+      expect(processInfo.pid).toBe(testPid);
       
       // Verify exe path is not empty
-      expect(processInfo.exePath.length).toBeGreaterThan(0);
+      expect(processInfo.path.length).toBeGreaterThan(0);
       
       // Verify memory values are positive
       expect(processInfo.memory.workingSetSize).toBeGreaterThan(0);
       expect(processInfo.memory.peakWorkingSetSize).toBeGreaterThan(0);
       expect(processInfo.memory.privateUsage).toBeGreaterThan(0);
-      expect(processInfo.memory.pagefileUsage).toBeGreaterThan(0);
+      expect(processInfo.memory.pageFileUsage).toBeGreaterThan(0);
     });
 
     it('should throw error for invalid process ID', () => {
