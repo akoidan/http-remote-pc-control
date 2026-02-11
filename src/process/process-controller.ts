@@ -17,7 +17,7 @@ export class ProcessController {
   @Get(':pid')
   @ApiOperation({summary: 'Get all windows with their IDs for a concrete process id'})
   @ApiResponse({type: Number, isArray: true})
-  getWindowsIdByPid(@Param('id', ParseIntPipe) id: number): ProcessResponseDto {
+  getWindowsIdByPid(@Param('pid', ParseIntPipe) id: number): ProcessResponseDto {
     return this.processService.getProcessInfo(id);
   }
 
@@ -45,7 +45,7 @@ export class ProcessController {
   @Delete(':pid')
   @ApiOperation({summary: 'Kill process by PID'})
   @HttpCode(204)
-  async killExeByPid(@Param('mid', ParseIntPipe) pid: number): Promise<void> {
+  async killExeByPid(@Param('pid', ParseIntPipe) pid: number): Promise<void> {
     await this.executionService.killExeByPid(pid);
   }
 }

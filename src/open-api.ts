@@ -9,6 +9,7 @@ import {ProcessModule} from '@/process/process-module';
 import {Native} from '@/native/native-model';
 import {AppController} from '@/app/app-controller';
 import {NestFactory} from '@nestjs/core';
+import {GlobalModule} from '@/global/global-module';
 import {Global, Module} from '@nestjs/common';
 
 async function generateSwaggerConfig(): Promise<Omit<OpenAPIObject, 'paths'>> {
@@ -28,6 +29,11 @@ async function generateSwaggerConfig(): Promise<Omit<OpenAPIObject, 'paths'>> {
         description: 'The port the server is running on',
       },
     })
+    .addSecurity('clientCertAuth', {
+      type: 'mutualTLS' as any,
+      description: 'Client certificate authentication required for secure API communication',
+    })
+    .addSecurityRequirements('clientCertAuth')
     .addGlobalParameters(
       {
         name: 'x-request-id',
@@ -60,6 +66,7 @@ async function bootstrap(): Promise<void> {
       MouseModule,
       WindowModule,
       MonitorModule,
+      GlobalModule,
       ProcessModule,
     ],
     controllers: [AppController],
@@ -71,6 +78,7 @@ async function bootstrap(): Promise<void> {
   // Enable Zod -> Swagger support
   patchNestjsSwagger();
   const config = await generateSwaggerConfig();
+  config.openapi = '3.1.0';
   const document = SwaggerModule.createDocument(app, config);
   await writeFile('./openapi/openapi.json', JSON.stringify(document, null, 2));
 }
