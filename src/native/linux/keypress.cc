@@ -10,10 +10,11 @@
 #include "./headers/keyboard-layout.h"
 #include "./headers/validators.h"
 
-#define X_KEY_EVENT(display, key, is_press)                \
-    (XTestFakeKeyEvent(display, XKeysymToKeycode(display, key), is_press, CurrentTime), XFlush(display))
-
 void toggleKeyCode(Napi::Env env, KeySym code, const bool down, unsigned int flags) {
+
+  #define X_KEY_EVENT(display, key, is_press)                \
+  (XTestFakeKeyEvent(display, XKeysymToKeycode(display, key), is_press, CurrentTime), XFlush(display))
+
   Display* display = xGetMainDisplay(env);
   const Bool is_press = down ? True : False; /* Just to be safe. */
   if (!down) {
@@ -46,8 +47,7 @@ KeySym keyCodeForChar(const char c) {
     auto it = xSpecialCharacterMap.find(c);
     if (it != xSpecialCharacterMap.end()) {
       code = it->second;
-    }
-    else {
+    } else {
       auto shiftIt = xShiftRequiredMap.find(c);
       if (shiftIt != xShiftRequiredMap.end()) {
         code = shiftIt->second;
@@ -81,15 +81,13 @@ void typeString(const Napi::CallbackInfo& info) {
     auto it = xSpecialCharacterMap.find(*str);
     if (it != xSpecialCharacterMap.end()) {
       ks = it->second;
-    }
-    else {
+    } else {
       // Then check shift-required map
       auto shiftIt = xShiftRequiredMap.find(*str);
       if (shiftIt != xShiftRequiredMap.end()) {
         ks = shiftIt->second;
         needShift = true;
-      }
-      else {
+      } else {
         // Finally try normal character conversion
         char buf[2] = {*str, 0};
         ks = XStringToKeysym(buf);
@@ -127,17 +125,13 @@ unsigned int getFlag(napi_env env, napi_value value) {
 
   if (strcmp(buffer, "alt") == 0) {
     flags = Mod1Mask;
-  }
-  else if (strcmp(buffer, "command") == 0 || strcmp(buffer, "win") == 0 || strcmp(buffer, "meta") == 0) {
+  } else if (strcmp(buffer, "command") == 0 || strcmp(buffer, "win") == 0 || strcmp(buffer, "meta") == 0) {
     flags = Mod4Mask;
-  }
-  else if (strcmp(buffer, "control") == 0 || strcmp(buffer, "ctrl") == 0) {
+  } else if (strcmp(buffer, "control") == 0 || strcmp(buffer, "ctrl") == 0) {
     flags = ControlMask;
-  }
-  else if (strcmp(buffer, "shift") == 0) {
+  } else if (strcmp(buffer, "shift") == 0) {
     flags = ShiftMask;
-  }
-  else if (strcmp(buffer, "none") == 0) {
+  } else if (strcmp(buffer, "none") == 0) {
     flags = 0;
   }
 
@@ -164,7 +158,6 @@ unsigned int assignKeyCode(std::string& keyName) {
   if (keyName.length() == 1) {
     return keyCodeForChar(keyName[0]);
   }
-  unsigned int res = 0;
   KeyNames* kn = keyNames;
   while (kn->name) {
     if (keyName == kn->name) {

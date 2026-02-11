@@ -7,7 +7,6 @@
 #include "headers/validators.h"
 
 
-
 Napi::Object getMousePosition(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   int x, y; /* This is all we care about. Seriously. */
@@ -23,7 +22,6 @@ Napi::Object getMousePosition(const Napi::CallbackInfo& info) {
   obj.Set("y", Napi::Number::New(env, y));
   return obj;
 }
-
 
 void setMouseButtonToState(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
@@ -67,7 +65,6 @@ void setMousePosition(const Napi::CallbackInfo& info) {
     throw Napi::Error::New(env, "Failed to XFlush");
   }
 }
-
 
 Napi::Object mouseInit(Napi::Env env, Napi::Object exports) {
   exports.Set(Napi::String::New(env, "setMousePosition"), Napi::Function::New(env, setMousePosition));
