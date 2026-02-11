@@ -8,10 +8,21 @@ import {NativeModule} from '@/native/native-module';
 import {MonitorModule} from '@/monitor/monitor-module';
 import {ProcessModule} from '@/process/process-module';
 import {GlobalModule} from '@/global/global-module';
-import {GraphQLModule} from '@/graphql/graphql.module';
+import { TRPCModule } from 'nestjs-trpc';
 
 @Module({
-  imports: [GlobalModule, KeyboardModule, MouseModule, WindowModule, MonitorModule, ProcessModule, NativeModule, GraphQLModule],
+  imports: [
+    GlobalModule,
+    KeyboardModule,
+    MouseModule,
+    WindowModule,
+    MonitorModule,
+    ProcessModule,
+    NativeModule,
+    TRPCModule.forRoot({
+      logger:
+    }),
+  ],
   controllers: [AppController],
   providers: [RequestIdMiddleware],
 })
