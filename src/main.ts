@@ -8,6 +8,7 @@ import process from 'node:process';
 import {platform, setPriority} from 'os';
 import * as path from 'path';
 import yargs from 'yargs';
+import {customLogger} from '@/app/app-logger-instance';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 async function parseArgs(): Promise<{port: number, certDir: string}> {
@@ -34,7 +35,6 @@ async function parseArgs(): Promise<{port: number, certDir: string}> {
 }
 
 asyncLocalStorage.run(new Map<string, string>().set('comb', 'init'), () => {
-  const customLogger = new CustomLogger();
   // eslint-disable-next-line
   const packageJson: string = require('../package.json').version;
   customLogger.log(`Booting http-remote-pc-control ${packageJson}`);
