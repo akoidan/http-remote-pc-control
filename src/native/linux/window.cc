@@ -93,11 +93,9 @@ pid_t getWindowPid(xcb_window_t window, Napi::Env env) {
 
 void setWindowActive(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
-  ASSERT_NUMBER(info, 0);
+  GET_INT_64(info, 0, window_id, xcb_window_t);
 
   ensure_xcb_initialized(env);
-
-  xcb_window_t window_id = static_cast<xcb_window_t>(info[0].ToNumber().Int64Value());
 
   // Send _NET_ACTIVE_WINDOW message
   xcb_client_message_event_t event;
@@ -233,11 +231,9 @@ Napi::Object getWindowBounds(Napi::Env env, xcb_window_t window_id) {
 Napi::Object getWindowInfo(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
 
-  ASSERT_NUMBER(info, 0);
+  GET_UINT_32(info, 0, window_id, xcb_window_t);
 
   ensure_xcb_initialized(env);
-
-  xcb_window_t window_id = info[0].As<Napi::Number>().Uint32Value();
 
   pid_t pid = getWindowPid(window_id, env);
   std::string path = getProcessPath(pid, env);
@@ -258,9 +254,7 @@ Napi::Object getWindowInfo(const Napi::CallbackInfo& info) {
 Napi::Array getWindowsByProcessId(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
 
-  ASSERT_NUMBER(info, 0);
-
-  pid_t target_pid = info[0].As<Napi::Number>().Uint32Value();
+  GET_UINT_32(info, 0, target_pid, pid_t);
   Napi::Array result = Napi::Array::New(env);
 
   ensure_xcb_initialized(env);
@@ -294,16 +288,13 @@ void setWindowBounds(const Napi::CallbackInfo& info) {
 
   ensure_xcb_initialized(env);
 
-  ASSERT_NUMBER(info, 0);
-  ASSERT_OBJECT(info, 1);
+  GET_INT_64(info, 0, window_id, xcb_window_t);
+  GET_OBJECT(info, 1, bounds);
   ASSERT_OBJECT_NUMBER(info, 1, "x");
   ASSERT_OBJECT_NUMBER(info, 1, "y");
   ASSERT_OBJECT_NUMBER(info, 1, "width");
   ASSERT_OBJECT_NUMBER(info, 1, "height");
 
-  xcb_window_t window_id = static_cast<xcb_window_t>(info[0].ToNumber().Int64Value());
-
-  Napi::Object bounds = info[1].As<Napi::Object>();
   int x = bounds.Get("x").ToNumber().Int32Value();
   int y = bounds.Get("y").ToNumber().Int32Value();
   int width = bounds.Get("width").ToNumber().Int32Value();
@@ -330,11 +321,8 @@ void setWindowState(const Napi::CallbackInfo& info) {
 
   ensure_xcb_initialized(env);
   
-  ASSERT_NUMBER(info, 0);
-  ASSERT_STRING(info, 1);
-
-  xcb_window_t window_id = static_cast<xcb_window_t>(info[0].ToNumber().Int64Value());
-  std::string type{info[1].As<Napi::String>()};
+  GET_INT_64(info, 0, window_id, xcb_window_t);
+  GET_STRING(info, 1, type);
 
   if (type == "show") {
     // Map the window (make it visible)

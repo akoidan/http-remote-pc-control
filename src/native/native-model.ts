@@ -67,9 +67,9 @@ enum WindowAction {
 }
 
 enum MouseButton {
-  LEFT = 1,
-  RIGHT = 2,
-  MIDDLE = 3,
+  LEFT = 'LEFT',
+  RIGHT = 'RIGHT',
+  MIDDLE = 'MIDDLE',
 }
 
 interface WindowNativeModule {

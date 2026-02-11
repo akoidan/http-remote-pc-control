@@ -23,15 +23,26 @@ Napi::Object getMousePosition(const Napi::CallbackInfo& info) {
   return obj;
 }
 
-/**
- * Press down a button, or release it.
- * @param down   True for down, false for up.
- * @param button The button to press down or release.
- */
-void toggleMouse(Napi::Env env, bool down, unsigned int button) {
+
+void setMouseButtonToState(const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
+
+  GET_STRING(info, 0, button);
+  GET_BOOL(info, 1, isDown);
+
+  int buttonInt;
+  if (button == "LEFT") {
+    buttonInt = 1;
+  } else if (button == "RIGHT") {
+    buttonInt = 2;
+  } else if (button == "MIDDLE") {
+    buttonInt = 3;
+  } else {
+    throw Napi::Error::New(env, "Invalid button name. Must be 'LEFT', 'RIGHT', or 'MIDDLE'");
+  }
   Display* display = XGetMainDisplay(env);
 
-  if (!XTestFakeButtonEvent(display, button, down ? True : False, CurrentTime)) {
+  if (!XTestFakeButtonEvent(display, buttonInt, isDown ? True : False, CurrentTime)) {
     throw Napi::Error::New(env, "Failed to send XTestFakeMotionEvent");
   }
   if (!XFlush(display)) {
@@ -39,26 +50,13 @@ void toggleMouse(Napi::Env env, bool down, unsigned int button) {
   }
 }
 
-
-void setMouseButtonToState(const Napi::CallbackInfo& info) {
-  Napi::Env env = info.Env();
-  ASSERT_NUMBER(info, 0)
-  unsigned int button = info[0].As<Napi::Number>().Int32Value();
-  if (button < 1 || button > 3) {
-    throw Napi::Error::New(env, "Invalid button number.");
-  }
-  toggleMouse(env, true, button);
-  toggleMouse(env, false, button);
-}
-
-void moveMouse(const Napi::CallbackInfo& info) {
+void setMousePosition(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
 
-  ASSERT_NUMBER(info, 0)
-  ASSERT_NUMBER(info, 1)
+  GET_OBJECT(info, 0, bounds);
+  int x = bounds.Get("x").ToNumber().Int32Value();
+  int y = bounds.Get("y").ToNumber().Int32Value();
 
-  int x = info[0].As<Napi::Number>().Int32Value();
-  int y = info[1].As<Napi::Number>().Int32Value();
   Display* display = XGetMainDisplay(env);
   int screen = -1;
   if (!XTestFakeMotionEvent(display, screen, x, y, CurrentTime)) {
@@ -71,7 +69,7 @@ void moveMouse(const Napi::CallbackInfo& info) {
 
 
 Napi::Object mouseInit(Napi::Env env, Napi::Object exports) {
-  exports.Set(Napi::String::New(env, "setMousePosition"), Napi::Function::New(env, moveMouse));
+  exports.Set(Napi::String::New(env, "setMousePosition"), Napi::Function::New(env, setMousePosition));
   exports.Set(Napi::String::New(env, "setMouseButtonToState"), Napi::Function::New(env, setMouseButtonToState));
   exports.Set(Napi::String::New(env, "getMousePosition"), Napi::Function::New(env, getMousePosition));
   return exports;

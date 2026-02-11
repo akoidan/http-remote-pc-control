@@ -23,7 +23,7 @@ type varName = info[index].As<Napi::Number>().Int32Value();
 if (info.Length() <= index || !info[index].IsNumber()) { \
 throw Napi::TypeError::New(info.Env(), "Argument " #index " must be a number"); \
 } \
-type varName = info[0].As<Napi::Number>().Uint32Value();
+type varName = info[index].As<Napi::Number>().Uint32Value();
 
 #define GET_STRING(info, index, varName) \
 if (info.Length() <= index || !info[index].IsString()) { \
@@ -81,4 +81,4 @@ Napi::Object varName{info[index].As<Napi::Object>()};
 //   if (!val.IsNumber()) { \
 //     throw Napi::TypeError::New(info.Env(), "Object property '" #attribute "' must be a number"); \
 //   } \
-// } while(0)
+// } while(00)

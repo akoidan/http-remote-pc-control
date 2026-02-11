@@ -69,9 +69,8 @@ void toggleKey(Napi::Env env, char c, const bool down, unsigned int flags) {
 void typeString(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
 
-  ASSERT_STRING(info, 0)
+  GET_STRING(info, 0, strstd);
 
-  std::string strstd = info[0].As<Napi::String>();
   const char* str = strstd.c_str();
   Display* display = XGetMainDisplay(env);
   while (*str) {
@@ -179,10 +178,9 @@ unsigned int assignKeyCode(std::string& keyName) {
 
 void keyTap(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
-  ASSERT_STRING(info, 0)
-  ASSERT_ARRAY(info, 1)
+  GET_STRING(info, 0, keyName);
+  ASSERT_ARRAY(info, 1);
   unsigned int flags = getAllFlags(env, info[1]);
-  std::string keyName = info[0].As<Napi::String>();
   unsigned int key = assignKeyCode(keyName);
   toggleKeyCode(env, key, true, flags);
   toggleKeyCode(env, key, false, flags);
@@ -191,13 +189,11 @@ void keyTap(const Napi::CallbackInfo& info) {
 void keyToggle(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
 
-  ASSERT_STRING(info, 0)
-  ASSERT_ARRAY(info, 1)
-  ASSERT_BOOL(info, 2)
+  GET_STRING(info, 0, keyName);
+  ASSERT_ARRAY(info, 1);
+  GET_BOOL(info, 2, down);
 
-  std::string keyName = info[0].As<Napi::String>();
   unsigned int flags = getAllFlags(env, info[1]);
-  bool down = info[2].As<Napi::Boolean>().Value();
 
   unsigned int key = assignKeyCode(keyName);
 
@@ -208,9 +204,7 @@ void keyToggle(const Napi::CallbackInfo& info) {
 void setKeyboardLayout(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
 
-  ASSERT_STRING(info, 0)
-
-  std::string layoutId = info[0].As<Napi::String>();
+  GET_STRING(info, 0, layoutId);
 
   // Try KDE's DBus interface first - query available layouts and validate
   std::vector<KdeLayout> availableLayouts = getKdeAvailableLayouts();

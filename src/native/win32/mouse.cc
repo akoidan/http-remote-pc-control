@@ -57,13 +57,21 @@ void toggleMouse(bool down, unsigned int button) {
 
 void setMouseButtonToState(const Napi::CallbackInfo &info) {
   Napi::Env env = info.Env();
-  GET_INT_32_NC(info, 0, button, unsigned int);
+  GET_STRING(info, 0, button);
   GET_BOOL(info, 1, isDown);
-  if (button < 1 || button > 3) {
-    throw Napi::Error::New(env, "Invalid button number.");
+  
+  int buttonInt;
+  if (button == "LEFT") {
+    buttonInt = 1;
+  } else if (button == "RIGHT") {
+    buttonInt = 2;
+  } else if (button == "MIDDLE") {
+    buttonInt = 3;
+  } else {
+    throw Napi::Error::New(env, "Invalid button name. Must be 'LEFT', 'RIGHT', or 'MIDDLE'");
   }
 
-  toggleMouse(isDown, button);
+  toggleMouse(isDown, buttonInt);
 }
 
 Napi::Object getMousePosition(const Napi::CallbackInfo &info) {
