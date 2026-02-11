@@ -63,6 +63,14 @@ throw Napi::TypeError::New(info.Env(), "Argument " #index " must be an object");
 }\
 Napi::Object varName{info[index].As<Napi::Object>()};
 
+#define ASSERT_OBJECT_NUMBER(info, position, attribute) \
+do {\
+Napi::Object obj = info[position].As<Napi::Object>(); \
+Napi::Value val = obj.Get(#attribute); \
+if (!val.IsNumber()) { \
+  throw Napi::TypeError::New(info.Env(), "Object property '" #attribute "' must be a number"); \
+}\
+} while (0)
 
 // #define ASSERT_ARRAY(info, index) \
 // if (info.Length() <= index || !info[index].IsArray()) { \

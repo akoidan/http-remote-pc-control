@@ -161,7 +161,7 @@ std::string getWindowVisiblity(Napi::Env env, xcb_window_t window_id) {
   // If property doesn't exist, it's not minimized or maximized
   if (state_reply->type == XCB_NONE) {
     free(state_reply);
-    // Keep default visibility (show/hide based on mapped state)
+    return visibility; // Return early with default visibility
   } else if (state_reply->type != XCB_ATOM) {
     free(state_reply);
     throw Napi::Error::New(env, "_NET_WM_STATE property type is not ATOM");
