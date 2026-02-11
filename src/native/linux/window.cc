@@ -11,6 +11,7 @@
 static xcb_connection_t* connection = nullptr;
 static xcb_ewmh_connection_t ewmh;
 static xcb_window_t root_window;
+static xcb_atom_t _NET_WM_WINDOW_OPACITY_ATOM;
 
 
 // Initialize XCB if not already initialized
@@ -57,6 +58,16 @@ void ensure_xcb_initialized(Napi::Env env) {
     xcb_disconnect(connection);
     connection = nullptr;
     throw Napi::Error::New(env, "Failed to initialize EWMH atoms");
+  }
+
+  // Initialize _NET_WM_WINDOW_OPACITY atom
+  xcb_intern_atom_cookie_t opacity_cookie = xcb_intern_atom(connection, 0, strlen("_NET_WM_WINDOW_OPACITY"), "_NET_WM_WINDOW_OPACITY");
+  xcb_intern_atom_reply_t* opacity_reply = xcb_intern_atom_reply(connection, opacity_cookie, nullptr);
+  if (opacity_reply) {
+    _NET_WM_WINDOW_OPACITY_ATOM = opacity_reply->atom;
+    free(opacity_reply);
+  } else {
+    _NET_WM_WINDOW_OPACITY_ATOM = XCB_NONE;
   }
 
   LOG("XCB initialized successfully");
@@ -228,6 +239,65 @@ Napi::Object getWindowBounds(Napi::Env env, xcb_window_t window_id) {
   return bounds;
 }
 
+std::string getWindowTitle(Napi::Env env, xcb_window_t window_id) {
+  xcb_get_property_cookie_t cookie = xcb_get_property(
+    connection, 0, window_id, ewmh._NET_WM_NAME, XCB_ATOM_STRING, 0, 1024);
+  xcb_get_property_reply_t* reply = xcb_get_property_reply(connection, cookie, nullptr);
+  
+  std::string title = "";
+  if (reply && reply->type != XCB_NONE && reply->format == 8 && reply->length > 0) {
+    title = std::string((char*)xcb_get_property_value(reply), reply->length);
+  }
+  
+  if (reply) free(reply);
+  
+  // Fallback to WM_NAME if _NET_WM_NAME is not available
+  if (title.empty()) {
+    cookie = xcb_get_property(connection, 0, window_id, XCB_ATOM_WM_NAME, XCB_ATOM_STRING, 0, 1024);
+    reply = xcb_get_property_reply(connection, cookie, nullptr);
+    
+    if (reply && reply->type != XCB_NONE && reply->format == 8 && reply->length > 0) {
+      title = std::string((char*)xcb_get_property_value(reply), reply->length);
+    }
+    
+    if (reply) free(reply);
+  }
+  
+  return title;
+}
+
+double getWindowOpacity(Napi::Env env, xcb_window_t window_id) {
+  if (_NET_WM_WINDOW_OPACITY_ATOM == XCB_NONE) {
+    return 1.0; // Opacity not supported
+  }
+  
+  xcb_get_property_cookie_t cookie = xcb_get_property(
+    connection, 0, window_id, _NET_WM_WINDOW_OPACITY_ATOM, XCB_ATOM_CARDINAL, 0, 1);
+  xcb_get_property_reply_t* reply = xcb_get_property_reply(connection, cookie, nullptr);
+  
+  double opacity = 1.0; // Default opacity
+  if (reply && reply->type == XCB_ATOM_CARDINAL && reply->format == 32 && reply->length == 1) {
+    uint32_t opacity_value = *(uint32_t*)xcb_get_property_value(reply);
+    opacity = static_cast<double>(opacity_value) / 4294967295.0;
+  }
+  
+  if (reply) free(reply);
+  return opacity;
+}
+
+xcb_window_t getParentWindow(Napi::Env env, xcb_window_t window_id) {
+  xcb_query_tree_cookie_t cookie = xcb_query_tree(connection, window_id);
+  xcb_query_tree_reply_t* reply = xcb_query_tree_reply(connection, cookie, nullptr);
+  
+  xcb_window_t parent = 0;
+  if (reply) {
+    parent = reply->parent;
+    free(reply);
+  }
+  
+  return parent;
+}
+
 Napi::Object getWindowInfo(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
 
@@ -239,12 +309,19 @@ Napi::Object getWindowInfo(const Napi::CallbackInfo& info) {
   std::string path = getProcessPath(pid, env);
   Napi::Object bounds = getWindowBounds(env, window_id);
   std::string visibility = getWindowVisiblity(env, window_id);
+  std::string title = getWindowTitle(env, window_id);
+  double opacity = getWindowOpacity(env, window_id);
+  xcb_window_t parent_wid = getParentWindow(env, window_id);
+  
   Napi::Object result = Napi::Object::New(env);
   result.Set("wid", Napi::Number::New(env, static_cast<int64_t>(window_id)));
   result.Set("pid", Napi::Number::New(env, pid));
   result.Set("path", Napi::String::New(env, path));
   result.Set("bounds", bounds);
   result.Set("visibility", Napi::String::New(env, visibility));
+  result.Set("title", Napi::String::New(env, title));
+  result.Set("opacity", Napi::Number::New(env, opacity));
+  result.Set("parentWid", Napi::Number::New(env, static_cast<int64_t>(parent_wid)));
 
   return result;
 }
@@ -386,7 +463,29 @@ void setWindowState(const Napi::CallbackInfo& info) {
   xcb_flush(connection);
 }
 
-
+void setWindowOpacity(const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
+  
+  ensure_xcb_initialized(env);
+  
+  GET_INT_64(info, 0, window_id, xcb_window_t);
+  GET_DOUBLE(info, 1, opacity);
+  
+  if (opacity < 0.0 || opacity > 1.0) {
+    throw Napi::Error::New(env, "Opacity must be between 0.0 and 1.0");
+  }
+  
+  if (_NET_WM_WINDOW_OPACITY_ATOM == XCB_NONE) {
+    throw Napi::Error::New(env, "Window opacity not supported");
+  }
+  
+  // Convert opacity to 32-bit integer (0-4294967295)
+  uint32_t opacity_value = static_cast<uint32_t>(opacity * 4294967295.0);
+  
+  xcb_change_property(connection, XCB_PROP_MODE_REPLACE, window_id,
+                       _NET_WM_WINDOW_OPACITY_ATOM, XCB_ATOM_CARDINAL, 32, 1, &opacity_value);
+  xcb_flush(connection);
+}
 
 Napi::Object windowInit(Napi::Env env, Napi::Object exports) {
   exports.Set("getWindowActiveId", Napi::Function::New(env, getWindowActiveId));
@@ -395,5 +494,6 @@ Napi::Object windowInit(Napi::Env env, Napi::Object exports) {
   exports.Set("setWindowActive", Napi::Function::New(env, setWindowActive));
   exports.Set("setWindowState", Napi::Function::New(env, setWindowState));
   exports.Set("setWindowBounds", Napi::Function::New(env, setWindowBounds));
+  exports.Set("setWindowOpacity", Napi::Function::New(env, setWindowOpacity));
   return exports;
 }
