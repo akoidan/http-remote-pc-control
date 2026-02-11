@@ -145,7 +145,6 @@ unsigned int getFlag(napi_env env, napi_value value) {
 }
 
 unsigned int getAllFlags(napi_env env, napi_value value) {
-  bool isArray;
   unsigned int flags = 0;
 
   uint32_t length;

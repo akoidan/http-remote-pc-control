@@ -118,11 +118,11 @@ interface MonitorNativeModule {
   /**
    * Returns all monitors id (actually connected displays)
    */
-  getMonitors(): number[];
+  getMonitors?(): number[];
   /**
    * Gets monitor Id from a window Id
    */
-  getMonitorFromWindow(handle: number): number;
+  getMonitorFromWindow?(handle: number): number;
 
   /**
    * Returns minimal information about monitor by its id

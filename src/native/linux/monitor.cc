@@ -6,20 +6,6 @@
 // This basic version reports a single primary monitor using the default screen.
 // getMonitorScaleFactor returns 1.0 as a conservative default (no per-monitor scaling).
 
-static Napi::Array getMonitors(const Napi::CallbackInfo& info) {
-    Napi::Env env = info.Env();
-    auto arr = Napi::Array::New(env);
-    // Use a single synthetic monitor id 1
-    arr.Set((uint32_t)0, Napi::Number::New(env, 1));
-    return arr;
-}
-
-static Napi::Number getMonitorFromWindow(const Napi::CallbackInfo& info) {
-    Napi::Env env = info.Env();
-    // Single-monitor fallback: always return 1
-    return Napi::Number::New(env, 1);
-}
-
 
 static Napi::Object getMonitorInfo(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
@@ -51,8 +37,6 @@ static Napi::Object getMonitorInfo(const Napi::CallbackInfo& info) {
 }
 
 Napi::Object monitorInit(Napi::Env env, Napi::Object exports) {
-    exports.Set(Napi::String::New(env, "getMonitors"), Napi::Function::New(env, getMonitors));
-    exports.Set(Napi::String::New(env, "getMonitorFromWindow"), Napi::Function::New(env, getMonitorFromWindow));
     exports.Set(Napi::String::New(env, "getMonitorInfo"), Napi::Function::New(env, getMonitorInfo));
     return exports;
 }

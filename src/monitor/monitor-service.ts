@@ -13,9 +13,9 @@ export class MonitorService {
   ) {}
 
 
-  @Safe400(['win32', 'linux'])
+  @Safe400(['win32'])
   public getMonitors(): number[] {
-    return this.addon.getMonitors();
+    return this.addon.getMonitors!();
   }
 
   @Safe400(['win32', 'linux'])
@@ -23,8 +23,8 @@ export class MonitorService {
     return this.addon.getMonitorInfo(mid);
   }
 
-  @Safe400(['win32', 'linux'])
+  @Safe400(['win32'])
   public getMonitorFromWindow(wid: number): number {
-    return this.addon.getMonitorFromWindow(wid);
+    return this.addon.getMonitorFromWindow!(wid);
   }
 }

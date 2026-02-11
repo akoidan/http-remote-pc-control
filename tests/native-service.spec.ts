@@ -1,6 +1,6 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { NativeModule } from '../src/native/native-module';
-import { INativeModule, Native, WindowAction, MouseButton } from '../src/native/native-model';
+import {Test, TestingModule} from '@nestjs/testing';
+import {NativeModule} from '../src/native/native-module';
+import {INativeModule, Native, WindowAction, MouseButton} from '../src/native/native-model';
 
 describe('NativeService', () => {
   let nativeService: INativeModule;
@@ -55,8 +55,8 @@ describe('NativeService', () => {
       const updatedBounds = nativeService.getWindowInfo(windowId).bounds;
 
       // Allow for small variations due to window decorations and coordinate system differences
-      expect(Math.abs(updatedBounds.x - newBounds.x)).toBeLessThanOrEqual(process.platform === 'linux' ? 30: 3);
-      expect(Math.abs(updatedBounds.y - newBounds.y)).toBeLessThanOrEqual(process.platform === 'linux' ? 30: 3);
+      expect(Math.abs(updatedBounds.x - newBounds.x)).toBeLessThanOrEqual(process.platform === 'linux' ? 30 : 3);
+      expect(Math.abs(updatedBounds.y - newBounds.y)).toBeLessThanOrEqual(process.platform === 'linux' ? 30 : 3);
       expect(updatedBounds.width).toBe(newBounds.width);
       expect(updatedBounds.height).toBe(newBounds.height);
     });
@@ -91,23 +91,26 @@ describe('NativeService', () => {
   });
 
   describe('Monitor Management', () => {
-    it('should get monitors', () => {
-      const monitors = nativeService.getMonitors();
-      expect(Array.isArray(monitors)).toBe(true);
 
-      if (monitors.length > 0) {
-        const monitorInfo = nativeService.getMonitorInfo(monitors[0]);
-        expect(monitorInfo).toHaveProperty('bounds');
-        expect(monitorInfo).toHaveProperty('workArea');
-        expect(monitorInfo).toHaveProperty('scale');
-        expect(monitorInfo).toHaveProperty('isPrimary');
-      }
-    });
+    if (process.platform === 'win32') {
+      it('should get monitors', () => {
+        const monitors = nativeService.getMonitors!();
+        expect(Array.isArray(monitors)).toBe(true);
 
-    it('should get monitor from window', () => {
-      const monitorId = nativeService.getMonitorFromWindow(windowId);
-      expect(typeof monitorId).toBe('number');
-    });
+        if (monitors.length > 0) {
+          const monitorInfo = nativeService.getMonitorInfo(monitors[0]);
+          expect(monitorInfo).toHaveProperty('bounds');
+          expect(monitorInfo).toHaveProperty('workArea');
+          expect(monitorInfo).toHaveProperty('scale');
+          expect(monitorInfo).toHaveProperty('isPrimary');
+        }
+      });
+
+      it('should get monitor from window', () => {
+        const monitorId = nativeService.getMonitorFromWindow!(windowId);
+        expect(typeof monitorId).toBe('number');
+      });
+    }
   });
 
   describe('Process Management', () => {
@@ -118,43 +121,43 @@ describe('NativeService', () => {
 
     it('should get process info for current process', () => {
       const processInfo = nativeService.getProcessInfo(testPid);
-      
+
       expect(processInfo).toHaveProperty('pid');
       expect(processInfo).toHaveProperty('path');
       expect(processInfo).toHaveProperty('isElevated');
       expect(processInfo).toHaveProperty('memory');
       expect(processInfo).toHaveProperty('times');
-      
+
       expect(typeof processInfo.parentPid).toBe('number');
       expect(typeof processInfo.path).toBe('string');
       expect(typeof processInfo.isElevated).toBe('boolean');
-      
+
       // Check memory object structure
       expect(processInfo.memory).toHaveProperty('workingSetSize');
       expect(processInfo.memory).toHaveProperty('peakWorkingSetSize');
       expect(processInfo.memory).toHaveProperty('privateUsage');
       expect(processInfo.memory).toHaveProperty('pageFileUsage');
-      
+
       expect(typeof processInfo.memory.workingSetSize).toBe('number');
       expect(typeof processInfo.memory.peakWorkingSetSize).toBe('number');
       expect(typeof processInfo.memory.privateUsage).toBe('number');
       expect(typeof processInfo.memory.pageFileUsage).toBe('number');
-      
+
       // Check times object structure
       expect(processInfo.times).toHaveProperty('creationTime');
       expect(processInfo.times).toHaveProperty('kernelTime');
       expect(processInfo.times).toHaveProperty('userTime');
-      
+
       expect(typeof processInfo.times.creationTime).toBe('number');
       expect(typeof processInfo.times.kernelTime).toBe('number');
       expect(typeof processInfo.times.userTime).toBe('number');
-      
+
       // Verify the process ID matches
       expect(processInfo.pid).toBe(testPid);
-      
+
       // Verify exe path is not empty
       expect(processInfo.path.length).toBeGreaterThan(0);
-      
+
       // Verify memory values are positive
       expect(processInfo.memory.workingSetSize).toBeGreaterThan(0);
       expect(processInfo.memory.peakWorkingSetSize).toBeGreaterThan(0);
@@ -186,7 +189,7 @@ describe('NativeService', () => {
       expect(originalPos).toHaveProperty('x');
       expect(originalPos).toHaveProperty('y');
 
-      const newPos = { x: originalPos.x - 50, y: originalPos.y + 120 };
+      const newPos = {x: originalPos.x - 50, y: originalPos.y + 120};
       nativeService.setMousePosition(newPos);
 
       await new Promise(r => setTimeout(r, 100));
