@@ -33,20 +33,20 @@ export class MouseController {
   @ApiOperation({summary: 'Mouse move to the point, absolute coordinate for all monitors'})
   @HttpCode(204)
   setMousePosition(@Body() event: MousePositionRRDto): void {
-    this.mouseService.move(event);
+    this.mouseService.setMousePosition(event);
   }
 
   @Post('move-human')
   @ApiOperation({summary: 'Moves mouse in a human pattern with time'})
   @HttpCode(204)
   async mouseMoveHuman(@Body() event: MouseMoveHumanRequestDto): Promise<void> {
-    await this.mouseService.moveMouseHuman(event);
+    await this.mouseService.mouseMoveHuman(event);
   }
 
   @Post('click')
   @ApiOperation({summary: 'Left click on the current position'})
   @HttpCode(204)
-  leftMouseClick(@Body() event: MouseClickRequestDto): void {
+  click(@Body() event: MouseClickRequestDto): void {
     this.mouseService.click(event);
   }
 }

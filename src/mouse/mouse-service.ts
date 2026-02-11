@@ -29,8 +29,7 @@ export class MouseService {
   }
 
   @Safe400(['win32', 'linux'])
-  move(pos: MousePositionRR): void {
-    this.logger.log(`Mouse move: \u001b[35m${JSON.stringify(pos)}`);
+  setMousePosition(pos: MousePositionRR): void {
     this.addon.setMousePosition(pos);
   }
 
@@ -46,7 +45,7 @@ export class MouseService {
   }
 
   @Safe400(['win32', 'linux'])
-  async moveMouseHuman(event: MouseMoveHumanClickRequest): Promise<void> {
+  async mouseMoveHuman(event: MouseMoveHumanClickRequest): Promise<void> {
     this.logger.log(`Mouse human: \u001b[35m[${event.x},${event.y}]`);
     const {x: x1, y: y1} = this.addon.getMousePosition();
     let x2 = event.x;

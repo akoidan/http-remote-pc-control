@@ -8,7 +8,6 @@
     "start": "rm -rf ./dist/ && node -r tsconfig-paths/register -r ts-node/register src/main.ts",
     "clean": "rm -rf ./dist/ && rm -rf ./build",
     "openapi": "rm -rf ./dist/ && node -r tsconfig-paths/register -r ts-node/register src/open-api.ts",
-    "a": "ts-node a.ts",
     "cmake": "cmake-js build",
     "test": "jest --runInBand --testTimeout=10000",
     "cmake:debug": "cmake-js build --debug",

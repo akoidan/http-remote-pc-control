@@ -17,7 +17,7 @@ export class ProcessController {
   @Get(':pid')
   @ApiOperation({summary: 'Get all windows with their IDs for a concrete process id'})
   @ApiResponse({type: Number, isArray: true})
-  getWindowsIdByPid(@Param('pid', ParseIntPipe) id: number): ProcessResponseDto {
+  getProcessInfo(@Param('pid', ParseIntPipe) id: number): ProcessResponseDto {
     return this.processService.getProcessInfo(id);
   }
 

@@ -28,7 +28,7 @@ export class KeyboardController {
   @Post('set-layout')
   @ApiOperation({summary: 'Change keyboard layout'})
   @HttpCode(204)
-  setKeyboardLayout(@Body() body: SetKeyboardLayoutRequestDto): void {
+  setLayout(@Body() body: SetKeyboardLayoutRequestDto): void {
     this.keyboardService.setLayout(body);
   }
 }
