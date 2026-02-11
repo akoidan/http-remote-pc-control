@@ -142,8 +142,31 @@ Napi::Number getWindowActiveId(const Napi::CallbackInfo& info) {
   xcb_get_property_cookie_t cookie = xcb_ewmh_get_active_window(&ewmh, 0);
   xcb_window_t active_window = 0;
 
-  if (!xcb_ewmh_get_active_window_reply(&ewmh, cookie, &active_window, nullptr)) {
-    throw Napi::Error::New(env, "Failed to get active window");
+  xcb_generic_error_t* error = nullptr;
+  if (!xcb_ewmh_get_active_window_reply(&ewmh, cookie, &active_window, &error)) {
+    std::string errorMsg = "Failed to get active window";
+
+    if (error) {
+      switch (error->error_code) {
+      case XCB_WINDOW:  // 3
+        errorMsg += ": Invalid window";
+        break;
+      case XCB_VALUE:   // 2
+        errorMsg += ": Invalid value";
+        break;
+      case XCB_ACCESS:  // 10
+        errorMsg += ": Access denied";
+        break;
+      default:
+        errorMsg += ": X11 error code " + std::to_string(error->error_code);
+      }
+      errorMsg += " (sequence: " + std::to_string(error->sequence) + ")";
+      free(error);
+    } else {
+      errorMsg += ": No EWMH support or window manager not compliant";
+    }
+
+    throw Napi::Error::New(env, errorMsg);
   }
 
   return Napi::Number::New(env, static_cast<int64_t>(active_window));
@@ -347,8 +370,31 @@ Napi::Array getWindowsByProcessId(const Napi::CallbackInfo& info) {
   xcb_ewmh_get_windows_reply_t clients;
   xcb_get_property_cookie_t cookie = xcb_ewmh_get_client_list(&ewmh, 0);
 
-  if (!xcb_ewmh_get_client_list_reply(&ewmh, cookie, &clients, nullptr)) {
-    throw Napi::Error::New(env, "Failed to get client list");
+  xcb_generic_error_t* error = nullptr;
+  if (!xcb_ewmh_get_client_list_reply(&ewmh, cookie, &clients, &error)) {
+    std::string errorMsg = "Failed to get client list";
+
+    if (error) {
+      switch (error->error_code) {
+      case XCB_WINDOW:  // 3
+        errorMsg += ": Invalid window";
+        break;
+      case XCB_VALUE:   // 2
+        errorMsg += ": Invalid value";
+        break;
+      case XCB_ACCESS:  // 10
+        errorMsg += ": Access denied";
+        break;
+      default:
+        errorMsg += ": X11 error code " + std::to_string(error->error_code);
+      }
+      errorMsg += " (sequence: " + std::to_string(error->sequence) + ")";
+      free(error);
+    } else {
+      errorMsg += ": No EWMH support or window manager not compliant";
+    }
+
+    throw Napi::Error::New(env, errorMsg);
   }
 
   size_t count = 0;
