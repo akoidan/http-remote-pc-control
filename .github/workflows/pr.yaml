@@ -97,7 +97,7 @@ jobs:
       - name: Install dependencies # TODO cache
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends libx11-dev libxtst-dev libxcb-ewmh-dev libxcb1-dev cmake g++ make libdbus-1-dev xvfb
+          sudo apt-get install -y --no-install-recommends libx11-dev libxtst-dev libxcb-ewmh-dev libxcb1-dev cmake g++ make libdbus-1-dev xvfb openbox
 
       - uses: actions/setup-node@v3
         with:
@@ -127,4 +127,13 @@ jobs:
       - name: native
         run: yarn native
       - name: test
-        run: xvfb-run --auto-servernum --server-args="-screen 0 1280x1024x24" yarn test
+        run: |
+          xvfb-run --auto-servernum --server-args="-screen 0 1280x1024x24" &
+          sleep 2
+          # Set DISPLAY environment variable
+          export DISPLAY=:99
+          # Start Openbox window manager
+          openbox &
+          sleep 2
+          export DISPLAY=:99
+          yarn test
