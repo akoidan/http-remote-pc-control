@@ -166,11 +166,11 @@ describe('NativeService', () => {
   describe('Keyboard Operations', () => {
     it('should type a string', () => {
       // This will actually type, so be careful with this test
-      // nativeService.typeString('Test');
+      nativeService.typeString('Test');
     });
 
     it('should simulate key tap', () => {
-      // nativeService.keyTap('a', []);
+      nativeService.keyTap('a', []);
     });
   });
 
