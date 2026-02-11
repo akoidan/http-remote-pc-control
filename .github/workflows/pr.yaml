@@ -128,12 +128,9 @@ jobs:
         run: yarn native
       - name: test
         run: |
-          xvfb-run --auto-servernum --server-args="-screen 0 1280x1024x24" &
+          xvfb-run --auto-servernum --server-args="-screen 0 1280x1024x24" sh -c "
           sleep 2
-          # Set DISPLAY environment variable
-          export DISPLAY=:99
-          # Start Openbox window manager
           openbox &
           sleep 2
-          export DISPLAY=:99
           yarn test
+          "
