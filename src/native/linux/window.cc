@@ -71,7 +71,8 @@ void ensure_xcb_initialized(Napi::Env env) {
   }
 
   // Initialize _NET_WM_WINDOW_OPACITY atom
-  xcb_intern_atom_cookie_t opacityCookie = xcb_intern_atom(connection, 0, strlen("_NET_WM_WINDOW_OPACITY"), "_NET_WM_WINDOW_OPACITY");
+  xcb_intern_atom_cookie_t opacityCookie = xcb_intern_atom(connection, 0, strlen("_NET_WM_WINDOW_OPACITY"),
+                                                           "_NET_WM_WINDOW_OPACITY");
   xcb_generic_error_t* opacityError = nullptr;
   xcb_intern_atom_reply_t* opacityReply = xcb_intern_atom_reply(connection, opacityCookie, &opacityError);
   if (!opacityReply) {
@@ -93,7 +94,6 @@ void ensure_xcb_initialized(Napi::Env env) {
 
 // Get PID for a window
 pid_t getWindowPid(xcb_window_t window, Napi::Env env) {
-
   xcb_get_property_cookie_t cookie = xcb_get_property(
     connection,
     0,
@@ -169,13 +169,13 @@ Napi::Number getWindowActiveId(const Napi::CallbackInfo& info) {
 
     if (error) {
       switch (error->error_code) {
-      case XCB_WINDOW:  // 3
+      case XCB_WINDOW: // 3
         errorMsg += ": Invalid window";
         break;
-      case XCB_VALUE:   // 2
+      case XCB_VALUE: // 2
         errorMsg += ": Invalid value";
         break;
-      case XCB_ACCESS:  // 10
+      case XCB_ACCESS: // 10
         errorMsg += ": Access denied";
         break;
       default:
@@ -256,9 +256,9 @@ std::string getWindowVisiblity(Napi::Env env, xcb_window_t window_id) {
         isHidden = true;
       }
       if (atoms[i] == ewmh._NET_WM_STATE_MAXIMIZED_VERT ||
-          atoms[i] == ewmh._NET_WM_STATE_MAXIMIZED_HORZ) {
+        atoms[i] == ewmh._NET_WM_STATE_MAXIMIZED_HORZ) {
         isMaximized = true;
-          }
+      }
     }
 
     if (isHidden) {
@@ -323,20 +323,20 @@ std::string getWindowTitle(Napi::Env env, xcb_window_t window_id) {
     connection, 0, window_id, ewmh._NET_WM_NAME, XCB_ATOM_STRING, 0, 1024);
   xcb_generic_error_t* error = nullptr;
   xcb_get_property_reply_t* reply = xcb_get_property_reply(connection, cookie, &error);
-  
+
   std::string title = "";
   if (reply && reply->type != XCB_NONE && reply->format == 8 && reply->length > 0) {
     title = std::string((char*)xcb_get_property_value(reply), reply->length);
   }
-  
+
   if (reply) free(reply);
-  
+
   // Fallback to WM_NAME if _NET_WM_NAME is not available
   if (title.empty()) {
     cookie = xcb_get_property(connection, 0, window_id, XCB_ATOM_WM_NAME, XCB_ATOM_STRING, 0, 1024);
     xcb_generic_error_t* fallback_error = nullptr;
     reply = xcb_get_property_reply(connection, cookie, &fallback_error);
-    
+
     if (!reply) {
       std::string errorMsg = "Failed to get WM_NAME property reply";
       if (fallback_error) {
@@ -348,13 +348,13 @@ std::string getWindowTitle(Napi::Env env, xcb_window_t window_id) {
     } else if (reply->type != XCB_NONE && reply->format == 8 && reply->length > 0) {
       title = std::string((char*)xcb_get_property_value(reply), reply->length);
     }
-    
+
     if (reply) free(reply);
   } else if (error) {
     // Free error from first attempt if we got a reply
     free(error);
   }
-  
+
   return title;
 }
 
@@ -362,12 +362,12 @@ double getWindowOpacity(Napi::Env env, xcb_window_t window_id) {
   if (netWmWindowOpacityAtom == XCB_NONE) {
     return 1.0; // Opacity not supported
   }
-  
+
   xcb_get_property_cookie_t cookie = xcb_get_property(
     connection, 0, window_id, netWmWindowOpacityAtom, XCB_ATOM_CARDINAL, 0, 1);
   xcb_generic_error_t* error = nullptr;
   xcb_get_property_reply_t* reply = xcb_get_property_reply(connection, cookie, &error);
-  
+
   double opacity = 1.0; // Default opacity
   if (reply && reply->type == XCB_ATOM_CARDINAL && reply->format == 32 && reply->length == 1) {
     uint32_t opacityValue = *(uint32_t*)xcb_get_property_value(reply);
@@ -381,7 +381,7 @@ double getWindowOpacity(Napi::Env env, xcb_window_t window_id) {
     }
     // Don't throw here, just return default opacity since it's not critical
   }
-  
+
   if (reply) free(reply);
   return opacity;
 }
@@ -390,7 +390,7 @@ xcb_window_t getParentWindow(Napi::Env env, xcb_window_t window_id) {
   xcb_query_tree_cookie_t cookie = xcb_query_tree(connection, window_id);
   xcb_generic_error_t* error = nullptr;
   xcb_query_tree_reply_t* reply = xcb_query_tree_reply(connection, cookie, &error);
-  
+
   xcb_window_t parent = 0;
   if (reply) {
     parent = reply->parent;
@@ -404,7 +404,7 @@ xcb_window_t getParentWindow(Napi::Env env, xcb_window_t window_id) {
     }
     throw Napi::Error::New(env, errorMsg);
   }
-  
+
   return parent;
 }
 
@@ -428,7 +428,7 @@ Napi::Object getWindowInfo(const Napi::CallbackInfo& info) {
   std::string title = getWindowTitle(env, window_id);
   double opacity = getWindowOpacity(env, window_id);
   xcb_window_t parentWid = getParentWindow(env, window_id);
-  
+
 
   result.Set("wid", Napi::Number::New(env, static_cast<int64_t>(window_id)));
   result.Set("bounds", bounds);
@@ -458,13 +458,13 @@ Napi::Array getWindowsByProcessId(const Napi::CallbackInfo& info) {
 
     if (error) {
       switch (error->error_code) {
-      case XCB_WINDOW:  // 3
+      case XCB_WINDOW: // 3
         errorMsg += ": Invalid window";
         break;
-      case XCB_VALUE:   // 2
+      case XCB_VALUE: // 2
         errorMsg += ": Invalid value";
         break;
-      case XCB_ACCESS:  // 10
+      case XCB_ACCESS: // 10
         errorMsg += ": Access denied";
         break;
       default:
@@ -528,13 +528,12 @@ void setWindowBounds(const Napi::CallbackInfo& info) {
 }
 
 
-
 // Show a window
 void setWindowState(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
   ensure_xcb_initialized(env);
-  
+
   GET_INT_64(info, 0, window_id, xcb_window_t);
   GET_STRING(info, 1, type);
 
@@ -556,7 +555,7 @@ void setWindowState(const Napi::CallbackInfo& info) {
     event.data.data32[1] = ewmh._NET_WM_STATE_HIDDEN;
     event.data.data32[2] = XCB_NONE;
     event.data.data32[3] = 0;
-    
+
     xcb_send_event(connection, 0, rootWindow,
                    XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY | XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT,
                    (const char*)&event);
@@ -572,7 +571,7 @@ void setWindowState(const Napi::CallbackInfo& info) {
     event.data.data32[1] = ewmh._NET_WM_STATE_HIDDEN;
     event.data.data32[2] = XCB_NONE;
     event.data.data32[3] = 0;
-    
+
     xcb_send_event(connection, 0, rootWindow,
                    XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY | XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT,
                    (const char*)&event);
@@ -589,7 +588,7 @@ void setWindowState(const Napi::CallbackInfo& info) {
     event.data.data32[1] = ewmh._NET_WM_STATE_MAXIMIZED_VERT;
     event.data.data32[2] = ewmh._NET_WM_STATE_MAXIMIZED_HORZ;
     event.data.data32[3] = 0;
-    
+
     xcb_send_event(connection, 0, rootWindow,
                    XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY | XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT,
                    (const char*)&event);
@@ -602,25 +601,25 @@ void setWindowState(const Napi::CallbackInfo& info) {
 
 void setWindowOpacity(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
-  
+
   ensure_xcb_initialized(env);
-  
+
   GET_INT_64(info, 0, window_id, xcb_window_t);
   GET_DOUBLE(info, 1, opacity);
-  
+
   if (opacity < 0.0 || opacity > 1.0) {
     throw Napi::Error::New(env, "Opacity must be between 0.0 and 1.0");
   }
-  
+
   if (netWmWindowOpacityAtom == XCB_NONE) {
     throw Napi::Error::New(env, "Window opacity not supported");
   }
-  
+
   // Convert opacity to 32-bit integer (0-4294967295)
   uint32_t opacityValue = static_cast<uint32_t>(opacity * 4294967295.0);
-  
+
   xcb_change_property(connection, XCB_PROP_MODE_REPLACE, window_id,
-                       netWmWindowOpacityAtom, XCB_ATOM_CARDINAL, 32, 1, &opacityValue);
+                      netWmWindowOpacityAtom, XCB_ATOM_CARDINAL, 32, 1, &opacityValue);
   xcb_flush(connection);
 }
 ; // Global variable
@@ -630,11 +629,13 @@ Napi::Value createTestWindow(const Napi::CallbackInfo& info) {
 
   Display* test_display = xGetMainDisplay(env);
 
-  Window window = XCreateSimpleWindow(test_display,
-                                  RootWindow(test_display, DefaultScreen(test_display)),
-                                  100, 100, 500, 500, 1,
-                                  BlackPixel(test_display, DefaultScreen(test_display)),
-                                  WhitePixel(test_display, DefaultScreen(test_display)));
+  Window window = XCreateSimpleWindow(
+    test_display,
+    RootWindow(test_display, DefaultScreen(test_display)),
+    100, 100, 500, 500, 1,
+    BlackPixel(test_display, DefaultScreen(test_display)),
+    WhitePixel(test_display, DefaultScreen(test_display))
+  );
 
   XMapWindow(test_display, window);
   XFlush(test_display);

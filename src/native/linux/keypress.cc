@@ -11,8 +11,7 @@
 #include "./headers/validators.h"
 
 void toggleKeyCode(Napi::Env env, KeySym code, const bool down, unsigned int flags) {
-
-  #define X_KEY_EVENT(display, key, is_press)                \
+#define X_KEY_EVENT(display, key, is_press)                \
   (XTestFakeKeyEvent(display, XKeysymToKeycode(display, key), is_press, CurrentTime), XFlush(display))
 
   Display* display = xGetMainDisplay(env);
