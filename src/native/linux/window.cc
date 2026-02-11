@@ -488,12 +488,13 @@ void setWindowOpacity(const Napi::CallbackInfo& info) {
 }
 
 Napi::Object windowInit(Napi::Env env, Napi::Object exports) {
+  exports.Set("setWindowActive", Napi::Function::New(env, setWindowActive));
   exports.Set("getWindowActiveId", Napi::Function::New(env, getWindowActiveId));
   exports.Set("getWindowsByProcessId", Napi::Function::New(env, getWindowsByProcessId));
-  exports.Set("getWindowInfo", Napi::Function::New(env, getWindowInfo));
-  exports.Set("setWindowActive", Napi::Function::New(env, setWindowActive));
   exports.Set("setWindowState", Napi::Function::New(env, setWindowState));
+  exports.Set("getWindowInfo", Napi::Function::New(env, getWindowInfo));
   exports.Set("setWindowBounds", Napi::Function::New(env, setWindowBounds));
+
   exports.Set("setWindowOpacity", Napi::Function::New(env, setWindowOpacity));
   return exports;
 }
