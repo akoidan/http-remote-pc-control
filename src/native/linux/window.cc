@@ -57,20 +57,34 @@ void ensure_xcb_initialized(Napi::Env env) {
   xcb_screen_t* screen = xcb_setup_roots_iterator(xcb_get_setup(connection)).data;
   root_window = screen->root;
 
-  if (xcb_ewmh_init_atoms_replies(&ewmh, xcb_ewmh_init_atoms(connection, &ewmh), nullptr) == 0) {
+  xcb_generic_error_t* ewmh_error = nullptr;
+  if (xcb_ewmh_init_atoms_replies(&ewmh, xcb_ewmh_init_atoms(connection, &ewmh), &ewmh_error) == 0) {
+    std::string errorMsg = "Failed to initialize EWMH atoms";
+    if (ewmh_error) {
+      errorMsg += ": X11 error code " + std::to_string(ewmh_error->error_code);
+      errorMsg += " (sequence: " + std::to_string(ewmh_error->sequence) + ")";
+      free(ewmh_error);
+    }
     xcb_disconnect(connection);
     connection = nullptr;
-    throw Napi::Error::New(env, "Failed to initialize EWMH atoms");
+    throw Napi::Error::New(env, errorMsg);
   }
 
   // Initialize _NET_WM_WINDOW_OPACITY atom
   xcb_intern_atom_cookie_t opacity_cookie = xcb_intern_atom(connection, 0, strlen("_NET_WM_WINDOW_OPACITY"), "_NET_WM_WINDOW_OPACITY");
-  xcb_intern_atom_reply_t* opacity_reply = xcb_intern_atom_reply(connection, opacity_cookie, nullptr);
-  if (opacity_reply) {
+  xcb_generic_error_t* opacity_error = nullptr;
+  xcb_intern_atom_reply_t* opacity_reply = xcb_intern_atom_reply(connection, opacity_cookie, &opacity_error);
+  if (!opacity_reply) {
+    std::string errorMsg = "Failed to get _NET_WM_WINDOW_OPACITY atom reply";
+    if (opacity_error) {
+      errorMsg += ": X11 error code " + std::to_string(opacity_error->error_code);
+      errorMsg += " (sequence: " + std::to_string(opacity_error->sequence) + ")";
+      free(opacity_error);
+    }
+    _NET_WM_WINDOW_OPACITY_ATOM = XCB_NONE;
+  } else {
     _NET_WM_WINDOW_OPACITY_ATOM = opacity_reply->atom;
     free(opacity_reply);
-  } else {
-    _NET_WM_WINDOW_OPACITY_ATOM = XCB_NONE;
   }
 
   LOG("XCB initialized successfully");
@@ -90,9 +104,16 @@ pid_t getWindowPid(xcb_window_t window, Napi::Env env) {
     1
   );
 
-  xcb_get_property_reply_t* reply = xcb_get_property_reply(connection, cookie, nullptr);
+  xcb_generic_error_t* error = nullptr;
+  xcb_get_property_reply_t* reply = xcb_get_property_reply(connection, cookie, &error);
   if (!reply) {
-    throw Napi::Error::New(env, "Failed to get reply from XCB connection");
+    std::string errorMsg = "Failed to get _NET_WM_PID property reply";
+    if (error) {
+      errorMsg += ": X11 error code " + std::to_string(error->error_code);
+      errorMsg += " (sequence: " + std::to_string(error->sequence) + ")";
+      free(error);
+    }
+    throw Napi::Error::New(env, errorMsg);
   };
 
   pid_t pid = 0;
@@ -179,22 +200,38 @@ std::string getWindowVisiblity(Napi::Env env, xcb_window_t window_id) {
 
   // Check if window is mapped (visible)
   xcb_get_window_attributes_cookie_t attr_cookie = xcb_get_window_attributes(connection, window_id);
-  xcb_get_window_attributes_reply_t* attr_reply = xcb_get_window_attributes_reply(connection, attr_cookie, nullptr);
+  xcb_generic_error_t* attr_error = nullptr;
+  xcb_get_window_attributes_reply_t* attr_reply = xcb_get_window_attributes_reply(connection, attr_cookie, &attr_error);
 
   if (attr_reply) {
     if (attr_reply->map_state != XCB_MAP_STATE_VIEWABLE) {
       visibility = "hide";
     }
     free(attr_reply);
+  } else {
+    std::string errorMsg = "Failed to get window attributes";
+    if (attr_error) {
+      errorMsg += ": X11 error code " + std::to_string(attr_error->error_code);
+      errorMsg += " (sequence: " + std::to_string(attr_error->sequence) + ")";
+      free(attr_error);
+    }
+    throw Napi::Error::New(env, errorMsg);
   }
 
   // Check for minimized state
   xcb_get_property_cookie_t state_cookie = xcb_get_property(
     connection, 0, window_id, ewmh._NET_WM_STATE, XCB_ATOM_ATOM, 0, 1024);
-  xcb_get_property_reply_t* state_reply = xcb_get_property_reply(connection, state_cookie, nullptr);
+  xcb_generic_error_t* state_error = nullptr;
+  xcb_get_property_reply_t* state_reply = xcb_get_property_reply(connection, state_cookie, &state_error);
 
   if (!state_reply) {
-    throw Napi::Error::New(env, "Failed to get _NET_WM_STATE property reply");
+    std::string errorMsg = "Failed to get _NET_WM_STATE property reply";
+    if (state_error) {
+      errorMsg += ": X11 error code " + std::to_string(state_error->error_code);
+      errorMsg += " (sequence: " + std::to_string(state_error->sequence) + ")";
+      free(state_error);
+    }
+    throw Napi::Error::New(env, errorMsg);
   }
 
   // If property doesn't exist, it's not minimized or maximized
@@ -238,21 +275,35 @@ std::string getWindowVisiblity(Napi::Env env, xcb_window_t window_id) {
 
 Napi::Object getWindowBounds(Napi::Env env, xcb_window_t window_id) {
   xcb_get_geometry_cookie_t geom_cookie = xcb_get_geometry(connection, window_id);
-  xcb_get_geometry_reply_t* geom_reply = xcb_get_geometry_reply(connection, geom_cookie, nullptr);
+  xcb_generic_error_t* geom_error = nullptr;
+  xcb_get_geometry_reply_t* geom_reply = xcb_get_geometry_reply(connection, geom_cookie, &geom_error);
 
   if (!geom_reply) {
-    throw Napi::Error::New(env, "Failed to get window geometry");
+    std::string errorMsg = "Failed to get window geometry";
+    if (geom_error) {
+      errorMsg += ": X11 error code " + std::to_string(geom_error->error_code);
+      errorMsg += " (sequence: " + std::to_string(geom_error->sequence) + ")";
+      free(geom_error);
+    }
+    throw Napi::Error::New(env, errorMsg);
   }
 
   // Get window's absolute position (accounting for window decorations)
   xcb_translate_coordinates_cookie_t trans_cookie = xcb_translate_coordinates(
     connection, window_id, root_window, 0, 0);
+  xcb_generic_error_t* trans_error = nullptr;
   xcb_translate_coordinates_reply_t* trans_reply =
-    xcb_translate_coordinates_reply(connection, trans_cookie, nullptr);
+    xcb_translate_coordinates_reply(connection, trans_cookie, &trans_error);
 
   if (!trans_reply) {
+    std::string errorMsg = "Failed to translate window coordinates";
+    if (trans_error) {
+      errorMsg += ": X11 error code " + std::to_string(trans_error->error_code);
+      errorMsg += " (sequence: " + std::to_string(trans_error->sequence) + ")";
+      free(trans_error);
+    }
     free(geom_reply);
-    throw Napi::Error::New(env, "Failed to translate window coordinates");
+    throw Napi::Error::New(env, errorMsg);
   }
 
   Napi::Object bounds = Napi::Object::New(env);
@@ -270,7 +321,8 @@ Napi::Object getWindowBounds(Napi::Env env, xcb_window_t window_id) {
 std::string getWindowTitle(Napi::Env env, xcb_window_t window_id) {
   xcb_get_property_cookie_t cookie = xcb_get_property(
     connection, 0, window_id, ewmh._NET_WM_NAME, XCB_ATOM_STRING, 0, 1024);
-  xcb_get_property_reply_t* reply = xcb_get_property_reply(connection, cookie, nullptr);
+  xcb_generic_error_t* error = nullptr;
+  xcb_get_property_reply_t* reply = xcb_get_property_reply(connection, cookie, &error);
   
   std::string title = "";
   if (reply && reply->type != XCB_NONE && reply->format == 8 && reply->length > 0) {
@@ -282,13 +334,25 @@ std::string getWindowTitle(Napi::Env env, xcb_window_t window_id) {
   // Fallback to WM_NAME if _NET_WM_NAME is not available
   if (title.empty()) {
     cookie = xcb_get_property(connection, 0, window_id, XCB_ATOM_WM_NAME, XCB_ATOM_STRING, 0, 1024);
-    reply = xcb_get_property_reply(connection, cookie, nullptr);
+    xcb_generic_error_t* fallback_error = nullptr;
+    reply = xcb_get_property_reply(connection, cookie, &fallback_error);
     
-    if (reply && reply->type != XCB_NONE && reply->format == 8 && reply->length > 0) {
+    if (!reply) {
+      std::string errorMsg = "Failed to get WM_NAME property reply";
+      if (fallback_error) {
+        errorMsg += ": X11 error code " + std::to_string(fallback_error->error_code);
+        errorMsg += " (sequence: " + std::to_string(fallback_error->sequence) + ")";
+        free(fallback_error);
+      }
+      // Don't throw here, just return empty title since it's a fallback
+    } else if (reply->type != XCB_NONE && reply->format == 8 && reply->length > 0) {
       title = std::string((char*)xcb_get_property_value(reply), reply->length);
     }
     
     if (reply) free(reply);
+  } else if (error) {
+    // Free error from first attempt if we got a reply
+    free(error);
   }
   
   return title;
@@ -301,12 +365,21 @@ double getWindowOpacity(Napi::Env env, xcb_window_t window_id) {
   
   xcb_get_property_cookie_t cookie = xcb_get_property(
     connection, 0, window_id, _NET_WM_WINDOW_OPACITY_ATOM, XCB_ATOM_CARDINAL, 0, 1);
-  xcb_get_property_reply_t* reply = xcb_get_property_reply(connection, cookie, nullptr);
+  xcb_generic_error_t* error = nullptr;
+  xcb_get_property_reply_t* reply = xcb_get_property_reply(connection, cookie, &error);
   
   double opacity = 1.0; // Default opacity
   if (reply && reply->type == XCB_ATOM_CARDINAL && reply->format == 32 && reply->length == 1) {
     uint32_t opacity_value = *(uint32_t*)xcb_get_property_value(reply);
     opacity = static_cast<double>(opacity_value) / 4294967295.0;
+  } else if (!reply) {
+    std::string errorMsg = "Failed to get _NET_WM_WINDOW_OPACITY property reply";
+    if (error) {
+      errorMsg += ": X11 error code " + std::to_string(error->error_code);
+      errorMsg += " (sequence: " + std::to_string(error->sequence) + ")";
+      free(error);
+    }
+    // Don't throw here, just return default opacity since it's not critical
   }
   
   if (reply) free(reply);
@@ -315,12 +388,21 @@ double getWindowOpacity(Napi::Env env, xcb_window_t window_id) {
 
 xcb_window_t getParentWindow(Napi::Env env, xcb_window_t window_id) {
   xcb_query_tree_cookie_t cookie = xcb_query_tree(connection, window_id);
-  xcb_query_tree_reply_t* reply = xcb_query_tree_reply(connection, cookie, nullptr);
+  xcb_generic_error_t* error = nullptr;
+  xcb_query_tree_reply_t* reply = xcb_query_tree_reply(connection, cookie, &error);
   
   xcb_window_t parent = 0;
   if (reply) {
     parent = reply->parent;
     free(reply);
+  } else {
+    std::string errorMsg = "Failed to get window tree";
+    if (error) {
+      errorMsg += ": X11 error code " + std::to_string(error->error_code);
+      errorMsg += " (sequence: " + std::to_string(error->sequence) + ")";
+      free(error);
+    }
+    throw Napi::Error::New(env, errorMsg);
   }
   
   return parent;
