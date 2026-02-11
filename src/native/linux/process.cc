@@ -8,7 +8,7 @@
 #include "./headers/process.h"
 
 
-std::string get_process_path(pid_t pid, Napi::Env env) {
+std::string getProcessPath(pid_t pid, Napi::Env env) {
     if (pid <= 0) {
         throw Napi::Error::New(env, "Invalid pid");
     }
