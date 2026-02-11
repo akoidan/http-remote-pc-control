@@ -84,7 +84,7 @@ pid_t getWindowPid(xcb_window_t window, Napi::Env env) {
     XCB_ATOM_CARDINAL,
     0,
     1
-    );
+  );
 
   xcb_get_property_reply_t* reply = xcb_get_property_reply(connection, cookie, nullptr);
   if (!reply) {

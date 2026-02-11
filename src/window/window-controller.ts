@@ -12,7 +12,7 @@ export class WindowController {
   ) {
   }
 
-  @Get(':wid')
+  @Get('by-wid/:wid')
   @ApiResponse({type: GetWindowResponseDto})
   @ApiOperation({summary: 'Get window coordinates and parameters (x,y, width, height)'})
   getWindowBounds(@Param('wid', ParseIntPipe) wid: number): GetWindowResponseDto {
@@ -26,7 +26,7 @@ export class WindowController {
     return this.windowService.getActiveWindowInfo();
   }
 
-  @Patch(':wid')
+  @Patch('by-wid/:wid')
   @ApiOperation({summary: 'Set window properties'})
   setWindowBounds(
     @Param('wid', ParseIntPipe) wid: number,
@@ -35,7 +35,7 @@ export class WindowController {
     this.windowService.setWindowProperties(wid, body);
   }
 
-  @Post(':wid/focus')
+  @Post('by-wid/:wid/focus')
   @ApiOperation({summary: 'Focuses a window by its id'})
   @HttpCode(204)
   focusWindowId(@Param('wid', ParseIntPipe) wid: number): void {
