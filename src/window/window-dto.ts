@@ -16,8 +16,8 @@ const widSchema = z.number().describe('Target window handle (HWND as number)');
 const getWindowResponseShema = z.object({
   bounds: boundsSchema,
   wid: widSchema,
-  pid: z.number().describe('Process ID of the active window'),
-  path: z.string().describe('Absolute path to the process executable for the active window'),
+  pid: z.number().optional().describe('Process ID of the active window'),
+  path: z.string().optional().describe('Absolute path to the process executable for the active window'),
   parentWid: z.number().describe('Parent window id'),
   opacity: z.number().min(0).max(1).describe('Opacity value in range 0..1 where 1 is fully opaque'),
   title: z.string().describe('Window title'),
