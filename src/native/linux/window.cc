@@ -13,8 +13,8 @@
 // Global XCB connection
 static xcb_connection_t* connection = nullptr;
 static xcb_ewmh_connection_t ewmh;
-static xcb_window_t root_window;
-static xcb_atom_t _NET_WM_WINDOW_OPACITY_ATOM;
+static xcb_window_t rootWindow;
+static xcb_atom_t netWmWindowOpacityAtom;
 
 
 // Initialize XCB if not already initialized
@@ -55,7 +55,7 @@ void ensure_xcb_initialized(Napi::Env env) {
   }
 
   xcb_screen_t* screen = xcb_setup_roots_iterator(xcb_get_setup(connection)).data;
-  root_window = screen->root;
+  rootWindow = screen->root;
 
   xcb_generic_error_t* ewmh_error = nullptr;
   if (xcb_ewmh_init_atoms_replies(&ewmh, xcb_ewmh_init_atoms(connection, &ewmh), &ewmh_error) == 0) {
@@ -81,9 +81,9 @@ void ensure_xcb_initialized(Napi::Env env) {
       errorMsg += " (sequence: " + std::to_string(opacity_error->sequence) + ")";
       free(opacity_error);
     }
-    _NET_WM_WINDOW_OPACITY_ATOM = XCB_NONE;
+    netWmWindowOpacityAtom = XCB_NONE;
   } else {
-    _NET_WM_WINDOW_OPACITY_ATOM = opacity_reply->atom;
+    netWmWindowOpacityAtom = opacity_reply->atom;
     free(opacity_reply);
   }
 
@@ -146,7 +146,7 @@ void setWindowActive(const Napi::CallbackInfo& info) {
   event.data.data32[1] = XCB_CURRENT_TIME;
   event.data.data32[2] = XCB_NONE;
 
-  xcb_send_event(connection, 0, root_window,
+  xcb_send_event(connection, 0, rootWindow,
                  XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY | XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT,
                  (const char*)&event);
 
@@ -290,7 +290,7 @@ Napi::Object getWindowBounds(Napi::Env env, xcb_window_t window_id) {
 
   // Get window's absolute position (accounting for window decorations)
   xcb_translate_coordinates_cookie_t trans_cookie = xcb_translate_coordinates(
-    connection, window_id, root_window, 0, 0);
+    connection, window_id, rootWindow, 0, 0);
   xcb_generic_error_t* trans_error = nullptr;
   xcb_translate_coordinates_reply_t* trans_reply =
     xcb_translate_coordinates_reply(connection, trans_cookie, &trans_error);
@@ -359,12 +359,12 @@ std::string getWindowTitle(Napi::Env env, xcb_window_t window_id) {
 }
 
 double getWindowOpacity(Napi::Env env, xcb_window_t window_id) {
-  if (_NET_WM_WINDOW_OPACITY_ATOM == XCB_NONE) {
+  if (netWmWindowOpacityAtom == XCB_NONE) {
     return 1.0; // Opacity not supported
   }
   
   xcb_get_property_cookie_t cookie = xcb_get_property(
-    connection, 0, window_id, _NET_WM_WINDOW_OPACITY_ATOM, XCB_ATOM_CARDINAL, 0, 1);
+    connection, 0, window_id, netWmWindowOpacityAtom, XCB_ATOM_CARDINAL, 0, 1);
   xcb_generic_error_t* error = nullptr;
   xcb_get_property_reply_t* reply = xcb_get_property_reply(connection, cookie, &error);
   
@@ -557,7 +557,7 @@ void setWindowState(const Napi::CallbackInfo& info) {
     event.data.data32[2] = XCB_NONE;
     event.data.data32[3] = 0;
     
-    xcb_send_event(connection, 0, root_window,
+    xcb_send_event(connection, 0, rootWindow,
                    XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY | XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT,
                    (const char*)&event);
   } else if (type == "restore") {
@@ -573,7 +573,7 @@ void setWindowState(const Napi::CallbackInfo& info) {
     event.data.data32[2] = XCB_NONE;
     event.data.data32[3] = 0;
     
-    xcb_send_event(connection, 0, root_window,
+    xcb_send_event(connection, 0, rootWindow,
                    XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY | XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT,
                    (const char*)&event);
     xcb_map_window(connection, window_id);
@@ -590,7 +590,7 @@ void setWindowState(const Napi::CallbackInfo& info) {
     event.data.data32[2] = ewmh._NET_WM_STATE_MAXIMIZED_HORZ;
     event.data.data32[3] = 0;
     
-    xcb_send_event(connection, 0, root_window,
+    xcb_send_event(connection, 0, rootWindow,
                    XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY | XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT,
                    (const char*)&event);
   } else {
@@ -612,7 +612,7 @@ void setWindowOpacity(const Napi::CallbackInfo& info) {
     throw Napi::Error::New(env, "Opacity must be between 0.0 and 1.0");
   }
   
-  if (_NET_WM_WINDOW_OPACITY_ATOM == XCB_NONE) {
+  if (netWmWindowOpacityAtom == XCB_NONE) {
     throw Napi::Error::New(env, "Window opacity not supported");
   }
   
@@ -620,7 +620,7 @@ void setWindowOpacity(const Napi::CallbackInfo& info) {
   uint32_t opacity_value = static_cast<uint32_t>(opacity * 4294967295.0);
   
   xcb_change_property(connection, XCB_PROP_MODE_REPLACE, window_id,
-                       _NET_WM_WINDOW_OPACITY_ATOM, XCB_ATOM_CARDINAL, 32, 1, &opacity_value);
+                       netWmWindowOpacityAtom, XCB_ATOM_CARDINAL, 32, 1, &opacity_value);
   xcb_flush(connection);
 }
 ; // Global variable

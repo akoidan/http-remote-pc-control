@@ -147,7 +147,7 @@ KeyNames keyNames[] = {
 };
 
 
-std::map<char, KeySym> XSpecialCharacterMap = {
+std::map<char, KeySym> xSpecialCharacterMap = {
   {'[', XK_bracketleft},
   {']', XK_bracketright},
   {',', XK_comma},
@@ -163,7 +163,7 @@ std::map<char, KeySym> XSpecialCharacterMap = {
   {'\n', XK_Return}
 };
 
-std::map<char, KeySym> XShiftRequiredMap = {
+std::map<char, KeySym> xShiftRequiredMap = {
   {'~', XK_asciitilde},
   {'_', XK_underscore},
   {'!', XK_exclam},

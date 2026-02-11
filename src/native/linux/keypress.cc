@@ -43,13 +43,13 @@ KeySym keyCodeForChar(const char c) {
 
   code = XStringToKeysym(buf);
   if (code == NoSymbol) {
-    auto it = XSpecialCharacterMap.find(c);
-    if (it != XSpecialCharacterMap.end()) {
+    auto it = xSpecialCharacterMap.find(c);
+    if (it != xSpecialCharacterMap.end()) {
       code = it->second;
     }
     else {
-      auto shiftIt = XShiftRequiredMap.find(c);
-      if (shiftIt != XShiftRequiredMap.end()) {
+      auto shiftIt = xShiftRequiredMap.find(c);
+      if (shiftIt != xShiftRequiredMap.end()) {
         code = shiftIt->second;
       }
     }
@@ -60,7 +60,7 @@ KeySym keyCodeForChar(const char c) {
 
 void toggleKey(Napi::Env env, char c, const bool down, unsigned int flags) {
   KeySym keyCode = keyCodeForChar(c);
-  if (std::isupper(c) || XShiftRequiredMap.find(c) != XShiftRequiredMap.end()) {
+  if (std::isupper(c) || xShiftRequiredMap.find(c) != xShiftRequiredMap.end()) {
     flags |= ShiftMask;
   }
   toggleKeyCode(env, keyCode, down, flags);
@@ -78,14 +78,14 @@ void typeString(const Napi::CallbackInfo& info) {
     bool needShift = false;
 
     // First check our special character map
-    auto it = XSpecialCharacterMap.find(*str);
-    if (it != XSpecialCharacterMap.end()) {
+    auto it = xSpecialCharacterMap.find(*str);
+    if (it != xSpecialCharacterMap.end()) {
       ks = it->second;
     }
     else {
       // Then check shift-required map
-      auto shiftIt = XShiftRequiredMap.find(*str);
-      if (shiftIt != XShiftRequiredMap.end()) {
+      auto shiftIt = xShiftRequiredMap.find(*str);
+      if (shiftIt != xShiftRequiredMap.end()) {
         ks = shiftIt->second;
         needShift = true;
       }
