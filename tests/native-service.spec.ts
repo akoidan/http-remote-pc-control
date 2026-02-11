@@ -16,15 +16,20 @@ describe('NativeService', () => {
   });
 
   describe('Window Management', () => {
+    const wid =nativeService.createTestWindow()
+
+    it('should set windowActive', () => {
+      nativeService.setWindowActive(wid);
+    });
+
     it('should get active window ID', () => {
       const windowId = nativeService.getWindowActiveId();
       expect(typeof windowId).toBe('number');
-      expect(windowId).toBeGreaterThan(0);
+      expect(windowId).toBe(wid);
     });
 
     it('should get window info', () => {
-      const windowId = nativeService.getWindowActiveId();
-      const windowInfo = nativeService.getWindowInfo(windowId);
+      const windowInfo = nativeService.getWindowInfo(wid);
 
       expect(windowInfo).toHaveProperty('wid');
       expect(windowInfo).toHaveProperty('pid');
@@ -39,8 +44,8 @@ describe('NativeService', () => {
       const windowId = nativeService.getWindowActiveId();
       const originalBounds = nativeService.getWindowInfo(windowId).bounds;
       const newBounds = {
-        x: originalBounds.x + 10,
-        y: originalBounds.y + 10,
+        x: originalBounds.x + 50,
+        y: originalBounds.y + 50,
         width: originalBounds.width,
         height: originalBounds.height
       };
@@ -48,8 +53,11 @@ describe('NativeService', () => {
       nativeService.setWindowBounds(windowId, newBounds);
       const updatedBounds = nativeService.getWindowInfo(windowId).bounds;
 
-      expect(updatedBounds.x).toBe(newBounds.x);
-      expect(updatedBounds.y).toBe(newBounds.y);
+      // Allow for small variations due to window decorations and coordinate system differences
+      expect(Math.abs(updatedBounds.x - newBounds.x)).toBeLessThanOrEqual(3);
+      expect(Math.abs(updatedBounds.y - newBounds.y)).toBeLessThanOrEqual(3);
+      expect(updatedBounds.width).toBe(newBounds.width);
+      expect(updatedBounds.height).toBe(newBounds.height);
     });
 
     it('should change window state', () => {
@@ -175,14 +183,15 @@ describe('NativeService', () => {
   });
 
   describe('Mouse Operations', () => {
-    it('should get and set mouse position', () => {
+    it('should get and set mouse position', async () => {
       const originalPos = nativeService.getMousePosition();
       expect(originalPos).toHaveProperty('x');
       expect(originalPos).toHaveProperty('y');
 
-      const newPos = { x: originalPos.x + 10, y: originalPos.y + 10 };
+      const newPos = { x: originalPos.x - 50, y: originalPos.y + 120 };
       nativeService.setMousePosition(newPos);
 
+      await new Promise(r => setTimeout(r, 1000));
       const updatedPos = nativeService.getMousePosition();
       // Allow for small variations in position (up to 2 pixels)
       expect(Math.abs(updatedPos.x - newPos.x)).toBeLessThanOrEqual(2);

@@ -106,6 +106,12 @@ interface WindowNativeModule {
    * Attaches to window, sharing common keyboard. Only is available on Windows OS
    */
   setWindowAttached(handle: number): void;
+
+  /**
+   * Creates a simple window for jest
+   */
+  createTestWindow(): number;
+
 }
 
 interface MonitorNativeModule {

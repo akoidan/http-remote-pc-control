@@ -2,6 +2,7 @@
 #include "./headers/mouse.h"
 #include <napi.h>
 #include <X11/extensions/XTest.h>
+#include <unistd.h>
 
 #include "headers/validators.h"
 

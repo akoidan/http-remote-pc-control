@@ -5,7 +5,8 @@
 #include "./headers/logger.h"
 #include "./headers/process.h"
 #include "./headers/validators.h"
-
+#include <X11/Xlib.h>
+#include <X11/Xatom.h>
 
 // Global XCB connection
 static xcb_connection_t* connection = nullptr;
@@ -72,6 +73,7 @@ void ensure_xcb_initialized(Napi::Env env) {
 
   LOG("XCB initialized successfully");
 }
+
 
 // Get PID for a window
 pid_t getWindowPid(xcb_window_t window, Napi::Env env) {
@@ -487,6 +489,28 @@ void setWindowOpacity(const Napi::CallbackInfo& info) {
   xcb_flush(connection);
 }
 
+
+// Add to your native module
+Napi::Value createTestWindow(const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
+
+  Display* display = XOpenDisplay(NULL);
+  if (!display) {
+    throw Napi::Error::New(env, "Failed to open display");
+  }
+
+  Window window = XCreateSimpleWindow(display, RootWindow(display, DefaultScreen(display)),
+                                    100, 100, 200, 200, 1,
+                                    BlackPixel(display, DefaultScreen(display)),
+                                    WhitePixel(display, DefaultScreen(display)));
+
+  XMapWindow(display, window);
+  XFlush(display);
+  XCloseDisplay(display);
+
+  return Napi::Number::New(env, (int64_t)window);
+}
+
 Napi::Object windowInit(Napi::Env env, Napi::Object exports) {
   exports.Set("setWindowActive", Napi::Function::New(env, setWindowActive));
   exports.Set("getWindowActiveId", Napi::Function::New(env, getWindowActiveId));
@@ -496,5 +520,49 @@ Napi::Object windowInit(Napi::Env env, Napi::Object exports) {
   exports.Set("setWindowBounds", Napi::Function::New(env, setWindowBounds));
 
   exports.Set("setWindowOpacity", Napi::Function::New(env, setWindowOpacity));
+  exports.Set("createTestWindow", Napi::Function::New(env, createTestWindow));
   return exports;
 }
+
+// pid_t getWindowPid(xcb_window_t window, Napi::Env env) {
+//   Display* display = XOpenDisplay(NULL);
+//   if (!display) {
+//     throw Napi::Error::New(env, "Failed to open X display");
+//   }
+//
+//   Atom pid_atom = XInternAtom(display, "_NET_WM_PID", False);
+//   Atom actual_type;
+//   int actual_format;
+//   unsigned long nitems, bytes_after;
+//   unsigned char *prop = NULL;
+//
+//   pid_t pid = 0;
+//   Status result = XGetWindowProperty(display, window, pid_atom, 0, 1, False,
+//                                XA_CARDINAL, &actual_type, &actual_format,
+//                                &nitems, &bytes_after, &prop);
+//
+//   XCloseDisplay(display);
+//
+//   if (result != Success) {
+//     throw Napi::Error::New(env, "Failed to get window property");
+//   }
+//
+//   if (!prop || nitems == 0) {
+//     if (prop) XFree(prop);
+//     throw Napi::Error::New(env, "No PID property found on window");
+//   }
+//
+//   if (actual_type != XA_CARDINAL || actual_format != 32) {
+//     XFree(prop);
+//     throw Napi::Error::New(env, "PID property has wrong format");
+//   }
+//
+//   pid = *(unsigned long*)prop;
+//   XFree(prop);
+//
+//   if (pid <= 0) {
+//     throw Napi::Error::New(env, "Invalid PID value retrieved");
+//   }
+//
+//   return pid;
+// }
