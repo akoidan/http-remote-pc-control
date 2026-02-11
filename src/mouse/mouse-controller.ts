@@ -2,7 +2,7 @@ import {Body, Controller, Get, HttpCode, Post} from '@nestjs/common';
 import {
   MouseClickRequestDto,
   MousePositionRRDto,
-  MouseMoveHumanClickRequestDto,
+  MouseMoveHumanRequestDto,
 } from '@/mouse/mouse-dto';
 import {MouseService} from '@/mouse/mouse-service';
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
@@ -39,7 +39,7 @@ export class MouseController {
   @Post('move-human')
   @ApiOperation({summary: 'Moves mouse in a human pattern with time'})
   @HttpCode(204)
-  async mouseMoveHuman(@Body() event: MouseMoveHumanClickRequestDto): Promise<void> {
+  async mouseMoveHuman(@Body() event: MouseMoveHumanRequestDto): Promise<void> {
     await this.mouseService.moveMouseHuman(event);
   }
 

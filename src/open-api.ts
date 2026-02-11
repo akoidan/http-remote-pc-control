@@ -46,6 +46,25 @@ async function generateSwaggerConfig(): Promise<Omit<OpenAPIObject, 'paths'>> {
     .build();
 }
 
+// Recursively remove exclusiveMinimum keys from the document
+function swagger30to31(obj: any): any {
+  if (typeof obj !== 'object' || obj === null) {
+    return obj;
+  }
+
+  if (Array.isArray(obj)) {
+    return obj.map(swagger30to31);
+  }
+
+  const result: any = {};
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+  for (const [key, value] of Object.entries(obj)) {
+    if (key !== 'exclusiveMinimum') {
+      result[key] = swagger30to31(value);
+    }
+  }
+  return result;
+}
 
 async function bootstrap(): Promise<void> {
   @Global()
@@ -80,6 +99,9 @@ async function bootstrap(): Promise<void> {
   const config = await generateSwaggerConfig();
   config.openapi = '3.1.0';
   const document = SwaggerModule.createDocument(app, config);
+
+  const cleanedDocument = swagger30to31(document);
+
   await writeFile('./openapi/openapi.json', JSON.stringify(document, null, 2));
 }
 

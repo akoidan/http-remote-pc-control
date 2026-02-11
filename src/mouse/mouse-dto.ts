@@ -59,7 +59,7 @@ const mouseClickSchemaRequestSchema = z.object({
 
 // Create DTO class for Swagger
 class MousePositionRRDto extends createZodDto(mousePositionSchema) {}
-class MouseMoveHumanClickRequestDto extends createZodDto(mouseMoveHumanClickRequestSchema) {}
+class MouseMoveHumanRequestDto extends createZodDto(mouseMoveHumanClickRequestSchema) {}
 class MouseClickRequestDto extends createZodDto(mouseClickSchemaRequestSchema) {}
 
 type MouseMoveHumanClickRequest = z.infer<typeof mouseMoveHumanClickRequestSchema>;
@@ -74,11 +74,11 @@ export {
   mouseMoveHumanClickRequestSchema,
   mouseClickSchemaRequestSchema,
   MouseClickRequestDto,
+  MouseMoveHumanRequestDto,
 };
 
 
 export type {
-  MouseMoveHumanClickRequestDto,
   MouseMoveHumanClickRequest,
   MousePositionRR,
   MouseClickRequest,
