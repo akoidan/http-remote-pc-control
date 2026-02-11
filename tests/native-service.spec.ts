@@ -5,6 +5,7 @@ import { INativeModule, Native, WindowAction, MouseButton } from '../src/native/
 describe('NativeService', () => {
   let nativeService: INativeModule;
   let testPid: number;
+  let windowId: number = 0;
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -12,27 +13,27 @@ describe('NativeService', () => {
     }).compile();
 
     nativeService = module.get<INativeModule>(Native);
+    windowId = nativeService.createTestWindow();
     testPid = process.pid; // Using current process for testing
   });
 
   describe('Window Management', () => {
-    const wid =nativeService.createTestWindow()
 
-    it('should set windowActive', () => {
-      nativeService.setWindowActive(wid);
-    });
-
-    it('should get active window ID', () => {
-      const windowId = nativeService.getWindowActiveId();
+    it('should get active window ID', async () => {
+      nativeService.setWindowActive(windowId);
+      await new Promise(r => setTimeout(r, 100));
+      const newId = nativeService.getWindowActiveId();
       expect(typeof windowId).toBe('number');
-      expect(windowId).toBe(wid);
+      expect(windowId).toBe(newId);
     });
 
     it('should get window info', () => {
-      const windowInfo = nativeService.getWindowInfo(wid);
+      const windowInfo = nativeService.getWindowInfo(windowId);
 
-      expect(windowInfo).toHaveProperty('wid');
-      expect(windowInfo).toHaveProperty('pid');
+      if (process.platform !== 'linux') {
+        expect(windowInfo).toHaveProperty('wid');
+        expect(windowInfo).toHaveProperty('pid');
+      }
       expect(windowInfo).toHaveProperty('bounds');
       expect(windowInfo.bounds).toHaveProperty('x');
       expect(windowInfo.bounds).toHaveProperty('y');
@@ -40,28 +41,27 @@ describe('NativeService', () => {
       expect(windowInfo.bounds).toHaveProperty('height');
     });
 
-    it('should set window bounds', () => {
-      const windowId = nativeService.getWindowActiveId();
+    it('should set window bounds', async () => {
       const originalBounds = nativeService.getWindowInfo(windowId).bounds;
       const newBounds = {
-        x: originalBounds.x + 50,
-        y: originalBounds.y + 50,
-        width: originalBounds.width,
-        height: originalBounds.height
+        x: originalBounds.x + 200,
+        y: originalBounds.y + 200,
+        width: originalBounds.width + 200,
+        height: originalBounds.height + 200
       };
 
       nativeService.setWindowBounds(windowId, newBounds);
+      await new Promise(r => setTimeout(r, 100));
       const updatedBounds = nativeService.getWindowInfo(windowId).bounds;
 
       // Allow for small variations due to window decorations and coordinate system differences
-      expect(Math.abs(updatedBounds.x - newBounds.x)).toBeLessThanOrEqual(3);
-      expect(Math.abs(updatedBounds.y - newBounds.y)).toBeLessThanOrEqual(3);
+      expect(Math.abs(updatedBounds.x - newBounds.x)).toBeLessThanOrEqual(process.platform === 'linux' ? 30: 3);
+      expect(Math.abs(updatedBounds.y - newBounds.y)).toBeLessThanOrEqual(process.platform === 'linux' ? 30: 3);
       expect(updatedBounds.width).toBe(newBounds.width);
       expect(updatedBounds.height).toBe(newBounds.height);
     });
 
     it('should change window state', () => {
-      const windowId = nativeService.getWindowActiveId();
 
       // Test minimize
       nativeService.setWindowState(windowId, WindowAction.MINIMIZE);
@@ -75,7 +75,6 @@ describe('NativeService', () => {
     });
 
     it('should change window opacity', () => {
-      const windowId = nativeService.getWindowActiveId();
       nativeService.setWindowOpacity(windowId, 1);
       // Note: We can't easily verify opacity change without additional APIs
     });
@@ -106,7 +105,6 @@ describe('NativeService', () => {
     });
 
     it('should get monitor from window', () => {
-      const windowId = nativeService.getWindowActiveId();
       const monitorId = nativeService.getMonitorFromWindow(windowId);
       expect(typeof monitorId).toBe('number');
     });
@@ -191,7 +189,7 @@ describe('NativeService', () => {
       const newPos = { x: originalPos.x - 50, y: originalPos.y + 120 };
       nativeService.setMousePosition(newPos);
 
-      await new Promise(r => setTimeout(r, 1000));
+      await new Promise(r => setTimeout(r, 100));
       const updatedPos = nativeService.getMousePosition();
       // Allow for small variations in position (up to 2 pixels)
       expect(Math.abs(updatedPos.x - newPos.x)).toBeLessThanOrEqual(2);

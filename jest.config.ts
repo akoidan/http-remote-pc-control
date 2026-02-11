@@ -4,6 +4,7 @@ const config: Config.InitialOptions = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   roots: ['<rootDir>/tests'],
+  maxWorkers: 1,
   modulePaths: ['.'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',

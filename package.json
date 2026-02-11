@@ -10,7 +10,7 @@
     "openapi": "rm -rf ./dist/ && node -r tsconfig-paths/register -r ts-node/register src/open-api.ts",
     "a": "ts-node a.ts",
     "cmake": "cmake-js build",
-    "test": "jest --detectOpenHandles --testTimeout=10000",
+    "test": "jest --runInBand --testTimeout=10000",
     "cmake:debug": "cmake-js build --debug",
     "nest": "nest build",
     "native": "pkg .",

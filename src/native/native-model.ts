@@ -36,8 +36,8 @@ interface ProcessInfo {
 
 interface WindowInfo {
   wid: number;
-  pid: number;
-  path: string;
+  pid?: number;
+  path?: string;
   bounds: WindowBounds;
   opacity: number;
   title: string;

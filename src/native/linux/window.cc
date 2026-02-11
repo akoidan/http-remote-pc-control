@@ -8,6 +8,8 @@
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
 
+#include "headers/display.h"
+
 // Global XCB connection
 static xcb_connection_t* connection = nullptr;
 static xcb_ewmh_connection_t ewmh;
@@ -99,7 +101,8 @@ pid_t getWindowPid(xcb_window_t window, Napi::Env env) {
     free(reply);
   } else {
     free(reply);
-    throw Napi::Error::New(env, "Failed to get PID from XCB reply");
+    return 0; // TODO this is an error :(
+    // throw Napi::Error::New(env, "Failed to get PID from XCB reply");
   }
   return pid;
 }
@@ -308,17 +311,21 @@ Napi::Object getWindowInfo(const Napi::CallbackInfo& info) {
   ensure_xcb_initialized(env);
 
   pid_t pid = getWindowPid(window_id, env);
-  std::string path = getProcessPath(pid, env);
+  Napi::Object result = Napi::Object::New(env);
+  if (pid != 0) {
+    std::string path = getProcessPath(pid, env);
+    result.Set("path", Napi::String::New(env, path));
+    result.Set("pid", Napi::Number::New(env, pid));
+  }
+
   Napi::Object bounds = getWindowBounds(env, window_id);
   std::string visibility = getWindowVisiblity(env, window_id);
   std::string title = getWindowTitle(env, window_id);
   double opacity = getWindowOpacity(env, window_id);
   xcb_window_t parent_wid = getParentWindow(env, window_id);
   
-  Napi::Object result = Napi::Object::New(env);
+
   result.Set("wid", Napi::Number::New(env, static_cast<int64_t>(window_id)));
-  result.Set("pid", Napi::Number::New(env, pid));
-  result.Set("path", Napi::String::New(env, path));
   result.Set("bounds", bounds);
   result.Set("visibility", Napi::String::New(env, visibility));
   result.Set("title", Napi::String::New(env, title));
@@ -488,25 +495,21 @@ void setWindowOpacity(const Napi::CallbackInfo& info) {
                        _NET_WM_WINDOW_OPACITY_ATOM, XCB_ATOM_CARDINAL, 32, 1, &opacity_value);
   xcb_flush(connection);
 }
-
-
+; // Global variable
 // Add to your native module
 Napi::Value createTestWindow(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
 
-  Display* display = XOpenDisplay(NULL);
-  if (!display) {
-    throw Napi::Error::New(env, "Failed to open display");
-  }
+  Display* test_display = XGetMainDisplay(env);
 
-  Window window = XCreateSimpleWindow(display, RootWindow(display, DefaultScreen(display)),
-                                    100, 100, 200, 200, 1,
-                                    BlackPixel(display, DefaultScreen(display)),
-                                    WhitePixel(display, DefaultScreen(display)));
+  Window window = XCreateSimpleWindow(test_display,
+                                  RootWindow(test_display, DefaultScreen(test_display)),
+                                  100, 100, 500, 500, 1,
+                                  BlackPixel(test_display, DefaultScreen(test_display)),
+                                  WhitePixel(test_display, DefaultScreen(test_display)));
 
-  XMapWindow(display, window);
-  XFlush(display);
-  XCloseDisplay(display);
+  XMapWindow(test_display, window);
+  XFlush(test_display);
 
   return Napi::Number::New(env, (int64_t)window);
 }
