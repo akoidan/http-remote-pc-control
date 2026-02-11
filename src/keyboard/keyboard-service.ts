@@ -1,10 +1,10 @@
 import {Inject, Injectable, Logger} from '@nestjs/common';
-import {INativeModule} from '@/native/native-model';
+import {KeyboardNativeModule, Native} from '@/native/native-model';
 import {sleep} from '@/shared';
 import {RandomService} from '@/random/random-service';
-import {KeyboardLayoutValue} from '@/keyboard/keyboard-dto';
-import {Safe400} from "@/utils/decorators";
-import {OS_INJECT} from "@/global/global-model";
+import {KeyboardLayoutValue, KeyPressRequest, SetKeyboardLayoutRequest, TypeTextRequest} from '@/keyboard/keyboard-dto';
+import {Safe400} from '@/utils/decorators';
+import {OS_INJECT} from '@/global/global-model';
 
 @Injectable()
 export class KeyboardService {
@@ -12,52 +12,56 @@ export class KeyboardService {
     readonly logger: Logger,
     @Inject(OS_INJECT)
     readonly os: NodeJS.Platform,
-    private readonly addon: INativeModule,
+    @Inject(Native)
+    private readonly addon: KeyboardNativeModule,
     private readonly rs: RandomService
   ) {
   }
 
 
-  @Safe400(['darwin'])
-  public async typeText(text: string, delay?: number, deviationDelay?: number): Promise<void> {
-    this.logger.log(`Type: \u001b[35m${text}`);
-    if (delay) {
-      const realDelay = deviationDelay ? this.rs.calcDeviation(delay, deviationDelay) : delay;
-      for (const char of text.split('')) {
+  @Safe400(['win32', 'linux'])
+  public async typeText(body: TypeTextRequest): Promise<void> {
+    this.logger.log(`Type: \u001b[35m${body.text}`);
+    if (body.keyDelay) {
+      let realDelay = body.keyDelay;
+      for (const char of body.text.split('')) {
+        if (body.keyDelayDeviation) {
+          realDelay =  this.rs.calcDeviation(body.keyDelay, body.keyDelayDeviation);
+        }
         await sleep(realDelay); // sleep before, in case we are typing on the same pc the shorcut was triggered from
         // to avoid meta keys in keystrokes
         this.addon.typeString(char);
       }
     } else {
-      this.addon.typeString(text);
+      this.addon.typeString(body.text);
     }
   }
 
-  @Safe400(['darwin'])
-  public setLayout(layout: KeyboardLayoutValue): void {
-    this.addon.setKeyboardLayout(layout);
+  @Safe400(['win32', 'linux'])
+  public setLayout(body: SetKeyboardLayoutRequest): void {
+    this.addon.setKeyboardLayout(body.layout);
   }
 
-  @Safe400(['darwin'])
-  public async keyPress(keys: string[], holdKeys: string[], duration?: number): Promise<void> {
-    for (const key of holdKeys) {
+  @Safe400(['win32', 'linux'])
+  public async keyPress(body: KeyPressRequest): Promise<void> {
+    for (const key of (body.holdKeys ?? [])) {
       this.logger.log(`HoldKey: \u001b[35m${key}`);
       // libnut.keyToggle(key, 'down', [])
       this.addon.keyToggle(key, [], true);
       await sleep(100);
     }
-    for (const key of keys) {
+    for (const key of body.keys) {
       this.logger.log(`KeyPress: \u001b[35m${key}`);
-      if (duration) {
+      if (body.duration) {
         this.addon.keyToggle(key, [], true);
-        await sleep(duration);
+        await sleep(body.duration);
         this.addon.keyToggle(key, [], false);
       } else {
         this.addon.keyTap(key, []);
       }
       await sleep(100);
     }
-    for (const key of holdKeys) {
+    for (const key of (body.holdKeys ?? [])) {
       this.logger.log(`ReleaseKey: \u001b[35m${key}`);
       this.addon.keyToggle(key, [], false);
       await sleep(100);

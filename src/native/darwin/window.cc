@@ -137,7 +137,7 @@ Napi::Array getWindows(const Napi::CallbackInfo& info) {
   return arr;
 }
 
-Napi::Number getActiveWindowId(const Napi::CallbackInfo& info) {
+Napi::Number getWindowActiveId(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
   CGWindowListOption listOptions = kCGWindowListOptionOnScreenOnly | kCGWindowListExcludeDesktopElements;
@@ -255,7 +255,7 @@ Napi::Value setWindowBounds(const Napi::CallbackInfo &info) {
   return env.Undefined();
 }
 
-Napi::Value bringWindowToTop(const Napi::CallbackInfo &info) {
+Napi::Value setWindowActive(const Napi::CallbackInfo &info) {
   Napi::Env env{info.Env()};
 
   auto handle = info[0].As<Napi::Number>().Int32Value();
@@ -310,11 +310,11 @@ Napi::Value setWindowMaximized(const Napi::CallbackInfo &info) {
 }
 
 
-Napi::Object window_init(Napi::Env env, Napi::Object exports) {
+Napi::Object windowInit(Napi::Env env, Napi::Object exports) {
   exports.Set(Napi::String::New(env, "getWindows"),
               Napi::Function::New(env, getWindows));
-  exports.Set(Napi::String::New(env, "getActiveWindowId"),
-              Napi::Function::New(env, getActiveWindowId));
+  exports.Set(Napi::String::New(env, "getWindowActiveId"),
+              Napi::Function::New(env, getWindowActiveId));
   exports.Set(Napi::String::New(env, "setWindowBounds"),
               Napi::Function::New(env, setWindowBounds));
   exports.Set(Napi::String::New(env, "getWindowBounds"),
@@ -323,8 +323,8 @@ Napi::Object window_init(Napi::Env env, Napi::Object exports) {
               Napi::Function::New(env, getWindowTitle));
   exports.Set(Napi::String::New(env, "initWindow"),
               Napi::Function::New(env, initWindow));
-  exports.Set(Napi::String::New(env, "bringWindowToTop"),
-              Napi::Function::New(env, bringWindowToTop));
+  exports.Set(Napi::String::New(env, "setWindowActive"),
+              Napi::Function::New(env, setWindowActive));
   exports.Set(Napi::String::New(env, "setWindowMinimized"),
               Napi::Function::New(env, setWindowMinimized));
   exports.Set(Napi::String::New(env, "setWindowMaximized"),

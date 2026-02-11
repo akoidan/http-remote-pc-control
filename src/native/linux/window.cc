@@ -91,7 +91,7 @@ pid_t getWindowPid(xcb_window_t window, Napi::Env env) {
   return pid;
 }
 
-void bringWindowToTop(const Napi::CallbackInfo& info) {
+void setWindowActive(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   ASSERT_NUMBER(info, 0);
 
@@ -122,7 +122,7 @@ void bringWindowToTop(const Napi::CallbackInfo& info) {
   xcb_flush(connection);
 }
 
-Napi::Number getActiveWindowId(const Napi::CallbackInfo& info) {
+Napi::Number getWindowActiveId(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   ensure_xcb_initialized(env);
   xcb_get_property_cookie_t cookie = xcb_ewmh_get_active_window(&ewmh, 0);
@@ -325,7 +325,7 @@ void setWindowBounds(const Napi::CallbackInfo& info) {
 
 
 // Show a window
-void setWindowVisibility(const Napi::CallbackInfo& info) {
+void setWindowState(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
   ensure_xcb_initialized(env);
@@ -400,12 +400,12 @@ void setWindowVisibility(const Napi::CallbackInfo& info) {
 
 
 
-Napi::Object window_init(Napi::Env env, Napi::Object exports) {
-  exports.Set("bringWindowToTop", Napi::Function::New(env, bringWindowToTop));
-  exports.Set("getActiveWindowId", Napi::Function::New(env, getActiveWindowId));
+Napi::Object windowInit(Napi::Env env, Napi::Object exports) {
+  exports.Set("getWindowActiveId", Napi::Function::New(env, getWindowActiveId));
   exports.Set("getWindowsByProcessId", Napi::Function::New(env, getWindowsByProcessId));
   exports.Set("getWindowInfo", Napi::Function::New(env, getWindowInfo));
-  exports.Set("setWindowVisibility", Napi::Function::New(env, setWindowVisibility));
+  exports.Set("setWindowActive", Napi::Function::New(env, setWindowActive));
+  exports.Set("setWindowState", Napi::Function::New(env, setWindowState));
   exports.Set("setWindowBounds", Napi::Function::New(env, setWindowBounds));
   return exports;
 }

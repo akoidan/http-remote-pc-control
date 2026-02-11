@@ -13,17 +13,17 @@ export class MonitorService {
   ) {}
 
 
-  @Safe400(['darwin'])
+  @Safe400(['win32', 'linux'])
   public getMonitors(): number[] {
     return this.addon.getMonitors();
   }
 
-  @Safe400(['darwin'])
+  @Safe400(['win32', 'linux'])
   public getMonitorInfo(mid: number): MonitorInfo {
     return this.addon.getMonitorInfo(mid);
   }
 
-  @Safe400(['darwin'])
+  @Safe400(['win32', 'linux'])
   public getMonitorFromWindow(wid: number): number {
     return this.addon.getMonitorFromWindow(wid);
   }

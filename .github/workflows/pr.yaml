@@ -78,8 +78,14 @@ jobs:
         with:
           path: ~/.pkg-cache
           key: ${{ runner.os }}-pkg-18
-      - name: Build
-        run: yarn build
+      - name: cmake
+        run: yarn cmake
+      - name: nest
+        run: yarn nest
+      - name: native
+        run: yarn native
+      - name: test
+        run: yarn test
 
   linux:
     runs-on: ubuntu-22.04
@@ -114,5 +120,11 @@ jobs:
         with:
           path: ~/.pkg-cache
           key: ${{ runner.os }}-pkg-18
-      - name: Build
-        run: yarn build
+      - name: cmake
+        run: yarn cmake
+      - name: nest
+        run: yarn nest
+      - name: native
+        run: yarn native
+      - name: test
+        run: yarn test

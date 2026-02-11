@@ -169,7 +169,7 @@ Napi::Value _typeString(const Napi::CallbackInfo& info) {
 }
 
 // Initialize keyboard module
-Napi::Object keyboard_init(Napi::Env env, Napi::Object exports) {
+Napi::Object keyboardInit(Napi::Env env, Napi::Object exports) {
   exports.Set(Napi::String::New(env, "keyTap"), Napi::Function::New(env, _keyTap));
   exports.Set(Napi::String::New(env, "keyToggle"), Napi::Function::New(env, _keyToggle));
   exports.Set(Napi::String::New(env, "typeString"), Napi::Function::New(env, _typeString));

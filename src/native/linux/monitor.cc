@@ -50,7 +50,7 @@ static Napi::Object getMonitorInfo(const Napi::CallbackInfo& info) {
     return obj;
 }
 
-Napi::Object monitor_init(Napi::Env env, Napi::Object exports) {
+Napi::Object monitorInit(Napi::Env env, Napi::Object exports) {
     exports.Set(Napi::String::New(env, "getMonitors"), Napi::Function::New(env, getMonitors));
     exports.Set(Napi::String::New(env, "getMonitorFromWindow"), Napi::Function::New(env, getMonitorFromWindow));
     exports.Set(Napi::String::New(env, "getMonitorInfo"), Napi::Function::New(env, getMonitorInfo));

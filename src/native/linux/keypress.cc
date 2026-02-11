@@ -254,7 +254,7 @@ void setKeyboardLayout(const Napi::CallbackInfo& info) {
 }
 
 
-Napi::Object keyboard_init(Napi::Env env, Napi::Object exports) {
+Napi::Object keyboardInit(Napi::Env env, Napi::Object exports) {
   exports.Set("keyTap", Napi::Function::New(env, keyTap));
   exports.Set("keyToggle", Napi::Function::New(env, keyToggle));
   exports.Set("typeString", Napi::Function::New(env, typeString));
