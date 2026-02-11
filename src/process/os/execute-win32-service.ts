@@ -3,7 +3,7 @@ import {exec} from 'child_process';
 import {promisify} from 'util';
 import {IExecuteService} from '@/process/process-model';
 import {LauncherService} from '@/process/launcher-service';
-import {LaunchExeRequest} from "@/process/process-dto";
+import {LaunchExeRequest} from '@/process/process-dto';
 
 @Injectable()
 export class ExecuteWin32Service implements IExecuteService {

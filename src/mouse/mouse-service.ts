@@ -4,8 +4,8 @@ import {Inject, Injectable, Logger} from '@nestjs/common';
 import {INativeModule, MouseButton, Native} from '@/native/native-model';
 import {sleep} from '@/shared';
 import {MouseClickRequest, MouseMoveHumanClickRequest, MousePositionRR} from '@/mouse/mouse-dto';
-import {OS_INJECT} from "@/global/global-model";
-import {Safe400} from "@/utils/decorators";
+import {OS_INJECT} from '@/global/global-model';
+import {Safe400} from '@/utils/decorators';
 
 
 @Injectable()

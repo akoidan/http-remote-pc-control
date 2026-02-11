@@ -1,7 +1,7 @@
 import {Inject, Injectable, Logger} from '@nestjs/common';
 import {INativeModule, MonitorInfo, Native} from '@/native/native-model';
 import {Safe400} from '@/utils/decorators';
-import {OS_INJECT} from "@/global/global-model";
+import {OS_INJECT} from '@/global/global-model';
 
 @Injectable()
 export class MonitorService {

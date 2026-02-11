@@ -1,4 +1,4 @@
-import {LaunchExeRequest} from "@/process/process-dto";
+import type {LaunchExeRequest} from '@/process/process-dto';
 
 export interface IExecuteService {
   launchExe(data: LaunchExeRequest): Promise<number>;

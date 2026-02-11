@@ -1,6 +1,6 @@
 import {Injectable, Logger, ServiceUnavailableException} from '@nestjs/common';
 import {spawn} from 'child_process';
-import {LaunchExeRequest} from "@/process/process-dto";
+import {LaunchExeRequest} from '@/process/process-dto';
 
 @Injectable()
 export class LauncherService {
