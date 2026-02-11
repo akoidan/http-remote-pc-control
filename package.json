@@ -8,6 +8,8 @@
     "start": "rm -rf ./dist/ && node -r tsconfig-paths/register -r ts-node/register src/main.ts",
     "clean": "rm -rf ./dist/ && rm -rf ./build",
     "openapi": "rm -rf ./dist/ && node -r tsconfig-paths/register -r ts-node/register src/open-api.ts",
+    "openapi-client": "rm -rf client && openapi-ts --input ./openapi/openapi.json --output client",
+    "a": "ts-node ./a.ts",
     "cmake": "cmake-js build",
     "test": "jest --detectOpenHandles --testTimeout=10000",
     "cmake:debug": "cmake-js build --debug",
@@ -24,6 +26,7 @@
     ]
   },
   "devDependencies": {
+    "@hey-api/openapi-ts": "^0.92.3",
     "@nestjs/cli": "^10.4.9",
     "@nestjs/testing": "^11.1.13",
     "@types/bindings": "^1.5.5",
