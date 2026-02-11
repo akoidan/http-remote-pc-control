@@ -63,7 +63,7 @@ CLion does not automatically pick up Node.js and N-API headers. You must add the
 -DCMAKE_CXX_FLAGS="-I/home/andrew/.nvm/versions/node/v18.18.2/include/node -I/home/andrew/it/my-projects/http-remote-pc-control/node_modules/node-addon-api"
 ```
 **Generator** (adjust to your CLI match system).
-cmake or ninja, depending what your cli supports
+Select ninja generator (unless your cli configured otherwise)
 
 #### Windows example
 **CMake options** (adjust paths for your system).
