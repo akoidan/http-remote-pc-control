@@ -22,8 +22,8 @@ void ensure_xcb_initialized(Napi::Env env) {
   if (connection) {
     return;
   }
-  int screen_num;
-  connection = xcb_connect(nullptr, &screen_num);
+  int screenNum;
+  connection = xcb_connect(nullptr, &screenNum);
 
   if (int error = xcb_connection_has_error(connection)) {
     std::string errorMsg;
@@ -71,20 +71,20 @@ void ensure_xcb_initialized(Napi::Env env) {
   }
 
   // Initialize _NET_WM_WINDOW_OPACITY atom
-  xcb_intern_atom_cookie_t opacity_cookie = xcb_intern_atom(connection, 0, strlen("_NET_WM_WINDOW_OPACITY"), "_NET_WM_WINDOW_OPACITY");
-  xcb_generic_error_t* opacity_error = nullptr;
-  xcb_intern_atom_reply_t* opacity_reply = xcb_intern_atom_reply(connection, opacity_cookie, &opacity_error);
-  if (!opacity_reply) {
+  xcb_intern_atom_cookie_t opacityCookie = xcb_intern_atom(connection, 0, strlen("_NET_WM_WINDOW_OPACITY"), "_NET_WM_WINDOW_OPACITY");
+  xcb_generic_error_t* opacityError = nullptr;
+  xcb_intern_atom_reply_t* opacityReply = xcb_intern_atom_reply(connection, opacityCookie, &opacityError);
+  if (!opacityReply) {
     std::string errorMsg = "Failed to get _NET_WM_WINDOW_OPACITY atom reply";
-    if (opacity_error) {
-      errorMsg += ": X11 error code " + std::to_string(opacity_error->error_code);
-      errorMsg += " (sequence: " + std::to_string(opacity_error->sequence) + ")";
-      free(opacity_error);
+    if (opacityError) {
+      errorMsg += ": X11 error code " + std::to_string(opacityError->error_code);
+      errorMsg += " (sequence: " + std::to_string(opacityError->sequence) + ")";
+      free(opacityError);
     }
     netWmWindowOpacityAtom = XCB_NONE;
   } else {
-    netWmWindowOpacityAtom = opacity_reply->atom;
-    free(opacity_reply);
+    netWmWindowOpacityAtom = opacityReply->atom;
+    free(opacityReply);
   }
 
   LOG("XCB initialized successfully");
@@ -161,10 +161,10 @@ Napi::Number getWindowActiveId(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   ensure_xcb_initialized(env);
   xcb_get_property_cookie_t cookie = xcb_ewmh_get_active_window(&ewmh, 0);
-  xcb_window_t active_window = 0;
+  xcb_window_t activeWindow = 0;
 
   xcb_generic_error_t* error = nullptr;
-  if (!xcb_ewmh_get_active_window_reply(&ewmh, cookie, &active_window, &error)) {
+  if (!xcb_ewmh_get_active_window_reply(&ewmh, cookie, &activeWindow, &error)) {
     std::string errorMsg = "Failed to get active window";
 
     if (error) {
@@ -190,7 +190,7 @@ Napi::Number getWindowActiveId(const Napi::CallbackInfo& info) {
     throw Napi::Error::New(env, errorMsg);
   }
 
-  return Napi::Number::New(env, static_cast<int64_t>(active_window));
+  return Napi::Number::New(env, static_cast<int64_t>(activeWindow));
 }
 
 
@@ -199,121 +199,121 @@ std::string getWindowVisiblity(Napi::Env env, xcb_window_t window_id) {
   std::string visibility = "show"; // default
 
   // Check if window is mapped (visible)
-  xcb_get_window_attributes_cookie_t attr_cookie = xcb_get_window_attributes(connection, window_id);
-  xcb_generic_error_t* attr_error = nullptr;
-  xcb_get_window_attributes_reply_t* attr_reply = xcb_get_window_attributes_reply(connection, attr_cookie, &attr_error);
+  xcb_get_window_attributes_cookie_t attrCookie = xcb_get_window_attributes(connection, window_id);
+  xcb_generic_error_t* attrError = nullptr;
+  xcb_get_window_attributes_reply_t* attrReply = xcb_get_window_attributes_reply(connection, attrCookie, &attrError);
 
-  if (attr_reply) {
-    if (attr_reply->map_state != XCB_MAP_STATE_VIEWABLE) {
+  if (attrReply) {
+    if (attrReply->map_state != XCB_MAP_STATE_VIEWABLE) {
       visibility = "hide";
     }
-    free(attr_reply);
+    free(attrReply);
   } else {
     std::string errorMsg = "Failed to get window attributes";
-    if (attr_error) {
-      errorMsg += ": X11 error code " + std::to_string(attr_error->error_code);
-      errorMsg += " (sequence: " + std::to_string(attr_error->sequence) + ")";
-      free(attr_error);
+    if (attrError) {
+      errorMsg += ": X11 error code " + std::to_string(attrError->error_code);
+      errorMsg += " (sequence: " + std::to_string(attrError->sequence) + ")";
+      free(attrError);
     }
     throw Napi::Error::New(env, errorMsg);
   }
 
   // Check for minimized state
-  xcb_get_property_cookie_t state_cookie = xcb_get_property(
+  xcb_get_property_cookie_t stateCookie = xcb_get_property(
     connection, 0, window_id, ewmh._NET_WM_STATE, XCB_ATOM_ATOM, 0, 1024);
-  xcb_generic_error_t* state_error = nullptr;
-  xcb_get_property_reply_t* state_reply = xcb_get_property_reply(connection, state_cookie, &state_error);
+  xcb_generic_error_t* stateError = nullptr;
+  xcb_get_property_reply_t* stateReply = xcb_get_property_reply(connection, stateCookie, &stateError);
 
-  if (!state_reply) {
+  if (!stateReply) {
     std::string errorMsg = "Failed to get _NET_WM_STATE property reply";
-    if (state_error) {
-      errorMsg += ": X11 error code " + std::to_string(state_error->error_code);
-      errorMsg += " (sequence: " + std::to_string(state_error->sequence) + ")";
-      free(state_error);
+    if (stateError) {
+      errorMsg += ": X11 error code " + std::to_string(stateError->error_code);
+      errorMsg += " (sequence: " + std::to_string(stateError->sequence) + ")";
+      free(stateError);
     }
     throw Napi::Error::New(env, errorMsg);
   }
 
   // If property doesn't exist, it's not minimized or maximized
-  if (state_reply->type == XCB_NONE) {
-    free(state_reply);
+  if (stateReply->type == XCB_NONE) {
+    free(stateReply);
     return visibility; // Return early with default visibility
-  } else if (state_reply->type != XCB_ATOM && state_reply->type != 4) { // 4 is XA_ATOM
-    free(state_reply);
+  } else if (stateReply->type != XCB_ATOM && stateReply->type != 4) { // 4 is XA_ATOM
+    free(stateReply);
     throw Napi::Error::New(env, "_NET_WM_STATE property type is not ATOM");
-  } else if (state_reply->format != 32) {
-    free(state_reply);
+  } else if (stateReply->format != 32) {
+    free(stateReply);
     throw Napi::Error::New(env, "_NET_WM_STATE property format is not 32");
   } else {
-    xcb_atom_t* atoms = (xcb_atom_t*)xcb_get_property_value(state_reply);
-    int atom_count = state_reply->value_len;
+    xcb_atom_t* atoms = (xcb_atom_t*)xcb_get_property_value(stateReply);
+    int atomCount = stateReply->value_len;
 
-    bool is_hidden = false;
-    bool is_maximized = false;
+    bool isHidden = false;
+    bool isMaximized = false;
 
-    for (int i = 0; i < atom_count; i++) {
+    for (int i = 0; i < atomCount; i++) {
       if (atoms[i] == ewmh._NET_WM_STATE_HIDDEN) {
-        is_hidden = true;
+        isHidden = true;
       }
       if (atoms[i] == ewmh._NET_WM_STATE_MAXIMIZED_VERT ||
           atoms[i] == ewmh._NET_WM_STATE_MAXIMIZED_HORZ) {
-        is_maximized = true;
+        isMaximized = true;
           }
     }
 
-    if (is_hidden) {
+    if (isHidden) {
       visibility = "minimize";
-    } else if (is_maximized) {
+    } else if (isMaximized) {
       visibility = "maximize";
     }
 
-    free(state_reply);
+    free(stateReply);
   }
   return visibility;
 }
 
 
 Napi::Object getWindowBounds(Napi::Env env, xcb_window_t window_id) {
-  xcb_get_geometry_cookie_t geom_cookie = xcb_get_geometry(connection, window_id);
-  xcb_generic_error_t* geom_error = nullptr;
-  xcb_get_geometry_reply_t* geom_reply = xcb_get_geometry_reply(connection, geom_cookie, &geom_error);
+  xcb_get_geometry_cookie_t geomCookie = xcb_get_geometry(connection, window_id);
+  xcb_generic_error_t* geomError = nullptr;
+  xcb_get_geometry_reply_t* geomReply = xcb_get_geometry_reply(connection, geomCookie, &geomError);
 
-  if (!geom_reply) {
+  if (!geomReply) {
     std::string errorMsg = "Failed to get window geometry";
-    if (geom_error) {
-      errorMsg += ": X11 error code " + std::to_string(geom_error->error_code);
-      errorMsg += " (sequence: " + std::to_string(geom_error->sequence) + ")";
-      free(geom_error);
+    if (geomError) {
+      errorMsg += ": X11 error code " + std::to_string(geomError->error_code);
+      errorMsg += " (sequence: " + std::to_string(geomError->sequence) + ")";
+      free(geomError);
     }
     throw Napi::Error::New(env, errorMsg);
   }
 
   // Get window's absolute position (accounting for window decorations)
-  xcb_translate_coordinates_cookie_t trans_cookie = xcb_translate_coordinates(
+  xcb_translate_coordinates_cookie_t transCookie = xcb_translate_coordinates(
     connection, window_id, rootWindow, 0, 0);
-  xcb_generic_error_t* trans_error = nullptr;
-  xcb_translate_coordinates_reply_t* trans_reply =
-    xcb_translate_coordinates_reply(connection, trans_cookie, &trans_error);
+  xcb_generic_error_t* transError = nullptr;
+  xcb_translate_coordinates_reply_t* transReply =
+    xcb_translate_coordinates_reply(connection, transCookie, &transError);
 
-  if (!trans_reply) {
+  if (!transReply) {
     std::string errorMsg = "Failed to translate window coordinates";
-    if (trans_error) {
-      errorMsg += ": X11 error code " + std::to_string(trans_error->error_code);
-      errorMsg += " (sequence: " + std::to_string(trans_error->sequence) + ")";
-      free(trans_error);
+    if (transError) {
+      errorMsg += ": X11 error code " + std::to_string(transError->error_code);
+      errorMsg += " (sequence: " + std::to_string(transError->sequence) + ")";
+      free(transError);
     }
-    free(geom_reply);
+    free(geomReply);
     throw Napi::Error::New(env, errorMsg);
   }
 
   Napi::Object bounds = Napi::Object::New(env);
-  bounds.Set("x", Napi::Number::New(env, trans_reply->dst_x));
-  bounds.Set("y", Napi::Number::New(env, trans_reply->dst_y));
-  bounds.Set("width", Napi::Number::New(env, geom_reply->width));
-  bounds.Set("height", Napi::Number::New(env, geom_reply->height));
+  bounds.Set("x", Napi::Number::New(env, transReply->dst_x));
+  bounds.Set("y", Napi::Number::New(env, transReply->dst_y));
+  bounds.Set("width", Napi::Number::New(env, geomReply->width));
+  bounds.Set("height", Napi::Number::New(env, geomReply->height));
 
-  free(geom_reply);
-  free(trans_reply);
+  free(geomReply);
+  free(transReply);
 
   return bounds;
 }
@@ -370,8 +370,8 @@ double getWindowOpacity(Napi::Env env, xcb_window_t window_id) {
   
   double opacity = 1.0; // Default opacity
   if (reply && reply->type == XCB_ATOM_CARDINAL && reply->format == 32 && reply->length == 1) {
-    uint32_t opacity_value = *(uint32_t*)xcb_get_property_value(reply);
-    opacity = static_cast<double>(opacity_value) / 4294967295.0;
+    uint32_t opacityValue = *(uint32_t*)xcb_get_property_value(reply);
+    opacity = static_cast<double>(opacityValue) / 4294967295.0;
   } else if (!reply) {
     std::string errorMsg = "Failed to get _NET_WM_WINDOW_OPACITY property reply";
     if (error) {
@@ -427,7 +427,7 @@ Napi::Object getWindowInfo(const Napi::CallbackInfo& info) {
   std::string visibility = getWindowVisiblity(env, window_id);
   std::string title = getWindowTitle(env, window_id);
   double opacity = getWindowOpacity(env, window_id);
-  xcb_window_t parent_wid = getParentWindow(env, window_id);
+  xcb_window_t parentWid = getParentWindow(env, window_id);
   
 
   result.Set("wid", Napi::Number::New(env, static_cast<int64_t>(window_id)));
@@ -435,7 +435,7 @@ Napi::Object getWindowInfo(const Napi::CallbackInfo& info) {
   result.Set("visibility", Napi::String::New(env, visibility));
   result.Set("title", Napi::String::New(env, title));
   result.Set("opacity", Napi::Number::New(env, opacity));
-  result.Set("parentWid", Napi::Number::New(env, static_cast<int64_t>(parent_wid)));
+  result.Set("parentWid", Napi::Number::New(env, static_cast<int64_t>(parentWid)));
 
   return result;
 }
@@ -445,7 +445,7 @@ Napi::Object getWindowInfo(const Napi::CallbackInfo& info) {
 Napi::Array getWindowsByProcessId(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
 
-  GET_UINT_32(info, 0, target_pid, pid_t);
+  GET_UINT_32(info, 0, targetPid, pid_t);
   Napi::Array result = Napi::Array::New(env);
 
   ensure_xcb_initialized(env);
@@ -482,8 +482,8 @@ Napi::Array getWindowsByProcessId(const Napi::CallbackInfo& info) {
   size_t count = 0;
   for (unsigned int i = 0; i < clients.windows_len; i++) {
     try {
-      pid_t window_pid = getWindowPid(clients.windows[i], env);
-      if (window_pid == target_pid) {
+      pid_t windowPid = getWindowPid(clients.windows[i], env);
+      if (windowPid == targetPid) {
         result[count++] = Napi::Number::New(env, static_cast<int64_t>(clients.windows[i]));
       }
     }
@@ -617,10 +617,10 @@ void setWindowOpacity(const Napi::CallbackInfo& info) {
   }
   
   // Convert opacity to 32-bit integer (0-4294967295)
-  uint32_t opacity_value = static_cast<uint32_t>(opacity * 4294967295.0);
+  uint32_t opacityValue = static_cast<uint32_t>(opacity * 4294967295.0);
   
   xcb_change_property(connection, XCB_PROP_MODE_REPLACE, window_id,
-                       netWmWindowOpacityAtom, XCB_ATOM_CARDINAL, 32, 1, &opacity_value);
+                       netWmWindowOpacityAtom, XCB_ATOM_CARDINAL, 32, 1, &opacityValue);
   xcb_flush(connection);
 }
 ; // Global variable

@@ -12,11 +12,11 @@ Napi::Object getMousePosition(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   int x, y; /* This is all we care about. Seriously. */
   Window garb1, garb2; /* Why you can't specify NULL as a parameter */
-  int garb_x, garb_y; /* is beyond me. */
-  unsigned int more_garbage;
+  int garbX, garbY; /* is beyond me. */
+  unsigned int moreGarbage;
 
   Display* display = xGetMainDisplay(env);
-  XQueryPointer(display, XDefaultRootWindow(display), &garb1, &garb2, &x, &y, &garb_x, &garb_y, &more_garbage);
+  XQueryPointer(display, XDefaultRootWindow(display), &garb1, &garb2, &x, &y, &garbX, &garbY, &moreGarbage);
 
   Napi::Object obj = Napi::Object::New(env);
   obj.Set("x", Napi::Number::New(env, x));

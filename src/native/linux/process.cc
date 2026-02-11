@@ -135,8 +135,8 @@ static Napi::Object getProcessInfo(const Napi::CallbackInfo& info) {
     snprintf(status_path, sizeof(status_path), "/proc/%d/status", pid);
     
     std::ifstream status_file(status_path);
-    unsigned long memory_usage = 0;
-    int thread_count = 0;
+    unsigned long memoryUsage = 0;
+    int threadCount = 0;
     
     if (status_file.is_open()) {
         std::string line;
@@ -144,11 +144,11 @@ static Napi::Object getProcessInfo(const Napi::CallbackInfo& info) {
             if (line.substr(0, 6) == "VmRSS:") {
                 std::istringstream iss(line);
                 std::string label;
-                iss >> label >> memory_usage; // in KB
+                iss >> label >> memoryUsage; // in KB
             } else if (line.substr(0, 8) == "Threads:") {
                 std::istringstream iss(line);
                 std::string label;
-                iss >> label >> thread_count;
+                iss >> label >> threadCount;
             }
         }
     }
@@ -156,22 +156,22 @@ static Napi::Object getProcessInfo(const Napi::CallbackInfo& info) {
     // Set result properties
     result.Set("pid", Napi::Number::New(env, pid));
     result.Set("parentPid", Napi::Number::New(env, ppid));
-    result.Set("threadCount", Napi::Number::New(env, thread_count));
+    result.Set("threadCount", Napi::Number::New(env, threadCount));
     
     // Memory object
     Napi::Object memory = Napi::Object::New(env);
-    memory.Set("workingSetSize", Napi::Number::New(env, static_cast<double>(memory_usage * 1024))); // Convert KB to bytes
-    memory.Set("peakWorkingSetSize", Napi::Number::New(env, static_cast<double>(memory_usage * 1024)));
-    memory.Set("privateUsage", Napi::Number::New(env, static_cast<double>(memory_usage * 1024)));
-    memory.Set("pageFileUsage", Napi::Number::New(env, static_cast<double>(memory_usage * 1024))); // Use RSS as approximation
+    memory.Set("workingSetSize", Napi::Number::New(env, static_cast<double>(memoryUsage * 1024))); // Convert KB to bytes
+    memory.Set("peakWorkingSetSize", Napi::Number::New(env, static_cast<double>(memoryUsage * 1024)));
+    memory.Set("privateUsage", Napi::Number::New(env, static_cast<double>(memoryUsage * 1024)));
+    memory.Set("pageFileUsage", Napi::Number::New(env, static_cast<double>(memoryUsage * 1024))); // Use RSS as approximation
     result.Set("memory", memory);
     
     // Times object (convert clock ticks to milliseconds)
-    long clock_ticks_per_sec = sysconf(_SC_CLK_TCK);
+    long clockTicksPerSec = sysconf(_SC_CLK_TCK);
     Napi::Object times = Napi::Object::New(env);
     times.Set("creationTime", Napi::Number::New(env, 0.0)); // Not easily available
-    times.Set("kernelTime", Napi::Number::New(env, static_cast<double>(stime * 1000 / clock_ticks_per_sec)));
-    times.Set("userTime", Napi::Number::New(env, static_cast<double>(utime * 1000 / clock_ticks_per_sec)));
+    times.Set("kernelTime", Napi::Number::New(env, static_cast<double>(stime * 1000 / clockTicksPerSec)));
+    times.Set("userTime", Napi::Number::New(env, static_cast<double>(utime * 1000 / clockTicksPerSec)));
     result.Set("times", times);
     
     // Check if process is elevated (same as current process)
