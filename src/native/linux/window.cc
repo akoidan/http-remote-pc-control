@@ -162,7 +162,7 @@ std::string getWindowVisiblity(Napi::Env env, xcb_window_t window_id) {
   if (state_reply->type == XCB_NONE) {
     free(state_reply);
     return visibility; // Return early with default visibility
-  } else if (state_reply->type != XCB_ATOM) {
+  } else if (state_reply->type != XCB_ATOM && state_reply->type != 4) { // 4 is XA_ATOM
     free(state_reply);
     throw Napi::Error::New(env, "_NET_WM_STATE property type is not ATOM");
   } else if (state_reply->format != 32) {
@@ -290,10 +290,10 @@ void setWindowBounds(const Napi::CallbackInfo& info) {
 
   GET_INT_64(info, 0, window_id, xcb_window_t);
   GET_OBJECT(info, 1, bounds);
-  ASSERT_OBJECT_NUMBER(info, 1, "x");
-  ASSERT_OBJECT_NUMBER(info, 1, "y");
-  ASSERT_OBJECT_NUMBER(info, 1, "width");
-  ASSERT_OBJECT_NUMBER(info, 1, "height");
+  ASSERT_OBJECT_NUMBER(info, 1, x);
+  ASSERT_OBJECT_NUMBER(info, 1, y);
+  ASSERT_OBJECT_NUMBER(info, 1, width);
+  ASSERT_OBJECT_NUMBER(info, 1, height);
 
   int x = bounds.Get("x").ToNumber().Int32Value();
   int y = bounds.Get("y").ToNumber().Int32Value();
