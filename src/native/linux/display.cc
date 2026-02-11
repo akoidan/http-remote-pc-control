@@ -8,17 +8,17 @@ int registered = 0;
 char* displayName = NULL;
 int hasDisplayNameChanged = 0;
 
-void XCloseMainDisplay(void) {
+void xCloseMainDisplay(void) {
   if (mainDisplay != NULL) {
     XCloseDisplay(mainDisplay);
     mainDisplay = NULL;
   }
 }
 
-Display* XGetMainDisplay(Napi::Env env) {
+Display* xGetMainDisplay(Napi::Env env) {
   /* Close the display if displayName has changed */
   if (hasDisplayNameChanged) {
-    XCloseMainDisplay();
+    xCloseMainDisplay();
     hasDisplayNameChanged = 0;
   }
 
@@ -30,7 +30,7 @@ Display* XGetMainDisplay(Napi::Env env) {
       throw Napi::Error::New(env, "Couldn't open main display");
     }
     if (!registered) {
-      atexit(&XCloseMainDisplay);
+      atexit(&xCloseMainDisplay);
       registered = 1;
     }
   }

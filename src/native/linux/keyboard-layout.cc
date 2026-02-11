@@ -7,7 +7,7 @@
 #include <vector>
 #include <string>
 
-extern Display* XGetMainDisplay();
+extern Display* xGetMainDisplay();
 
 std::vector<KdeLayout> getKdeAvailableLayouts() {
   std::vector<KdeLayout> layouts;
@@ -136,7 +136,7 @@ bool switchToKdeLayout(uint32_t layoutIndex) {
 }
 
 bool fallbackLayoutSwitch() {
-  Display* display = XGetMainDisplay();
+  Display* display = xGetMainDisplay();
   if (!display) {
     return false;
   }

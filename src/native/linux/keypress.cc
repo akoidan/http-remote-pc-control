@@ -14,7 +14,7 @@
     (XTestFakeKeyEvent(display, XKeysymToKeycode(display, key), is_press, CurrentTime), XFlush(display))
 
 void toggleKeyCode(Napi::Env env, KeySym code, const bool down, unsigned int flags) {
-  Display* display = XGetMainDisplay(env);
+  Display* display = xGetMainDisplay(env);
   const Bool is_press = down ? True : False; /* Just to be safe. */
   if (!down) {
     X_KEY_EVENT(display, code, is_press);
@@ -72,7 +72,7 @@ void typeString(const Napi::CallbackInfo& info) {
   GET_STRING(info, 0, strstd);
 
   const char* str = strstd.c_str();
-  Display* display = XGetMainDisplay(env);
+  Display* display = xGetMainDisplay(env);
   while (*str) {
     KeySym ks;
     bool needShift = false;
@@ -166,7 +166,7 @@ unsigned int assignKeyCode(std::string& keyName) {
     return keyCodeForChar(keyName[0]);
   }
   unsigned int res = 0;
-  KeyNames* kn = key_names;
+  KeyNames* kn = keyNames;
   while (kn->name) {
     if (keyName == kn->name) {
       return kn->key;

@@ -628,7 +628,7 @@ void setWindowOpacity(const Napi::CallbackInfo& info) {
 Napi::Value createTestWindow(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
 
-  Display* test_display = XGetMainDisplay(env);
+  Display* test_display = xGetMainDisplay(env);
 
   Window window = XCreateSimpleWindow(test_display,
                                   RootWindow(test_display, DefaultScreen(test_display)),

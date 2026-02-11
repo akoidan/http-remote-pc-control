@@ -2,6 +2,6 @@
 #include <napi.h>
 #include <X11/Xlib.h>
 
-void XCloseMainDisplay();
+void xCloseMainDisplay();
 
-Display* XGetMainDisplay(Napi::Env);
+Display* xGetMainDisplay(Napi::Env);

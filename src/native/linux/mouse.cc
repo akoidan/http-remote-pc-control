@@ -15,7 +15,7 @@ Napi::Object getMousePosition(const Napi::CallbackInfo& info) {
   int garb_x, garb_y; /* is beyond me. */
   unsigned int more_garbage;
 
-  Display* display = XGetMainDisplay(env);
+  Display* display = xGetMainDisplay(env);
   XQueryPointer(display, XDefaultRootWindow(display), &garb1, &garb2, &x, &y, &garb_x, &garb_y, &more_garbage);
 
   Napi::Object obj = Napi::Object::New(env);
@@ -41,7 +41,7 @@ void setMouseButtonToState(const Napi::CallbackInfo& info) {
   } else {
     throw Napi::Error::New(env, "Invalid button name. Must be 'LEFT', 'RIGHT', or 'MIDDLE'");
   }
-  Display* display = XGetMainDisplay(env);
+  Display* display = xGetMainDisplay(env);
 
   if (!XTestFakeButtonEvent(display, buttonInt, isDown ? True : False, CurrentTime)) {
     throw Napi::Error::New(env, "Failed to send XTestFakeMotionEvent");
@@ -58,7 +58,7 @@ void setMousePosition(const Napi::CallbackInfo& info) {
   int x = bounds.Get("x").ToNumber().Int32Value();
   int y = bounds.Get("y").ToNumber().Int32Value();
 
-  Display* display = XGetMainDisplay(env);
+  Display* display = xGetMainDisplay(env);
   int screen = -1;
   if (!XTestFakeMotionEvent(display, screen, x, y, CurrentTime)) {
     throw Napi::Error::New(env, "Failed to send XTestFakeMotionEvent");
