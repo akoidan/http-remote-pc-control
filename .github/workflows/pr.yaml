@@ -97,7 +97,7 @@ jobs:
       - name: Install dependencies # TODO cache
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends libx11-dev libxtst-dev libxcb-ewmh-dev libxcb1-dev cmake g++ make libdbus-1-dev
+          sudo apt-get install -y --no-install-recommends libx11-dev libxtst-dev libxcb-ewmh-dev libxcb1-dev cmake g++ make libdbus-1-dev xvfb
 
       - uses: actions/setup-node@v3
         with:
@@ -127,4 +127,4 @@ jobs:
       - name: native
         run: yarn native
       - name: test
-        run: yarn test
+        run: xvfb-run --auto-servernum --server-args="-screen 0 1280x1024x24" yarn test
