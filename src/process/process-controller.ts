@@ -15,8 +15,8 @@ export class ProcessController {
   }
 
   @Get(':pid')
-  @ApiOperation({summary: 'Get all windows with their IDs for a concrete process id'})
-  @ApiResponse({type: Number, isArray: true})
+  @ApiOperation({summary: 'Gets process information along with windows attached to it'})
+  @ApiResponse({type: ProcessResponseDto})
   getProcessInfo(@Param('pid', ParseIntPipe) id: number): ProcessResponseDto {
     return this.processService.getProcessInfo(id);
   }
@@ -37,7 +37,7 @@ export class ProcessController {
 
   @Get()
   @ApiResponse({type: Number, isArray: true})
-  @ApiOperation({summary: 'Returns processes ID list based on executable name'})
+  @ApiOperation({summary: 'Searches procceses with specified executable name. Returns list of process ids'})
   async findPidByName(@Query() query: ExecutableNameRequestDto): Promise<number[]> {
     return this.executionService.findPidByName(query.name);
   }

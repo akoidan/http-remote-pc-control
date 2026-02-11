@@ -51,7 +51,7 @@ const mouseMoveHumanClickRequestSchema = z.object({
   'The path includes subtle variations to mimic human motor control, with configurable curve intensity and movement variance.');
 
 const mouseButtonSchema = z.nativeEnum(MouseButton)
-    .describe('Mouse button, left=1, right=2 , middle=3');
+    .describe('Mouse button');
 
 const mouseClickSchemaRequestSchema = z.object({
   button: mouseButtonSchema.default(MouseButton.LEFT),

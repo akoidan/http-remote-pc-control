@@ -102,7 +102,7 @@ async function bootstrap(): Promise<void> {
 
   const cleanedDocument = swagger30to31(document);
 
-  await writeFile('./openapi/openapi.json', JSON.stringify(document, null, 2));
+  await writeFile('./openapi/openapi.json', JSON.stringify(cleanedDocument, null, 2));
 }
 
 void bootstrap();

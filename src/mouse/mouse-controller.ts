@@ -44,7 +44,7 @@ export class MouseController {
   }
 
   @Post('click')
-  @ApiOperation({summary: 'Left click on the current position'})
+  @ApiOperation({summary: 'Click mouse on the current position'})
   @HttpCode(204)
   click(@Body() event: MouseClickRequestDto): void {
     this.mouseService.click(event);
