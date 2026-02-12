@@ -7,6 +7,7 @@ import {INativeModule, Native} from '../src/native/native-model';
 import {OS_INJECT} from '../src/global/global-model';
 import {RandomService} from '../src/random/random-service';
 import {createMockNativeService, createMockRandomService, createMockLogger, setupValidationPipe} from './test-utils';
+import {KeyPressRequestDto} from "../src/keyboard/keyboard-dto";
 
 describe('KeyboardController (e2e)', () => {
   let app: INestApplication;
@@ -45,9 +46,9 @@ describe('KeyboardController (e2e)', () => {
     });
 
     it('should call keyTap with correct parameters', () => {
-      const keyPressData = {
+      const keyPressData: KeyPressRequestDto = {
         keys: ['a', 'b', 'c'],
-        modifiers: ['ctrl']
+        holdKeys: ['control']
       };
 
       return request(app.getHttpServer())
@@ -64,9 +65,9 @@ describe('KeyboardController (e2e)', () => {
     });
 
     it('should handle single key without modifiers', () => {
-      const keyPressData = {
+      const keyPressData: KeyPressRequestDto = {
         keys: ['enter'],
-        modifiers: []
+        holdKeys: []
       };
 
       return request(app.getHttpServer())
