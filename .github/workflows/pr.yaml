@@ -98,6 +98,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends libx11-dev libxtst-dev libxcb-ewmh-dev libxcb1-dev cmake g++ make libdbus-1-dev xvfb openbox
+          sudo apt-get install -y --no-install-recommends libxkbfile-dev x11-xserver-utils
 
       - uses: actions/setup-node@v3
         with:
@@ -132,5 +133,7 @@ jobs:
           sleep 2
           openbox &
           sleep 2
+          # Set up basic keyboard layout configuration for XKB
+          setxkbmap -layout us,us -variant , -option grp:shifts_toggle
           yarn test
           "
