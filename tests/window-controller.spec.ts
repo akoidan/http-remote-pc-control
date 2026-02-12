@@ -127,7 +127,7 @@ describe('WindowController (e2e)', () => {
         .expect(400);
     });
 
-    it('should return 400 for invalid coordinates', () => {
+    it('should return 400 for invalid coordinates (string)', () => {
       const windowData = {
         x: 'invalid',
         y: 100,
@@ -151,6 +151,25 @@ describe('WindowController (e2e)', () => {
         y: 100,
         width: -100,
         height: 600
+      };
+
+      return request(app.getHttpServer())
+        .patch('/window/by-wid/123')
+        .send(windowData)
+        .expect(400)
+        .expect((res: Response) => {
+          expect(res.body).toHaveProperty('message');
+          expect(Array.isArray(res.body.message)).toBe(true);
+        });
+    });
+
+    it('should return 400 for opacity out of range', () => {
+      const windowData = {
+        x: 100,
+        y: 100,
+        width: 800,
+        height: 600,
+        opacity: 1.5 // Above max of 1
       };
 
       return request(app.getHttpServer())

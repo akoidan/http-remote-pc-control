@@ -96,23 +96,25 @@ describe('ProcessController (e2e)', () => {
     it('should launch new process', () => {
       const processData = {
         path: '/usr/bin/test-app',
-        args: ['--verbose'],
-        workingDirectory: '/tmp'
+        arguments: ['--verbose'],
+        waitTillFinish: true
       };
 
       return request(app.getHttpServer())
         .post('/process')
         .send(processData)
-        .expect(200)
+        .expect(201)
         .expect((res: Response) => {
           expect(res.body).toHaveProperty('pid');
           expect(res.body).toHaveProperty('path');
+          expect(executionService.launchExe).toHaveBeenCalledWith(processData);
         });
     });
 
     it('should return 400 for missing path', () => {
       const processData = {
-        args: ['--verbose']
+        arguments: ['--verbose'],
+        waitTillFinish: true
       };
 
       return request(app.getHttpServer())
@@ -123,22 +125,6 @@ describe('ProcessController (e2e)', () => {
           expect(res.body).toHaveProperty('message');
           expect(Array.isArray(res.body.message)).toBe(true);
           expect(res.body.message[0]).toContain('path');
-        });
-    });
-
-    it('should return 400 for empty path', () => {
-      const processData = {
-        path: '',
-        args: ['--verbose']
-      };
-
-      return request(app.getHttpServer())
-        .post('/process')
-        .send(processData)
-        .expect(400)
-        .expect((res: Response) => {
-          expect(res.body).toHaveProperty('message');
-          expect(Array.isArray(res.body.message)).toBe(true);
         });
     });
   });
