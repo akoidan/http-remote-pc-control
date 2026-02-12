@@ -327,6 +327,7 @@ describe('KeyboardController (e2e)', () => {
       nativeService.typeString('test');
       expect(spy).toHaveBeenCalledWith('test');
       
+      // Clean up the spy immediately
       spy.mockRestore();
     });
   });

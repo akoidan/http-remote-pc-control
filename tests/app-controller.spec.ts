@@ -62,7 +62,7 @@ describe('AppController (e2e)', () => {
       nativeService.isProcessElevated();
       expect(spy).toHaveBeenCalled();
       
-      // Reset the spy
+      // Clean up the spy immediately
       spy.mockRestore();
     });
   });

@@ -28,6 +28,7 @@ export class WindowController {
 
   @Patch('by-wid/:wid')
   @ApiOperation({summary: 'Set window properties'})
+  @HttpCode(204)
   setWindowProperties(
     @Param('wid', ParseIntPipe) wid: number,
     @Body() body: SetWindowPropertiesRequestDto

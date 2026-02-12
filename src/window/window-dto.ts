@@ -9,7 +9,7 @@ const boundsSchema = z.object({
   y: z.number().describe('Top position in screen coordinates (pixels)'),
   width: z.number().describe('Window width in pixels'),
   height: z.number().describe('Window height in pixels'),
-}).describe('Rectangle bounds for a window');
+}).strict().describe('Rectangle bounds for a window');
 
 const widSchema = z.number().describe('Target window handle (HWND as number)');
 
@@ -27,16 +27,20 @@ const setWindowsPropertiesRequestSchema = z.object({
   bounds: boundsSchema.optional(),
   state: z.nativeEnum(WindowAction).optional().describe('Action to apply: show | hide | minimize | restore | maximize'),
   opacity: z.number().min(0).max(1).optional().describe('Opacity value in range 0..1 where 1 is fully opaque'),
+}).strict().superRefine((data, ctx) => {
+  if (!data.bounds && !data.state && !data.opacity) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'At least one property must be provided: bounds, state, or opacity',
+    });
+  }
 });
-
 
 class SetWindowPropertiesRequestDto extends createZodDto(setWindowsPropertiesRequestSchema) {}
 class GetWindowResponseDto extends createZodDto(getWindowResponseShema) {}
 
-
 type SetWindowPropertiesRequest = z.infer<typeof setWindowsPropertiesRequestSchema>;
 type WindowResponse = z.infer<typeof getWindowResponseShema>;
-
 
 export {
   boundsSchema,

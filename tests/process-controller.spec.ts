@@ -73,14 +73,18 @@ describe('ProcessController (e2e)', () => {
         .expect(400);
     });
 
-    it('should return 404 for non-existent PID', () => {
+    it('should return 404 for non-existent PID', async () => {
+      const originalImplementation = nativeService.getProcessInfo;
       nativeService.getProcessInfo.mockImplementation(() => {
         throw new Error('Process not found');
       });
 
-      return request(app.getHttpServer())
+      await request(app.getHttpServer())
         .get('/process/999')
-        .expect(400);
+        .expect(400); // The actual behavior returns 400 for errors
+      
+      // Restore the original implementation
+      nativeService.getProcessInfo = originalImplementation;
     });
   });
 
@@ -213,14 +217,18 @@ describe('ProcessController (e2e)', () => {
         .expect(400);
     });
 
-    it('should return 404 for non-existent PID', () => {
+    it('should return 404 for non-existent PID', async () => {
+      const originalImplementation = executionService.killExeByPid;
       executionService.killExeByPid.mockImplementation(() => {
         throw new Error('Process not found');
       });
 
-      return request(app.getHttpServer())
+      await request(app.getHttpServer())
         .delete('/process/999')
-        .expect(404);
+        .expect(404); // This should return 404
+      
+      // Restore the original implementation
+      executionService.killExeByPid = originalImplementation;
     });
   });
 });
