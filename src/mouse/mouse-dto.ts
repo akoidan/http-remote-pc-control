@@ -5,7 +5,7 @@ import {MouseButton} from '@/native/native-model';
 const mousePositionSchema = z.object({
   x: z.number().describe('X coordinate to move mouse to'),
   y: z.number().describe('Y coordinate to move mouse to'),
-});
+}).strict();
 
 const mouseMoveHumanClickRequestSchema = z.object({
   destinationRandomX: z.number()
@@ -55,7 +55,7 @@ const mouseButtonSchema = z.nativeEnum(MouseButton)
 
 const mouseClickSchemaRequestSchema = z.object({
   button: mouseButtonSchema.default(MouseButton.LEFT),
-}).describe('Request to perform a mouse button click');
+}).strict().describe('Request to perform a mouse button click');
 
 // Create DTO class for Swagger
 class MousePositionRRDto extends createZodDto(mousePositionSchema) {}

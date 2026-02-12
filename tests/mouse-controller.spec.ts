@@ -141,7 +141,6 @@ describe('MouseController (e2e)', () => {
       const moveData = {
         x: 100,
         y: 200,
-        duration: 500
       };
 
       return request(app.getHttpServer())
@@ -153,10 +152,9 @@ describe('MouseController (e2e)', () => {
         });
     });
 
-    it('should return 400 for missing duration', () => {
+    it('should return 400 for missing y', () => {
       const moveData = {
         x: 100,
-        y: 200
       };
 
       return request(app.getHttpServer())
@@ -166,7 +164,7 @@ describe('MouseController (e2e)', () => {
         .expect((res: Response) => {
           expect(res.body).toHaveProperty('message');
           expect(Array.isArray(res.body.message)).toBe(true);
-          expect(res.body.message[0]).toContain('duration');
+          expect(res.body.message[0]).toContain('y: Required');
         });
     });
 
@@ -196,8 +194,7 @@ describe('MouseController (e2e)', () => {
 
     it('should click mouse button', () => {
       const clickData = {
-        button: 'LEFT',
-        down: true
+        button: 'RIGHT'
       };
 
       return request(app.getHttpServer())
@@ -209,19 +206,16 @@ describe('MouseController (e2e)', () => {
         });
     });
 
-    it('should return 400 for missing button', () => {
-      const clickData = {
-        down: true
-      };
+    it('should return 400 for extra payload', () => {
 
       return request(app.getHttpServer())
         .post('/mouse/click')
-        .send(clickData)
+        .send({a:3})
         .expect(400)
         .expect((res: Response) => {
           expect(res.body).toHaveProperty('message');
           expect(Array.isArray(res.body.message)).toBe(true);
-          expect(res.body.message[0]).toContain('button');
+          expect(res.body.message[0]).toContain('Unrecognized key(s)');
         });
     });
 
