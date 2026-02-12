@@ -20,7 +20,7 @@ describe('MouseController (e2e)', () => {
       providers: [
         MouseService,
         {provide: Native, useValue: mockNativeService},
-        {provide: OS_INJECT, useValue: 'linux'},
+        {provide: OS_INJECT, useValue: process.platform},
         {provide: Logger, useValue: createMockLogger()},
       ],
     })

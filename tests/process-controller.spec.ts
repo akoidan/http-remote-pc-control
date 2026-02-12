@@ -27,7 +27,7 @@ describe('ProcessController (e2e)', () => {
         ProcessService,
         {provide: Native, useValue: mockNativeService},
         {provide: ExecuteService, useValue: mockExecutionService},
-        {provide: OS_INJECT, useValue: 'linux'},
+        {provide: OS_INJECT, useValue: process.platform},
         {provide: Logger, useValue: createMockLogger()},
       ],
     })

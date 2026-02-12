@@ -19,7 +19,7 @@ describe('MonitorController (e2e)', () => {
       providers: [
         MonitorService,
         {provide: Native, useValue: mockNativeService},
-        {provide: OS_INJECT, useValue: 'linux'},
+        {provide: OS_INJECT, useValue: process.platform},
         {provide: Logger, useValue: createMockLogger()},
       ],
     })
