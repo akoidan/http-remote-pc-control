@@ -46,6 +46,7 @@ export class ExecuteWin32Service implements IExecuteService {
       .map(pid => parseInt(pid, 10));
   }
 
+
   async killExeByPid(pid: number): Promise<void> {
     this.logger.log(`Kill ${pid}`);
 

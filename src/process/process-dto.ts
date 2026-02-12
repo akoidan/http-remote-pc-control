@@ -35,7 +35,7 @@ const launchExeRequestSchema = z.object({
 });
 
 const executableNameSchema = z.object({
-  name: z.string().regex(/^[a-zA-Z0-9._ -]$/u).describe('Process name. Allows only specific symbols due to security reasons'),
+  name: z.string().regex(/^[a-zA-Z0-9._ -]+$/u).describe('Process name. Allows only specific symbols due to security reasons'),
 });
 
 
