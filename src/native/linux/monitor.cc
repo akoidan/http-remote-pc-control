@@ -2,6 +2,8 @@
 #include "./headers/monitor.h"
 #include <X11/Xlib.h>
 
+#include "headers/display.h"
+
 // Minimal Linux monitor implementation providing API parity with win32
 // This basic version reports a single primary monitor using the default screen.
 // getMonitorScaleFactor returns 1.0 as a conservative default (no per-monitor scaling).
@@ -10,11 +12,7 @@
 static Napi::Object getMonitorInfo(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
 
-  Display* display = XOpenDisplay(nullptr);
-  if (!display) {
-    // Fallback to 1920x1080 if X display is unavailable
-    throw Napi::Error::New(env, "Monitor handle is null or invalid");
-  }
+  Display* display = xGetMainDisplay(env);
 
   int screen = DefaultScreen(display);
   int width = DisplayWidth(display, screen);
@@ -32,7 +30,6 @@ static Napi::Object getMonitorInfo(const Napi::CallbackInfo& info) {
   obj.Set("isPrimary", true);
   obj.Set("scale", 1);
 
-  XCloseDisplay(display);
   return obj;
 }
 
