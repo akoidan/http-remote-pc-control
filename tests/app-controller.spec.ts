@@ -1,10 +1,8 @@
 import {Test, TestingModule} from '@nestjs/testing';
 import {INestApplication} from '@nestjs/common';
-import request from 'supertest';
+import request, {Response} from 'supertest';
 import {AppModule} from '../src/app/app.module';
-import {NativeModule} from '../src/native/native-module';
 import {INativeModule, Native} from '../src/native/native-model';
-import {Response} from 'supertest';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
