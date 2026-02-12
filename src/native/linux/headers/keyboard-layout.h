@@ -19,6 +19,6 @@ std::vector<KdeLayout> getKdeAvailableLayouts();
 bool switchToKdeLayout(uint32_t layoutIndex);
 
 // Fallback method using XKB group switching for non-KDE systems
-bool fallbackLayoutSwitch();
+bool fallbackLayoutSwitch(Napi::Env env);
 
 // Main keyboard layout switching function (Napi wrapper)

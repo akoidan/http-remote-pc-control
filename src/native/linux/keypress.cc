@@ -230,7 +230,7 @@ void setKeyboardLayout(const Napi::CallbackInfo& info) {
   }
 
   // Fallback to direct XKB group switching (works on non-KDE systems or when DBus is unavailable)
-  if (fallbackLayoutSwitch()) {
+  if (fallbackLayoutSwitch(env)) {
     return;
   }
 

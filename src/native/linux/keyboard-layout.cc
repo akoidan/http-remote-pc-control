@@ -7,7 +7,7 @@
 #include <vector>
 #include <string>
 
-extern Display* xGetMainDisplay();
+extern Display* xGetMainDisplay(Napi::Env env);
 
 std::vector<KdeLayout> getKdeAvailableLayouts() {
   std::vector<KdeLayout> layouts;
@@ -135,8 +135,8 @@ bool switchToKdeLayout(uint32_t layoutIndex) {
   return success;
 }
 
-bool fallbackLayoutSwitch() {
-  Display* display = xGetMainDisplay();
+bool fallbackLayoutSwitch(Napi::Env env) {
+  Display* display = xGetMainDisplay(env);
   if (!display) {
     return false;
   }
