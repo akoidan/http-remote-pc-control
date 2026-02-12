@@ -10,13 +10,10 @@ import {OS_INJECT} from '../src/global/global-model';
 import {createMockNativeService, createMockLogger, setupValidationPipe} from './test-utils';
 
 describe('ProcessController (e2e)', () => {
-  let app: INestApplication;
-  let nativeService: jest.Mocked<INativeModule>;
-  let executionService: jest.Mocked<IExecuteService>;
-
-  beforeAll(async () => {
+  const createTestApp = async () => {
+    jest.resetModules();
     const mockNativeService = createMockNativeService();
-    
+
     const mockExecutionService: jest.Mocked<IExecuteService> = {
       launchExe: jest.fn().mockResolvedValue(123),
       killExeByName: jest.fn().mockResolvedValue(undefined),
@@ -34,66 +31,56 @@ describe('ProcessController (e2e)', () => {
         {provide: Logger, useValue: createMockLogger()},
       ],
     })
-      .compile();
+        .compile();
 
-    app = module.createNestApplication();
+    const app = module.createNestApplication();
     setupValidationPipe(app);
-    nativeService = module.get<jest.Mocked<INativeModule>>(Native);
-    executionService = module.get<jest.Mocked<IExecuteService>>(ExecuteService);
-    
-    await app.init();
-  });
 
-  afterAll(async () => {
-    await app.close();
-  });
+    await app.init();
+
+    return { app, nativeService: mockNativeService, executionService: mockExecutionService };
+  };
 
   describe('GET /process/:pid', () => {
-    beforeEach(() => {
-      jest.clearAllMocks();
+    it('should return process info for valid PID', async () => {
+      const { app } = await createTestApp();
+
+      return request(app.getHttpServer())
+          .get('/process/123')
+          .expect(200)
+          .expect((res: Response) => {
+            expect(res.body).toHaveProperty('pid');
+            expect(res.body).toHaveProperty('path');
+            expect(res.body).toHaveProperty('isElevated');
+            expect(res.body).toHaveProperty('memory');
+            expect(res.body).toHaveProperty('times');
+          });
     });
 
-    it('should return process info for valid PID', () => {
-      return request(app.getHttpServer())
-        .get('/process/123')
-        .expect(200)
-        .expect((res: Response) => {
-          expect(res.body).toHaveProperty('pid');
-          expect(res.body).toHaveProperty('path');
-          expect(res.body).toHaveProperty('isElevated');
-          expect(res.body).toHaveProperty('memory');
-          expect(res.body).toHaveProperty('times');
-        });
-    });
+    it('should return 400 for invalid PID (non-integer)', async () => {
+      const { app } = await createTestApp();
 
-
-    it('should return 400 for invalid PID (non-integer)', () => {
       return request(app.getHttpServer())
-        .get('/process/abc')
-        .expect(400);
+          .get('/process/abc')
+          .expect(400);
     });
 
     it('should return 404 for non-existent PID', async () => {
-      const originalImplementation = nativeService.getProcessInfo;
+      const { app, nativeService } = await createTestApp();
+
       nativeService.getProcessInfo.mockImplementation(() => {
         throw new Error('Process not found');
       });
 
-      await request(app.getHttpServer())
-        .get('/process/999')
-        .expect(400); // The actual behavior returns 400 for errors
-      
-      // Restore the original implementation
-      nativeService.getProcessInfo = originalImplementation;
+      return request(app.getHttpServer())
+          .get('/process/999')
+          .expect(400); // The actual behavior returns 400 for errors
     });
   });
 
   describe('POST /process', () => {
-    beforeEach(() => {
-      jest.clearAllMocks();
-    });
-
-    it('should launch new process', () => {
+    it('should launch new process', async () => {
+      const { app, executionService } = await createTestApp();
       const processData: LaunchExeRequestDto = {
         path: '/usr/bin/test-app',
         arguments: ['--verbose'],
@@ -101,134 +88,137 @@ describe('ProcessController (e2e)', () => {
       };
 
       return request(app.getHttpServer())
-        .post('/process')
-        .send(processData)
-        .expect(201)
-        .expect((res: Response) => {
-          expect(res.body).toHaveProperty('pid');
-          expect(res.body).toHaveProperty('path');
-          expect(executionService.launchExe).toHaveBeenCalledWith(processData);
-        });
+          .post('/process')
+          .send(processData)
+          .expect(201)
+          .expect((res: Response) => {
+            expect(res.body).toHaveProperty('pid');
+            expect(res.body).toHaveProperty('path');
+            expect(executionService.launchExe).toHaveBeenCalledWith(processData);
+          });
     });
 
-    it('should return 400 for missing path', () => {
+    it('should return 400 for missing path', async () => {
+      const { app } = await createTestApp();
       const processData = {
         arguments: ['--verbose'],
         waitTillFinish: true
       };
 
       return request(app.getHttpServer())
-        .post('/process')
-        .send(processData)
-        .expect(400)
-        .expect((res: Response) => {
-          expect(res.body).toHaveProperty('message');
-          expect(Array.isArray(res.body.message)).toBe(true);
-          expect(res.body.message[0]).toContain('path');
-        });
+          .post('/process')
+          .send(processData)
+          .expect(400)
+          .expect((res: Response) => {
+            expect(res.body).toHaveProperty('message');
+            expect(Array.isArray(res.body.message)).toBe(true);
+            expect(res.body.message[0]).toContain('path');
+          });
     });
   });
 
   describe('DELETE /process', () => {
-    beforeEach(() => {
-      jest.clearAllMocks();
+    it('should kill process by name', async () => {
+      const { app, executionService } = await createTestApp();
+
+      return request(app.getHttpServer())
+          .delete('/process?name=test-app')
+          .expect(204)
+          .then(() => {
+            expect(executionService.killExeByName).toHaveBeenCalledWith('test-app');
+          });
     });
 
-    it('should kill process by name', () => {
+    it('should return 400 for missing name parameter', async () => {
+      const { app } = await createTestApp();
+
       return request(app.getHttpServer())
-        .delete('/process?name=test-app')
-        .expect(204)
-        .then(() => {
-          expect(executionService.killExeByName).toHaveBeenCalledWith('test-app');
-        });
+          .delete('/process')
+          .expect(400)
+          .expect((res: Response) => {
+            expect(res.body).toHaveProperty('message');
+            expect(Array.isArray(res.body.message)).toBe(true);
+          });
     });
 
-    it('should return 400 for missing name parameter', () => {
-      return request(app.getHttpServer())
-        .delete('/process')
-        .expect(400)
-        .expect((res: Response) => {
-          expect(res.body).toHaveProperty('message');
-          expect(Array.isArray(res.body.message)).toBe(true);
-        });
-    });
+    it('should return 400 for empty name parameter', async () => {
+      const { app } = await createTestApp();
 
-    it('should return 400 for empty name parameter', () => {
       return request(app.getHttpServer())
-        .delete('/process?name=')
-        .expect(400)
-        .expect((res: Response) => {
-          expect(res.body).toHaveProperty('message');
-          expect(Array.isArray(res.body.message)).toBe(true);
-        });
+          .delete('/process?name=')
+          .expect(400)
+          .expect((res: Response) => {
+            expect(res.body).toHaveProperty('message');
+            expect(Array.isArray(res.body.message)).toBe(true);
+          });
     });
   });
 
   describe('GET /process (find by name)', () => {
-    beforeEach(() => {
-      jest.clearAllMocks();
+    it('should find PIDs by process name', async () => {
+      const { app, executionService } = await createTestApp();
+
+      return request(app.getHttpServer())
+          .get('/process?name=test-app')
+          .expect(200)
+          .expect((res: Response) => {
+            expect(Array.isArray(res.body)).toBe(true);
+            expect(res.body).toEqual([123, 456]);
+            expect(executionService.findPidByName).toHaveBeenCalledWith('test-app');
+          });
     });
 
-    it('should find PIDs by process name', () => {
-      return request(app.getHttpServer())
-        .get('/process?name=test-app')
-        .expect(200)
-        .expect((res: Response) => {
-          expect(Array.isArray(res.body)).toBe(true);
-          expect(res.body).toEqual([123, 456]);
-          expect(executionService.findPidByName).toHaveBeenCalledWith('test-app');
-        });
-    });
+    it('should return 400 for missing name parameter', async () => {
+      const { app } = await createTestApp();
 
-    it('should return 400 for missing name parameter', () => {
       return request(app.getHttpServer())
-        .get('/process')
-        .expect(400)
-        .expect((res: Response) => {
-          expect(res.body).toHaveProperty('message');
-          expect(Array.isArray(res.body.message)).toBe(true);
-        });
+          .get('/process')
+          .expect(400)
+          .expect((res: Response) => {
+            expect(res.body).toHaveProperty('message');
+            expect(Array.isArray(res.body.message)).toBe(true);
+          });
     });
   });
 
   describe('DELETE /process/:pid', () => {
-    beforeEach(() => {
-      jest.clearAllMocks();
+    it('should kill process by PID', async () => {
+      const { app, executionService } = await createTestApp();
+
+      return request(app.getHttpServer())
+          .delete('/process/123')
+          .expect(204)
+          .then(() => {
+            expect(executionService.killExeByPid).toHaveBeenCalledWith(123);
+          });
     });
 
-    it('should kill process by PID', () => {
+    it('should return 400 for invalid PID (negative)', async () => {
+      const { app } = await createTestApp();
+
       return request(app.getHttpServer())
-        .delete('/process/123')
-        .expect(204)
-        .then(() => {
-          expect(executionService.killExeByPid).toHaveBeenCalledWith(123);
-        });
+          .delete('/process/-1')
+          .expect(400);
     });
 
-    it('should return 400 for invalid PID (negative)', () => {
-      return request(app.getHttpServer())
-        .delete('/process/-1')
-        .expect(400);
-    });
+    it('should return 400 for invalid PID (non-integer)', async () => {
+      const { app } = await createTestApp();
 
-    it('should return 400 for invalid PID (non-integer)', () => {
       return request(app.getHttpServer())
-        .delete('/process/abc')
-        .expect(400);
+          .delete('/process/abc')
+          .expect(400);
     });
 
     it('should return 404 for non-existent PID', async () => {
-      const originalImplementation = executionService.killExeByPid;
+      const { app, executionService } = await createTestApp();
+
       executionService.killExeByPid.mockImplementation(() => {
         throw new Error('Process not found');
       });
 
-      await request(app.getHttpServer())
-        .delete('/process/999')
-        .expect(404); // This should return 404
-      
-      // Restore the original implementation
-      executionService.killExeByPid = originalImplementation;
+      return request(app.getHttpServer())
+          .delete('/process/999')
+          .expect(404);
     });
   });
 });
