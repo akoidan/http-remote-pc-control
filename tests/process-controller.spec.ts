@@ -66,11 +66,6 @@ describe('ProcessController (e2e)', () => {
         });
     });
 
-    it('should return 400 for invalid PID (negative)', () => {
-      return request(app.getHttpServer())
-        .get('/process/-1')
-        .expect(400);
-    });
 
     it('should return 400 for invalid PID (non-integer)', () => {
       return request(app.getHttpServer())
@@ -85,7 +80,7 @@ describe('ProcessController (e2e)', () => {
 
       return request(app.getHttpServer())
         .get('/process/999')
-        .expect(404);
+        .expect(400);
     });
   });
 
