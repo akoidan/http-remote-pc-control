@@ -3,75 +3,14 @@ import {INestApplication} from '@nestjs/common';
 import request, {Response} from 'supertest';
 import {AppModule} from '../src/app/app.module';
 import {INativeModule, Native} from '../src/native/native-model';
+import {createMockNativeService} from './test-utils';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
   let nativeService: jest.Mocked<INativeModule>;
 
   beforeAll(async () => {
-    // Create a comprehensive mock for the native service
-    const mockNativeService: jest.Mocked<INativeModule> = {
-      path: '/mock/path/native.node',
-      // Window methods
-      setWindowActive: jest.fn().mockReturnValue(true),
-      getWindowActiveId: jest.fn().mockReturnValue(123),
-      getWindowsByProcessId: jest.fn().mockReturnValue([123, 456]),
-      setWindowState: jest.fn(),
-      getWindowInfo: jest.fn().mockReturnValue({
-        wid: 123,
-        pid: 456,
-        bounds: {x: 0, y: 0, width: 800, height: 600},
-        opacity: 1,
-        title: 'Test Window',
-        parentWid: 0
-      }),
-      setWindowBounds: jest.fn(),
-      setWindowOpacity: jest.fn(),
-      setWindowAttached: jest.fn(),
-      createTestWindow: jest.fn().mockReturnValue(123),
-      
-      // Monitor methods
-      getMonitors: jest.fn().mockReturnValue([1, 2]),
-      getMonitorFromWindow: jest.fn().mockReturnValue(1),
-      getMonitorInfo: jest.fn().mockReturnValue({
-        bounds: {x: 0, y: 0, width: 1920, height: 1080},
-        workArea: {x: 0, y: 0, width: 1920, height: 1040},
-        scale: 1,
-        isPrimary: true
-      }),
-      
-      // Process methods
-      isProcessElevated: jest.fn().mockReturnValue(false),
-      getProcessInfo: jest.fn().mockReturnValue({
-        pid: 123,
-        parentPid: 1,
-        threadCount: 5,
-        path: '/test/path',
-        isElevated: false,
-        memory: {
-          workingSetSize: 1000000,
-          peakWorkingSetSize: 2000000,
-          privateUsage: 500000,
-          pageFileUsage: 750000
-        },
-        times: {
-          creationTime: Date.now(),
-          kernelTime: 1000,
-          userTime: 2000
-        }
-      }),
-      
-      // Keyboard methods
-      typeString: jest.fn(),
-      keyTap: jest.fn(),
-      keyToggle: jest.fn(),
-      setKeyboardLayout: jest.fn(),
-      
-      // Mouse methods
-      setMouseButtonToState: jest.fn(),
-      setMousePosition: jest.fn(),
-      getMousePosition: jest.fn().mockReturnValue({x: 100, y: 200}),
-    };
+    const mockNativeService = createMockNativeService();
 
     const module: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
