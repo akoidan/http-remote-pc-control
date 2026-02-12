@@ -140,7 +140,7 @@ void typeString(const Napi::CallbackInfo &info) {
   // Ensure Caps Lock is disabled before typing
   ensureCapsLockDisabled();
 
-  HKL savedLayout = GetSystemKeyboardLayout();
+  HKL savedLayout = getSystemKeyboardLayout();
   HKL currentLayout = savedLayout;
 
   // Convert input UTF-8 string to UTF-16
@@ -155,15 +155,15 @@ void typeString(const Napi::CallbackInfo &info) {
     }
 
     // Detect language and switch layout if needed
-    const char *detectedLang = DetectLanguageFromChar(wc);
-    HKL neededLayout = GetKeyboardLayoutForLanguage(detectedLang);
+    const char *detectedLang = detectLanguageFromChar(wc);
+    HKL neededLayout = getKeyboardLayoutForLanguage(detectedLang);
 
     if (neededLayout != currentLayout) {
       LOG("Switching keyboard layout lang=%s from=0x%p to=0x%p",
           detectedLang,
           reinterpret_cast<void *>(currentLayout),
           reinterpret_cast<void *>(neededLayout));
-      SetThreadKeyboardLayout(neededLayout, env);
+      setThreadKeyboardLayout(neededLayout, env);
       currentLayout = neededLayout;
       Sleep(50);
       // wait timeout so first letters typging is not affected by lang changed
@@ -171,7 +171,7 @@ void typeString(const Napi::CallbackInfo &info) {
 
     // Get virtual key and modifiers for the character
     UINT virtualKey, modifiers;
-    GetVirtualKeyForChar(wc, currentLayout, &virtualKey, &modifiers, env);
+    getVirtualKeyForChar(wc, currentLayout, &virtualKey, &modifiers, env);
     // Convert Windows modifiers to our flags
     unsigned int flags = getModifiersFromWindowsBits(modifiers);
 
@@ -212,7 +212,7 @@ unsigned int assignKeyCode(const char *keyName, Napi::Env env) {
   if (strlen(keyName) == 1) {
     return VkKeyScan(keyName[0]);
   }
-  KeyNames *kn = key_names;
+  KeyNames *kn = keyNames;
   while (kn->name) {
     if (_stricmp(keyName, kn->name) == 0) {
       return kn->key;

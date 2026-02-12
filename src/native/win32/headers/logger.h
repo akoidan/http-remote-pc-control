@@ -25,10 +25,10 @@ namespace AnsiColor {
 
 #define LOG_TIME() do { \
     auto now = std::chrono::system_clock::now(); \
-    auto now_time = std::chrono::system_clock::to_time_t(now); \
+    auto nowTime = std::chrono::system_clock::to_time_t(now); \
     auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count() % 1000; \
     std::tm local_tm; \
-    localtime_s(&local_tm, &now_time); \
+    localtime_s(&local_tm, &nowTime); \
     std::cout << AnsiColor::Time << "[" \
               << std::setfill('0') << std::setw(2) << local_tm.tm_hour << ":" \
               << std::setfill('0') << std::setw(2) << local_tm.tm_min << ":" \

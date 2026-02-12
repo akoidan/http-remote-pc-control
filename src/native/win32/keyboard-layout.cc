@@ -6,14 +6,14 @@
 #include "./headers/keyboard-layout.h"
 
 // Helper function to create keyboard layout string from LANGID
-std::string MakeKLID(LANGID langId) {
+std::string makeKLID(LANGID langId) {
   char klid[KL_NAMELENGTH];
   sprintf_s(klid, KL_NAMELENGTH, "%08x", MAKELCID(langId, SORT_DEFAULT));
   return std::string(klid);
 }
 
 // Helper function to get foreground window's layout
-HKL GetSystemKeyboardLayout() {
+HKL getSystemKeyboardLayout() {
   // Get the foreground window which represents active application
   HWND foreground = GetForegroundWindow();
   if (!foreground) {
@@ -27,22 +27,22 @@ HKL GetSystemKeyboardLayout() {
 
 // Map of common language codes to their keyboard layout IDs
 static const std::unordered_map<std::string, std::string> LAYOUT_MAP = {
-  {"en", MakeKLID(MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US))}, // US English
-  {"ru", MakeKLID(MAKELANGID(LANG_RUSSIAN, SUBLANG_RUSSIAN_RUSSIA))}, // Russian
-  {"uk", MakeKLID(MAKELANGID(LANG_UKRAINIAN, SUBLANG_DEFAULT))}, // Ukrainian
-  {"de", MakeKLID(MAKELANGID(LANG_GERMAN, SUBLANG_GERMAN))}, // German
-  {"fr", MakeKLID(MAKELANGID(LANG_FRENCH, SUBLANG_FRENCH))}, // French
-  {"es", MakeKLID(MAKELANGID(LANG_SPANISH, SUBLANG_SPANISH))}, // Spanish
-  {"it", MakeKLID(MAKELANGID(LANG_ITALIAN, SUBLANG_ITALIAN))}, // Italian
-  {"pt", MakeKLID(MAKELANGID(LANG_PORTUGUESE, SUBLANG_PORTUGUESE))}, // Portuguese
-  {"pl", MakeKLID(MAKELANGID(LANG_POLISH, SUBLANG_DEFAULT))}, // Polish
-  {"cs", MakeKLID(MAKELANGID(LANG_CZECH, SUBLANG_DEFAULT))}, // Czech
-  {"ja", MakeKLID(MAKELANGID(LANG_JAPANESE, SUBLANG_DEFAULT))}, // Japanese
-  {"ko", MakeKLID(MAKELANGID(LANG_KOREAN, SUBLANG_KOREAN))}, // Korean
-  {"zh", MakeKLID(MAKELANGID(LANG_CHINESE_SIMPLIFIED, SUBLANG_CHINESE_SIMPLIFIED))} // Chinese (Simplified)
+  {"en", makeKLID(MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US))}, // US English
+  {"ru", makeKLID(MAKELANGID(LANG_RUSSIAN, SUBLANG_RUSSIAN_RUSSIA))}, // Russian
+  {"uk", makeKLID(MAKELANGID(LANG_UKRAINIAN, SUBLANG_DEFAULT))}, // Ukrainian
+  {"de", makeKLID(MAKELANGID(LANG_GERMAN, SUBLANG_GERMAN))}, // German
+  {"fr", makeKLID(MAKELANGID(LANG_FRENCH, SUBLANG_FRENCH))}, // French
+  {"es", makeKLID(MAKELANGID(LANG_SPANISH, SUBLANG_SPANISH))}, // Spanish
+  {"it", makeKLID(MAKELANGID(LANG_ITALIAN, SUBLANG_ITALIAN))}, // Italian
+  {"pt", makeKLID(MAKELANGID(LANG_PORTUGUESE, SUBLANG_PORTUGUESE))}, // Portuguese
+  {"pl", makeKLID(MAKELANGID(LANG_POLISH, SUBLANG_DEFAULT))}, // Polish
+  {"cs", makeKLID(MAKELANGID(LANG_CZECH, SUBLANG_DEFAULT))}, // Czech
+  {"ja", makeKLID(MAKELANGID(LANG_JAPANESE, SUBLANG_DEFAULT))}, // Japanese
+  {"ko", makeKLID(MAKELANGID(LANG_KOREAN, SUBLANG_KOREAN))}, // Korean
+  {"zh", makeKLID(MAKELANGID(LANG_CHINESE_SIMPLIFIED, SUBLANG_CHINESE_SIMPLIFIED))} // Chinese (Simplified)
 };
 
-std::vector<HKL> GetInstalledKeyboardLayouts() {
+std::vector<HKL> getInstalledKeyboardLayouts() {
   std::vector<HKL> layouts;
   HKL hklArray[256];
   UINT count = GetKeyboardLayoutList(256, hklArray);
@@ -52,29 +52,29 @@ std::vector<HKL> GetInstalledKeyboardLayouts() {
   return layouts;
 }
 
-bool IsKeyboardLayoutInstalled(HKL layout) {
-  std::vector<HKL> layouts = GetInstalledKeyboardLayouts();
+bool isKeyboardLayoutInstalled(HKL layout) {
+  std::vector<HKL> layouts = getInstalledKeyboardLayouts();
   return std::find(layouts.begin(), layouts.end(), layout) != layouts.end();
 }
 
-HKL GetCurrentKeyboardLayout() {
+HKL getCurrentKeyboardLayout() {
   return GetKeyboardLayout(0);
 }
 
-HKL GetKeyboardLayoutForLanguage(const char *languageCode) {
+HKL getKeyboardLayoutForLanguage(const char *languageCode) {
   std::string lang(languageCode);
   auto it = LAYOUT_MAP.find(lang);
 
   if (it != LAYOUT_MAP.end()) {
     // Try to load the layout
     HKL layout = LoadKeyboardLayoutA(it->second.c_str(), KLF_ACTIVATE | KLF_SUBSTITUTE_OK);
-    if (layout && IsKeyboardLayoutInstalled(layout)) {
+    if (layout && isKeyboardLayoutInstalled(layout)) {
       return layout;
     }
   }
 
   // If we couldn't load the specific layout, try to find a compatible one
-  std::vector<HKL> layouts = GetInstalledKeyboardLayouts();
+  std::vector<HKL> layouts = getInstalledKeyboardLayouts();
   for (HKL layout: layouts) {
     char layoutName[KL_NAMELENGTH];
     if (GetKeyboardLayoutNameA(layoutName)) {
@@ -87,16 +87,16 @@ HKL GetKeyboardLayoutForLanguage(const char *languageCode) {
   }
 
   // Default to current layout if no matching layout found
-  return GetCurrentKeyboardLayout();
+  return getCurrentKeyboardLayout();
 }
 
-void SetThreadKeyboardLayout(HKL layout, Napi::Env env) {
+void setThreadKeyboardLayout(HKL layout, Napi::Env env) {
   if (!layout) {
     throw Napi::Error::New(env, "Cannot set null layout");
   };
 
   // First, check if the layout is installed
-  if (!IsKeyboardLayoutInstalled(layout)) {
+  if (!isKeyboardLayoutInstalled(layout)) {
     throw Napi::Error::New(env, "Current keyboard layout is not installed or not found");
   }
 
@@ -119,14 +119,14 @@ void SetThreadKeyboardLayout(HKL layout, Napi::Env env) {
   ActivateKeyboardLayout(layout, KLF_SETFORPROCESS | KLF_REORDER);
 }
 
-HKL SaveAndSetKeyboardLayout(HKL newLayout, Napi::Env env) {
-  HKL currentLayout = GetCurrentKeyboardLayout();
-  SetThreadKeyboardLayout(newLayout, env);
+HKL saveAndSetKeyboardLayout(HKL newLayout, Napi::Env env) {
+  HKL currentLayout = getCurrentKeyboardLayout();
+  setThreadKeyboardLayout(newLayout, env);
   return currentLayout;
 }
 
-void RestoreKeyboardLayout(HKL savedLayout, Napi::Env env) {
-  SetThreadKeyboardLayout(savedLayout, env);
+void restoreKeyboardLayout(HKL savedLayout, Napi::Env env) {
+  setThreadKeyboardLayout(savedLayout, env);
 }
 
 // Set keyboard layout by layout ID string (e.g., "00000409" for US English)
@@ -189,7 +189,7 @@ void setKeyboardLayoutImpl(const char *layoutId, Napi::Env env) {
   }
 }
 
-const char *DetectLanguageFromChar(wchar_t ch) {
+const char *detectLanguageFromChar(wchar_t ch) {
   if (ch <= 0x007F) return "en"; // ASCII (English)
   else if (ch >= 0x0400 && ch <= 0x04FF) return "ru"; // Cyrillic
   else if (ch >= 0x0500 && ch <= 0x052F) return "uk"; // Ukrainian
@@ -205,7 +205,7 @@ const char *DetectLanguageFromChar(wchar_t ch) {
   return "en"; // Default to English
 }
 
-void GetVirtualKeyForChar(wchar_t ch, HKL layout, UINT *virtualKey, UINT *modifiers, Napi::Env env) {
+void getVirtualKeyForChar(wchar_t ch, HKL layout, UINT *virtualKey, UINT *modifiers, Napi::Env env) {
   SHORT vk = VkKeyScanExW(ch, layout);
   if (vk == -1) {
     throw Napi::Error::New(env, "Unable to map character to virtual key");

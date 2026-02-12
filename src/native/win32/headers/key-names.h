@@ -5,4 +5,4 @@ typedef struct {
   int key;
 } KeyNames;
 
-extern KeyNames key_names[];
+extern KeyNames keyNames[];

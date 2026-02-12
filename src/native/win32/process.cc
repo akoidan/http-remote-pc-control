@@ -15,8 +15,18 @@ Napi::Number createProcess(const Napi::CallbackInfo &info) {
 
   STARTUPINFOA sInfo = {sizeof (sInfo)};
   PROCESS_INFORMATION processInfo;
-  CreateProcessA(path.c_str(), &cmd[0], NULL, NULL, FALSE,
-                 CREATE_NEW_PROCESS_GROUP | CREATE_NEW_CONSOLE, NULL, NULL, &sInfo, &processInfo);
+  CreateProcessA(
+    path.c_str(),
+    &cmd[0],
+    NULL,
+    NULL,
+    FALSE,
+    CREATE_NEW_PROCESS_GROUP | CREATE_NEW_CONSOLE,
+    NULL,
+    NULL,
+    &sInfo,
+    &processInfo
+  );
 
   return Napi::Number::New(env, processInfo.dwProcessId);
 }
@@ -88,7 +98,6 @@ Napi::String getProcessPath(const Napi::Env env, HANDLE pHandle) {
   return Napi::String::New(env, utf8Path);
 }
 
-
 std::tuple<double, double> getProcessThreads(const Napi::Env env, HANDLE pHandle, DWORD pid) {
   HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
   if (snapshot == INVALID_HANDLE_VALUE) {
@@ -152,9 +161,9 @@ Napi::Boolean isProcessElevated(const Napi::CallbackInfo &info) {
   if (!OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &hToken)) {
     return Napi::Boolean::New(env, false);
   }
-  BOOL isElavated = isProcessElevatedImp(env, GetCurrentProcess());
+  BOOL isElevated = isProcessElevatedImp(env, GetCurrentProcess());
   CloseHandle(hToken);
-  return Napi::Boolean::New(env, isElavated);
+  return Napi::Boolean::New(env, isElevated);
 }
 
 
