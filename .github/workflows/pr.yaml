@@ -94,6 +94,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Cache apt packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            /var/cache/apt/archives
+            /var/lib/apt/lists
+          key: ${{ runner.os }}-apt-${{ hashFiles('**/apt-packages.txt') }}
+
       - name: Install dependencies # TODO cache
         run: |
           sudo apt-get update
@@ -133,7 +141,9 @@ jobs:
           sleep 2
           openbox &
           sleep 2
-          # Set up basic keyboard layout configuration for XKB
-          setxkbmap -layout us,us -variant , -option grp:shifts_toggle
+          # Set up keyboard layout configuration for XKB
+          setxkbmap -layout us,de -variant , -option grp:alt_shift_toggle
+          # Verify the layout was set
+          setxkbmap -print
           yarn test
           "
