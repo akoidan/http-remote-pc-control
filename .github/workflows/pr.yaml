@@ -105,8 +105,7 @@ jobs:
       - name: Install dependencies # TODO cache
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends libx11-dev libxtst-dev libxcb-ewmh-dev libxcb1-dev cmake g++ make libdbus-1-dev xvfb openbox
-          sudo apt-get install -y --no-install-recommends libxkbfile-dev x11-xserver-utils
+          sudo apt-get install -y --no-install-recommends libx11-dev libxtst-dev libxcb-ewmh-dev libxcb1-dev cmake g++ make libdbus-1-dev xvfb openbox libxkbfile-dev x11-xserver-utils
 
       - uses: actions/setup-node@v3
         with:
