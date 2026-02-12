@@ -275,6 +275,48 @@ Napi::Object getWindowInfo(const Napi::CallbackInfo &info) {
   return result;
 }
 
+Napi::Number createTestWindow(const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
+
+  // Register window class
+  const char* className = "TestWindow";
+  WNDCLASSA wc = {};
+  wc.lpfnWndProc = DefWindowProcA;
+  wc.hInstance = GetModuleHandle(NULL);
+  wc.lpszClassName = className;
+  wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+  wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+
+  if (!RegisterClassA(&wc)) {
+    DWORD err = GetLastError();
+    if (err != ERROR_CLASS_ALREADY_EXISTS) {
+      throw Napi::Error::New(env, "Failed to register window class err=" + std::to_string(err));
+    }
+  }
+
+  // Create window
+  HWND window = CreateWindowA(
+    className,
+    "Test Window",
+    WS_OVERLAPPEDWINDOW | WS_VISIBLE,
+    100, 100, 500, 500,
+    NULL,
+    NULL,
+    GetModuleHandle(NULL),
+    NULL
+  );
+
+  if (!window) {
+    DWORD err = GetLastError();
+    throw Napi::Error::New(env, "Failed to create window err=" + std::to_string(err));
+  }
+
+  ShowWindow(window, SW_SHOW);
+  UpdateWindow(window);
+
+  return Napi::Number::New(env, reinterpret_cast<int64_t>(window));
+}
+
 
 // Initialize the window module
 Napi::Object windowInit(Napi::Env env, Napi::Object exports) {
@@ -284,6 +326,7 @@ Napi::Object windowInit(Napi::Env env, Napi::Object exports) {
   exports.Set(Napi::String::New(env, "setWindowState"), Napi::Function::New(env, setWindowState));
   exports.Set(Napi::String::New(env, "getWindowInfo"), Napi::Function::New(env, getWindowInfo));
   exports.Set(Napi::String::New(env, "setWindowBounds"), Napi::Function::New(env, setWindowBounds));
+  exports.Set(Napi::String::New(env, "createTestWindow"), Napi::Function::New(env, createTestWindow));
 
   exports.Set(Napi::String::New(env, "setWindowAttached"), Napi::Function::New(env, setWindowAttached));
   exports.Set(Napi::String::New(env, "setWindowOpacity"), Napi::Function::New(env, setWindowOpacity));
