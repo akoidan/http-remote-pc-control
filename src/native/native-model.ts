@@ -132,11 +132,6 @@ interface MonitorNativeModule {
 
 interface ProcessNativeModule {
   /**
-   * Launches a new process with specified arguments
-   */
-  createProcess(path: string, cmd?: string): number;
-
-  /**
    * Checks if http-remote-pc-control has Admin privileges (which also sometimes can't be enought for every operation
    * Sometimes this process is required to run from AdminPowerShell and admin CMD would return true despite it doesn't have all
    */

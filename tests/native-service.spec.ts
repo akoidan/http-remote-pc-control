@@ -27,6 +27,12 @@ describe('NativeService', () => {
       expect(windowId).toBe(newId);
     });
 
+    if (process.platform === 'win32') {
+      it('should attach window to share keyboard', () => {
+        nativeService.setWindowAttached(windowId);
+      });
+    }
+
     it('should get window info', () => {
       const windowInfo = nativeService.getWindowInfo(windowId);
 
@@ -176,6 +182,16 @@ describe('NativeService', () => {
     it('should type a string', () => {
       // This will actually type, so be careful with this test
       nativeService.typeString('Test');
+    });
+
+    it('should set keyboard layout', () => {
+      nativeService.setKeyboardLayout('us');
+    });
+
+    it('should toggle key state', () => {
+      // Test key down and up for 'a' key
+      nativeService.keyToggle('a', [], true);
+      nativeService.keyToggle('a', [], false);
     });
 
     it('should simulate key tap', () => {
