@@ -1,5 +1,7 @@
 import {INativeModule} from '../src/native/native-model';
 import {RandomService} from '../src/random/random-service';
+import {ZodValidationPipe} from '@anatine/zod-nestjs';
+import {INestApplication} from '@nestjs/common';
 
 /**
  * Creates a comprehensive mock for the native service
@@ -85,3 +87,10 @@ export const createMockLogger = () => ({
   debug: jest.fn(),
   verbose: jest.fn(),
 });
+
+/**
+ * Sets up global validation pipe for testing
+ */
+export const setupValidationPipe = (app: INestApplication): void => {
+  app.useGlobalPipes(new ZodValidationPipe());
+};

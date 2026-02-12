@@ -42,7 +42,7 @@ const setKeyboardLayoutSchema = z.object({
 }).describe('Request to change keyboard layout');
 
 const keyPressRequestSchema = z.object({
-  keys: z.array(keySchema),
+  keys: z.array(keySchema).min(1),
   duration: z.number().min(50).default(50).optional().describe('Duration of key beeing presssed'),
   holdKeys: z.array(keySchema).optional(),
 }).superRefine((data: any, ctx) => {

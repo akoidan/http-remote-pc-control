@@ -6,7 +6,7 @@ import {KeyboardService} from '../src/keyboard/keyboard-service';
 import {INativeModule, Native} from '../src/native/native-model';
 import {OS_INJECT} from '../src/global/global-model';
 import {RandomService} from '../src/random/random-service';
-import {createMockNativeService, createMockRandomService, createMockLogger} from './test-utils';
+import {createMockNativeService, createMockRandomService, createMockLogger, setupValidationPipe} from './test-utils';
 
 describe('KeyboardController (e2e)', () => {
   let app: INestApplication;
@@ -29,6 +29,7 @@ describe('KeyboardController (e2e)', () => {
       .compile();
 
     app = module.createNestApplication();
+    setupValidationPipe(app);
     nativeService = module.get<jest.Mocked<INativeModule>>(Native);
     
     await app.init();
@@ -77,6 +78,74 @@ describe('KeyboardController (e2e)', () => {
           expect(nativeService.keyTap).toHaveBeenCalledTimes(1);
         });
     });
+
+    it('should return 400 for missing keys field', () => {
+      const keyPressData = {
+        modifiers: []
+      };
+
+      return request(app.getHttpServer())
+        .post('/keyboard/key-press')
+        .send(keyPressData)
+        .expect(400)
+        .expect((res: Response) => {
+          expect(res.body).toHaveProperty('message');
+          expect(Array.isArray(res.body.message)).toBe(true);
+          expect(res.body.message[0]).toContain('keys');
+        });
+    });
+
+    it('should return 400 for invalid key', () => {
+      const keyPressData = {
+        keys: ['invalid_key_123'],
+        modifiers: []
+      };
+
+      return request(app.getHttpServer())
+        .post('/keyboard/key-press')
+        .send(keyPressData)
+        .expect(400)
+        .expect((res: Response) => {
+          expect(res.body).toHaveProperty('message');
+          expect(Array.isArray(res.body.message)).toBe(true);
+          expect(res.body.message[0]).toContain('Invalid');
+        });
+    });
+
+    it('should return 400 for empty keys array', () => {
+      const keyPressData = {
+        keys: [],
+        modifiers: []
+      };
+
+      return request(app.getHttpServer())
+        .post('/keyboard/key-press')
+        .send(keyPressData)
+        .expect(400)
+        .expect((res: Response) => {
+          expect(res.body).toHaveProperty('message');
+          expect(Array.isArray(res.body.message)).toBe(true);
+          expect(res.body.message[0]).toContain('keys');
+        });
+    });
+
+    it('should return 400 for invalid duration', () => {
+      const keyPressData = {
+        keys: ['a'],
+        modifiers: [],
+        duration: 10 // Below minimum of 50
+      };
+
+      return request(app.getHttpServer())
+        .post('/keyboard/key-press')
+        .send(keyPressData)
+        .expect(400)
+        .expect((res: Response) => {
+          expect(res.body).toHaveProperty('message');
+          expect(Array.isArray(res.body.message)).toBe(true);
+          expect(res.body.message[0]).toContain('duration');
+        });
+    });
   });
 
   describe('POST /keyboard/type-text', () => {
@@ -113,6 +182,70 @@ describe('KeyboardController (e2e)', () => {
           expect(nativeService.typeString).toHaveBeenCalledTimes(1);
         });
     });
+
+    it('should return 400 for missing text field', () => {
+      const typeTextData = {};
+
+      return request(app.getHttpServer())
+        .post('/keyboard/type-text')
+        .send(typeTextData)
+        .expect(400)
+        .expect((res: Response) => {
+          expect(res.body).toHaveProperty('message');
+          expect(Array.isArray(res.body.message)).toBe(true);
+          expect(res.body.message[0]).toContain('text');
+        });
+    });
+
+    it('should return 400 for non-string text', () => {
+      const typeTextData = {
+        text: 123
+      };
+
+      return request(app.getHttpServer())
+        .post('/keyboard/type-text')
+        .send(typeTextData)
+        .expect(400)
+        .expect((res: Response) => {
+          expect(res.body).toHaveProperty('message');
+          expect(Array.isArray(res.body.message)).toBe(true);
+          expect(res.body.message[0]).toContain('text');
+        });
+    });
+
+    it('should return 400 for non-integer keyDelay', () => {
+      const typeTextData = {
+        text: 'Hello',
+        keyDelay: 'invalid' // Non-integer value
+      };
+
+      return request(app.getHttpServer())
+        .post('/keyboard/type-text')
+        .send(typeTextData)
+        .expect(400)
+        .expect((res: Response) => {
+          expect(res.body).toHaveProperty('message');
+          expect(Array.isArray(res.body.message)).toBe(true);
+          expect(res.body.message[0]).toContain('keyDelay');
+        });
+    });
+
+    it('should return 400 for invalid keyDelayDeviation', () => {
+      const typeTextData = {
+        text: 'Hello',
+        keyDelayDeviation: 2 // Above maximum of 1
+      };
+
+      return request(app.getHttpServer())
+        .post('/keyboard/type-text')
+        .send(typeTextData)
+        .expect(400)
+        .expect((res: Response) => {
+          expect(res.body).toHaveProperty('message');
+          expect(Array.isArray(res.body.message)).toBe(true);
+          expect(res.body.message[0]).toContain('keyDelayDeviation');
+        });
+    });
   });
 
   describe('POST /keyboard/set-layout', () => {
@@ -147,6 +280,36 @@ describe('KeyboardController (e2e)', () => {
         .then(() => {
           expect(nativeService.setKeyboardLayout).toHaveBeenCalledWith('de');
           expect(nativeService.setKeyboardLayout).toHaveBeenCalledTimes(1);
+        });
+    });
+
+    it('should return 400 for invalid keyboard layout', () => {
+      const layoutData = {
+        layout: 'asdfasdf'
+      };
+
+      return request(app.getHttpServer())
+        .post('/keyboard/set-layout')
+        .send(layoutData)
+        .expect(400)
+        .expect((res: Response) => {
+          expect(res.body).toHaveProperty('message');
+          expect(Array.isArray(res.body.message)).toBe(true);
+          expect(res.body.message[0]).toContain('Invalid');
+        });
+    });
+
+    it('should return 400 for missing layout field', () => {
+      const layoutData = {};
+
+      return request(app.getHttpServer())
+        .post('/keyboard/set-layout')
+        .send(layoutData)
+        .expect(400)
+        .expect((res: Response) => {
+          expect(res.body).toHaveProperty('message');
+          expect(Array.isArray(res.body.message)).toBe(true);
+          expect(res.body.message[0]).toContain('layout');
         });
     });
   });
