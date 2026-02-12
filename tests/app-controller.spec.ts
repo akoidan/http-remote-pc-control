@@ -1,27 +1,33 @@
 import {Test, TestingModule} from '@nestjs/testing';
-import {INestApplication} from '@nestjs/common';
+import {INestApplication, Logger} from '@nestjs/common';
 import request, {Response} from 'supertest';
-import {AppModule} from '../src/app/app.module';
 import {INativeModule, Native} from '../src/native/native-model';
-import {createMockNativeService} from './test-utils';
+import {createMockLogger, createMockNativeService, setupValidationPipe} from './test-utils';
+import {AppController} from "../src/app/app-controller";
+import {OS_INJECT} from "../src/global/global-model";
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
   let nativeService: jest.Mocked<INativeModule>;
 
+
   beforeAll(async () => {
     const mockNativeService = createMockNativeService();
 
     const module: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
+      controllers: [AppController],
+      providers: [
+        {provide: Native, useValue: mockNativeService},
+        {provide: OS_INJECT, useValue: 'linux'},
+        {provide: Logger, useValue: createMockLogger()},
+      ],
     })
-      .overrideProvider(Native)
-      .useValue(mockNativeService)
-      .compile();
+        .compile();
 
     app = module.createNestApplication();
+    setupValidationPipe(app);
     nativeService = module.get<jest.Mocked<INativeModule>>(Native);
-    
+
     await app.init();
   });
 
