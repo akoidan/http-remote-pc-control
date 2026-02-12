@@ -3,8 +3,9 @@ import {INestApplication, Logger} from '@nestjs/common';
 import request, {Response} from 'supertest';
 import {MouseController} from '../src/mouse/mouse-controller';
 import {MouseService} from '../src/mouse/mouse-service';
-import {INativeModule, Native} from '../src/native/native-model';
+import {INativeModule, Native, MouseButton} from '../src/native/native-model';
 import {OS_INJECT} from '../src/global/global-model';
+import {MousePositionRRDto, MouseMoveHumanRequestDto, MouseClickRequestDto} from '../src/mouse/mouse-dto';
 import {createMockNativeService, createMockLogger, setupValidationPipe} from './test-utils';
 
 describe('MouseController (e2e)', () => {
@@ -60,7 +61,7 @@ describe('MouseController (e2e)', () => {
     });
 
     it('should move and left click at position', () => {
-      const positionData = {x: 100, y: 200};
+      const positionData: MousePositionRRDto = {x: 100, y: 200};
 
       return request(app.getHttpServer())
         .post('/mouse/move-left-click')
@@ -107,7 +108,7 @@ describe('MouseController (e2e)', () => {
     });
 
     it('should move mouse to position', () => {
-      const positionData = {x: 150, y: 250};
+      const positionData: MousePositionRRDto = {x: 150, y: 250};
 
       return request(app.getHttpServer())
         .post('/mouse/move')
@@ -138,7 +139,7 @@ describe('MouseController (e2e)', () => {
     });
 
     it('should move mouse in human pattern', () => {
-      const moveData = {
+      const moveData: MouseMoveHumanRequestDto = {
         x: 100,
         y: 200,
       };
@@ -193,8 +194,8 @@ describe('MouseController (e2e)', () => {
     });
 
     it('should click mouse button', () => {
-      const clickData = {
-        button: 'RIGHT'
+      const clickData: MouseClickRequestDto = {
+        button: MouseButton.RIGHT
       };
 
       return request(app.getHttpServer())

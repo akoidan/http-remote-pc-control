@@ -5,6 +5,7 @@ import {ProcessController} from '../src/process/process-controller';
 import {ProcessService} from '../src/process/process-service';
 import {INativeModule, Native} from '../src/native/native-model';
 import {IExecuteService, ExecuteService} from '../src/process/process-model';
+import {LaunchExeRequestDto, ExecutableNameRequestDto} from '../src/process/process-dto';
 import {OS_INJECT} from '../src/global/global-model';
 import {createMockNativeService, createMockLogger, setupValidationPipe} from './test-utils';
 
@@ -94,7 +95,7 @@ describe('ProcessController (e2e)', () => {
     });
 
     it('should launch new process', () => {
-      const processData = {
+      const processData: LaunchExeRequestDto = {
         path: '/usr/bin/test-app',
         arguments: ['--verbose'],
         waitTillFinish: true

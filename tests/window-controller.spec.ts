@@ -5,6 +5,7 @@ import {WindowController} from '../src/window/window-controller';
 import {WindowService} from '../src/window/window-service';
 import {INativeModule, Native} from '../src/native/native-model';
 import {OS_INJECT} from '../src/global/global-model';
+import {SetWindowPropertiesRequestDto} from '../src/window/window-dto';
 import {createMockNativeService, createMockLogger, setupValidationPipe} from './test-utils';
 
 describe('WindowController (e2e)', () => {
@@ -101,11 +102,13 @@ describe('WindowController (e2e)', () => {
     });
 
     it('should set window properties', () => {
-      const windowData = {
-        x: 100,
-        y: 100,
-        width: 800,
-        height: 600,
+      const windowData: SetWindowPropertiesRequestDto = {
+        bounds: {
+          x: 100,
+          y: 100,
+          width: 800,
+          height: 600
+        },
         opacity: 0.8
       };
 

@@ -7,7 +7,7 @@ import {INativeModule, Native} from '../src/native/native-model';
 import {OS_INJECT} from '../src/global/global-model';
 import {RandomService} from '../src/random/random-service';
 import {createMockNativeService, createMockRandomService, createMockLogger, setupValidationPipe} from './test-utils';
-import {KeyPressRequestDto} from "../src/keyboard/keyboard-dto";
+import {KeyPressRequestDto, TypeTextRequestDto, SetKeyboardLayoutRequestDto} from "../src/keyboard/keyboard-dto";
 
 describe('KeyboardController (e2e)', () => {
   let app: INestApplication;
@@ -155,7 +155,7 @@ describe('KeyboardController (e2e)', () => {
     });
 
     it('should call typeString with correct text', () => {
-      const typeTextData = {
+      const typeTextData: TypeTextRequestDto = {
         text: 'Hello World!'
       };
 
@@ -255,7 +255,7 @@ describe('KeyboardController (e2e)', () => {
     });
 
     it('should call setKeyboardLayout with correct layout', () => {
-      const layoutData = {
+      const layoutData: SetKeyboardLayoutRequestDto = {
         layout: 'us'
       };
 
@@ -270,7 +270,7 @@ describe('KeyboardController (e2e)', () => {
     });
 
     it('should handle different keyboard layouts', () => {
-      const layoutData = {
+      const layoutData: SetKeyboardLayoutRequestDto = {
         layout: 'de'
       };
 
