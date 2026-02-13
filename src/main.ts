@@ -2,18 +2,20 @@ import {NestFactory} from '@nestjs/core';
 import {AppModule} from '@/app/app.module';
 import {MtlsModule} from '@/mtls/mtls.module';
 import {CertService} from '@/mtls/cert-service';
-import {asyncLocalStorage, CustomLogger} from '@/app/custom-logger';
 import {ZodValidationPipe} from '@anatine/zod-nestjs';
 import process from 'node:process';
 import {platform, setPriority} from 'os';
 import * as path from 'path';
 import yargs from 'yargs';
+import {ConsoleLogger} from '@/app/console-logger';
+import {asyncLocalStorage} from '@/asyncstore/async-storage-value';
+import type {LogLevel} from '@nestjs/common';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-async function parseArgs(): Promise<{port: number, certDir: string}> {
+async function parseArgs(): Promise<{port: number, certDir: string, logLevel: string}> {
   const isNodeJs = process.execPath.endsWith('node') || process.execPath.endsWith('node.exe');
   const defaultCertDir = path.join(isNodeJs ? process.cwd() : path.dirname(process.execPath), 'certs');
-
+  const logLevel: LogLevel[] = ['log' , 'error' , 'warn' , 'debug' , 'verbose' , 'fatal'] as LogLevel[];
   return yargs(process.argv.slice(2))
       .strict()
       .scriptName('http-remote-pc-control')
@@ -25,6 +27,11 @@ async function parseArgs(): Promise<{port: number, certDir: string}> {
         default: 5000,
         description: 'HTTPS port that this app will listen for remote control',
       })
+      .option('log-level', {
+        choices: logLevel,
+        default: 'log',
+        description: 'Log level. Set to debug to print more info',
+      })
       .option('cert-dir', {
         type: 'string',
         default: defaultCertDir,
@@ -34,19 +41,19 @@ async function parseArgs(): Promise<{port: number, certDir: string}> {
 }
 
 asyncLocalStorage.run(new Map<string, string>().set('comb', 'init'), () => {
-  const customLogger = new CustomLogger();
+  const logger = new ConsoleLogger(asyncLocalStorage);
   // eslint-disable-next-line
   const packageJson: string = require('../package.json').version;
-  customLogger.log(`Booting http-remote-pc-control ${packageJson}`);
+  logger.log(`Booting http-remote-pc-control ${packageJson}`);
   (async function startApp(): Promise<void> {
-    const logger = new CustomLogger();
-    // experimental
+    const {port, certDir, logLevel} = await parseArgs();
+    logger.setLogLevel(logLevel as LogLevel);
+    
     const os = platform();
     if (os === 'win32') {
       // otherwise it will stop accepting http
       setPriority(-2);
     }
-    const {port, certDir} = await parseArgs();
     const mtls = await NestFactory.create(
         MtlsModule.forRoot(certDir),
         {logger},
@@ -69,7 +76,7 @@ asyncLocalStorage.run(new Map<string, string>().set('comb', 'init'), () => {
     logger.log(`Listening port ${port}`);
     await app.listen(port);
   })().catch((err: unknown) => {
-    customLogger.error(err as (string | Error), (err as Error)?.stack);
+    logger.error(err as (string | Error), (err as Error)?.stack);
     process.exit(98);
   });
 });

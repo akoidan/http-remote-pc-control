@@ -8,7 +8,8 @@ import {NativeModule} from '@/native/native-module';
 import {MonitorModule} from '@/monitor/monitor-module';
 import {ProcessModule} from '@/process/process-module';
 import {GlobalModule} from '@/global/global-module';
-import {CustomLogger} from '@/app/custom-logger';
+import {ConsoleLogger} from '@/app/console-logger';
+import {AsyncStorageModule} from "@/asyncstore/async-storage.module";
 
 @Module({
   imports: [
@@ -18,10 +19,11 @@ import {CustomLogger} from '@/app/custom-logger';
     WindowModule,
     MonitorModule,
     ProcessModule,
+    AsyncStorageModule,
     NativeModule,
   ],
   controllers: [AppController],
-  providers: [RequestIdMiddleware, CustomLogger],
+  providers: [RequestIdMiddleware, ConsoleLogger],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {

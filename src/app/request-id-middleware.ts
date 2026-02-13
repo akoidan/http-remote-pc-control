@@ -1,18 +1,23 @@
-import {Injectable, Logger, NestMiddleware} from '@nestjs/common';
-import {asyncLocalStorage} from '@/app/custom-logger';
+import {Inject, Injectable, Logger, NestMiddleware} from '@nestjs/common';
+import {ASYNC_PROVIDER} from '@/asyncstore/async-storage-const';
+import {AsyncLocalStorage} from 'async_hooks';
 
 @Injectable()
 export class RequestIdMiddleware implements NestMiddleware {
-  constructor(private readonly logger: Logger) {
+  constructor(
+      private readonly logger: Logger,
+      @Inject(ASYNC_PROVIDER)
+      private readonly asyncLocalStorage: AsyncLocalStorage<Map<string, any>>,
+  ) {
   }
 
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type,@typescript-eslint/explicit-module-boundary-types
   use(req: any, res: any, next: () => void) {
-    const comb = asyncLocalStorage.getStore()?.get('comb');
+    const comb = this.asyncLocalStorage.getStore()?.get('comb');
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    asyncLocalStorage.run(new Map().set('comb', comb), () => {
+    this.asyncLocalStorage.run(new Map().set('comb', comb), () => {
       const reqId = req.headers['x-request-id'] ?? Math.random().toString(36).substring(2, 6);
-      asyncLocalStorage.getStore()?.set('comb', reqId);
+      this.asyncLocalStorage.getStore()?.set('comb', reqId);
 
       const {method, originalUrl, body} = req;
 
