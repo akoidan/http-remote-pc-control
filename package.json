@@ -12,10 +12,11 @@
     "test": "jest --runInBand --testTimeout=10000",
     "cmake:debug": "cmake-js build --debug",
     "nest": "nest build",
-    "native": "pkg .",
-    "build": "npm-run-all -s cmake nest native",
+    "build": "npm-run-all -s clean cmake nest esbuild native",
     "lint": "eslint --ext .ts --max-warnings=0 src",
+    "esbuild": "node esbuild.config.js",
     "autoformat": "eslint --ext .ts --max-warnings=0 --fix src",
+    "native": "node native.js",
     "postinstall": "patch-package"
   },
   "binary": {
@@ -38,6 +39,7 @@
     "@typescript-eslint/eslint-plugin": "^7.7.2",
     "@typescript-eslint/parser": "^7.7.2",
     "cmake-js": "^7.3.0",
+    "esbuild": "^0.27.0",
     "eslint": "^8.57.0",
     "eslint-find-rules": "^4.1.0",
     "eslint-plugin-babel": "^5.3.1",
@@ -54,24 +56,14 @@
     "supertest": "^7.2.2",
     "ts-jest": "^29.4.6",
     "ts-node": "^10.9.2",
+    "postject": "^1.0.0-alpha.6",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.4.5"
   },
   "engines": {
-    "node": ">=18.0.0 <19",
+    "node": ">=24.0.0 <25",
     "npm": "please-use-yarn",
     "yarn": ">= 1.17.3"
-  },
-  "pkg": {
-    "scripts": "dist/main.js",
-    "assets": [
-      "node_modules/thread-stream/lib/worker.js",
-      "build/Release/native.node",
-      "build/Debug/native.node"
-    ],
-    "targets": [
-      "host"
-    ]
   },
   "bin": "dist/main.js",
   "dependencies": {

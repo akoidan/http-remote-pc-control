@@ -18,20 +18,13 @@ jobs:
           path: node_modules
           lookup-only: true
           key: ${{ runner.os }}-node-modules-${{ hashFiles('yarn.lock') }}
-      - name: Restore pkg cache
-        id: cache-pkg
-        # DO not create cache on release, only on master
-        uses: actions/cache/restore@v4
+      - uses: actions/setup-node@v6
+        if: steps.cache-node.outputs.cache-hit != 'true'
         with:
-          path: ~/.pkg-cache
-          lookup-only: 'true'
-          key: ${{ runner.os }}-pkg-18
-      - uses: actions/setup-node@v3
-        if: steps.cache-node.outputs.cache-hit != 'true' || steps.cache-pkg.outputs.cache-hit != 'true'
-        with:
-          node-version: 18
+          package-manager-cache: false
+          node-version: 24
       - name: Install yarn deps
-        if: steps.cache-node.outputs.cache-hit != 'true' || steps.cache-pkg.outputs.cache-hit != 'true'
+        if: steps.cache-node.outputs.cache-hit != 'true'
         run: yarn install --frozen-lockfile
 
       - name: Upload node_modules cache
@@ -42,18 +35,6 @@ jobs:
           path: |
             node_modules
           key: ${{ runner.os }}-node-modules-${{ hashFiles('yarn.lock') }}
-      - name: Install pkg-fetch
-        if: steps.cache-pkg.outputs.cache-hit != 'true'
-        run: yarn pkg-fetch
-
-      - name: Upload pkg cache
-        if: steps.cache-pkg.outputs.cache-hit != 'true'
-        # DO not create cache on release, only on master
-        uses: actions/cache/save@v4
-        with:
-          path: |
-            ~/.pkg-cache
-          key: ${{ runner.os }}-pkg-18
   linux:
     runs-on: ubuntu-22.04
     steps:
@@ -66,20 +47,13 @@ jobs:
           path: node_modules
           lookup-only: true
           key: ${{ runner.os }}-node-modules-${{ hashFiles('yarn.lock') }}
-      - name: Restore pkg cache
-        id: cache-pkg
-        # DO not create cache on release, only on master
-        uses: actions/cache/restore@v4
+      - uses: actions/setup-node@v6
+        if: steps.cache-node.outputs.cache-hit != 'true'
         with:
-          path: ~/.pkg-cache
-          lookup-only: 'true'
-          key: ${{ runner.os }}-pkg-18
-      - uses: actions/setup-node@v3
-        if: steps.cache-node.outputs.cache-hit != 'true' || steps.cache-pkg.outputs.cache-hit != 'true'
-        with:
-          node-version: 18
+          package-manager-cache: false
+          node-version: 24
       - name: Install yarn deps
-        if: steps.cache-node.outputs.cache-hit != 'true' || steps.cache-pkg.outputs.cache-hit != 'true'
+        if: steps.cache-node.outputs.cache-hit != 'true'
         run: yarn install --frozen-lockfile
 
       - name: Upload node_modules cache
@@ -90,15 +64,3 @@ jobs:
           path: |
             node_modules
           key: ${{ runner.os }}-node-modules-${{ hashFiles('yarn.lock') }}
-      - name: Install pkg-fetch
-        if: steps.cache-pkg.outputs.cache-hit != 'true'
-        run: yarn pkg-fetch
-
-      - name: Upload pkg cache
-        if: steps.cache-pkg.outputs.cache-hit != 'true'
-        # DO not create cache on release, only on master
-        uses: actions/cache/save@v4
-        with:
-          path: |
-            ~/.pkg-cache
-          key: ${{ runner.os }}-pkg-18

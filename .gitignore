@@ -9,6 +9,7 @@ coverage
 /!certs/.gitkeep
 /.vs
 /http-remote-pc-control
+/http-remote-pc-control.exe
 /Project1
 /app
 /cmake-build-debug
