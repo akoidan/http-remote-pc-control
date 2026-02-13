@@ -1,15 +1,17 @@
 /* eslint-disable no-console */
-import {Injectable, LogLevel} from '@nestjs/common';
+import {Inject, Injectable, LogLevel} from '@nestjs/common';
 import clc from 'cli-color';
 import {AsyncLocalStorage} from 'async_hooks';
 import {LoggerService} from '@nestjs/common/services/logger.service';
+import {ASYNC_PROVIDER} from '@/asyncstore/async-storage-const';
 
 
 @Injectable()
 class ConsoleLogger implements LoggerService {
   constructor(
-      private readonly asyncStorage: AsyncLocalStorage<Map<string, any>>,
-      private logLevels: LogLevel[] = ['error', 'warn', 'log', 'debug', 'verbose', 'fatal']
+    @Inject(ASYNC_PROVIDER)
+    private readonly asyncStorage: AsyncLocalStorage<Map<string, any>>,
+    private logLevels: LogLevel[] = ['error', 'warn', 'log', 'debug', 'verbose', 'fatal']
   ) {
   }
 

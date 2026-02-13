@@ -8,8 +8,7 @@ import {NativeModule} from '@/native/native-module';
 import {MonitorModule} from '@/monitor/monitor-module';
 import {ProcessModule} from '@/process/process-module';
 import {GlobalModule} from '@/global/global-module';
-import {ConsoleLogger} from '@/app/console-logger';
-import {AsyncStorageModule} from "@/asyncstore/async-storage.module";
+import {AsyncStorageModule} from '@/asyncstore/async-storage.module';
 
 @Module({
   imports: [
@@ -23,7 +22,7 @@ import {AsyncStorageModule} from "@/asyncstore/async-storage.module";
     NativeModule,
   ],
   controllers: [AppController],
-  providers: [RequestIdMiddleware, ConsoleLogger],
+  providers: [RequestIdMiddleware],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {
