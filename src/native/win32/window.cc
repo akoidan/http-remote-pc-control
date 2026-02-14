@@ -194,7 +194,14 @@ void setWindowActive(const Napi::CallbackInfo &info) {
 
   BOOL b{SetForegroundWindow(handle)};
   if (!b) {
-    throw Napi::Error::New(env, "Unable to bring window to foreground");
+    DWORD err = GetLastError();
+    if (err == ERROR_INVALID_WINDOW_HANDLE) {
+      throw Napi::Error::New(env, "Invalid window handle");
+    } else if (err == ERROR_ACCESS_DENIED) {
+      throw Napi::Error::New(env, "Window cannot be brought to foreground");
+    } else {
+      throw Napi::Error::New(env, "Unknown error in SetForegroundWindow");
+    }
   }
 }
 
