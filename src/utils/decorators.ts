@@ -26,6 +26,7 @@ export function Safe400(supported?: NodeJS.Platform[]) {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-return
           return originalMethod.apply(this, args);
         } catch (e: unknown) {
+          this.logger.error(`Unable to execute ${String(propertyKey)} because ${(e as Error)?.message ?? e}`, (e as Error).stack);
           throw new BadRequestException(
               `Unable to execute ${String(propertyKey)} because ${(e as Error)?.message ?? e}`
           );
@@ -43,6 +44,7 @@ export function Safe400(supported?: NodeJS.Platform[]) {
           // eslint-disable-next-line
           return await originalMethod.apply(this, args);
         } catch (e: unknown) {
+          this.logger.error(`Unable to execute ${String(propertyKey)} because ${(e as Error)?.message ?? e}`, (e as Error).stack);
           throw new BadRequestException(
               `Unable to execute ${String(propertyKey)} because ${(e as Error)?.message ?? e}`
           );

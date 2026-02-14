@@ -56,7 +56,7 @@ BOOL CALLBACK enumWindowsByProcessIdProc(HWND hwnd, LPARAM lparam) {
   auto &args = *reinterpret_cast<EnumWindowsCallbackArgs *>(lparam);
   DWORD processId = 0;
   if (!GetWindowThreadProcessId(hwnd, &processId)) {
-    LOG("Failed to check if window %" PRIuPTR " belongs to current process or not\n",  (uintptr_t)hwnd);
+    LOG("Failed to check if window %" PRIuPTR " belongs to current process or not\n", (uintptr_t)hwnd);
   };
 
   if (processId == args.processId) {
@@ -195,7 +195,24 @@ void setWindowActive(const Napi::CallbackInfo &info) {
   BOOL b{SetForegroundWindow(handle)};
   if (!b) {
     DWORD err = GetLastError();
-    if (err == ERROR_INVALID_WINDOW_HANDLE) {
+    if (err == ERROR_MOD_NOT_FOUND) {
+      LOG("Unable to bring window %" PRIuPTR " to foreground, trying fallback hack", (uintptr_t)handle);
+      DWORD currentThread = GetCurrentThreadId();
+      DWORD foregroundThread = GetWindowThreadProcessId(handle, nullptr);
+      if (!foregroundThread) {
+        throw Napi::Error::New(env, "Failed to get foreground thread ID");
+      }
+      if (!AttachThreadInput(currentThread, foregroundThread, TRUE)) {
+        DWORD err = GetLastError();
+        throw Napi::Error::New(env, "AttachThreadInput failed: " + std::to_string(err));
+      }
+      BOOL result = SetForegroundWindow(handle);
+      AttachThreadInput(currentThread, foregroundThread, FALSE);
+      if (!result) {
+        // DO NOT trust GetLastError blindly here
+        throw Napi::Error::New(env, "SetForegroundWindow failed (blocked by Windows focus rules)");
+      }
+    } else if (err == ERROR_INVALID_WINDOW_HANDLE) {
       throw Napi::Error::New(env, "Invalid window handle");
     } else if (err == ERROR_ACCESS_DENIED) {
       throw Napi::Error::New(env, "Window cannot be brought to foreground");
@@ -282,16 +299,16 @@ Napi::Object getWindowInfo(const Napi::CallbackInfo &info) {
   return result;
 }
 
-Napi::Number createTestWindow(const Napi::CallbackInfo& info) {
+Napi::Number createTestWindow(const Napi::CallbackInfo &info) {
   Napi::Env env = info.Env();
 
   // Register window class
-  const char* className = "TestWindow";
+  const char *className = "TestWindow";
   WNDCLASSA wc = {};
   wc.lpfnWndProc = DefWindowProcA;
   wc.hInstance = GetModuleHandle(NULL);
   wc.lpszClassName = className;
-  wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+  wc.hbrBackground = (HBRUSH) (COLOR_WINDOW + 1);
   wc.hCursor = LoadCursor(NULL, IDC_ARROW);
 
   if (!RegisterClassA(&wc)) {
