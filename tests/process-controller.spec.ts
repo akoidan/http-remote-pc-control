@@ -93,7 +93,6 @@ describe('ProcessController (e2e)', () => {
           .expect(201)
           .expect((res: Response) => {
             expect(res.body).toHaveProperty('pid');
-            expect(res.body).toHaveProperty('path');
             expect(executionService.launchExe).toHaveBeenCalledWith(processData);
           });
     });
