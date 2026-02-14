@@ -85,7 +85,7 @@ jobs:
           path: |
             /var/cache/apt/archives
             /var/lib/apt/lists
-          key: ${{ runner.os }}-apt-${{ hashFiles('**/apt-packages.txt') }}
+          key: ${{ runner.os }}-apt-1
       - name: Install dependencies
         run: |
           sudo apt-get update
