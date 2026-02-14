@@ -194,30 +194,20 @@ void setWindowActive(const Napi::CallbackInfo &info) {
 
   BOOL b{SetForegroundWindow(handle)};
   if (!b) {
-    DWORD err = GetLastError();
-    if (err == ERROR_MOD_NOT_FOUND) {
-      LOG("Unable to bring window %" PRIuPTR " to foreground, trying fallback hack", (uintptr_t)handle);
-      DWORD currentThread = GetCurrentThreadId();
-      DWORD foregroundThread = GetWindowThreadProcessId(handle, nullptr);
-      if (!foregroundThread) {
-        throw Napi::Error::New(env, "Failed to get foreground thread ID");
-      }
-      if (!AttachThreadInput(currentThread, foregroundThread, TRUE)) {
-        DWORD err = GetLastError();
-        throw Napi::Error::New(env, "AttachThreadInput failed: " + std::to_string(err));
-      }
-      BOOL result = SetForegroundWindow(handle);
-      AttachThreadInput(currentThread, foregroundThread, FALSE);
-      if (!result) {
-        // DO NOT trust GetLastError blindly here
-        throw Napi::Error::New(env, "SetForegroundWindow failed (blocked by Windows focus rules)");
-      }
-    } else if (err == ERROR_INVALID_WINDOW_HANDLE) {
-      throw Napi::Error::New(env, "Invalid window handle");
-    } else if (err == ERROR_ACCESS_DENIED) {
-      throw Napi::Error::New(env, "Window cannot be brought to foreground");
-    } else {
-      throw Napi::Error::New(env, "Unknown error in SetForegroundWindow err=" + std::to_string(err));
+
+    /// getlastError doesnt work for SetForegroundWindow
+    LOG("Unable to bring window %" PRIuPTR " to foreground, trying FlashWindowEx hack", (uintptr_t)handle);
+    FLASHWINFO flashInfo;
+    flashInfo.cbSize = sizeof(FLASHWINFO);
+    flashInfo.hwnd = handle;
+    flashInfo.dwFlags = FLASHW_ALL | FLASHW_TIMERNOFG;
+    flashInfo.uCount = 3;
+    flashInfo.dwTimeout = 0;
+    bool result = FlashWindowEx(&flashInfo);
+    if (!result) {
+      /// getlastError doesnt work for FlashWindowEx
+      throw Napi::Error::New(env,
+       "SetForegroundWindow blocked and FlashWindowEx failed");
     }
   }
 }
