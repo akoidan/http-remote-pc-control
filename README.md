@@ -27,7 +27,7 @@ You have to:
 - Copy ./gencert/client into ./certs on the remote PC from where you use the api. The client PC should not validate domain name.
 
 ### Ubuntu
- - Install dependencies `sudo apt-get install libxcb-ewmh2 libxtst6 libxcb-ewmh2 libxcb1 libdbus-1-3` if you dont have them yet 
+ - Install dependencies `sudo apt-get install --no-install-recommends libxcb-ewmh2 libxtst6 libxcb-ewmh2 libxcb1 libdbus-1-3` 
  - Download `http-remote-pc-control.deb` from [releases](https://github.com/akoidan/http-remote-pc-control/releases).
  - Install the package `sudo dpkg -i http-remote-pc-control.deb`
  - Start the service with the same user as logged in X `systemctl --user start http-remote-pc-control`
