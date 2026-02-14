@@ -45,7 +45,7 @@ const keyPressRequestSchema = z.object({
   keys: z.array(keySchema).min(1),
   duration: z.number().min(50).default(50).optional().describe('Duration of key beeing presssed'),
   holdKeys: z.array(keySchema).optional(),
-}).strict().superRefine((data: any, ctx: any) => {
+}).strict().superRefine((data: any, ctx) => {
   if (data.key && data.multiKey) {
     return ctx.addIssue({
       code: z.ZodIssueCode.custom,
