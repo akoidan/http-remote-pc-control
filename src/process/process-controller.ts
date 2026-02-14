@@ -1,7 +1,12 @@
 import {Body, Controller, Delete, Get, HttpCode, Inject, Param, ParseIntPipe, Post, Query} from '@nestjs/common';
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import {ProcessService} from '@/process/process-service';
-import {ExecutableNameRequestDto, LaunchExeRequestDto, ProcessResponseDto} from '@/process/process-dto';
+import {
+  CreateProcessResponseDto,
+  ExecutableNameRequestDto,
+  LaunchExeRequestDto,
+  ProcessResponseDto,
+} from '@/process/process-dto';
 import {ExecuteService, IExecuteService} from '@/process/process-model';
 
 @ApiTags('Process')
@@ -23,8 +28,8 @@ export class ProcessController {
 
   @Post()
   @ApiOperation({summary: 'Launches an application'})
-  @ApiResponse({type: ProcessResponseDto})
-  async createProcess(@Body() body: LaunchExeRequestDto): Promise<ProcessResponseDto> {
+  @ApiResponse({type: CreateProcessResponseDto})
+  async createProcess(@Body() body: LaunchExeRequestDto): Promise<CreateProcessResponseDto> {
     return this.processService.createProcess(body);
   }
 

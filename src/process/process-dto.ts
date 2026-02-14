@@ -28,6 +28,12 @@ const processSchema = z.object({
   wids: z.array(z.number()).describe('List of all windows id of the process'),
 }).describe('Process information');
 
+
+const createProcessResponseSchema = z.object({
+  // eslint-disable-next-line sonarjs/no-duplicate-string
+  pid: z.number().describe('Process ID'),
+}).describe('Information about created process');
+
 const launchExeRequestSchema = z.object({
   path: z.string().describe('Path to executable'),
   arguments: z.array(z.string()).describe('Command line arguments'),
@@ -41,20 +47,24 @@ const executableNameSchema = z.object({
 
 class LaunchExeRequestDto extends createZodDto(launchExeRequestSchema) {}
 class ExecutableNameRequestDto extends createZodDto(executableNameSchema) {}
+class CreateProcessResponseDto extends createZodDto(createProcessResponseSchema) {}
 class ProcessResponseDto extends createZodDto(processSchema) {}
 
 type LaunchExeRequest = z.infer<typeof launchExeRequestSchema>;
 type ProcessResponse = z.infer<typeof processSchema>;
+type CreateProcessResponse = z.infer<typeof createProcessResponseSchema>;
 
 export {
   launchExeRequestSchema,
   executableNameSchema,
   LaunchExeRequestDto,
+  CreateProcessResponseDto,
   ExecutableNameRequestDto,
   ProcessResponseDto,
 };
 
 export type {
   ProcessResponse,
+  CreateProcessResponse,
   LaunchExeRequest,
 };

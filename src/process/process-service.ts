@@ -2,7 +2,12 @@ import {Inject, Injectable, Logger} from '@nestjs/common';
 import {Native, ProcessNativeModule, WindowNativeModule} from '@/native/native-model';
 import {Safe400} from '@/utils/decorators';
 import {OS_INJECT} from '@/global/global-model';
-import {LaunchExeRequest, ProcessResponse} from '@/process/process-dto';
+import {
+  CreateProcessResponse,
+  CreateProcessResponseDto,
+  LaunchExeRequest,
+  ProcessResponse
+} from '@/process/process-dto';
 import {ExecuteService, IExecuteService} from '@/process/process-model';
 
 @Injectable()
@@ -21,9 +26,9 @@ export class ProcessService {
   }
 
   @Safe400(['win32', 'linux'])
-  public async createProcess(data: LaunchExeRequest): Promise<ProcessResponse> {
+  public async createProcess(data: LaunchExeRequest): Promise<CreateProcessResponse> {
     const pid = await this.executionService.launchExe(data);
-    return this.getProcessInfo(pid);
+    return {pid};
   }
 
   @Safe400(['win32', 'linux'])
