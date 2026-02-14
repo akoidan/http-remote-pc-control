@@ -78,6 +78,8 @@ jobs:
         run: yarn cmake
       - name: nest
         run: yarn nest
+      - name: esbuild
+        run: yarn esbuild
       - name: native
         run: yarn native
       - name: test
@@ -98,7 +100,7 @@ jobs:
             /var/lib/apt/lists
           key: ${{ runner.os }}-apt-${{ hashFiles('**/apt-packages.txt') }}
 
-      - name: Install dependencies # TODO cache
+      - name: Install dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends libx11-dev libxtst-dev libxcb-ewmh-dev libxcb1-dev cmake g++ make libdbus-1-dev xvfb openbox libxkbfile-dev x11-xserver-utils
@@ -122,6 +124,8 @@ jobs:
         run: yarn cmake
       - name: nest
         run: yarn nest
+      - name: esbuild
+        run: yarn esbuild
       - name: native
         run: yarn native
       - name: test

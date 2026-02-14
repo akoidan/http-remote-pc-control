@@ -24,13 +24,6 @@ jobs:
       - name: Install yarn deps
         if: steps.cache-node.outputs.cache-hit != 'true'
         run: yarn install --frozen-lockfile
-      - name: Restore pkg cache
-        id: cache-pkg
-        # DO not create cache on release, only on master
-        uses: actions/cache/restore@v4
-        with:
-          path: ~/.pkg-cache
-          key: ${{ runner.os }}-pkg-18
       - name: Build
         run: yarn build
 
@@ -86,8 +79,14 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Install dependencies # TODO cache
+      - name: Cache apt packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            /var/cache/apt/archives
+            /var/lib/apt/lists
+          key: ${{ runner.os }}-apt-${{ hashFiles('**/apt-packages.txt') }}
+      - name: Install dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends libx11-dev libxtst-dev libxcb-ewmh-dev libxcb1-dev cmake g++ make libdbus-1-dev
@@ -106,13 +105,6 @@ jobs:
       - name: Install yarn deps
         if: steps.cache-node.outputs.cache-hit != 'true'
         run: yarn install --frozen-lockfile
-      - name: Restore pkg cache
-        id: cache-pkg
-        # DO not create cache on release, only on master
-        uses: actions/cache/restore@v4
-        with:
-          path: ~/.pkg-cache
-          key: ${{ runner.os }}-pkg-18
       - name: Build
         run: yarn build
 
