@@ -16,9 +16,10 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v6
         with:
-          node-version: 18
+          package-manager-cache: false
+          node-version: 24
       - name: Restore node_modules cache
         id: cache-node
         # DO not create cache for PRs, since they are not accessible withing different PRs
@@ -36,9 +37,10 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v6
         with:
-          node-version: 18
+          package-manager-cache: false
+          node-version: 24
       - name: Restore node_modules cache
         id: cache-node
         # DO not create cache for PRs, since they are not accessible withing different PRs
@@ -57,9 +59,10 @@ jobs:
     permissions: write-all
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v6
         with:
-          node-version: 18
+          package-manager-cache: false
+          node-version: 24
       - name: Restore node_modules cache
         id: cache-node
         # DO not create cache for PRs, since they are not accessible withing different PRs
@@ -71,13 +74,6 @@ jobs:
       - name: Install yarn deps
         if: steps.cache-node.outputs.cache-hit != 'true'
         run:  yarn install --frozen-lockfile
-      - name: Restore pkg cache
-        id: cache-pkg
-        # DO not create cache on release, only on master
-        uses: actions/cache/restore@v4
-        with:
-          path: ~/.pkg-cache
-          key: ${{ runner.os }}-pkg-18
       - name: cmake
         run: yarn cmake
       - name: nest
@@ -107,9 +103,10 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends libx11-dev libxtst-dev libxcb-ewmh-dev libxcb1-dev cmake g++ make libdbus-1-dev xvfb openbox libxkbfile-dev x11-xserver-utils
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v6
         with:
-          node-version: 18
+          package-manager-cache: false
+          node-version: 24
       - name: Restore node_modules cache
         id: cache-node
         # DO not create cache for PRs, since they are not accessible withing different PRs
@@ -121,13 +118,6 @@ jobs:
       - name: Install yarn deps
         if: steps.cache-node.outputs.cache-hit != 'true'
         run:  yarn install --frozen-lockfile
-      - name: Restore pkg cache
-        id: cache-pkg
-        # DO not create cache on release, only on master
-        uses: actions/cache/restore@v4
-        with:
-          path: ~/.pkg-cache
-          key: ${{ runner.os }}-pkg-18
       - name: cmake
         run: yarn cmake
       - name: nest
