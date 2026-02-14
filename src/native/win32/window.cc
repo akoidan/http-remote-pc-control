@@ -200,7 +200,7 @@ void setWindowActive(const Napi::CallbackInfo &info) {
     } else if (err == ERROR_ACCESS_DENIED) {
       throw Napi::Error::New(env, "Window cannot be brought to foreground");
     } else {
-      throw Napi::Error::New(env, "Unknown error in SetForegroundWindow");
+      throw Napi::Error::New(env, "Unknown error in SetForegroundWindow err=" + std::to_string(err));
     }
   }
 }
