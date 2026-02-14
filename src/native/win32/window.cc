@@ -194,21 +194,8 @@ void setWindowActive(const Napi::CallbackInfo &info) {
 
   BOOL b{SetForegroundWindow(handle)};
   if (!b) {
-
-    /// getlastError doesnt work for SetForegroundWindow
-    LOG("Unable to bring window %" PRIuPTR " to foreground, trying FlashWindowEx hack", (uintptr_t)handle);
-    FLASHWINFO flashInfo;
-    flashInfo.cbSize = sizeof(FLASHWINFO);
-    flashInfo.hwnd = handle;
-    flashInfo.dwFlags = FLASHW_ALL | FLASHW_TIMERNOFG;
-    flashInfo.uCount = 3;
-    flashInfo.dwTimeout = 0;
-    bool result = FlashWindowEx(&flashInfo);
-    if (!result) {
-      /// getlastError doesnt work for FlashWindowEx
-      throw Napi::Error::New(env,
-       "SetForegroundWindow blocked and FlashWindowEx failed");
-    }
+    throw Napi::Error::New(env,
+     "SetForegroundWindow blocked by windows, place focus on http-remote-pc-control terminal to override");
   }
 }
 
