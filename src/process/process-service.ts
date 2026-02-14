@@ -2,12 +2,7 @@ import {Inject, Injectable, Logger} from '@nestjs/common';
 import {Native, ProcessNativeModule, WindowNativeModule} from '@/native/native-model';
 import {Safe400} from '@/utils/decorators';
 import {OS_INJECT} from '@/global/global-model';
-import {
-  CreateProcessResponse,
-  CreateProcessResponseDto,
-  LaunchExeRequest,
-  ProcessResponse
-} from '@/process/process-dto';
+import {CreateProcessResponse, LaunchExeRequest, ProcessResponse} from '@/process/process-dto';
 import {ExecuteService, IExecuteService} from '@/process/process-model';
 
 @Injectable()
