@@ -21,7 +21,7 @@ export function Safe400(supported?: NodeJS.Platform[]) {
         if (typeof supported !== 'undefined' && !supported.includes(this.os)) {
           throw new BadRequestException(`Unsupported method ${String(propertyKey)} on platform ${this.os}`);
         }
-        this.logger.log(`Calling getMonitors ${String(propertyKey)} with arguments ${JSON.stringify(args)}`);
+        this.logger.log(`Calling ${String(propertyKey)} with arguments ${JSON.stringify(args)}`);
         try {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-return
           return originalMethod.apply(this, args);
@@ -39,7 +39,7 @@ export function Safe400(supported?: NodeJS.Platform[]) {
         if (typeof supported !== 'undefined' && !supported.includes(this.os)) {
           throw new BadRequestException(`Unsupported method ${String(propertyKey)} on platform ${this.os}`);
         }
-        this.logger.log(`Calling getMonitors ${String(propertyKey)} with arguments ${JSON.stringify(args)}`);
+        this.logger.log(`Calling ${String(propertyKey)} with arguments ${JSON.stringify(args)}`);
         try {
           // eslint-disable-next-line
           return await originalMethod.apply(this, args);
