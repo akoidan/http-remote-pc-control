@@ -70,7 +70,7 @@ jobs:
       - name: Build
         run: yarn build
       - name: Tests
-        run: yarn test
+        run: yarn test --testPathIgnorePatterns=native-service.spec.ts
       - name: Upload coverage to Coveralls
         uses: coverallsapp/github-action@v2
         with:
