@@ -1,20 +1,13 @@
 import {z} from 'zod';
 import {createZodDto} from '@anatine/zod-nestjs';
+import {MouseButton} from '@/native/native-model';
 
-const mouseMoveClickRequestSchema = z.object({
+const mousePositionSchema = z.object({
   x: z.number().describe('X coordinate to move mouse to'),
   y: z.number().describe('Y coordinate to move mouse to'),
-});
-
-const mousePositionResponseSchema = z.object({
-  x: z.number().describe('X coordinate of mouse position'),
-  y: z.number().describe('Y coordinate of mouse position'),
-});
-
+}).strict();
 
 const mouseMoveHumanClickRequestSchema = z.object({
-  x: z.number().describe('X coordinate to move mouse to'),
-  y: z.number().describe('Y coordinate to move mouse to'),
   destinationRandomX: z.number()
     .int()
     .min(0)
@@ -53,22 +46,40 @@ const mouseMoveHumanClickRequestSchema = z.object({
     .describe('Amount of random variation in curve intensity. 0 = no variation, 0.5 = ±50% variation')
     .default(0.2)
     .optional(),
-}).strict()
+}).merge(mousePositionSchema).strict()
   .describe('Request to move mouse with human-like movement. The movement follows a natural curved path with smooth acceleration and deceleration. ' +
   'The path includes subtle variations to mimic human motor control, with configurable curve intensity and movement variance.');
 
+const mouseButtonSchema = z.nativeEnum(MouseButton)
+    .describe('Mouse button');
+
+const mouseClickSchemaRequestSchema = z.object({
+  button: mouseButtonSchema.default(MouseButton.LEFT),
+}).strict().describe('Request to perform a mouse button click');
+
 // Create DTO class for Swagger
-class MouseMoveClickRequestDto extends createZodDto(mouseMoveClickRequestSchema) {}
-class MouseMoveHumanClickRequestDto extends createZodDto(mouseMoveHumanClickRequestSchema) {}
-class MousePositionResponseDto extends createZodDto(mousePositionResponseSchema) {}
+class MousePositionRRDto extends createZodDto(mousePositionSchema) {}
+class MouseMoveHumanRequestDto extends createZodDto(mouseMoveHumanClickRequestSchema) {}
+class MouseClickRequestDto extends createZodDto(mouseClickSchemaRequestSchema) {}
 
 type MouseMoveHumanClickRequest = z.infer<typeof mouseMoveHumanClickRequestSchema>;
-type MousePositionResponse = z.infer<typeof mousePositionResponseSchema>;
+type MousePositionRR = z.infer<typeof mousePositionSchema>;
+type MouseClickRequest = z.infer<typeof mouseClickSchemaRequestSchema>;
 
 // Export values
-export {mouseMoveClickRequestSchema, MouseMoveClickRequestDto, mouseMoveHumanClickRequestSchema, MousePositionResponseDto};
+export {
+  mousePositionSchema,
+  MousePositionRRDto,
+  mouseButtonSchema,
+  mouseMoveHumanClickRequestSchema,
+  mouseClickSchemaRequestSchema,
+  MouseClickRequestDto,
+  MouseMoveHumanRequestDto,
+};
 
 
 export type {
-  MouseMoveHumanClickRequestDto, MouseMoveHumanClickRequest, MousePositionResponse,
+  MouseMoveHumanClickRequest,
+  MousePositionRR,
+  MouseClickRequest,
 };

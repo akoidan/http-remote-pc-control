@@ -5,38 +5,38 @@
 #include <vector>
 
 // Get all installed keyboard layouts
-std::vector<HKL> GetInstalledKeyboardLayouts();
+std::vector<HKL> getInstalledKeyboardLayouts();
 
 // Check if a keyboard layout is installed
-bool IsKeyboardLayoutInstalled(HKL layout);
+bool isKeyboardLayoutInstalled(HKL layout);
 
 // Get the current keyboard layout (system-wide)
-HKL GetSystemKeyboardLayout();
+HKL getSystemKeyboardLayout();
 
 // Get the current keyboard layout (thread-specific)
-HKL GetCurrentKeyboardLayout();
+HKL getCurrentKeyboardLayout();
 
 // Get the keyboard layout for a specific language
-HKL GetKeyboardLayoutForLanguage(const char* languageCode);
+HKL getKeyboardLayoutForLanguage(const char *languageCode);
 
 // Set the keyboard layout for the current thread and active window
-void SetThreadKeyboardLayout(HKL layout, Napi::Env env);
+void setThreadKeyboardLayout(HKL layout, Napi::Env env);
 
 // Save current keyboard layout and set a new one
 // Returns the previous layout
-HKL SaveAndSetKeyboardLayout(HKL newLayout, Napi::Env env);
+HKL saveAndSetKeyboardLayout(HKL newLayout, Napi::Env env);
 
 // Restore previously saved keyboard layout
-void RestoreKeyboardLayout(HKL savedLayout, Napi::Env env);
+void restoreKeyboardLayout(HKL savedLayout, Napi::Env env);
 
 // Set keyboard layout by layout ID string (e.g., "00000409" for US English)
-void SetKeyboardLayout(const char* layoutId, const Napi::CallbackInfo& info);
+void setKeyboardLayoutImpl(const char *layoutId, Napi::Env env);
 
 // Detect language from Unicode character
-const char* DetectLanguageFromChar(wchar_t ch);
+const char *detectLanguageFromChar(wchar_t ch);
 
 // Get virtual key and required modifiers for a Unicode character
-void GetVirtualKeyForChar(wchar_t ch, HKL layout, UINT* virtualKey, UINT* modifiers, Napi::Env env);
+void getVirtualKeyForChar(wchar_t ch, HKL layout, UINT *virtualKey, UINT *modifiers, Napi::Env env);
 
 // Check if Caps Lock is enabled
 bool isCapsLockEnabled();

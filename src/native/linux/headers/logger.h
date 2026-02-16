@@ -16,14 +16,14 @@ namespace AnsiColor {
 
 #define LOG_TIME() do { \
     auto now = std::chrono::system_clock::now(); \
-    auto now_time = std::chrono::system_clock::to_time_t(now); \
+    auto nowTime = std::chrono::system_clock::to_time_t(now); \
     auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count() % 1000; \
-    std::tm local_tm; \
-    localtime_r(&now_time, &local_tm); \
+    std::tm localTm; \
+    localtime_r(&nowTime, &localTm); \
     std::cout << AnsiColor::Time << "[" \
-              << std::setfill('0') << std::setw(2) << local_tm.tm_hour << ":" \
-              << std::setfill('0') << std::setw(2) << local_tm.tm_min << ":" \
-              << std::setfill('0') << std::setw(2) << local_tm.tm_sec << "." \
+              << std::setfill('0') << std::setw(2) << localTm.tm_hour << ":" \
+              << std::setfill('0') << std::setw(2) << localTm.tm_min << ":" \
+              << std::setfill('0') << std::setw(2) << localTm.tm_sec << "." \
               << std::setfill('0') << std::setw(3) << ms << "] " \
               << AnsiColor::Reset; \
 } while(0)

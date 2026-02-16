@@ -1,32 +1,34 @@
-import {Body, Controller, Inject, Post} from '@nestjs/common';
+import {Body, Controller, HttpCode, Post} from '@nestjs/common';
 import {KeyPressRequestDto, SetKeyboardLayoutRequestDto, TypeTextRequestDto} from '@/keyboard/keyboard-dto';
-import {IKeyboardService, KeyboardService} from '@/keyboard/keyboard-model';
 import {ApiOperation, ApiTags} from '@nestjs/swagger';
+import {KeyboardService} from '@/keyboard/keyboard-service';
 
 @ApiTags('Keyboard')
 @Controller('keyboard')
 export class KeyboardController {
   constructor(
-    @Inject(KeyboardService)
-    private readonly keyboardService: IKeyboardService,
+    private readonly keyboardService: KeyboardService,
   ) {
   }
 
   @Post('key-press')
   @ApiOperation({summary: 'Press one or more keys'})
+  @HttpCode(204)
   async keyPress(@Body() body: KeyPressRequestDto): Promise<void> {
-    await this.keyboardService.sendKey(body.keys as string[], body.holdKeys as string[], body.duration);
+    await this.keyboardService.keyPress(body);
   }
 
   @Post('type-text')
   @ApiOperation({summary: 'Type text'})
+  @HttpCode(204)
   async typeText(@Body() body: TypeTextRequestDto): Promise<void> {
-    await this.keyboardService.type(body.text, body.keyDelay, body.keyDelayDeviation);
+    await this.keyboardService.typeText(body);
   }
 
   @Post('set-layout')
   @ApiOperation({summary: 'Change keyboard layout'})
-  setKeyboardLayout(@Body() body: SetKeyboardLayoutRequestDto): void {
-    this.keyboardService.setKeyboardLayout(body.layout);
+  @HttpCode(204)
+  setLayout(@Body() body: SetKeyboardLayoutRequestDto): void {
+    this.keyboardService.setLayout(body);
   }
 }

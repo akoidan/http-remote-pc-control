@@ -5,23 +5,23 @@
 #include "./headers/monitor.h"
 #include "./headers/process.h"
 
-Napi::Object Init(Napi::Env env, Napi::Object exports) {
+Napi::Object init(Napi::Env env, Napi::Object exports) {
   // Initialize window management
-  window_init(env, exports);
+  windowInit(env, exports);
 
   // Initialize keyboard functions
-  keyboard_init(env, exports);
+  keyboardInit(env, exports);
 
   // Initialize mouse functions
-  mouse_init(env, exports);
+  mouseInit(env, exports);
 
   // Initialize monitor functions
-  monitor_init(env, exports);
+  monitorInit(env, exports);
 
   // Initialize process functions
-  process_init(env, exports);
+  processInit(env, exports);
 
   return exports;
 }
 
-NODE_API_MODULE(NODE_GYP_MODULE_NAME, Init)
+NODE_API_MODULE(NODE_GYP_MODULE_NAME, init)

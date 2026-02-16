@@ -1,29 +1,38 @@
-import {Inject, Injectable, Logger, NotImplementedException} from '@nestjs/common';
-import {INativeModule, Native} from '@/native/native-model';
-import {OS_INJECT} from '@/window/window-consts';
+import {Inject, Injectable, Logger} from '@nestjs/common';
+import {Native, ProcessNativeModule, WindowNativeModule} from '@/native/native-model';
+import {Safe400} from '@/utils/decorators';
+import {OS_INJECT} from '@/global/global-model';
+import {CreateProcessResponse, LaunchExeRequest, ProcessResponse} from '@/process/process-dto';
+import {ExecuteService, IExecuteService} from '@/process/process-model';
 
 @Injectable()
 export class ProcessService {
   constructor(
-    private readonly logger: Logger,
+    public readonly logger: Logger,
+    @Inject(ExecuteService)
+    private readonly executionService: IExecuteService,
     @Inject(Native)
-    private readonly addon: INativeModule,
+    private readonly addonProcess: ProcessNativeModule,
+    @Inject(Native)
+    private readonly addonWindow: WindowNativeModule,
     @Inject(OS_INJECT)
-    private readonly os: NodeJS.Platform,
+    public readonly os: NodeJS.Platform,
   ) {
   }
 
-  public createProcess(path: string, cmd?: string): number {
-    if (!['win32'].includes(this.os)) {
-      throw new NotImplementedException(`Unsupported platform: ${this.os}`);
-    }
-    return this.addon.createProcess(path, cmd);
+  @Safe400(['win32', 'linux'])
+  public async createProcess(data: LaunchExeRequest): Promise<CreateProcessResponse> {
+    const pid = await this.executionService.launchExe(data);
+    return {pid};
   }
 
-  public getProcessMainWindow(pid: number): number {
-    if (!['win32'].includes(this.os)) {
-      throw new NotImplementedException(`Unsupported platform: ${this.os}`);
-    }
-    return this.addon.getProcessMainWindow(pid);
+  @Safe400(['win32', 'linux'])
+  public getProcessInfo(pid: number): ProcessResponse {
+    const info = this.addonProcess.getProcessInfo(pid);
+    const wids = this.addonWindow.getWindowsByProcessId(pid);
+    return {
+      ...info,
+      wids,
+    };
   }
 }

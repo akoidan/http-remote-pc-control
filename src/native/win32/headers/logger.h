@@ -16,19 +16,19 @@ inline void enableAnsiColors() {
 
 // ANSI color codes matching cli-color
 namespace AnsiColor {
-  const char* const Reset = "\x1b[0m";
+  const char *const Reset = "\x1b[0m";
   // Exact matches for cli-color xterm codes
-  const char* const Time = "\x1b[38;5;100m"; // clc.xterm(100) - timestamp (dark gold)
-  const char* const Label = "\x1b[38;5;2m"; // clc.xterm(2) - label
-  const char* const Message = "\x1b[38;5;7m"; // clc.xterm(7) - message
+  const char *const Time = "\x1b[38;5;100m"; // clc.xterm(100) - timestamp (dark gold)
+  const char *const Label = "\x1b[38;5;2m"; // clc.xterm(2) - label
+  const char *const Message = "\x1b[38;5;7m"; // clc.xterm(7) - message
 }
 
 #define LOG_TIME() do { \
     auto now = std::chrono::system_clock::now(); \
-    auto now_time = std::chrono::system_clock::to_time_t(now); \
+    auto nowTime = std::chrono::system_clock::to_time_t(now); \
     auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count() % 1000; \
     std::tm local_tm; \
-    localtime_s(&local_tm, &now_time); \
+    localtime_s(&local_tm, &nowTime); \
     std::cout << AnsiColor::Time << "[" \
               << std::setfill('0') << std::setw(2) << local_tm.tm_hour << ":" \
               << std::setfill('0') << std::setw(2) << local_tm.tm_min << ":" \

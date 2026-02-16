@@ -137,7 +137,7 @@ Napi::Array getWindows(const Napi::CallbackInfo& info) {
   return arr;
 }
 
-Napi::Number getActiveWindow(const Napi::CallbackInfo& info) {
+Napi::Number getWindowActiveId(const Napi::CallbackInfo& info) {
   Napi::Env env{info.Env()};
 
   CGWindowListOption listOptions = kCGWindowListOptionOnScreenOnly | kCGWindowListExcludeDesktopElements;
@@ -228,7 +228,7 @@ Napi::Object getWindowBounds(const Napi::CallbackInfo& info) {
   return Napi::Object::New(env);
 }
 
-Napi::Boolean setWindowBounds(const Napi::CallbackInfo& info) {
+Napi::Value setWindowBounds(const Napi::CallbackInfo &info) {
   Napi::Env env{info.Env()};
 
   auto handle = info[0].As<Napi::Number>().Int32Value();
@@ -252,10 +252,10 @@ Napi::Boolean setWindowBounds(const Napi::CallbackInfo& info) {
     AXUIElementSetAttributeValue(win, kAXSizeAttribute, sizeStorage);
   }
 
-  return Napi::Boolean::New(env, true);
+  return env.Undefined();
 }
 
-Napi::Boolean bringWindowToTop(const Napi::CallbackInfo& info) {
+Napi::Value setWindowActive(const Napi::CallbackInfo &info) {
   Napi::Env env{info.Env()};
 
   auto handle = info[0].As<Napi::Number>().Int32Value();
@@ -267,10 +267,10 @@ Napi::Boolean bringWindowToTop(const Napi::CallbackInfo& info) {
   AXUIElementSetAttributeValue(app, kAXFrontmostAttribute, kCFBooleanTrue);
   AXUIElementSetAttributeValue(win, kAXMainAttribute, kCFBooleanTrue);
 
-  return Napi::Boolean::New(env, true);
+  return env.Undefined();
 }
 
-Napi::Boolean setWindowMinimized(const Napi::CallbackInfo& info) {
+Napi::Value setWindowMinimized(const Napi::CallbackInfo &info) {
   Napi::Env env{info.Env()};
 
   auto handle = info[0].As<Napi::Number>().Int32Value();
@@ -282,16 +282,16 @@ Napi::Boolean setWindowMinimized(const Napi::CallbackInfo& info) {
     AXUIElementSetAttributeValue(win, kAXMinimizedAttribute, toggle ? kCFBooleanTrue : kCFBooleanFalse);
   }
 
-  return Napi::Boolean::New(env, true);
+  return env.Undefined();
 }
 
-Napi::Boolean setWindowMaximized(const Napi::CallbackInfo& info) {
+Napi::Value setWindowMaximized(const Napi::CallbackInfo &info) {
   Napi::Env env{info.Env()};
   auto handle = info[0].As<Napi::Number>().Int32Value();
   auto win = getAXWindowById(handle);
 
   if (win) {
-    NSRect screenSizeRect = 
+    NSRect screenSizeRect =
     [[NSScreen mainScreen] frame];
     int screenWidth = screenSizeRect.size.width;
     int screenHeight = screenSizeRect.size.height;
@@ -306,15 +306,15 @@ Napi::Boolean setWindowMaximized(const Napi::CallbackInfo& info) {
     AXUIElementSetAttributeValue(win, kAXSizeAttribute, sizeStorage);
   }
 
-  return Napi::Boolean::New(env, true);
+  return env.Undefined();
 }
 
 
-Napi::Object window_init(Napi::Env env, Napi::Object exports) {
+Napi::Object windowInit(Napi::Env env, Napi::Object exports) {
   exports.Set(Napi::String::New(env, "getWindows"),
               Napi::Function::New(env, getWindows));
-  exports.Set(Napi::String::New(env, "getActiveWindow"),
-              Napi::Function::New(env, getActiveWindow));
+  exports.Set(Napi::String::New(env, "getWindowActiveId"),
+              Napi::Function::New(env, getWindowActiveId));
   exports.Set(Napi::String::New(env, "setWindowBounds"),
               Napi::Function::New(env, setWindowBounds));
   exports.Set(Napi::String::New(env, "getWindowBounds"),
@@ -323,8 +323,8 @@ Napi::Object window_init(Napi::Env env, Napi::Object exports) {
               Napi::Function::New(env, getWindowTitle));
   exports.Set(Napi::String::New(env, "initWindow"),
               Napi::Function::New(env, initWindow));
-  exports.Set(Napi::String::New(env, "bringWindowToTop"),
-              Napi::Function::New(env, bringWindowToTop));
+  exports.Set(Napi::String::New(env, "setWindowActive"),
+              Napi::Function::New(env, setWindowActive));
   exports.Set(Napi::String::New(env, "setWindowMinimized"),
               Napi::Function::New(env, setWindowMinimized));
   exports.Set(Napi::String::New(env, "setWindowMaximized"),

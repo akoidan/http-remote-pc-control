@@ -1,18 +1,18 @@
 
 ## Requirements:
-You need cmake, yarn, node version 18 or nvm, and a proper C/C++ compiler toolchain of the given platform
+You need cmake, yarn, node version 24 or nvm, and a proper C/C++ compiler toolchain of the given platform
 
 ### Windows
 - [Visual C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/). If you installed nodejs with the installer, you can install these when prompted.
 - An alternate way is to install the [Chocolatey package manager](https://chocolatey.org/install), and run `choco install visualstudio2017-workload-vctools` in an Administrator Powershell
 - If you have multiple versions installed, you can select a specific version with `npm config set msvs_version 2017` (Note: this will also affect `node-gyp`)
 - [cmake](https://cmake.org/download/),
-- Node version 18 or [nvm](https://github.com/nvm-sh/nvm)
+- Node version 24 or [nvm](https://github.com/nvm-sh/nvm)
 - [yarn](https://yarnpkg.com/).
 ### Unix/Posix
 - Clang or GCC
 - Ninja or Make (Ninja will be picked if both present)
-- Node version 18 or [nvm](https://github.com/nvm-sh/nvm)
+- Node version 24 or [nvm](https://github.com/nvm-sh/nvm)
 - [yarn](https://yarnpkg.com/).
 ### MacOS
 - brew install cmake nvm yarn
@@ -24,7 +24,7 @@ You need cmake, yarn, node version 18 or nvm, and a proper C/C++ compiler toolch
 To build the client you need
 
 ```sh
-nvm use 18 # If you already have node 18, skip it
+nvm use 24 # If you already have node 24, skip it. Also do not use node 25, it has broken SEA
 yarn # install depenencies
 yarn build:local # builds native c++ modules 
 yarn start # starts a nestjs server 
@@ -45,7 +45,7 @@ This command already builds the native module in Debug mode.
   yarn start
   ```  
 #### Windows:
-You can only debug with VisualStudio or with `cdb`, since that toolchain was required for cmakejs. Clion wouldn't be able to pull sourcemaps. You need to  attach to the remote process that was started above.  
+You can only debug with VisualStudio or with `cdb`, since that toolchain was required for cmakejs. Clion wouldn't be able to pull sourcemaps. You need to  attach to the remote process that was started above.
 #### Linux
 You can use any debugger IDE. E.g. `gdb` or  CLion. You need to attach to the already running Node.js process. IDE should automatically pull sourcemaps, allowing you to place breakpoints in native C++ code.
 
@@ -55,17 +55,25 @@ CLion does not automatically pick up Node.js and N-API headers. You must add the
 **Steps:**
 1. Go to **Settings → Build, Execution, Deployment → CMake**.
 2. Add a new configuration.
-3. Add the following to **CMake options** (adjust paths for your system).
+3. Build directory: `build`
+4. Add the following Options:
 
 #### Arch Linux example
 ```cmake
--DCMAKE_CXX_FLAGS="-I/home/andrew/.nvm/versions/node/v18.18.2/include/node -I/home/andrew/it/my-projects/http-remote-pc-control/node_modules/node-addon-api"
+-DCMAKE_CXX_FLAGS="-I/home/andrew/.nvm/versions/node/v24.20.5/include/node -I/home/andrew/it/my-projects/http-remote-pc-control/node_modules/node-addon-api"
 ```
+**Generator** (adjust to your CLI match system).
+Select ninja generator (unless your cli configured otherwise)
 
 #### Windows example
+**CMake options** (adjust paths for your system).
 ```cmake
--DCMAKE_CXX_FLAGS="-IC:\Users\death\.cmake-js\node-x64\v18.20.5\include\node -IC:\Users\death\WebstormProjects\http-remote-pc-control\node_modules\node-addon-api"
+-DCMAKE_CXX_FLAGS="-IC:\Users\death\.cmake-js\node-x64\v24.20.5\include\node -IC:\Users\death\WebstormProjects\http-remote-pc-control\node_modules\node-addon-api"
 ```
+**Generator** (adjust to your CLI match system).
+`Visual Studio 17 2022`. 
+
+If you just need to build and syntax support on CLION. Use settings cmake
 
 ### Required Directories
 You need to provide **two include directories**:

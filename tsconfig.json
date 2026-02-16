@@ -1,6 +1,4 @@
 {
-  "exclude": ["dist"],
-  "include": ["src/**/*.ts", "src/**/*.node"],
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
@@ -8,19 +6,20 @@
         "src/*"
       ]
     },
+    "strictNullChecks": true,
     "resolveJsonModule": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "outDir": "dist",
-    "types": ["node"],
     "module": "commonjs",
     "target": "esnext",
     "noImplicitAny": true,
     "removeComments": true,
     "preserveConstEnums": true,
-    "sourceMap": true,
-    "strictNullChecks": true
-  }
+    "sourceMap": true
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "build"]
 }

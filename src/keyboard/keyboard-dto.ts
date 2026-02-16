@@ -34,18 +34,18 @@ const modifierKeys = [
   'fn',
 ] as const;
 
-const keySchema = z.enum(([...allowedKeys, ...modifierKeys]))
+const keySchema = z.enum([...allowedKeys, ...modifierKeys])
   .describe('A key to be sent.');
 
 const setKeyboardLayoutSchema = z.object({
   layout: keyboardLayoutValueSchema,
-}).describe('Request to change keyboard layout');
+}).strict().describe('Request to change keyboard layout');
 
 const keyPressRequestSchema = z.object({
-  keys: z.array(keySchema),
+  keys: z.array(keySchema).min(1),
   duration: z.number().min(50).default(50).optional().describe('Duration of key beeing presssed'),
   holdKeys: z.array(keySchema).optional(),
-}).superRefine((data: any, ctx) => {
+}).strict().superRefine((data: any, ctx) => {
   if (data.key && data.multiKey) {
     return ctx.addIssue({
       code: z.ZodIssueCode.custom,
@@ -64,7 +64,7 @@ const typeTextRequestSchema = z.object({
     .default(0)
     .optional()
     .describe('Deviation for randomness of delay. Final delay = delay ± (delay * deviation). E.g if keyDelay = 100 and deviation = 0.2. Then value would be 80-120ms'),
-});
+}).strict();
 
 // Create DTO classes for Swagger
 class KeyPressRequestDto extends createZodDto(keyPressRequestSchema) {}

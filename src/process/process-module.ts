@@ -1,7 +1,6 @@
 import {Logger, Module, NotImplementedException} from '@nestjs/common';
 import {ProcessController} from '@/process/process-controller';
 import {ProcessService} from '@/process/process-service';
-import {OS_INJECT} from '@/window/window-consts';
 import os from 'os';
 import {LauncherService} from '@/process/launcher-service';
 import {ExecuteService, IExecuteService} from '@/process/process-model';
@@ -11,10 +10,6 @@ import {ExecuteLinuxDarwinService} from '@/process/os/execute-linux-darwin-servi
 @Module({
   controllers: [ProcessController],
   providers: [
-    {
-      provide: OS_INJECT,
-      useFactory: os.platform,
-    },
     LauncherService,
     {
       provide: ExecuteService,

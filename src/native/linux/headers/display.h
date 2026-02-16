@@ -1,6 +1,7 @@
 #pragma once
+#include <napi.h>
 #include <X11/Xlib.h>
 
-void XCloseMainDisplay();
+void xCloseMainDisplay();
 
-Display* XGetMainDisplay();
+Display* xGetMainDisplay(Napi::Env);

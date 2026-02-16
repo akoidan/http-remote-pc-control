@@ -1,5 +1,9 @@
-import {Body, Controller, Get, Post} from '@nestjs/common';
-import {MouseMoveClickRequestDto, MouseMoveHumanClickRequestDto, MousePositionResponseDto} from '@/mouse/mouse-dto';
+import {Body, Controller, Get, HttpCode, Post} from '@nestjs/common';
+import {
+  MouseClickRequestDto,
+  MousePositionRRDto,
+  MouseMoveHumanRequestDto,
+} from '@/mouse/mouse-dto';
 import {MouseService} from '@/mouse/mouse-service';
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 
@@ -11,35 +15,38 @@ export class MouseController {
   ) {
   }
 
+  @Get('position')
+  @ApiOperation({summary: 'Returns X,Y of current mouse position, absolute to all monitors'})
+  @ApiResponse({type: MousePositionRRDto})
+  getPosition(): MousePositionRRDto {
+    return this.mouseService.getPosition();
+  }
+
   @Post('move-left-click')
   @ApiOperation({summary: 'Instantly moves mouse to the position and performs a left click there'})
-  async mouseMoveClick(@Body() event: MouseMoveClickRequestDto): Promise<void> {
-    await this.mouseService.mouseMove(event.x, event.y);
+  @HttpCode(204)
+  moveLeftClick(@Body() event: MousePositionRRDto): void {
+    this.mouseService.moveLeftClick(event);
   }
 
   @Post('move')
   @ApiOperation({summary: 'Mouse move to the point, absolute coordinate for all monitors'})
-  async mouseMove(@Body() event: MouseMoveClickRequestDto): Promise<void> {
-    await this.mouseService.mouseMove(event.x, event.y);
-  }
-
-  @Get('position')
-  @ApiOperation({summary: 'Returns X,Y of current mouse position, absolute to all monitors'})
-  @ApiResponse({type: MousePositionResponseDto})
-  // eslint-disable-next-line @typescript-eslint/require-await
-  async getMousePosition(): Promise<MousePositionResponseDto> {
-    return this.mouseService.getMousePos();
+  @HttpCode(204)
+  setMousePosition(@Body() event: MousePositionRRDto): void {
+    this.mouseService.setMousePosition(event);
   }
 
   @Post('move-human')
   @ApiOperation({summary: 'Moves mouse in a human pattern with time'})
-  async mouseMoveHuman(@Body() event: MouseMoveHumanClickRequestDto): Promise<void> {
-    await this.mouseService.moveMouseHuman(event);
+  @HttpCode(204)
+  async mouseMoveHuman(@Body() event: MouseMoveHumanRequestDto): Promise<void> {
+    await this.mouseService.mouseMoveHuman(event);
   }
 
-  @Post('left-click')
-  @ApiOperation({summary: 'Left click on the current position'})
-  async leftMouseClick(): Promise<void> {
-    await this.mouseService.click();
+  @Post('click')
+  @ApiOperation({summary: 'Click mouse on the current position'})
+  @HttpCode(204)
+  click(@Body() event: MouseClickRequestDto): void {
+    this.mouseService.click(event);
   }
 }

@@ -17,7 +17,7 @@ if(WIN32)
 elseif (UNIX AND NOT APPLE)
     message(STATUS "Linux build")
     # libXtst - allows sending keyStores at global level on X11 with XTestFakeKeyEvent
-    # libX11 - allows X11 mouseMove, mousePosition, default window of a process
+    # libX11 - allows X11 setMousePosition, mousePosition, default window of a process
     # libxkbfile - allows direct keyboard layout manipulation via XKB
     # libdbus-1 - allows direct DBus system calls for KDE integration
     list(APPEND LIBS "-lX11" "-lXtst" "-lxkbfile" "-ldbus-1")

@@ -3,7 +3,7 @@
 #include "./headers/key-names.h"
 #include <map>
 
-KeyNames key_names[] = {
+KeyNames keyNames[] = {
   {"backspace", XK_BackSpace},
   {"delete", XK_Delete},
   {"return", XK_Return},
@@ -147,7 +147,7 @@ KeyNames key_names[] = {
 };
 
 
-std::map<char, KeySym> XSpecialCharacterMap = {
+std::map<char, KeySym> xSpecialCharacterMap = {
   {'[', XK_bracketleft},
   {']', XK_bracketright},
   {',', XK_comma},
@@ -163,7 +163,7 @@ std::map<char, KeySym> XSpecialCharacterMap = {
   {'\n', XK_Return}
 };
 
-std::map<char, KeySym> XShiftRequiredMap = {
+std::map<char, KeySym> xShiftRequiredMap = {
   {'~', XK_asciitilde},
   {'_', XK_underscore},
   {'!', XK_exclam},

@@ -8,12 +8,13 @@
 #include "./headers/display.h"
 #include "./headers/keypress.h"
 #include "./headers/keyboard-layout.h"
+#include "./headers/validators.h"
 
+void toggleKeyCode(Napi::Env env, KeySym code, const bool down, unsigned int flags) {
 #define X_KEY_EVENT(display, key, is_press)                \
-    (XTestFakeKeyEvent(display, XKeysymToKeycode(display, key), is_press, CurrentTime), XFlush(display))
+  (XTestFakeKeyEvent(display, XKeysymToKeycode(display, key), is_press, CurrentTime), XFlush(display))
 
-void toggleKeyCode(KeySym code, const bool down, unsigned int flags) {
-  Display* display = XGetMainDisplay();
+  Display* display = xGetMainDisplay(env);
   const Bool is_press = down ? True : False; /* Just to be safe. */
   if (!down) {
     X_KEY_EVENT(display, code, is_press);
@@ -42,13 +43,12 @@ KeySym keyCodeForChar(const char c) {
 
   code = XStringToKeysym(buf);
   if (code == NoSymbol) {
-    auto it = XSpecialCharacterMap.find(c);
-    if (it != XSpecialCharacterMap.end()) {
+    auto it = xSpecialCharacterMap.find(c);
+    if (it != xSpecialCharacterMap.end()) {
       code = it->second;
-    }
-    else {
-      auto shiftIt = XShiftRequiredMap.find(c);
-      if (shiftIt != XShiftRequiredMap.end()) {
+    } else {
+      auto shiftIt = xShiftRequiredMap.find(c);
+      if (shiftIt != xShiftRequiredMap.end()) {
         code = shiftIt->second;
       }
     }
@@ -57,33 +57,36 @@ KeySym keyCodeForChar(const char c) {
   return code;
 }
 
-void toggleKey(char c, const bool down, unsigned int flags) {
+void toggleKey(Napi::Env env, char c, const bool down, unsigned int flags) {
   KeySym keyCode = keyCodeForChar(c);
-  if (std::isupper(c) || XShiftRequiredMap.find(c) != XShiftRequiredMap.end()) {
+  if (std::isupper(c) || xShiftRequiredMap.find(c) != xShiftRequiredMap.end()) {
     flags |= ShiftMask;
   }
-  toggleKeyCode(keyCode, down, flags);
+  toggleKeyCode(env, keyCode, down, flags);
 }
 
-void typeString(const char* str) {
-  Display* display = XGetMainDisplay();
+void typeString(const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
+
+  GET_STRING(info, 0, strstd);
+
+  const char* str = strstd.c_str();
+  Display* display = xGetMainDisplay(env);
   while (*str) {
     KeySym ks;
     bool needShift = false;
 
     // First check our special character map
-    auto it = XSpecialCharacterMap.find(*str);
-    if (it != XSpecialCharacterMap.end()) {
+    auto it = xSpecialCharacterMap.find(*str);
+    if (it != xSpecialCharacterMap.end()) {
       ks = it->second;
-    }
-    else {
+    } else {
       // Then check shift-required map
-      auto shiftIt = XShiftRequiredMap.find(*str);
-      if (shiftIt != XShiftRequiredMap.end()) {
+      auto shiftIt = xShiftRequiredMap.find(*str);
+      if (shiftIt != xShiftRequiredMap.end()) {
         ks = shiftIt->second;
         needShift = true;
-      }
-      else {
+      } else {
         // Finally try normal character conversion
         char buf[2] = {*str, 0};
         ks = XStringToKeysym(buf);
@@ -121,17 +124,13 @@ unsigned int getFlag(napi_env env, napi_value value) {
 
   if (strcmp(buffer, "alt") == 0) {
     flags = Mod1Mask;
-  }
-  else if (strcmp(buffer, "command") == 0 || strcmp(buffer, "win") == 0 || strcmp(buffer, "meta") == 0) {
+  } else if (strcmp(buffer, "command") == 0 || strcmp(buffer, "win") == 0 || strcmp(buffer, "meta") == 0) {
     flags = Mod4Mask;
-  }
-  else if (strcmp(buffer, "control") == 0 || strcmp(buffer, "ctrl") == 0) {
+  } else if (strcmp(buffer, "control") == 0 || strcmp(buffer, "ctrl") == 0) {
     flags = ControlMask;
-  }
-  else if (strcmp(buffer, "shift") == 0) {
+  } else if (strcmp(buffer, "shift") == 0) {
     flags = ShiftMask;
-  }
-  else if (strcmp(buffer, "none") == 0) {
+  } else if (strcmp(buffer, "none") == 0) {
     flags = 0;
   }
 
@@ -139,7 +138,6 @@ unsigned int getFlag(napi_env env, napi_value value) {
 }
 
 unsigned int getAllFlags(napi_env env, napi_value value) {
-  bool is_array;
   unsigned int flags = 0;
 
   uint32_t length;
@@ -159,8 +157,7 @@ unsigned int assignKeyCode(std::string& keyName) {
   if (keyName.length() == 1) {
     return keyCodeForChar(keyName[0]);
   }
-  unsigned int res = 0;
-  KeyNames* kn = key_names;
+  KeyNames* kn = keyNames;
   while (kn->name) {
     if (keyName == kn->name) {
       return kn->key;
@@ -170,44 +167,82 @@ unsigned int assignKeyCode(std::string& keyName) {
   return 0;
 }
 
-Napi::Value _keyTap(const Napi::CallbackInfo& info) {
+void keyTap(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
+  GET_STRING(info, 0, keyName);
+  ASSERT_ARRAY(info, 1);
   unsigned int flags = getAllFlags(env, info[1]);
-  std::string keyName = info[0].As<Napi::String>();
   unsigned int key = assignKeyCode(keyName);
-  toggleKeyCode(key, true, flags);
-  toggleKeyCode(key, false, flags);
-  return env.Undefined();
+  toggleKeyCode(env, key, true, flags);
+  toggleKeyCode(env, key, false, flags);
 }
 
-Napi::Value _keyToggle(const Napi::CallbackInfo& info) {
+void keyToggle(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
 
-  bool down = info[2].As<Napi::Boolean>().Value();
+  GET_STRING(info, 0, keyName);
+  ASSERT_ARRAY(info, 1);
+  GET_BOOL(info, 2, down);
 
   unsigned int flags = getAllFlags(env, info[1]);
 
-  std::string keyName = info[0].As<Napi::String>();
   unsigned int key = assignKeyCode(keyName);
 
-  toggleKeyCode(key, down, flags);
-  return env.Undefined();
+  toggleKeyCode(env, key, down, flags);
 }
 
-Napi::Value _typeString(const Napi::CallbackInfo& info) {
+
+void setKeyboardLayout(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
 
-  std::string str = info[0].As<Napi::String>();
-  typeString(str.c_str());
+  GET_STRING(info, 0, layoutId);
 
-  return env.Undefined();
+  // Try KDE's DBus interface first - query available layouts and validate
+  std::vector<KdeLayout> availableLayouts = getKdeAvailableLayouts();
+
+  if (!availableLayouts.empty()) {
+    // Check if requested layout is available and get its index
+    int layoutIndex = -1;
+    for (size_t i = 0; i < availableLayouts.size(); ++i) {
+      if (availableLayouts[i].code == layoutId) {
+        layoutIndex = i;
+        break;
+      }
+    }
+
+    if (layoutIndex == -1) {
+      // Build error message with available layouts
+      std::string availableList;
+      for (size_t i = 0; i < availableLayouts.size(); ++i) {
+        availableList += availableLayouts[i].code + " (" + availableLayouts[i].displayName + ")";
+        if (i < availableLayouts.size() - 1) availableList += ", ";
+      }
+
+      throw Napi::Error::New(env, "Layout '" + layoutId + "' not found. Available layouts: " + availableList);
+    }
+
+    // Layout is available, try to switch to it by index
+    if (switchToKdeLayout(layoutIndex)) {
+      return;
+    }
+
+    throw Napi::Error::New(env, "Failed to switch to layout '" + layoutId + "' via KDE DBus");
+  }
+
+  // Fallback to direct XKB group switching (works on non-KDE systems or when DBus is unavailable)
+  if (fallbackLayoutSwitch(env)) {
+    return;
+  }
+
+  // If both methods fail, throw error
+  throw Napi::Error::New(env, "Failed to switch keyboard layout. KDE service not available and XKB fallback failed.");
 }
 
 
-Napi::Object keyboard_init(Napi::Env env, Napi::Object exports) {
-  exports.Set("keyTap", Napi::Function::New(env, _keyTap));
-  exports.Set("keyToggle", Napi::Function::New(env, _keyToggle));
-  exports.Set("typeString", Napi::Function::New(env, _typeString));
-  exports.Set("setKeyboardLayout", Napi::Function::New(env, _setKeyboardLayout));
+Napi::Object keyboardInit(Napi::Env env, Napi::Object exports) {
+  exports.Set("keyTap", Napi::Function::New(env, keyTap));
+  exports.Set("keyToggle", Napi::Function::New(env, keyToggle));
+  exports.Set("typeString", Napi::Function::New(env, typeString));
+  exports.Set("setKeyboardLayout", Napi::Function::New(env, setKeyboardLayout));
   return exports;
 }

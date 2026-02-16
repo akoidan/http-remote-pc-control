@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include <map>
 #include <X11/keysymdef.h>
 #include <X11/X.h>
@@ -10,6 +9,6 @@ typedef struct {
   KeySym key;
 } KeyNames;
 
-extern KeyNames key_names[];
-extern std::map<char, KeySym> XShiftRequiredMap;
-extern std::map<char, KeySym> XSpecialCharacterMap;
+extern KeyNames keyNames[];
+extern std::map<char, KeySym> xShiftRequiredMap;
+extern std::map<char, KeySym> xSpecialCharacterMap;

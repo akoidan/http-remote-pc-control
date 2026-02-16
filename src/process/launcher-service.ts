@@ -1,5 +1,12 @@
-import {Injectable, Logger, ServiceUnavailableException} from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  RequestTimeoutException,
+  ServiceUnavailableException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import {spawn} from 'child_process';
+import {LaunchExeRequest} from '@/process/process-dto';
 
 @Injectable()
 export class LauncherService {
@@ -8,11 +15,11 @@ export class LauncherService {
   ) {
   }
 
-  async launchExe(pathToExe: string, args: string[], waitTillFinish: boolean): Promise<number> {
+  async launchExe(data: LaunchExeRequest): Promise<number> {
     return new Promise((resolve, reject) => {
-      this.logger.log(`Launching: \u001b[35m${pathToExe} ${args.join(' ')}`);
+      this.logger.log(`Launching: \u001b[35m${data.path} ${data.arguments!.join(' ')}`);
       try {
-        const process = spawn(pathToExe, args, {
+        const process = spawn(data.path, data.arguments!, {
           detached: true, // Run independently from parent process
           stdio: 'ignore', // Ignore console output
         });
@@ -26,23 +33,32 @@ export class LauncherService {
 
         // Detect if the process exits quickly after starting
         const startupTimeout = setTimeout(() => {
-          this.logger.debug(`Process started successfully: ${pathToExe}`);
-          resolve(process.pid!); // Resolve only after some time has passed without errors
-        }, waitTillFinish ? 60_000 : 300);
+          this.logger.debug(`Process started successfully: ${data.path}`);
+          // eslint-disable-next-line @typescript-eslint/no-use-before-define
+          process.off('close', onClose);
+          if (data.waitTillFinish) {
+            reject(new RequestTimeoutException(`Process ${process.pid} is still running after awaiting ${data.waitTimeout}ms`));
+          } else {
+            resolve(process.pid!);
+          }
+        }, data.waitTimeout);
 
-        process.on('close', (code) => {
+        // eslint-disable-next-line no-inner-declarations
+        function onClose(code: number): void{
           clearTimeout(startupTimeout); // Clear timeout if process exits
           if (code === 0) {
             resolve(process.pid!);
           } else {
-            reject(new ServiceUnavailableException(`Process exit with code ${code}`));
+            reject(new UnprocessableEntityException(`Process exit with code ${code}`));
           }
-        });
+        }
+
+        process.on('close', onClose);
 
         // Detach and allow process to run independently
         process.unref();
       } catch (e) {
-        reject(new ServiceUnavailableException(`${pathToExe} ${args.join(' ')} failed with: ${e.message}`, (e as Error).stack));
+        reject(new ServiceUnavailableException(`${data.path} ${data.arguments!.join(' ')} failed with: ${e.message}`, (e as Error).stack));
       }
     });
   }

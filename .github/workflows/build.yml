@@ -1,0 +1,77 @@
+name: build
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  win32:
+    runs-on: windows-2022
+    permissions: write-all
+    steps:
+      - uses: actions/checkout@v3
+      - name: Restore node_modules cache
+        id: cache-node
+        # DO not create cache on release, only on master
+        uses: actions/cache/restore@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('yarn.lock') }}
+      - uses: actions/setup-node@v6
+        with:
+          package-manager-cache: false
+          node-version: 24
+      - name: Install yarn deps
+        if: steps.cache-node.outputs.cache-hit != 'true'
+        run: yarn install --frozen-lockfile
+
+      - name: Upload node_modules cache
+        if: steps.cache-node.outputs.cache-hit != 'true'
+        # DO not create cache on release, only on master
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('yarn.lock') }}
+  linux:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - name: Restore node_modules cache
+        id: cache-node
+        # DO not create cache on release, only on master
+        uses: actions/cache/restore@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('yarn.lock') }}
+      - uses: actions/setup-node@v6
+        with:
+          package-manager-cache: false
+          node-version: 24
+      - name: Install yarn deps
+        if: steps.cache-node.outputs.cache-hit != 'true'
+        run: yarn install --frozen-lockfile
+
+      - name: Upload node_modules cache
+        if: steps.cache-node.outputs.cache-hit != 'true'
+        # DO not create cache on release, only on master
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('yarn.lock') }}
+
+      - uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: libx11-dev libxtst-dev libxcb-ewmh-dev libxcb1-dev cmake g++ make libdbus-1-dev xvfb openbox libxkbfile-dev x11-xserver-utils
+          version: 1.0
+
+      - name: Build
+        run: yarn build
+      - name: Tests
+        run: yarn test --testPathIgnorePatterns=native-service.spec.ts
+      - name: Upload coverage to Coveralls
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov: coverage/lcov.info

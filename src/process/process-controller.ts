@@ -1,18 +1,11 @@
-import {Body, Controller, Get, Inject, Param, ParseIntPipe, Post} from '@nestjs/common';
+import {Body, Controller, Delete, Get, HttpCode, Inject, Param, ParseIntPipe, Post, Query} from '@nestjs/common';
 import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 import {ProcessService} from '@/process/process-service';
-import {CreateProcessRequestDto} from '@/window/window-dto';
 import {
-  FindExeByNameRequestDto,
-  KillExeByNameRequestDto,
-  KillExeByPidRequestDto,
+  CreateProcessResponseDto,
+  ExecutableNameRequestDto,
   LaunchExeRequestDto,
-  LaunchPidResponse,
-  LaunchPidResponseDto,
-  ProcessIdResponse,
-  ProcessIdResponseDto,
-  WindowHandleResponse,
-  WindowHandleResponseDto,
+  ProcessResponseDto,
 } from '@/process/process-dto';
 import {ExecuteService, IExecuteService} from '@/process/process-model';
 
@@ -26,44 +19,38 @@ export class ProcessController {
   ) {
   }
 
-  @Post('create')
-  @ApiOperation({summary: 'Create process'})
-  @ApiResponse({type: ProcessIdResponseDto})
-  createProcess(@Body() body: CreateProcessRequestDto): ProcessIdResponse {
-    return {pid: this.processService.createProcess(body.path, body.cmd)};
+  @Get(':pid')
+  @ApiOperation({summary: 'Gets process information along with windows attached to it'})
+  @ApiResponse({type: ProcessResponseDto})
+  getProcessInfo(@Param('pid', ParseIntPipe) id: number): ProcessResponseDto {
+    return this.processService.getProcessInfo(id);
   }
 
-  @Get(':pid/main-window')
-  @ApiOperation({summary: 'Get process\' main window'})
-  @ApiResponse({type: WindowHandleResponseDto})
-  getProcessMainWindow(@Param('pid', ParseIntPipe) pid: number): WindowHandleResponse {
-    return {wid: this.processService.getProcessMainWindow(pid)};
+  @Post()
+  @ApiOperation({summary: 'Launches an application'})
+  @ApiResponse({type: CreateProcessResponseDto})
+  async createProcess(@Body() body: LaunchExeRequestDto): Promise<CreateProcessResponseDto> {
+    return this.processService.createProcess(body);
   }
 
-  @Post('launch-exe')
-  @ApiOperation({summary: 'Launch executable'})
-  @ApiResponse({type: LaunchPidResponseDto})
-  async lunchExe(@Body() body: LaunchExeRequestDto): Promise<LaunchPidResponse> {
-    const pid = await this.executionService.launchExe(body.path, body.arguments, body.waitTillFinish);
-    return {pid};
-  }
-
-  @Post('kill-exe-by-name')
+  @Delete()
   @ApiOperation({summary: 'Kill process by name'})
-  async killExeByName(@Body() body: KillExeByNameRequestDto): Promise<void> {
-    await this.executionService.killExeByName(body.name);
+  @HttpCode(204)
+  async killExeByName(@Query() query: ExecutableNameRequestDto): Promise<void> {
+    await this.executionService.killExeByName(query.name);
   }
 
-  @Post('find-pids-by-name')
+  @Get()
   @ApiResponse({type: Number, isArray: true})
-  @ApiOperation({summary: 'Returns processes ID list based on executable name'})
-  async findPidByName(@Body() body: FindExeByNameRequestDto): Promise<number[]> {
-    return this.executionService.findPidByName(body.name);
+  @ApiOperation({summary: 'Searches procceses with specified executable name. Returns list of process ids'})
+  async findPidByName(@Query() query: ExecutableNameRequestDto): Promise<number[]> {
+    return this.executionService.findPidByName(query.name);
   }
 
-  @Post('kill-exe-by-pid')
+  @Delete(':pid')
   @ApiOperation({summary: 'Kill process by PID'})
-  async killExeByPid(@Body() body: KillExeByPidRequestDto): Promise<void> {
-    await this.executionService.killExeByPid(body.pid);
+  @HttpCode(204)
+  async killExeByPid(@Param('pid', ParseIntPipe) pid: number): Promise<void> {
+    await this.executionService.killExeByPid(pid);
   }
 }

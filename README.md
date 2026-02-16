@@ -1,64 +1,66 @@
-# Http Remote PC control
-Allows to remotely control this PC using http api. Events like:
- - Mouse move, click
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/akoidan/http-remote-pc-control/blob/main/LICENSE) [![Coverage](https://coveralls.io/repos/github/akoidan/http-remote-pc-control/badge.svg?branch=main)](https://coveralls.io/github/akoidan/http-remote-pc-control?branch=main) [![Build Status](https://github.com/akoidan/http-remote-pc-control/actions/workflows/release.yaml/badge.svg)](https://github.com/akoidan/http-remote-pc-control/actions/workflows/release.yaml)
+
+# HTTP Remote PC Control
+Allows remote control a PC using HTTP API. Events include:
+ - Mouse movement and clicks
  - Keyboard events
- - Running executabe files or killing executable
- - Operating windows, like focus, resize
+ - Running executable files or terminating processes
+ - Window operations like focus and resize
 
-You can also use [hotkey-hub](https://github.com/akoidan/hotkey-hub) for managing PC via system wide keyboard shortcut on a remote PC.
+You can also use [hotkey-hub](https://github.com/akoidan/hotkey-hub) for managing PC via system-wide keyboard shortcuts on a remote PC.
 
-## Api documentation
-- Check [github pages](https://akoidan.github.io/http-remote-pc-control/) for latest version api specification.
-- For specific version address at `openapi.json` under [releases](https://github.com/akoidan/http-remote-pc-control/releases). You can load this file into openapi tool, e.g. [Swagger Editor](https://editor.swagger.io/)
+## API Documentation
+- Check [GitHub Pages](https://akoidan.github.io/http-remote-pc-control/) for the latest API specification.
+- For specific versions, use `openapi.json` from [releases](https://github.com/akoidan/http-remote-pc-control/releases). You can load this file into OpenAPI tools, e.g. [Swagger Editor](https://editor.swagger.io/)
 
 ## Get started
 
 ### Certificates
-The client server app both rely on [mutual TLS authentication](https://www.cloudflare.com/learning/access-management/what-is-mutual-tls/).
-If you use a package (Ubuntu/Debian/Archlinux) the service will generate certificates for you. No actions are required. For Windows or other Linux distros you can use my helper script to generate certificates with [gen-cert.sh](./gen-cert.sh). Download it and run it with bash.
+The client and server rely on [mutual TLS authentication](https://www.cloudflare.com/learning/access-management/what-is-mutual-tls/).
+If you use a package (Ubuntu/Debian/Arch Linux), the service will generate certificates automatically. No action is required. For Windows or other Linux distributions, use the helper script to generate certificates with [gen-cert.sh](./gen-cert.sh). Download and run it with bash.
 
 ```bash
 bash ./gen-cert.sh all
 ```
-Note that on Windows you need bash, you can either use [git bash](https://git-scm.com/install/windows) or [WSL](https://learn.microsoft.com/en-us/windows/wsl/install)
+Note that on Windows you need bash; you can use either [Git Bash](https://git-scm.com/install/windows) or [WSL](https://learn.microsoft.com/en-us/windows/wsl/install).
 
-You have to:
-- Copy ./gencert/server into ./certs directory where app executable is
-- Copy ./gencert/client into ./certs on the remote PC from where you use the api. The client PC should not validate domain name.
+You must:
+- Copy `./gencert/server` into the `./certs` directory where the app executable is located
+- Copy `./gencert/client` into the `./certs` directory on the remote PC from where you use the API. The client PC should not validate domain names.
 
 ### Ubuntu
- - Install dependencies `sudo apt-get install libxcb-ewmh2 libxtst6 libxcb-ewmh2 libxcb1 libdbus-1-3` if you dont have them yet 
+ - Install dependencies: `sudo apt-get install --no-install-recommends libxcb-ewmh2 libxtst6 libxcb-ewmh2 libxcb1 libdbus-1-3`
  - Download `http-remote-pc-control.deb` from [releases](https://github.com/akoidan/http-remote-pc-control/releases).
- - Install the package `sudo dpkg -i http-remote-pc-control.deb`
- - Start the service with the same user as logged in X `systemctl --user start http-remote-pc-control`
+ - Install the package: `sudo dpkg -i http-remote-pc-control.deb`
+ - Start the service with the same user as the logged-in X session: `systemctl --user start http-remote-pc-control`
  - You will find certificates in `~/.local/share/http-remote-pc-control/certs`
- - You will openapi documentation in  `/usr/share/http-remote-pc-control/openapi.json`
- - To view logs check `journalctl --user -o cat -u http-remote-pc-control -f`
+ - You will find OpenAPI documentation in `/usr/share/http-remote-pc-control/openapi.json`
+ - To view logs, run: `journalctl --user -o cat -u http-remote-pc-control -f`
 
-#### Archlinux
- - Install the package with `yay` or `paru` from AUR `yay -S http-remote-pc-control`
- - Start the service with the same user as logged in X `systemctl --user start http-remote-pc-control`
+#### Arch Linux
+ - Install the package with `yay` or `paru` from AUR: `yay -S http-remote-pc-control`
+ - Start the service with the same user as the logged-in X session: `systemctl --user start http-remote-pc-control`
  - You will find certificates in `~/.local/share/http-remote-pc-control/certs`
- - You will openapi documentation in  `/usr/share/http-remote-pc-control/openapi.json`
- - To view logs check `journalctl --user -o cat -u http-remote-pc-control -f`
+ - You will find OpenAPI documentation in `/usr/share/http-remote-pc-control/openapi.json`
+ - To view logs, run: `journalctl --user -o cat -u http-remote-pc-control -f`
 
-#### Other Linux distro
-- You need X11 server + XC Binding  (libX11, libXext, xcb-util-wm, xorg-setxkbmap)
+#### Other Linux Distributions
+- You need an X11 server + XCB bindings (libX11, libXext, xcb-util-wm, xorg-setxkbmap)
 - Download `http-remote-pc-control.elf` from [releases](https://github.com/akoidan/http-remote-pc-control/releases).
-- Ensure directory with the executalbe, or project direcotry contains `certs` directory with certificates
-- run `chmod +x http-remote-pc-control.elf && ./http-remote-pc-control.elf 5000`
-- If you need systemd unit, check [http-remote-pc-control.service](./packages/http-remote-pc-control.service)
+- Ensure the directory with the executable or project directory contains a `certs` directory with certificates
+- Run: `chmod +x http-remote-pc-control.elf && ./http-remote-pc-control.elf 5000`
+- If you need a systemd unit, check [http-remote-pc-control.service](./packages/http-remote-pc-control.service)
 
 #### Windows
  - Download `http-remote-pc-control.exe` from [releases](https://github.com/akoidan/http-remote-pc-control/releases).
- - If Antivirus deletes a file, you can allow it in **Virus & threat protection** -> **Protection History** -> Expaned recently blocked threat and allow it
- - Ensure directory with the executalbe, or project direcotry contains `certs` directory with certificates (check step above)
- - Run exe files as Administrator. 
- - If windows antivirus complains about security Open **Virus & threat protection** -> **Virus & threat protection settings** -> **Exclusions Add or remove exclusions** -> **Add an exclusion**. 
- - If it crashes, open powershell and run exe file from it, it's a CLI app.
+ - If an antivirus deletes the file, you can allow it in **Virus & threat protection** → **Protection History** → Expand the recently blocked threat and allow it.
+ - Ensure the directory with the executable or project directory contains a `certs` directory with certificates (see steps above).
+ - Run the executable as Administrator.
+ - If Windows antivirus complains about security, open **Virus & threat protection** → **Virus & threat protection settings** → **Exclusions** → **Add or remove exclusions** → **Add an exclusion**.
+ - If it crashes, open PowerShell and run the executable from it; it's a CLI app.
 
-#### Autostart on Windows OS
-This program has to be started as Admin so it has permision to send keystrokes or move mouse. Add a script to autostart in Windows with admin petrmissions: Replace path to your http-remote-pc-control.exe:
+#### Autostart on Windows
+This program must be started as Administrator so it has permission to send keystrokes or move the mouse. Add a script to autostart in Windows with admin permissions. Replace the path with your http-remote-pc-control.exe:
 ```shell
 @echo off
 setlocal
@@ -79,8 +81,8 @@ echo Failed to add program to startup.
 pause
 ```
 
-## Client example
-You can call the api programmaticaly via https my providing client private key, CA certificate and client certificate that was signed with CA certificate. Server uses certificate that was also signed by CA
+## Client Example
+You can call the API programmatically via HTTPS by providing the client private key, CA certificate, and client certificate that was signed with the CA certificate. The server uses a certificate that was also signed by the CA.
 
 ```typescript
 import {
@@ -105,7 +107,7 @@ import { readFile } from 'fs/promises';
     path: '/app/ping',
     method: 'GET',
     header: {
-      'x-request-id': 'r2d2' // unique request id, can be ommited
+      'x-request-id': 'r2d2' // unique request ID, can be omitted
     },
   }, (res) => {
     let data = '';
@@ -123,16 +125,16 @@ import { readFile } from 'fs/promises';
 ```
 
 ### NAT
-If your current PC doesn't have a static IP or under [NAT](https://en.wikipedia.org/wiki/Network_address_translation), you can use VPN or some 3rd party service like [ngrok](https://ngrok.com/) [localtunel](https://github.com/localtunnel/localtunnel) or [cloudflared](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/) to expose it to the world. Example with ngrock:
+If your current PC doesn't have a static IP or is behind [NAT](https://en.wikipedia.org/wiki/Network_address_translation), you can use a VPN or third-party services like [ngrok](https://ngrok.com/), [localtunnel](https://github.com/localtunnel/localtunnel), or [cloudflared](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/) to expose it to the internet. Example with ngrok:
 ```bash
 ngrok http 5000
 ```
 
 ### Help
-App allows minimal configuration, check the following command for options
+The app allows minimal configuration. Check the following command for options:
 ```bash
 ./http-remote-pc-control --help
 ```
 
-## Develop locally
+## Develop Locally
 Check [DEVELOPMENT.md](DEVELOPMENT.md)

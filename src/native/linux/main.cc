@@ -2,15 +2,17 @@
 #include "./headers/window.h"
 #include "./headers/keypress.h"
 #include "./headers/mouse.h"
+#include "./headers/monitor.h"
+#include "./headers/process.h"
 
-
-Napi::Object Init(Napi::Env env, Napi::Object exports) {
-  // Initialize window management
-  window_init(env, exports);
-  keyboard_init(env, exports);
-  mouse_init(env, exports);
+Napi::Object init(Napi::Env env, Napi::Object exports) {
+  windowInit(env, exports);
+  keyboardInit(env, exports);
+  mouseInit(env, exports);
+  monitorInit(env, exports);
+  processInit(env, exports);
 
   return exports;
 }
 
-NODE_API_MODULE(NODE_GYP_MODULE_NAME, Init)
+NODE_API_MODULE(NODE_GYP_MODULE_NAME, init)

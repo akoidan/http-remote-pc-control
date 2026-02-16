@@ -1,22 +1,24 @@
 #include "./headers/display.h"
+#include "./headers/logger.h"
 #include <iostream>
+#include <napi.h>
 
 Display* mainDisplay = NULL;
 int registered = 0;
 char* displayName = NULL;
 int hasDisplayNameChanged = 0;
 
-void XCloseMainDisplay(void) {
+void xCloseMainDisplay(void) {
   if (mainDisplay != NULL) {
     XCloseDisplay(mainDisplay);
     mainDisplay = NULL;
   }
 }
 
-Display* XGetMainDisplay(void) {
+Display* xGetMainDisplay(Napi::Env env) {
   /* Close the display if displayName has changed */
   if (hasDisplayNameChanged) {
-    XCloseMainDisplay();
+    xCloseMainDisplay();
     hasDisplayNameChanged = 0;
   }
 
@@ -25,10 +27,10 @@ Display* XGetMainDisplay(void) {
     mainDisplay = XOpenDisplay(displayName);
 
     if (mainDisplay == NULL) {
-      fputs("Could not open main display\n", stderr);
+      throw Napi::Error::New(env, "Couldn't open main display");
     }
-    else if (!registered) {
-      atexit(&XCloseMainDisplay);
+    if (!registered) {
+      atexit(&xCloseMainDisplay);
       registered = 1;
     }
   }
