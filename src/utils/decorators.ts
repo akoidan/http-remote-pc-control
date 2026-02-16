@@ -7,12 +7,11 @@ interface HasLogger {
 }
 
 export function Safe400(supported?: NodeJS.Platform[]) {
-  // eslint-disable-next-line
-  return function(
-      target: HasLogger,
-      propertyKey: string | symbol,
-      descriptor: TypedPropertyDescriptor<(...args: unknown[]) => unknown>
-  ) {
+  return function safe400Inner(
+    target: HasLogger,
+    propertyKey: string | symbol,
+    descriptor: TypedPropertyDescriptor<(...args: unknown[]) => unknown>
+  ): void {
     const originalMethod = descriptor.value!;
     if (originalMethod.constructor.name === 'Function') {
       // eslint-disable-next-line func-names
