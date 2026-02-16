@@ -1,4 +1,10 @@
-import {Injectable, Logger, ServiceUnavailableException} from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  RequestTimeoutException,
+  ServiceUnavailableException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import {spawn} from 'child_process';
 import {LaunchExeRequest} from '@/process/process-dto';
 
@@ -28,17 +34,26 @@ export class LauncherService {
         // Detect if the process exits quickly after starting
         const startupTimeout = setTimeout(() => {
           this.logger.debug(`Process started successfully: ${data.path}`);
-          resolve(process.pid!); // Resolve only after some time has passed without errors
-        }, data.waitTillFinish ? 60_000 : 300);
+          // eslint-disable-next-line @typescript-eslint/no-use-before-define
+          process.off('close', onClose);
+          if (data.waitTillFinish) {
+            reject(new RequestTimeoutException(`Process ${process.pid} is still running after awaiting ${data.waitTimeout}ms`));
+          } else {
+            resolve(process.pid!);
+          }
+        }, data.waitTimeout);
 
-        process.on('close', (code) => {
+        // eslint-disable-next-line no-inner-declarations
+        function onClose(code: number): void{
           clearTimeout(startupTimeout); // Clear timeout if process exits
           if (code === 0) {
             resolve(process.pid!);
           } else {
-            reject(new ServiceUnavailableException(`Process exit with code ${code}`));
+            reject(new UnprocessableEntityException(`Process exit with code ${code}`));
           }
-        });
+        }
+
+        process.on('close', onClose);
 
         // Detach and allow process to run independently
         process.unref();

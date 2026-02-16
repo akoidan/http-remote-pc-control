@@ -37,7 +37,13 @@ const createProcessResponseSchema = z.object({
 const launchExeRequestSchema = z.object({
   path: z.string().describe('Path to executable'),
   arguments: z.array(z.string()).describe('Command line arguments'),
-  waitTillFinish: z.boolean().describe('Wait for process to finish'),
+  waitTillFinish: z.boolean().default(false).optional()
+    .describe('If set to true, after this timeout if process not finished error will be thrown.'),
+  waitTimeout: z.number().default(300).optional()
+    .describe('Blocks current request execution for this time in miliseconds. ' +
+      'If waitTillFinish = false awaits this timeout before getting process id. ' +
+      'If waitTillFinish = true awaits maximum of this timeout to allow process to finish. ' +
+      'If process failed to finish before it, throws error.'),
 });
 
 const executableNameSchema = z.object({
