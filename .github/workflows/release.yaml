@@ -79,17 +79,10 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      - name: Cache apt packages
-        uses: actions/cache/restore@v4
+      - uses: awalsh128/cache-apt-pkgs-action@latest
         with:
-          path: |
-            /var/cache/apt/archives
-            /var/lib/apt/lists
-          key: ${{ runner.os }}-apt-1
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends libx11-dev libxtst-dev libxcb-ewmh-dev libxcb1-dev cmake g++ make libdbus-1-dev
+          packages: libx11-dev libxtst-dev libxcb-ewmh-dev libxcb1-dev cmake g++ make libdbus-1-dev
+          version: 1.0
 
       - uses: actions/setup-node@v6
         with:
@@ -187,3 +180,4 @@ jobs:
           asset_path: packages/debian/http-remote-pc-control-amd64.deb
           asset_name: http-remote-pc-control.deb
           asset_content_type: application/vnd.debian.binary-package
+

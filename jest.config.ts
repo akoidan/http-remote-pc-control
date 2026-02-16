@@ -6,6 +6,11 @@ const config: Config.InitialOptions = {
   roots: ['<rootDir>/tests'],
   maxWorkers: 1,
   modulePaths: ['.'],
+  collectCoverage: true,
+  coverageReporters: ["lcov", "text-summary"],
+  collectCoverageFrom: [
+    'src/**/*.ts',
+  ],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
   },

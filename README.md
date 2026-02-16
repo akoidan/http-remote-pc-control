@@ -1,3 +1,5 @@
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/akoidan/http-remote-pc-control/blob/main/LICENSE) [![Coverage](https://coveralls.io/repos/github/akoidan/http-remote-pc-control/badge.svg?branch=main)](https://coveralls.io/github/akoidan/http-remote-pc-control?branch=main) [![Build Status](https://github.com/akoidan/http-remote-pc-control/actions/workflows/release.yaml/badge.svg?branch=main)](https://github.com/akoidan/http-remote-pc-control/actions/workflows/release.yaml)
+
 # Http Remote PC control
 Allows to remotely control this PC using http api. Events like:
  - Mouse move, click

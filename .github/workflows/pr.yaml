@@ -92,18 +92,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Cache apt packages
-        uses: actions/cache/restore@v4
+      - uses: awalsh128/cache-apt-pkgs-action@latest
         with:
-          path: |
-            /var/cache/apt/archives
-            /var/lib/apt/lists
-          key: ${{ runner.os }}-apt-1
-
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends libx11-dev libxtst-dev libxcb-ewmh-dev libxcb1-dev cmake g++ make libdbus-1-dev xvfb openbox libxkbfile-dev x11-xserver-utils
+          packages: libx11-dev libxtst-dev libxcb-ewmh-dev libxcb1-dev cmake g++ make libdbus-1-dev xvfb openbox libxkbfile-dev x11-xserver-utils
+          version: 1.0
 
       - uses: actions/setup-node@v6
         with:
@@ -140,3 +132,4 @@ jobs:
           setxkbmap -print
           yarn test
           "
+

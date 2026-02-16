@@ -1,8 +1,9 @@
-name: cache
+name: build
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, develop ]
+  workflow_dispatch: {}
 
 jobs:
   win32:
@@ -16,10 +17,8 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: node_modules
-          lookup-only: true
           key: ${{ runner.os }}-node-modules-${{ hashFiles('yarn.lock') }}
       - uses: actions/setup-node@v6
-        if: steps.cache-node.outputs.cache-hit != 'true'
         with:
           package-manager-cache: false
           node-version: 24
@@ -45,10 +44,8 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: node_modules
-          lookup-only: true
           key: ${{ runner.os }}-node-modules-${{ hashFiles('yarn.lock') }}
       - uses: actions/setup-node@v6
-        if: steps.cache-node.outputs.cache-hit != 'true'
         with:
           package-manager-cache: false
           node-version: 24
@@ -64,16 +61,18 @@ jobs:
           path: |
             node_modules
           key: ${{ runner.os }}-node-modules-${{ hashFiles('yarn.lock') }}
-      - name: Cache apt packages
-        id: ubuntu-cache
-        uses: actions/cache@v4
+
+      - uses: awalsh128/cache-apt-pkgs-action@latest
         with:
-          path: |
-            /var/cache/apt/archives
-            /var/lib/apt/lists
-          key: ${{ runner.os }}-apt-1
-      - name: Install dependencies
-        if: steps.ubuntu-cache.outputs.cache-hit != 'true'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends libx11-dev libxtst-dev libxcb-ewmh-dev libxcb1-dev cmake g++ make libdbus-1-dev xvfb openbox libxkbfile-dev x11-xserver-utils
+          packages: libx11-dev libxtst-dev libxcb-ewmh-dev libxcb1-dev cmake g++ make libdbus-1-dev xvfb openbox libxkbfile-dev x11-xserver-utils
+          version: 1.0
+
+      - name: Build
+        run: yarn build
+      - name: Tests
+        run: yarn test
+      - name: Upload coverage to Coveralls
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov: coverage/lcov.info
