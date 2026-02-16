@@ -123,10 +123,17 @@ jobs:
         run: |
           TAG=${{ github.event.release.tag_name }}
           VERSION=$(jq -r '.version' package.json)
+          if [[ "$VERSION" == *"-"* ]]; then
+            echo "IS_RELEASE=false" >> $GITHUB_ENV
+            echo "Ommiting releasing beta/alpha version to AUR"
+          else
+            echo "IS_RELEASE=true" >> $GITHUB_ENV
+          fi
           sed -i "s/^pkgver=.*/pkgver=${VERSION}/" ./packages/arch/PKGBUILD
           sed -i "s/^tag=.*/tag=${TAG}/" ./packages/arch/PKGBUILD
 
       - name: Publish to AUR
+        if: env.IS_RELEASE == 'true'
         uses: KSXGitHub/github-actions-deploy-aur@v4.1.1
         with:
           pkgname: http-remote-pc-control
