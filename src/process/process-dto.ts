@@ -36,7 +36,7 @@ const createProcessResponseSchema = z.object({
 
 const launchExeRequestSchema = z.object({
   path: z.string().describe('Path to executable'),
-  arguments: z.array(z.string()).describe('Command line arguments'),
+  arguments: z.array(z.string()).default([]).optional().describe('Command line arguments'),
   waitTillFinish: z.boolean().default(false).optional()
     .describe('If set to true, after this timeout if process not finished error will be thrown.'),
   waitTimeout: z.number().default(300).optional()
