@@ -17,9 +17,9 @@ export class LauncherService {
 
   async launchExe(data: LaunchExeRequest): Promise<number> {
     return new Promise((resolve, reject) => {
-      this.logger.log(`Launching: \u001b[35m${data.path} ${data.arguments.join(' ')}`);
+      this.logger.log(`Launching: \u001b[35m${data.path} ${data.arguments!.join(' ')}`);
       try {
-        const process = spawn(data.path, data.arguments, {
+        const process = spawn(data.path, data.arguments!, {
           detached: true, // Run independently from parent process
           stdio: 'ignore', // Ignore console output
         });
@@ -58,7 +58,7 @@ export class LauncherService {
         // Detach and allow process to run independently
         process.unref();
       } catch (e) {
-        reject(new ServiceUnavailableException(`${data.path} ${data.arguments.join(' ')} failed with: ${e.message}`, (e as Error).stack));
+        reject(new ServiceUnavailableException(`${data.path} ${data.arguments!.join(' ')} failed with: ${e.message}`, (e as Error).stack));
       }
     });
   }
