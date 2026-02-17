@@ -21,6 +21,7 @@ export class CertService {
   ) {
     this.privateKeyPath = path.join(this.certDir, 'key.pem');
     this.certificatePath = path.join(this.certDir, 'cert.pem');
+    this.caCertificatePath = path.join(this.certDir, 'ca-cert.pem');
     this.caRoot = path.join(this.certDir, 'ca');
     this.caRootKey = path.join(this.caRoot, 'ca-key.pem');
     this.caRootCert = path.join(this.caRoot, 'ca-cert.pem');
