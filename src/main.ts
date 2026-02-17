@@ -12,7 +12,7 @@ import {asyncLocalStorage} from '@/asyncstore/async-storage-value';
 import type {LogLevel} from '@nestjs/common';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-async function parseArgs(): Promise<{port: number, certDir: string, logLevel: string}> {
+async function parseArgs(): Promise<{port: number, certDir: string, logLevel: string, generate: boolean, generateClient: string}> {
   const defaultCertDir = path.join(process.cwd(), 'certs');
   const logLevel: LogLevel[] = ['log' , 'error' , 'warn' , 'debug' , 'verbose' , 'fatal'] as LogLevel[];
   return yargs(process.argv.slice(2))
@@ -26,6 +26,15 @@ async function parseArgs(): Promise<{port: number, certDir: string, logLevel: st
         default: 5000,
         description: 'HTTPS port that this app will listen for remote control',
       })
+      .option('generate', {
+        type: 'boolean',
+        default: false,
+        description: 'Generates certificates in the directory if they are missing',
+      })
+      .option('generate-client', {
+        type: 'string',
+        description: 'Generates a directory with specified name with client certificates',
+      })
       .option('log-level', {
         choices: logLevel,
         default: 'log',
@@ -36,6 +45,7 @@ async function parseArgs(): Promise<{port: number, certDir: string, logLevel: st
         default: defaultCertDir,
         description: 'Directory that contains key.pem, cert.pem, ca-cert.pem for MTLS',
       })
+      .conflicts('generate', 'generate-client')
       .parse();
 }
 
@@ -45,7 +55,7 @@ asyncLocalStorage.run(new Map<string, string>().set('comb', 'init'), () => {
   const packageJson: string = require('../package.json').version;
   logger.log(`Booting http-remote-pc-control ${packageJson}`);
   (async function startApp(): Promise<void> {
-    const {port, certDir, logLevel} = await parseArgs();
+    const {port, certDir, logLevel, generate, generateClient} = await parseArgs();
     logger.setLogLevel(logLevel as LogLevel);
     
     const os = platform();
@@ -58,7 +68,10 @@ asyncLocalStorage.run(new Map<string, string>().set('comb', 'init'), () => {
         {logger},
     );
     const certs = mtls.get(CertService);
-    await certs.checkFilesExist();
+    if (generate || generateClient) {
+      certs.checkCertExist()
+    }
+    await certs.checkCertExist();
     const [key, cert, ca] = await Promise.all([certs.getPrivateKey(), certs.getCert(), certs.getCaCert()]);
     await mtls.close();
     const app = await NestFactory.create(AppModule, {
@@ -75,8 +88,18 @@ asyncLocalStorage.run(new Map<string, string>().set('comb', 'init'), () => {
     logger.log(`Listening port ${port}`);
     await app.listen(port);
   })().catch((err: unknown) => {
-    logger.error(err as (string | Error), (err as Error)?.stack);
-    process.exit(98);
+    logger.fatal(err as (string | Error), (err as Error)?.stack);
+    
+    // Wait for user input before exiting
+    process.stdin.setRawMode(true);
+    process.stdin.resume();
+    process.stdin.setEncoding('utf8');
+    
+    logger.log('Press any key to exit...');
+    
+    process.stdin.once('data', () => {
+      process.exit(98);
+    });
   });
 });
 
