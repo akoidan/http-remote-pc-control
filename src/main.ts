@@ -13,8 +13,7 @@ import type {LogLevel} from '@nestjs/common';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 async function parseArgs(): Promise<{port: number, certDir: string, logLevel: string}> {
-  const isNodeJs = process.execPath.endsWith('node') || process.execPath.endsWith('node.exe');
-  const defaultCertDir = path.join(isNodeJs ? process.cwd() : path.dirname(process.execPath), 'certs');
+  const defaultCertDir = path.join(process.cwd(), 'certs');
   const logLevel: LogLevel[] = ['log' , 'error' , 'warn' , 'debug' , 'verbose' , 'fatal'] as LogLevel[];
   return yargs(process.argv.slice(2))
       .strict()
