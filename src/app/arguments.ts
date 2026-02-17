@@ -5,6 +5,7 @@ import type {LogLevel} from '@nestjs/common';
 import yargs from 'yargs';
 import type {CliArgs} from '@/app/app-model';
 
+// eslint-disable-next-line max-lines-per-function
 async function parseArgs(): Promise<CliArgs> {
   const defaultCertDir = path.join(process.cwd(), 'certs');
   const logLevel: LogLevel[] = ['log', 'error', 'warn', 'debug', 'verbose', 'fatal'] as LogLevel[];
@@ -21,18 +22,18 @@ async function parseArgs(): Promise<CliArgs> {
     })
     .option('generate', {
       type: 'boolean',
-      default: false,
+      // eslint-disable-next-line sonarjs/no-duplicate-string
       conflicts: 'create-client-tls',
       description: 'Generates certificates in the directory if they are missing',
     })
     .option('if-missing', {
       type: 'boolean',
-      default: false,
       implies: 'generate',
       description: 'Do not fail on "generate" if certificates exists already. Generate only if they are missing',
     })
     .option('create-client-tls', {
       type: 'string',
+      conflicts: 'generate',
       description: 'Generates a directory with specified name with client certificates',
     })
     .option('log-level', {
@@ -45,10 +46,11 @@ async function parseArgs(): Promise<CliArgs> {
       default: defaultCertDir,
       description: 'Directory that contains key.pem, cert.pem, ca-cert.pem for MTLS',
     })
-    .option('cli', {
-      type: 'boolean',
-      default: false,
-      description: 'If set to false (by default) the application on fail will await for user input. Otherwise it just fails instantly',
+    .check((argv) => {
+      if (argv['create-client-tls'] === '') {
+        throw new Error('--create-client-tls requires a non-empty argument');
+      }
+      return true;
     })
     .parse();
 }

@@ -15,14 +15,11 @@ asyncLocalStorage.run(new Map<string, string>().set('comb', 'init'), () => {
   const logger = new ConsoleLogger(asyncLocalStorage);
   // eslint-disable-next-line
   const packageJson: string = require('../package.json').version;
-  let cliCache = false;
   logger.log(`Booting http-remote-pc-control ${packageJson}`);
 
   function procesError(err: unknown): void {
     logger.fatal(err as (string | Error), (err as Error)?.stack);
-    if (cliCache) {
-      process.exit(1);
-    } else {
+    if (process.platform === 'win32') {
       // Wait for user input before exiting
       process.stdin.setRawMode(true);
       process.stdin.resume();
@@ -31,13 +28,13 @@ asyncLocalStorage.run(new Map<string, string>().set('comb', 'init'), () => {
       process.stdin.once('data', () => {
         process.exit(1);
       });
+    } else {
+      process.exit(1);
     }
   }
 
   (async function startApp(): Promise<void> {
     const args = await parseArgs();
-    console.log(JSON.stringify(args));
-    cliCache = args.cli;
     logger.setLogLevel(args.logLevel as LogLevel);
 
     const os = platform();
@@ -51,11 +48,11 @@ asyncLocalStorage.run(new Map<string, string>().set('comb', 'init'), () => {
     );
     const certs = mtls.get(CertService);
     if (args.generate) {
-      await certs.generate(args.ifMissing);
+      await certs.generate(Boolean(args.ifMissing));
       return;
     }
-    if (args.createClientTLs) {
-      await certs.generateClient(args.createClientTLs);
+    if (args.createClientTls) {
+      await certs.generateClient(args.createClientTls);
       return;
     }
     await certs.checkCertExist();

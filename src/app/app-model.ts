@@ -5,11 +5,10 @@ interface AppVersion {
 interface CliArgs {
   port: number;
   certDir: string;
-  cli: boolean;
   logLevel: string;
-  generate: boolean;
-  createClientTLs?: string;
-  ifMissing: boolean;
+  generate?: boolean;
+  createClientTls?: string;
+  ifMissing?: boolean;
 }
 
 export type {AppVersion, CliArgs};
