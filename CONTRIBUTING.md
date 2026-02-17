@@ -89,3 +89,11 @@ You need to provide **two include directories**:
 - **N-API headers**
     - Example: `.../node_modules/node-addon-api`
     - Contains `napi.h` and related files.  
+
+
+## Test
+There are nodejs tests and native (napi) tests. Both will run upon 
+```bash
+yarn test
+```
+Mouse move test could fail if you move mouse during the test. 
