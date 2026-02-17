@@ -137,4 +137,4 @@ The app allows minimal configuration. Check the following command for options:
 ```
 
 ## Develop Locally
-Check [DEVELOPMENT.md](DEVELOPMENT.md)
+Check [CONTRIBUTING.md](CONTRIBUTING.md)
