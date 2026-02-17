@@ -11,10 +11,19 @@ import {ConsoleLogger} from '@/app/console-logger';
 import {asyncLocalStorage} from '@/asyncstore/async-storage-value';
 import type {LogLevel} from '@nestjs/common';
 
+interface CliArgs {
+  port: number,
+  certDir: string,
+  logLevel: string,
+  generate: boolean,
+  generateClient?: string,
+  ifMissing: boolean
+}
+
 // eslint-disable-next-line @typescript-eslint/naming-convention
-async function parseArgs(): Promise<{port: number, certDir: string, logLevel: string, generate: boolean, generateClient: string}> {
+async function parseArgs(): Promise<CliArgs> {
   const defaultCertDir = path.join(process.cwd(), 'certs');
-  const logLevel: LogLevel[] = ['log' , 'error' , 'warn' , 'debug' , 'verbose' , 'fatal'] as LogLevel[];
+  const logLevel: LogLevel[] = ['log', 'error', 'warn', 'debug', 'verbose', 'fatal'] as LogLevel[];
   return yargs(process.argv.slice(2))
       .strict()
       .scriptName('http-remote-pc-control')
@@ -31,6 +40,11 @@ async function parseArgs(): Promise<{port: number, certDir: string, logLevel: st
         default: false,
         description: 'Generates certificates in the directory if they are missing',
       })
+      .option('if-missing', {
+        type: 'boolean',
+        default: false,
+        description: 'Do not fail on "generate" if certificates exists already. Generate only if they are missing',
+      })
       .option('generate-client', {
         type: 'string',
         description: 'Generates a directory with specified name with client certificates',
@@ -45,6 +59,7 @@ async function parseArgs(): Promise<{port: number, certDir: string, logLevel: st
         default: defaultCertDir,
         description: 'Directory that contains key.pem, cert.pem, ca-cert.pem for MTLS',
       })
+      .implies('if-missing', 'generate')
       .conflicts('generate', 'generate-client')
       .parse();
 }
@@ -55,9 +70,9 @@ asyncLocalStorage.run(new Map<string, string>().set('comb', 'init'), () => {
   const packageJson: string = require('../package.json').version;
   logger.log(`Booting http-remote-pc-control ${packageJson}`);
   (async function startApp(): Promise<void> {
-    const {port, certDir, logLevel, generate, generateClient} = await parseArgs();
+    const {port, certDir, logLevel, generate, generateClient, ifMissing} = await parseArgs();
     logger.setLogLevel(logLevel as LogLevel);
-    
+
     const os = platform();
     if (os === 'win32') {
       // otherwise it will stop accepting http
@@ -68,8 +83,13 @@ asyncLocalStorage.run(new Map<string, string>().set('comb', 'init'), () => {
         {logger},
     );
     const certs = mtls.get(CertService);
-    if (generate || generateClient) {
-      certs.checkCertExist()
+    if (generate) {
+      await certs.generate(ifMissing);
+      return;
+    }
+    if (generateClient) {
+      await certs.generateClient(generateClient);
+      return;
     }
     await certs.checkCertExist();
     const [key, cert, ca] = await Promise.all([certs.getPrivateKey(), certs.getCert(), certs.getCaCert()]);
@@ -89,14 +109,14 @@ asyncLocalStorage.run(new Map<string, string>().set('comb', 'init'), () => {
     await app.listen(port);
   })().catch((err: unknown) => {
     logger.fatal(err as (string | Error), (err as Error)?.stack);
-    
+
     // Wait for user input before exiting
     process.stdin.setRawMode(true);
     process.stdin.resume();
     process.stdin.setEncoding('utf8');
-    
+
     logger.log('Press any key to exit...');
-    
+
     process.stdin.once('data', () => {
       process.exit(98);
     });

@@ -25,6 +25,14 @@ export class CertService {
     this.caRootCert = path.join(this.caRoot, 'ca-cert.pem');
   }
 
+  public async generate(onlyIfMissing: boolean) {
+
+  }
+
+  public async generateClient(client: string) {
+
+  }
+
   private async isFileAccessError(fileList: string[]): Promise<string|null> {
     this.logger.debug(`Checking file exists ${JSON.stringify(fileList)}`);
     return Promise.all(fileList.map(async(file) => access(file)))
@@ -41,7 +49,8 @@ export class CertService {
   public async checkWriteAccessAvailable(dirPath: string): Promise<boolean> {
     try {
       // eslint-disable-next-line no-bitwise
-      await access(dirPath, constants.F_OK | constants.W_OK)
+      await access(dirPath, constants.F_OK | constants.W_OK);
+      return true;
     } catch (e) {
       return false;
     }
@@ -52,11 +61,15 @@ export class CertService {
   }
 
   public async checkCertExist(): Promise<void> {
-    const fileList = [this.privateKeyPath, this.certificatePath, this.caCertificatePath];
-    const error = await this.isFileAccessError(fileList);
+    const error = await this.getCertError();
     if (error) {
       throw Error(error);
     }
+  }
+
+  public async getCertError(): Promise<string|null> {
+    const fileList = [this.privateKeyPath, this.certificatePath, this.caCertificatePath];
+    return this.isFileAccessError(fileList);
   }
 
   public async getPrivateKey(): Promise<string> {
