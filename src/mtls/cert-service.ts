@@ -10,6 +10,7 @@ export class CertService {
   private readonly privateKeyPath: string;
   private readonly certificatePath: string;
   private readonly caCertificatePath: string;
+  private readonly caCertName = 'ca-cert.pem';
   private readonly caRoot: string;
   private readonly caRootKey: string;
   private readonly caRootCert: string;
@@ -21,11 +22,12 @@ export class CertService {
   ) {
     this.privateKeyPath = path.join(this.certDir, 'key.pem');
     this.certificatePath = path.join(this.certDir, 'cert.pem');
-    this.caCertificatePath = path.join(this.certDir, 'ca-cert.pem');
+    this.caCertificatePath = path.join(this.certDir, this.caCertName);
     this.caRoot = path.join(this.certDir, 'ca');
     this.caRootKey = path.join(this.caRoot, 'ca-key.pem');
-    this.caRootCert = path.join(this.caRoot, 'ca-cert.pem');
+    this.caRootCert = path.join(this.caRoot, this.caCertName);
   }
+
 
   public async generate(onlyIfMissing: boolean): Promise<void> {
     const caExists = await this.checkCaExist();
@@ -73,7 +75,7 @@ export class CertService {
     await Promise.all([
       writeFile(path.join(clientDir, 'key.pem'), clientData.key, 'utf8'),
       writeFile(path.join(clientDir, 'cert.pem'), clientData.cert, 'utf8'),
-      writeFile(path.join(clientDir, 'ca-cert.pem'), clientData.caCert, 'utf8'),
+      writeFile(path.join(clientDir, this.caCertName), clientData.caCert, 'utf8'),
     ]);
     this.logger.log(`Created client: ${path.join(clientDir, 'key.pem')}, ${path.join(clientDir, 'cert.pem')}`);
   }
@@ -110,7 +112,7 @@ export class CertService {
     await Promise.all([
       writeFile(path.join(clientDir, 'key.pem'), clientData.key, 'utf8'),
       writeFile(path.join(clientDir, 'cert.pem'), clientData.cert, 'utf8'),
-      writeFile(path.join(clientDir, 'ca-cert.pem'), clientData.caCert, 'utf8'),
+      writeFile(path.join(clientDir, this.caCertName), clientData.caCert, 'utf8'),
     ]);
 
     this.logger.log(`Created ${path.join(clientDir, 'key.pem')} ${path.join(clientDir, 'cert.pem')}`);
@@ -146,7 +148,7 @@ export class CertService {
     const clientFiles = [
       path.join(clientDir, 'key.pem'),
       path.join(clientDir, 'cert.pem'),
-      path.join(clientDir, 'ca-cert.pem'),
+      path.join(clientDir, this.caCertName),
     ];
 
     const serverExists = !await this.isFileAccessError(serverFiles);
