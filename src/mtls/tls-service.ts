@@ -1,7 +1,7 @@
 import {generateKeyPairSync, KeyPairSyncResult} from 'crypto';
 import {Injectable, Logger} from '@nestjs/common';
 import forge from 'node-forge';
-import {CaResult, ClientResult, AllResult} from '@/mtls/mtls-model';
+import {CaResult, ClientResult} from '@/mtls/mtls-model';
 
 @Injectable()
 export class TlsService {
@@ -51,11 +51,7 @@ export class TlsService {
     };
   }
 
-  client(clientName: string, caKey: string, caCert: string): ClientResult {
-    if (!clientName) {
-      throw new Error('Error: output directory name is required');
-    }
-    
+  client(caKey: string, caCert: string): ClientResult {
     const clientKeys = this.generateKeyPair();
     const cert = forge.pki.createCertificate();
     cert.publicKey = forge.pki.publicKeyFromPem(clientKeys.publicKey);
@@ -92,18 +88,6 @@ export class TlsService {
       key: clientKeys.privateKey,
       cert: forge.pki.certificateToPem(cert),
       caCert,
-    };
-  }
-
-  all(): AllResult {
-    const caData = this.ca();
-    const serverClient = this.client('server', caData.key, caData.cert);
-    const clientClient = this.client('client', caData.key, caData.cert);
-
-    return {
-      ca: caData,
-      server: serverClient,
-      client: clientClient,
     };
   }
 }
