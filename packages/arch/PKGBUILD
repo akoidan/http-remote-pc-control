@@ -23,13 +23,9 @@ source=(
   "openapi.json-${tag}::${url}/releases/download/${tag}/openapi.json"
   "http-remote-pc-control.service"
   "http-remote-pc-control.install"
-  "gen-certs.sh"
-  "san.cnf"
 )
 options=(!strip)
 sha256sums=('SKIP'
-            'SKIP'
-            'SKIP'
             'SKIP'
             'SKIP'
             'SKIP')
@@ -38,6 +34,4 @@ package() {
   install -D -m755 "${srcdir}/http-remote-pc-control-${tag}" "${pkgdir}/usr/bin/http-remote-pc-control"
   install -D -m644 "${srcdir}/openapi.json-${tag}" "${pkgdir}/usr/share/http-remote-pc-control/openapi.json"
   install -D -m644 "${srcdir}/http-remote-pc-control.service" "${pkgdir}/usr/lib/systemd/user/http-remote-pc-control.service"
-  install -D -m755 "${srcdir}/gen-certs.sh" "${pkgdir}/usr/share/http-remote-pc-control/gen-certs"
-  install -D -m644 "${srcdir}/san.cnf" "${pkgdir}/usr/share/http-remote-pc-control/san.cnf"
 }

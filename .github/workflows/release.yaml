@@ -141,8 +141,6 @@ jobs:
           assets: |
             ./packages/arch/http-remote-pc-control.install
             ./packages/http-remote-pc-control.service
-            ./packages/gen-certs.sh
-            ./san.cnf
           commit_username: "GitHub Actions Bot"
           updpkgsums: "true"
           commit_email: "actions@github.com"
@@ -173,8 +171,6 @@ jobs:
           install -D -m 755 "${rootdir}/http-remote-pc-control.elf" "${pkgdir}/usr/bin/http-remote-pc-control"
           install -D -m 644 "${rootdir}/openapi.json" "${pkgdir}/usr/share/http-remote-pc-control/openapi.json"
           install -D -m 644 "${rootdir}/packages/http-remote-pc-control.service" "${pkgdir}/usr/lib/systemd/user/http-remote-pc-control.service"
-          install -D -m 755 "${rootdir}/packages/gen-certs.sh" "${pkgdir}/usr/share/http-remote-pc-control/gen-certs"
-          install -D -m 644 "${rootdir}/san.cnf" "${pkgdir}/usr/share/http-remote-pc-control/san.cnf"
           cd "$srcdir"
           dpkg-deb --build http-remote-pc-control http-remote-pc-control-amd64.deb
 

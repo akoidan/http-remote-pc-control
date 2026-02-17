@@ -6,7 +6,6 @@ coverage
 /app.exe
 /node_modules
 /certs
-/!certs/.gitkeep
 /.vs
 /http-remote-pc-control
 /http-remote-pc-control.exe

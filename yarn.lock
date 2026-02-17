@@ -1491,6 +1491,13 @@
   resolved "https://registry.yarnpkg.com/@types/mime/-/mime-1.3.5.tgz#1ef302e01cf7d2b5a0fa526790c9123bf1d06690"
   integrity sha512-/pyBZWSLD2n0dcHE3hq8s8ZvcETHtEuF+3E7XVt0Ig2nvsVQXdghHVcEkIWjy9A0wKfTn97a/PSDYohKIlnP/w==
 
+"@types/node-forge@^1.3.14":
+  version "1.3.14"
+  resolved "https://registry.yarnpkg.com/@types/node-forge/-/node-forge-1.3.14.tgz#006c2616ccd65550560c2757d8472eb6d3ecea0b"
+  integrity sha512-mhVF2BnD4BO+jtOp7z1CdzaK4mbuK0LLQYAvdOLqHTavxFNq4zA1EmYkpnFjP8HOUzedfQkRnp0E2ulSAYSzAw==
+  dependencies:
+    "@types/node" "*"
+
 "@types/node@*":
   version "22.10.2"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-22.10.2.tgz#a485426e6d1fdafc7b0d4c7b24e2c78182ddabb9"
@@ -5336,6 +5343,11 @@ node-emoji@1.11.0:
   integrity sha512-wo2DpQkQp7Sjm2A0cq+sN7EHKO6Sl0ctXeBdFZrL9T9+UywORbufTcTZxom8YqpLQt/FqNMUkOpkZrJVYSKD3A==
   dependencies:
     lodash "^4.17.21"
+
+node-forge@^1.3.3:
+  version "1.3.3"
+  resolved "https://registry.yarnpkg.com/node-forge/-/node-forge-1.3.3.tgz#0ad80f6333b3a0045e827ac20b7f735f93716751"
+  integrity sha512-rLvcdSyRCyouf6jcOIPe/BgwG/d7hKjzMKOas33/pHEr6gbq18IK9zV7DiPvzsz0oBJPme6qr6H6kGZuI9/DZg==
 
 node-int64@^0.4.0:
   version "0.4.0"

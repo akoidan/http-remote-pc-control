@@ -1,6 +1,6 @@
 import {Inject, Injectable, Logger} from '@nestjs/common';
 import {KeyboardNativeModule, Native} from '@/native/native-model';
-import {sleep} from '@/shared';
+import {sleep} from '@/app/shared';
 import {RandomService} from '@/random/random-service';
 import {KeyPressRequest, SetKeyboardLayoutRequest, TypeTextRequest} from '@/keyboard/keyboard-dto';
 import {Safe400} from '@/utils/decorators';

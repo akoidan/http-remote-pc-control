@@ -17,16 +17,26 @@ You can also use [hotkey-hub](https://github.com/akoidan/hotkey-hub) for managin
 
 ### Certificates
 The client and server rely on [mutual TLS authentication](https://www.cloudflare.com/learning/access-management/what-is-mutual-tls/).
-If you use a package (Ubuntu/Debian/Arch Linux), the service will generate certificates automatically. No action is required. For Windows or other Linux distributions, use the helper script to generate certificates with [gen-cert.sh](./gen-cert.sh). Download and run it with bash.
+In order to generate certificate use:
 
 ```bash
-bash ./gen-cert.sh all
+http-remote-pc-control --generate
 ```
-Note that on Windows you need bash; you can use either [Git Bash](https://git-scm.com/install/windows) or [WSL](https://learn.microsoft.com/en-us/windows/wsl/install).
 
-You must:
-- Copy `./gencert/server` into the `./certs` directory where the app executable is located
-- Copy `./gencert/client` into the `./certs` directory on the remote PC from where you use the API. The client PC should not validate domain names.
+This will generate `certs` directory with:
+ - `certs/ca-cert.pem`, `certs/key.pem`, `certs/cert.pem` files that http server will use.
+ - `certs/ca/ca-cert.pem` and `certs/ca/ca-key.pem` certificate authority (CA) for further MTLS client generation
+ - `certs/client/ca-cert.pem`, `certs/client/key.pem`, `certs/client/cert.pem` files for the http client you can use. Copy them to your client `*`
+
+For further client generation you can use
+
+```bash
+http-remote-pc-control --create-client-tls dirName
+```
+
+It will output files required clients to connect to `certs/dirName`. 
+
+`*` In ideal scenarios you can use `openssl` for mtls generation so you don't have to copy private keys over network.
 
 ### Ubuntu
  - Install dependencies: `sudo apt-get install --no-install-recommends libxcb-ewmh2 libxtst6 libxcb-ewmh2 libxcb1 libdbus-1-3`
