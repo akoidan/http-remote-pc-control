@@ -8,7 +8,7 @@ interface CliArgs {
   cli: boolean;
   logLevel: string;
   generate: boolean;
-  generateClient?: string;
+  createClientTLs?: string;
   ifMissing: boolean;
 }
 

@@ -35,9 +35,10 @@ asyncLocalStorage.run(new Map<string, string>().set('comb', 'init'), () => {
   }
 
   (async function startApp(): Promise<void> {
-    const {port, certDir, logLevel, generate, generateClient, ifMissing, cli} = await parseArgs();
-    cliCache = cli;
-    logger.setLogLevel(logLevel as LogLevel);
+    const args = await parseArgs();
+    console.log(JSON.stringify(args));
+    cliCache = args.cli;
+    logger.setLogLevel(args.logLevel as LogLevel);
 
     const os = platform();
     if (os === 'win32') {
@@ -45,16 +46,16 @@ asyncLocalStorage.run(new Map<string, string>().set('comb', 'init'), () => {
       setPriority(-2);
     }
     const mtls = await NestFactory.create(
-        MtlsModule.forRoot(certDir),
+        MtlsModule.forRoot(args.certDir),
         {logger},
     );
     const certs = mtls.get(CertService);
-    if (generate) {
-      await certs.generate(ifMissing);
+    if (args.generate) {
+      await certs.generate(args.ifMissing);
       return;
     }
-    if (generateClient) {
-      await certs.generateClient(generateClient);
+    if (args.createClientTLs) {
+      await certs.generateClient(args.createClientTLs);
       return;
     }
     await certs.checkCertExist();
@@ -71,8 +72,8 @@ asyncLocalStorage.run(new Map<string, string>().set('comb', 'init'), () => {
       },
     });
     app.useGlobalPipes(new ZodValidationPipe());
-    logger.log(`Listening port ${port}`);
-    await app.listen(port);
+    logger.log(`Listening port ${args.port}`);
+    await app.listen(args.port);
   })().catch(procesError);
 });
 

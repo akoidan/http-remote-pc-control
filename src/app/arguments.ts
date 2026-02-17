@@ -22,14 +22,16 @@ async function parseArgs(): Promise<CliArgs> {
     .option('generate', {
       type: 'boolean',
       default: false,
+      conflicts: 'create-client-tls',
       description: 'Generates certificates in the directory if they are missing',
     })
     .option('if-missing', {
       type: 'boolean',
       default: false,
+      implies: 'generate',
       description: 'Do not fail on "generate" if certificates exists already. Generate only if they are missing',
     })
-    .option('generate-client', {
+    .option('create-client-tls', {
       type: 'string',
       description: 'Generates a directory with specified name with client certificates',
     })
@@ -48,8 +50,6 @@ async function parseArgs(): Promise<CliArgs> {
       default: false,
       description: 'If set to false (by default) the application on fail will await for user input. Otherwise it just fails instantly',
     })
-    .implies('if-missing', 'generate')
-    .conflicts('generate', 'generate-client')
     .parse();
 }
 
