@@ -70,34 +70,30 @@ It will output files required clients to connect to `certs/dirName`.
  - If it crashes, open PowerShell and run the executable from it; it's a CLI app.
 
 #### Autostart on Windows
-This program must be started as Administrator so it has permission to send keystrokes or move the mouse. Add a script to autostart in Windows with admin permissions. Replace the path with your http-remote-pc-control.exe:
-```cmd
-@echo off
-setlocal
+This program must be started as Administrator so it has permission to send keystrokes or move the mouse. Add a script to autostart in Windows with admin permissions. Replace the path with your http-remote-pc-control.exe.
+Open admin powerhsell and insert this code (replace according comments)
+```ps1
+# Replace this path to where exe file is stored
+$ProgramPath = "C:\Users\death\Downloads\app.exe"
+# Replace this path to where you have cert directory and config directory
+$WorkingDir  = "C:\Users\death\Downloads"
+$TaskName    = "RemotePcControl"
 
-:: Replace this path with a directory where cert directory is
-set "WorkingDir=C:\Users\msi\Downloads\"
+$Action  = New-ScheduledTaskAction -Execute $ProgramPath -WorkingDirectory $WorkingDir
+$Trigger = New-ScheduledTaskTrigger -AtLogOn
+$Principal = New-ScheduledTaskPrincipal -UserId "$env:USERNAME" -RunLevel Highest
 
-:: This path with a path to executable
-set "ProgramPath=C:\Users\msi\Downloads\http-remote-pc-control.exe"
-set "ProgramName=RemotePcControl"
+Register-ScheduledTask -TaskName $TaskName `
+    -Action $Action `
+    -Trigger $Trigger `
+    -Principal $Principal `
+    -Force
 
-
-schtasks /create /tn "%ProgramName%" /sc onlogon /rl highest /f ^
-/tr "cmd.exe /c \"cd /d %WorkingDir% ^&^& \"%ProgramPath%\"\""
-
-
-if %errorlevel% equ 0 (
-echo Program added to startup with admin permissions successfully.
-) else (
-echo Failed to add program to startup.
-)
-
-pause
 ```
 
 ## Client Example
 You can call the API programmatically via HTTPS by providing the client private key, CA certificate, and client certificate that was signed with the CA certificate. The server uses a certificate that was also signed by the CA.
+You can also find more example on [GitHub Pages](https://akoidan.github.io/http-remote-pc-control/)
 
 ```typescript
 import {
