@@ -29,6 +29,19 @@ export class CertService {
   }
 
 
+  async hasAtLeastOneReadable(fileList: string[]): Promise<boolean> {
+    for (const file of fileList) {
+      try {
+        await access(file, constants.R_OK);
+        return true; // readable file found
+      } catch {
+        // ignore and continue
+      }
+    }
+    return false; // none readable
+  }
+
+  // eslint-disable-next-line max-lines-per-function,max-statements
   public async generate(onlyIfMissing: boolean): Promise<void> {
     const caExists = await this.checkCaExist();
     const clientExists = await this.checkClientExists();
@@ -44,6 +57,18 @@ export class CertService {
 
     if (caExists || clientExists) {
       throw new Error('Certificate files already exist. Use --if-missing to generate only if missing');
+    }
+
+    const someCertsExists = await this.hasAtLeastOneReadable([
+      this.caRootKey,
+      this.caRootCert,
+      this.privateKeyPath,
+      this.certificatePath,
+      this.caCertificatePath,
+    ]);
+
+    if (someCertsExists) {
+      throw new Error(`Some certificates exist but others are missing. Remove ${this.certDir} directory`);
     }
 
     // Generate CA

@@ -71,16 +71,21 @@ It will output files required clients to connect to `certs/dirName`.
 
 #### Autostart on Windows
 This program must be started as Administrator so it has permission to send keystrokes or move the mouse. Add a script to autostart in Windows with admin permissions. Replace the path with your http-remote-pc-control.exe:
-```shell
+```cmd
 @echo off
 setlocal
 
-:: Replace with the path to your program
+:: Replace this path with a directory where cert directory is
+set "WorkingDir=C:\Users\msi\Downloads\"
+
+:: This path with a path to executable
 set "ProgramPath=C:\Users\msi\Downloads\http-remote-pc-control.exe"
 set "ProgramName=RemotePcControl"
 
-:: Create the task in Task Scheduler for admin startup
-schtasks /create /tn "%ProgramName%" /tr "\"%ProgramPath%\"" /sc onlogon /rl highest /f
+
+schtasks /create /tn "%ProgramName%" /sc onlogon /rl highest /f ^
+/tr "cmd.exe /c \"cd /d %WorkingDir% ^&^& \"%ProgramPath%\"\""
+
 
 if %errorlevel% equ 0 (
 echo Program added to startup with admin permissions successfully.

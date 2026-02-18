@@ -17,7 +17,7 @@ asyncLocalStorage.run(new Map<string, string>().set('comb', 'init'), () => {
   const packageJson: string = require('../package.json').version;
   logger.log(`Booting http-remote-pc-control ${packageJson}`);
 
-  function procesError(err: unknown): void {
+  function processError(err: unknown): void {
     logger.fatal(err as (string | Error), (err as Error)?.stack);
     if (process.platform === 'win32') {
       // Wait for user input before exiting
@@ -71,6 +71,6 @@ asyncLocalStorage.run(new Map<string, string>().set('comb', 'init'), () => {
     app.useGlobalPipes(new ZodValidationPipe());
     logger.log(`Listening port ${args.port}`);
     await app.listen(args.port);
-  })().catch(procesError);
+  })().catch(processError);
 });
 
