@@ -53,6 +53,7 @@ async function parseArgs(): Promise<CliArgs> {
     .option('cert-dir', {
       type: 'string',
       default: defaultCertDir,
+      coerce: (input: string) => path.isAbsolute(input) ? input : path.resolve(process.cwd(), input),
       description: 'Directory that contains key.pem, cert.pem, ca-cert.pem for MTLS',
     })
     .check((argv) => {
