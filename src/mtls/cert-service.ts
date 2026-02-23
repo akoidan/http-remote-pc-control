@@ -4,6 +4,7 @@ import {access, readFile, constants, writeFile, mkdir} from 'fs/promises';
 import * as path from 'path';
 import {CERT_DIR} from '@/mtls/mtls-model';
 import {TlsService} from '@/mtls/tls-service';
+import clc from 'cli-color';
 
 @Injectable()
 export class CertService {
@@ -29,6 +30,19 @@ export class CertService {
   }
 
 
+  async hasAtLeastOneReadable(fileList: string[]): Promise<boolean> {
+    for (const file of fileList) {
+      try {
+        await access(file, constants.R_OK);
+        return true; // readable file found
+      } catch {
+        // ignore and continue
+      }
+    }
+    return false; // none readable
+  }
+
+  // eslint-disable-next-line max-lines-per-function,max-statements
   public async generate(onlyIfMissing: boolean): Promise<void> {
     const caExists = await this.checkCaExist();
     const clientExists = await this.checkClientExists();
@@ -44,6 +58,18 @@ export class CertService {
 
     if (caExists || clientExists) {
       throw new Error('Certificate files already exist. Use --if-missing to generate only if missing');
+    }
+
+    const someCertsExists = await this.hasAtLeastOneReadable([
+      this.caRootKey,
+      this.caRootCert,
+      this.privateKeyPath,
+      this.certificatePath,
+      this.caCertificatePath,
+    ]);
+
+    if (someCertsExists) {
+      throw new Error(`Some certificates exist but others are missing. Remove ${this.certDir} directory`);
     }
 
     // Generate CA
@@ -177,7 +203,18 @@ export class CertService {
   }
 
   public async getCaCert(): Promise<string> {
-    this.logger.debug(`Loading CA certificate key from ${this.caCertificatePath}`);
-    return readFile(this.caCertificatePath, 'utf8');
+    this.logger.debug(`Loading CA certificate from ${this.caCertificatePath}`);
+    const data = await readFile(this.caCertificatePath, 'utf8');
+    const lines = data.trim().split('\n');
+    // Find the last line that's not the END CERTIFICATE line
+    let lastContentLine = '';
+    for (let i = lines.length - 1; i >= 0; i--) {
+      if (!lines[i].includes('-----END CERTIFICATE-----')) {
+        lastContentLine = lines[i].trim().slice(-4);
+        break;
+      }
+    }
+    this.logger.log(`CA cert loaded from ${clc.yellow(this.caCertificatePath)} endswith ${clc.yellow(String(lastContentLine))}`);
+    return data;
   }
 }

@@ -23,7 +23,7 @@ In order to generate certificate use:
 http-remote-pc-control --generate
 ```
 
-This will generate `certs` directory with:
+This will generate `%APPDATA%/http-remote-pc-control/certs`, where `APPDATA` is `~/.config` on linux and `C:\Users\<username>\AppData\Roaming` on Windows:
  - `certs/ca-cert.pem`, `certs/key.pem`, `certs/cert.pem` files that http server will use.
  - `certs/ca/ca-cert.pem` and `certs/ca/ca-key.pem` certificate authority (CA) for further MTLS client generation
  - `certs/client/ca-cert.pem`, `certs/client/key.pem`, `certs/client/cert.pem` files for the http client you can use. Copy them to your client `*`
@@ -43,14 +43,14 @@ It will output files required clients to connect to `certs/dirName`.
  - Download `http-remote-pc-control.deb` from [releases](https://github.com/akoidan/http-remote-pc-control/releases).
  - Install the package: `sudo dpkg -i http-remote-pc-control.deb`
  - Start the service with the same user as the logged-in X session: `systemctl --user start http-remote-pc-control`
- - You will find certificates in `~/.local/share/http-remote-pc-control/certs`
+ - You will find certificates in `~/.config/http-remote-pc-control/certs`
  - You will find OpenAPI documentation in `/usr/share/http-remote-pc-control/openapi.json`
  - To view logs, run: `journalctl --user -o cat -u http-remote-pc-control -f`
 
 #### Arch Linux
  - Install the package with `yay` or `paru` from AUR: `yay -S http-remote-pc-control`
  - Start the service with the same user as the logged-in X session: `systemctl --user start http-remote-pc-control`
- - You will find certificates in `~/.local/share/http-remote-pc-control/certs`
+ - You will find certificates in `~/.config/http-remote-pc-control/certs`
  - You will find OpenAPI documentation in `/usr/share/http-remote-pc-control/openapi.json`
  - To view logs, run: `journalctl --user -o cat -u http-remote-pc-control -f`
 
@@ -70,29 +70,30 @@ It will output files required clients to connect to `certs/dirName`.
  - If it crashes, open PowerShell and run the executable from it; it's a CLI app.
 
 #### Autostart on Windows
-This program must be started as Administrator so it has permission to send keystrokes or move the mouse. Add a script to autostart in Windows with admin permissions. Replace the path with your http-remote-pc-control.exe:
-```shell
-@echo off
-setlocal
+This program must be started as Administrator so it has permission to send keystrokes or move the mouse. Add a script to autostart in Windows with admin permissions. Replace the path with your http-remote-pc-control.exe.
+Open admin powerhsell and insert this code (replace according comments)
+```ps1
+# Replace this path to where exe file is stored
+$ProgramPath = "C:\Users\death\Downloads\app.exe"
+# Replace this path to where you have cert directory and config directory
+$WorkingDir  = "C:\Users\death\Downloads"
+$TaskName    = "RemotePcControl"
 
-:: Replace with the path to your program
-set "ProgramPath=C:\Users\msi\Downloads\http-remote-pc-control.exe"
-set "ProgramName=RemotePcControl"
+$Action  = New-ScheduledTaskAction -Execute $ProgramPath -WorkingDirectory $WorkingDir
+$Trigger = New-ScheduledTaskTrigger -AtLogOn
+$Principal = New-ScheduledTaskPrincipal -UserId "$env:USERNAME" -RunLevel Highest
 
-:: Create the task in Task Scheduler for admin startup
-schtasks /create /tn "%ProgramName%" /tr "\"%ProgramPath%\"" /sc onlogon /rl highest /f
+Register-ScheduledTask -TaskName $TaskName `
+    -Action $Action `
+    -Trigger $Trigger `
+    -Principal $Principal `
+    -Force
 
-if %errorlevel% equ 0 (
-echo Program added to startup with admin permissions successfully.
-) else (
-echo Failed to add program to startup.
-)
-
-pause
 ```
 
 ## Client Example
 You can call the API programmatically via HTTPS by providing the client private key, CA certificate, and client certificate that was signed with the CA certificate. The server uses a certificate that was also signed by the CA.
+You can also find more example on [GitHub Pages](https://akoidan.github.io/http-remote-pc-control/)
 
 ```typescript
 import {
