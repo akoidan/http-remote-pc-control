@@ -23,7 +23,7 @@ In order to generate certificate use:
 http-remote-pc-control --generate
 ```
 
-This will generate `$APP_DATA/http-remote-pc-control/certs`, where `APP_DATA` is `~/.config` on linux and `C:\Users\<username>\AppData\Roaming` on Windows:
+This will generate `%APPDATA%/http-remote-pc-control/certs`, where `APPDATA` is `~/.config` on linux and `C:\Users\<username>\AppData\Roaming` on Windows:
  - `certs/ca-cert.pem`, `certs/key.pem`, `certs/cert.pem` files that http server will use.
  - `certs/ca/ca-cert.pem` and `certs/ca/ca-key.pem` certificate authority (CA) for further MTLS client generation
  - `certs/client/ca-cert.pem`, `certs/client/key.pem`, `certs/client/cert.pem` files for the http client you can use. Copy them to your client `*`
