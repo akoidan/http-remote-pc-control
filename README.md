@@ -23,7 +23,7 @@ In order to generate certificate use:
 http-remote-pc-control --generate
 ```
 
-This will generate `certs` directory with:
+This will generate `$APP_DATA/http-remote-pc-control/certs`, where `APP_DATA` is `~/.config` on linux and `C:\Users\<username>\AppData\Roaming` on Windows:
  - `certs/ca-cert.pem`, `certs/key.pem`, `certs/cert.pem` files that http server will use.
  - `certs/ca/ca-cert.pem` and `certs/ca/ca-key.pem` certificate authority (CA) for further MTLS client generation
  - `certs/client/ca-cert.pem`, `certs/client/key.pem`, `certs/client/cert.pem` files for the http client you can use. Copy them to your client `*`
@@ -43,14 +43,14 @@ It will output files required clients to connect to `certs/dirName`.
  - Download `http-remote-pc-control.deb` from [releases](https://github.com/akoidan/http-remote-pc-control/releases).
  - Install the package: `sudo dpkg -i http-remote-pc-control.deb`
  - Start the service with the same user as the logged-in X session: `systemctl --user start http-remote-pc-control`
- - You will find certificates in `~/.local/share/http-remote-pc-control/certs`
+ - You will find certificates in `~/.config/http-remote-pc-control/certs`
  - You will find OpenAPI documentation in `/usr/share/http-remote-pc-control/openapi.json`
  - To view logs, run: `journalctl --user -o cat -u http-remote-pc-control -f`
 
 #### Arch Linux
  - Install the package with `yay` or `paru` from AUR: `yay -S http-remote-pc-control`
  - Start the service with the same user as the logged-in X session: `systemctl --user start http-remote-pc-control`
- - You will find certificates in `~/.local/share/http-remote-pc-control/certs`
+ - You will find certificates in `~/.config/http-remote-pc-control/certs`
  - You will find OpenAPI documentation in `/usr/share/http-remote-pc-control/openapi.json`
  - To view logs, run: `journalctl --user -o cat -u http-remote-pc-control -f`
 

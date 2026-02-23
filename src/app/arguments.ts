@@ -4,10 +4,19 @@ import process from 'node:process';
 import type {LogLevel} from '@nestjs/common';
 import yargs from 'yargs';
 import type {CliArgs} from '@/app/app-model';
+import {homedir} from 'os';
 
 // eslint-disable-next-line max-lines-per-function
 async function parseArgs(): Promise<CliArgs> {
-  const defaultCertDir = path.join(process.cwd(), 'certs');
+  let appData;
+  if (process.platform === 'win32') {
+    appData = process.env.APPDATA ?? path.join(homedir(), 'AppData', 'Roaming');
+  } else if (process.platform === 'linux') {
+    appData = process.env.XDG_CONFIG_HOME ?? path.join(homedir(), '.config');
+  } else {
+    throw new Error(`Unsupported platform: ${process.platform}`);
+  }
+  const defaultCertDir = path.join(appData, 'http-remote-pc-control','certs');
   const logLevel: LogLevel[] = ['log', 'error', 'warn', 'debug', 'verbose', 'fatal'] as LogLevel[];
   return yargs(process.argv.slice(2))
     .strict()
