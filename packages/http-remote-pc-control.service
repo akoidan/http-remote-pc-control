@@ -1,6 +1,7 @@
 [Unit]
 Description=HTTP Remote PC Control
-After=graphical-session.target
+After=graphical-session.target network-online.target
+Wants=network-online.target
 
 [Service]
 Type=simple
