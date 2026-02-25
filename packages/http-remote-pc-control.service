@@ -2,6 +2,7 @@
 Description=HTTP Remote PC Control
 After=graphical-session.target network-online.target
 Wants=network-online.target
+PartOf=graphical-session.target
 
 [Service]
 Type=simple
@@ -11,4 +12,4 @@ Restart=on-failure
 RestartSec=2
 
 [Install]
-WantedBy=default.target
+WantedBy=graphical-session.target
