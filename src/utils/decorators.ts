@@ -20,14 +20,14 @@ export function Safe400(supported?: NodeJS.Platform[]) {
         if (typeof supported !== 'undefined' && !supported.includes(this.os)) {
           throw new BadRequestException(`Unsupported method ${String(propertyKey)} on platform ${this.os}`);
         }
-        this.logger.debug(`Calling ${String(propertyKey)}(${JSON.stringify(args)})`);
+        this.logger.debug(`Calling ${String(propertyKey)}(${JSON.stringify(args).slice(1, -1)})`);
         try {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-return
           const res =  originalMethod.apply(this, args);
-          this.logger.log(`${String(propertyKey)}(${JSON.stringify(args)})=${JSON.stringify(res)}`);
+          this.logger.log(`${String(propertyKey)}(${JSON.stringify(args).slice(1, -1)}) => ${JSON.stringify(res)}`);
           return res;
         } catch (e: unknown) {
-          this.logger.error(`${String(propertyKey)}(${JSON.stringify(args)}) throws ${(e as Error)?.message ?? e}`, (e as Error).stack);
+          this.logger.error(`${String(propertyKey)}(${JSON.stringify(args).slice(1, -1)}) throws ${(e as Error)?.message ?? e}`, (e as Error).stack);
           throw new BadRequestException(
               `Unable to execute ${String(propertyKey)} because ${(e as Error)?.message ?? e}`
           );
@@ -44,10 +44,10 @@ export function Safe400(supported?: NodeJS.Platform[]) {
         try {
           // eslint-disable-next-line
           const res =  await originalMethod.apply(this, args);
-          this.logger.log(`await ${String(propertyKey)}(${JSON.stringify(args)})=${JSON.stringify(res)}`);
+          this.logger.log(`await ${String(propertyKey)}(${JSON.stringify(args).slice(1, -1)}) => ${JSON.stringify(res)}`);
           return res;
         } catch (e: unknown) {
-          this.logger.error(`await ${String(propertyKey)}(${JSON.stringify(args)}) throws ${(e as Error)?.message ?? e}`, (e as Error).stack);
+          this.logger.error(`await ${String(propertyKey)}(${JSON.stringify(args).slice(1, -1)}) throws ${(e as Error)?.message ?? e}`, (e as Error).stack);
           throw new BadRequestException(
               `Unable to execute ${String(propertyKey)} because ${(e as Error)?.message ?? e}`
           );
